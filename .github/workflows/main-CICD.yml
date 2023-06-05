@@ -16,6 +16,7 @@ env:
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: ssaf-sound-deployment-group
 
 permissions:
+  id-token: write
   contents: read
 
 jobs:
