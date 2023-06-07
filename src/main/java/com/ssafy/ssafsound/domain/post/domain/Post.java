@@ -49,4 +49,7 @@ public class Post extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "post")
     private List<PostLike> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post")
+    private List<PostReport> reports = new ArrayList<>();
 }
