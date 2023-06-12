@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity(name="lunch_poll")
 @Getter
@@ -28,4 +29,7 @@ public class LunchPoll extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Column(updatable = false)
+    private LocalDate polledAt;
 }
