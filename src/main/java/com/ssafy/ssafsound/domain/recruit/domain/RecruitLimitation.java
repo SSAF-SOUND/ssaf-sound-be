@@ -20,7 +20,7 @@ public class RecruitLimitation {
     private Long id;
 
     @Column
-    private Integer limit;
+    private Integer limitation;
 
     @Column
     private Integer currentNumber;
