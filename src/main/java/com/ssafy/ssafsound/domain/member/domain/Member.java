@@ -22,7 +22,7 @@ public class Member extends BaseTimeEntity {
     private Long id;
 
     @Column
-    private Integer year;
+    private Integer semester;
 
     @Column
     private String oauthIdentifier;
