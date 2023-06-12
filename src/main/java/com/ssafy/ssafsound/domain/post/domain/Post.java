@@ -25,6 +25,9 @@ public class Post extends BaseTimeEntity {
     private Long id;
 
     @Column
+    private String title;
+
+    @Column
     private String content;
 
     @Column
