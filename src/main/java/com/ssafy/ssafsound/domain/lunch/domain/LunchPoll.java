@@ -30,6 +30,6 @@ public class LunchPoll extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Column(updatable = false)
+    @Column
     private LocalDate polledAt;
 }
