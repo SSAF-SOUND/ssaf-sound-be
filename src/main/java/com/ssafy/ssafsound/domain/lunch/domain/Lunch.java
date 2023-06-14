@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity(name="lunch")
 @Getter
@@ -36,4 +37,7 @@ public class Lunch extends BaseTimeEntity {
 
     @Convert(converter = CampusConverter.class)
     private MetaData campus;
+
+    @Column
+    private LocalDate createdAt;
 }
