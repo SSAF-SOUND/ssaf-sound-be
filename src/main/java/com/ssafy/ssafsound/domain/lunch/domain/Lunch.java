@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Lunch extends BaseTimeEntity {
+public class Lunch {
 
     @Id
     @Column(name = "lunch_id")

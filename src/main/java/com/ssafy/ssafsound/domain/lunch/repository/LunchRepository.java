@@ -13,5 +13,5 @@ public interface LunchRepository extends JpaRepository<Lunch, Long> {
 
     Optional<Lunch> findLunchById(Long id);
 
-    Optional<List<Lunch>> findAllByCampus_IdAndDate(Integer campusId, LocalDate date);
+    Optional<List<Lunch>> findAllByCampus_IdAndCreatedAt(Integer campusId, LocalDate date);
 }
