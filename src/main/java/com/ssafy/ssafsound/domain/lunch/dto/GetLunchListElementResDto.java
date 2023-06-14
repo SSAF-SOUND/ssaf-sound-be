@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 @Getter
 @Builder
-public class Menu {
+public class GetLunchListElementResDto {
 
     private String mainMenu;
 
@@ -13,8 +13,8 @@ public class Menu {
 
     private Long pollCount;
 
-    public static Menu of(Lunch lunch, Long pollCount){
-        return Menu.builder()
+    public static GetLunchListElementResDto of(Lunch lunch, Long pollCount){
+        return GetLunchListElementResDto.builder()
                 .mainMenu(lunch.getMainMenu())
                 .imagePath(lunch.getImagePath())
                 .pollCount(pollCount)
