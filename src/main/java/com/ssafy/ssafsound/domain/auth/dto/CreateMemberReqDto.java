@@ -6,15 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class LoginRequest {
+public class CreateMemberReqDto {
     @NotBlank(message = "코드가 유효하지 않습니다.")
     private String code;
 
-    @NotBlank(message = "Auth 타입이 유효하지 않습니다.")
-    private String oauthTypeName;
+    @NotBlank(message = "Oauth name이 유효하지 않습니다.")
+    private String oauthName;
 }
