@@ -30,7 +30,7 @@ public class LunchService {
         Integer dayDifference = getLunchListReqDto.getDate().compareTo(LocalDate.now());
         if (dayDifference < 0 || dayDifference > 1) throw new LunchException(LunchErrorInfo.INVALID_LUNCH_DATE);
 
-        List<Lunch> lunches = lunchRepository.findAllByCampus_IdAndDate(getLunchListReqDto.getCampusId(), getLunchListReqDto.getDate())
+        List<Lunch> lunches = lunchRepository.findAllByCampus_IdAndCreatedAt(getLunchListReqDto.getCampusId(), getLunchListReqDto.getDate())
                 .orElseThrow(()->new LunchException(LunchErrorInfo.NO_LUNCH_DATE));
 
         return GetLunchListResDto.of(lunches.stream()
