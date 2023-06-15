@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ExceptionControllerAdvice {
 
     @ExceptionHandler(LunchException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public EnvelopeResponse LunchExceptionHandler(LunchException e){
         log.error(e.getMessage());
 
@@ -37,6 +38,7 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public EnvelopeResponse RuntimeExceptionHandler(RuntimeException e) {
         log.error(e.getMessage());
         return EnvelopeResponse.builder()
