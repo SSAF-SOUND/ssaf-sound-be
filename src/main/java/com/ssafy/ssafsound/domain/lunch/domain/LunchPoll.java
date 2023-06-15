@@ -1,6 +1,5 @@
 package com.ssafy.ssafsound.domain.lunch.domain;
 
-import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +14,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LunchPoll extends BaseTimeEntity {
+public class LunchPoll {
 
     @Id
     @Column(name = "lunch_poll_id")
