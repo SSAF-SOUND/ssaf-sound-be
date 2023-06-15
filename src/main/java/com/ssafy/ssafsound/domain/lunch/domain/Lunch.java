@@ -1,7 +1,8 @@
 package com.ssafy.ssafsound.domain.lunch.domain;
 
 import com.ssafy.ssafsound.domain.BaseTimeEntity;
-import com.ssafy.ssafsound.domain.meta.domain.Campus;
+import com.ssafy.ssafsound.domain.meta.converter.CampusConverter;
+import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,7 +34,6 @@ public class Lunch extends BaseTimeEntity {
     @Column
     private String menuKcal;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "campus_id")
-    private Campus campus;
+    @Convert(converter = CampusConverter.class)
+    private MetaData campus;
 }

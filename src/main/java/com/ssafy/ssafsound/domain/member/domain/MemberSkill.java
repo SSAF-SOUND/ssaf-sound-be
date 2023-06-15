@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.domain.member.domain;
 
-import com.ssafy.ssafsound.domain.meta.domain.Skill;
+import com.ssafy.ssafsound.domain.meta.converter.SkillConverter;
+import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,7 +25,6 @@ public class MemberSkill {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "skill_id")
-    private Skill skill;
+    @Convert(converter = SkillConverter.class)
+    private MetaData skill;
 }
