@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name="lunch")
 @Getter
@@ -40,4 +42,8 @@ public class Lunch {
 
     @Column
     private LocalDate createdAt;
+
+    @OneToMany(mappedBy = "lunch")
+    @Builder.Default
+    private List<LunchPoll> lunchPolls = new ArrayList<>();
 }

@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LunchPollRepository extends JpaRepository<LunchPoll, Long> {
 
-    Long countAllByLunch(Lunch lunch);
+
 }
