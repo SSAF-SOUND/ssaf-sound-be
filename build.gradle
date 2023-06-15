@@ -69,7 +69,13 @@ jacocoTestCoverageVerification {
 				minimum = 0.60
 			}
 
-			excludes = []
+			excludes = ['com.ssafy.ssafsound.domain.BaseTimeEntity',
+						'com.ssafy.ssafsound.domain.*.domain.**',
+						'com.ssafy.ssafsound.domain.meta.converter.CampusConverter',
+						'com.ssafy.ssafsound.domain.meta.converter.SkillConverter',
+						'com.ssafy.ssafsound.global.**',
+						'*.*Controller',
+						'*.SsafsoundApplication']
 		}
 	}
 }

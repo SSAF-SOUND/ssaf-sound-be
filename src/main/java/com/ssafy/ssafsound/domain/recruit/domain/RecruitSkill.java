@@ -1,6 +1,5 @@
 package com.ssafy.ssafsound.domain.recruit.domain;
 
-import com.ssafy.ssafsound.domain.meta.domain.Skill;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,7 +23,6 @@ public class RecruitSkill {
     @JoinColumn(name = "recruit_id")
     private Recruit recruit;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "skill_id")
-    private Skill skill;
+    @Column
+    private String skill;
 }
