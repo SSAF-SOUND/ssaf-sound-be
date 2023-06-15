@@ -12,7 +12,7 @@ public class GoogleOauthProvider implements OauthProvider {
     private final RestTemplate restTemplate;
     @Value("${spring.oauth2.google.url}")
     private String GOOGLE_URL;
-    @Value("spring.oauth2.google.token-url")
+    @Value("${spring.oauth2.google.token-url}")
     private String GOOGLE_TOKEN_URL;
     @Value("${spring.oauth2.google.client-id}")
     private String GOOGLE_CLIENT_ID;
