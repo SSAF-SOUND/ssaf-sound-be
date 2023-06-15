@@ -9,7 +9,6 @@ import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.service.MemberService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 
 @RestController
@@ -30,8 +29,8 @@ public class AuthController {
     public EnvelopeResponse<CreateMemberTokensResDto> login(
             @Valid @RequestBody CreateMemberReqDto createMemberReqDto) {
 
-        String oauthIdentifier = authService.getUserOauthIdentifier(createMemberReqDto);
-        Member member = memberService.createMemberByOauthIdentifier(oauthIdentifier);
+        String accessToken = authService.getUserAccessToken(createMemberReqDto);
+        Member member = memberService.createMemberByOauthIdentifier(accessToken);
         AuthenticatedUser authenticatedUser = AuthenticatedUser.of(member);
 
         CreateMemberTokensResDto createMemberTokensResDto = memberService.createTokensByAuthenticatedUser(
@@ -41,14 +40,6 @@ public class AuthController {
 
         return EnvelopeResponse.<CreateMemberTokensResDto>builder()
                 .data(createMemberTokensResDto)
-                .build();
-    }
-
-    @GetMapping("/logout")
-    public EnvelopeResponse<?> logout(AuthenticatedUser authenticatedUser) {
-        return EnvelopeResponse
-                .builder()
-                .message("삭제되었습니다")
                 .build();
     }
 }
