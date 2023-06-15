@@ -1,7 +1,8 @@
 package com.ssafy.ssafsound.domain.member.domain;
 
 import com.ssafy.ssafsound.domain.BaseTimeEntity;
-import com.ssafy.ssafsound.domain.meta.domain.Campus;
+import com.ssafy.ssafsound.domain.meta.converter.CampusConverter;
+import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,9 +37,8 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private AuthenticationStatus certificationState;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "campus_id")
-    private Campus campus;
+    @Convert(converter = CampusConverter.class)
+    private MetaData campus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "oauth_type_id")
