@@ -1,17 +1,15 @@
 package com.ssafy.ssafsound.domain.lunch.controller;
 
+import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedUser;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListReqDto;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchResDto;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListResDto;
+import com.ssafy.ssafsound.domain.lunch.dto.PostLunchPollResDto;
 import com.ssafy.ssafsound.domain.lunch.service.LunchService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.NumberFormat;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -26,9 +24,7 @@ public class LunchController {
     public EnvelopeResponse<GetLunchResDto> getLunchByLunchId(@PathVariable @NumberFormat Long lunchId){
 
         return EnvelopeResponse.<GetLunchResDto>builder()
-                .code(HttpStatus.OK.toString())
-                .message("success")
-                .data(lunchService.findLunchByLunchId(lunchId))
+                .data(lunchService.findLunchDetail(lunchId))
                 .build();
     }
 
@@ -36,9 +32,15 @@ public class LunchController {
     public EnvelopeResponse<GetLunchListResDto> getLunchesByCampusAndDate(@Valid GetLunchListReqDto getLunchListReqDto){
 
         return EnvelopeResponse.<GetLunchListResDto>builder()
-                .code(HttpStatus.OK.toString())
-                .message("success")
-                .data(lunchService.findLunchesByCampusAndDate(getLunchListReqDto))
+                .data(lunchService.findLunches(getLunchListReqDto))
+                .build();
+    }
+
+    @PostMapping("/poll/{lunchId}")
+    public EnvelopeResponse<PostLunchPollResDto> postLunchPoll(AuthenticatedUser user, @PathVariable @NumberFormat Long lunchId){
+
+        return EnvelopeResponse.<PostLunchPollResDto>builder()
+                .data(lunchService.saveLunchPoll(user.getMemberId(), lunchId))
                 .build();
     }
 }
