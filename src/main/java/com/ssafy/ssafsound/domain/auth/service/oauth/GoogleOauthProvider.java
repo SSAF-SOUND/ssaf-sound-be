@@ -54,7 +54,29 @@ public class GoogleOauthProvider implements OauthProvider {
 
     @Override
     public String  getOauthAccessToken(String code) {
-        return null;
+        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        HttpHeaders headers = new HttpHeaders();
+
+        code = URLDecoder.decode(code);
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        parameters.set("code", code);
+        parameters.set("client_id", GOOGLE_CLIENT_ID);
+        parameters.set("client_secret", GOOGLE_CLIENT_SECRET);
+        parameters.set("redirect_uri", GOOGLE_CLIENT_URL);
+        parameters.set("grant_type", "authorization_code");
+
+        HttpEntity<MultiValueMap<String, Object>> restRequest = new HttpEntity<>(parameters, headers);
+        log.info("code: " + code);
+        log.info("restRequest: " + restRequest);
+        try {
+            ResponseEntity<String> apiResponse = restTemplate.postForEntity(GOOGLE_TOKEN_URL, restRequest, String.class);
+            log.info("apiResponse: " + apiResponse);
+            log.info("api body: " + apiResponse.getBody());
+            return apiResponse.getBody();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new AuthException(GlobalErrorInfo.AUTH_SERVER_ERROR);
+        }
     }
 
     @Override

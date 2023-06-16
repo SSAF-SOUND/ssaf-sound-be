@@ -54,7 +54,25 @@ public class GithubOauthProvider implements OauthProvider {
 
     @Override
     public String getOauthAccessToken(String code) {
-        return null;
+        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+
+        code = URLDecoder.decode(code);
+        parameters.set("code", code);
+        parameters.set("client_id", GITHUB_CLIENT_ID);
+        parameters.set("client_secret", GITHUB_CLIENT_SECRET);
+        parameters.set("redirect_uri", GITHUB_REDIRECT_URI);
+        HttpEntity<MultiValueMap<String, Object>> restRequest = new HttpEntity<>(parameters);
+        log.info("restRequest: " + restRequest);
+
+        try {
+            ResponseEntity<String> apiResponse = restTemplate.postForEntity(GITHUB_TOKEN_URL, restRequest, String.class);
+            log.info("apiResponse: " + apiResponse);
+            log.info("api body: " + apiResponse.getBody());
+            return apiResponse.getBody();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new AuthException(GlobalErrorInfo.AUTH_SERVER_ERROR);
+        }
     }
 
     @Override
