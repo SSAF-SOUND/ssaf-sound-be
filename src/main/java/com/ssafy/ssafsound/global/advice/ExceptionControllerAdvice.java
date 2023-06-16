@@ -1,13 +1,12 @@
 package com.ssafy.ssafsound.global.advice;
 
-import com.ssafy.ssafsound.domain.lunch.exception.LunchErrorInfo;
 import com.ssafy.ssafsound.domain.lunch.exception.LunchException;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -27,9 +26,9 @@ public class ExceptionControllerAdvice {
                 .build();
     }
 
-    @ExceptionHandler(ConstraintViolationException.class)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public EnvelopeResponse BadRequestExceptionHandler(ConstraintViolationException e){
+    public EnvelopeResponse BadRequestExceptionHandler(MethodArgumentNotValidException e){
         log.error(e.getMessage());
 
         return EnvelopeResponse.builder()
