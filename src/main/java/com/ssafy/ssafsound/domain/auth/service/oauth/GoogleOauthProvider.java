@@ -10,17 +10,17 @@ import org.springframework.web.client.RestTemplate;
 public class GoogleOauthProvider implements OauthProvider {
 
     private final RestTemplate restTemplate;
-    @Value("${spring.oauth2.google.url}")
+    @Value("${oauth2.google.url}")
     private String GOOGLE_URL;
-    @Value("${spring.oauth2.google.token-url}")
+    @Value("${oauth2.google.token-url}")
     private String GOOGLE_TOKEN_URL;
-    @Value("${spring.oauth2.google.client-id}")
+    @Value("${oauth2.google.client-id}")
     private String GOOGLE_CLIENT_ID;
-    @Value("${spring.oauth2.google.client-secret}")
+    @Value("${oauth2.google.client-secret}")
     private String GOOGLE_CLIENT_SECRET;
-    @Value("${spring.oauth2.google.client-url}")
+    @Value("${oauth2.google.client-url}")
     private String GOOGLE_CLIENT_URL;
-    @Value("${spring.oauth2.google.scope}")
+    @Value("${oauth2.google.scope}")
     private String GOOGLE_DATA_ACCESS_SCOPE;
 
     @Override

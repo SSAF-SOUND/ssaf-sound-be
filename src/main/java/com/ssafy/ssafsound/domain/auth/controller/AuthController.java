@@ -28,9 +28,8 @@ public class AuthController {
     @PostMapping("/callback")
     public EnvelopeResponse<CreateMemberTokensResDto> login(
             @Valid @RequestBody CreateMemberReqDto createMemberReqDto) {
-
-        String accessToken = authService.getUserAccessToken(createMemberReqDto);
-        Member member = memberService.createMemberByOauthIdentifier(accessToken);
+        String oauthIdentifier = authService.login(createMemberReqDto);
+        Member member = memberService.createMemberByOauthIdentifier(oauthIdentifier);
         AuthenticatedUser authenticatedUser = AuthenticatedUser.of(member);
 
         CreateMemberTokensResDto createMemberTokensResDto = memberService.createTokensByAuthenticatedUser(
