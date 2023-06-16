@@ -9,6 +9,8 @@ import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.service.MemberService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RestController
@@ -23,6 +25,12 @@ public class AuthController {
         this.authService = authService;
         this.memberService = memberService;
         this.jwtTokenProvider = jwtTokenProvider;
+    }
+
+    @GetMapping("/{oauthName}")
+    public void socialLoginRedirect(@PathVariable(name = "oauthName") String oauthName,
+                                    HttpServletResponse response) {
+        authService.sendRedirectURL(oauthName, response);
     }
 
     @PostMapping("/callback")
