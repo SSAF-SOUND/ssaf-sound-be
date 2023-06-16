@@ -8,9 +8,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class OauthProviderFactory {
     private final GoogleOauthProvider googleOauthProvider;
+    private final GithubOauthProvider githubOauthProvider;
+    private final KakaoOauthProvider kakaoOauthProvider;
 
-    public OauthProviderFactory(GoogleOauthProvider googleOauthProvider) {
+    public OauthProviderFactory(GoogleOauthProvider googleOauthProvider,
+                                GithubOauthProvider githubOauthProvider,
+                                KakaoOauthProvider kakaoOauthProvider) {
         this.googleOauthProvider = googleOauthProvider;
+        this.githubOauthProvider = githubOauthProvider;
+        this.kakaoOauthProvider = kakaoOauthProvider;
     }
 
     public OauthProvider of(String oauthName) {
@@ -18,6 +24,12 @@ public class OauthProviderFactory {
         if (OauthType.GOOGLE.isEqual(oauthName)) {
             log.info("GoogleOauthProvider가 제공됩니다.");
             return googleOauthProvider;
+        } else if (OauthType.GITHUB.isEqual(oauthName)) {
+            log.info("GithubOauthProvider가 제공됩니다.");
+            return githubOauthProvider;
+        } else if (OauthType.KAKAO.isEqual(oauthName)) {
+            log.info("KakaoOauthProvider가 제공됩니다.");
+            return kakaoOauthProvider;
         }
         return null;
     }
