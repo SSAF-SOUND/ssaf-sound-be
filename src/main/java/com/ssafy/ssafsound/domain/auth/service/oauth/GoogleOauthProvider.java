@@ -1,5 +1,8 @@
 package com.ssafy.ssafsound.domain.auth.service.oauth;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -35,7 +39,8 @@ public class GoogleOauthProvider implements OauthProvider {
     private String GOOGLE_CLIENT_URL;
     @Value("${oauth2.google.scope}")
     private String GOOGLE_DATA_ACCESS_SCOPE;
-
+    @Value("${oauth2.google.client-key-url}")
+    private String GOOGLE_USER_KEY;
     @Override
     public String getOauthUrl() {
         Map<String, Object> params = new HashMap<>();
@@ -72,7 +77,9 @@ public class GoogleOauthProvider implements OauthProvider {
             ResponseEntity<String> apiResponse = restTemplate.postForEntity(GOOGLE_TOKEN_URL, restRequest, String.class);
             log.info("apiResponse: " + apiResponse);
             log.info("api body: " + apiResponse.getBody());
-            return apiResponse.getBody();
+            String accessToken = parsingValue(apiResponse.getBody(), "access_token");
+            log.info("access_token: " + accessToken);
+            return accessToken;
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new AuthException(GlobalErrorInfo.AUTH_SERVER_ERROR);
@@ -81,6 +88,27 @@ public class GoogleOauthProvider implements OauthProvider {
 
     @Override
     public String getUserOauthIdentifier(String accessToken) {
-        return null;
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization","Bearer "+accessToken);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<String> apiResponse = restTemplate.exchange(
+                    GOOGLE_USER_KEY,
+                    HttpMethod.GET, request,
+                    String.class);
+            log.info("success:" + apiResponse.getBody());
+            String oauthIdentifier = parsingValue(apiResponse.getBody(), "email");
+            log.info("oauthIdentifier: " + oauthIdentifier);
+            return oauthIdentifier;
+        } catch (Exception e) {
+            throw new AuthException(GlobalErrorInfo.AUTH_SERVER_ERROR);
+        }
+    }
+
+    public String parsingValue(String response, String key) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> jsonMap = objectMapper.readValue(response, new TypeReference<>() {});
+        return (String) jsonMap.get(key);
     }
 }
