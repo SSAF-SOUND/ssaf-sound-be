@@ -20,7 +20,7 @@ public class ExceptionControllerAdvice {
     public EnvelopeResponse AuthExceptionHandler(AuthException e) {
         log.error(e.getMessage());
         return EnvelopeResponse.builder()
-                .code(GlobalErrorInfo.AUTH_VALUE_NOT_FOUND.getCode())
+                .code(e.getInfo().getCode())
                 .message(e.getInfo().getMessage())
                 .build();
     }
