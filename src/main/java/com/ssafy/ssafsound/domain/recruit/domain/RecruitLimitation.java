@@ -1,5 +1,7 @@
 package com.ssafy.ssafsound.domain.recruit.domain;
 
+import com.ssafy.ssafsound.domain.meta.converter.RecruitTypeConverter;
+import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,7 +31,6 @@ public class RecruitLimitation {
     @JoinColumn(name = "recruit_id")
     private Recruit recruit;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recruit_type_id")
-    private RecruitType type;
+    @Convert(converter = RecruitTypeConverter.class)
+    private MetaData type;
 }

@@ -1,5 +1,7 @@
 package com.ssafy.ssafsound.domain.recruit.domain;
 
+import com.ssafy.ssafsound.domain.meta.converter.SkillConverter;
+import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +25,6 @@ public class RecruitSkill {
     @JoinColumn(name = "recruit_id")
     private Recruit recruit;
 
-    @Column
-    private String skill;
+    @Convert(converter = SkillConverter.class)
+    private MetaData skill;
 }
