@@ -16,6 +16,7 @@ public class EnumMetaDataConsumer implements MetaDataConsumer {
         this.map = new HashMap<>();
         this.putMetaData(MetaDataType.SKILL.name(), Skill.class);
         this.putMetaData(MetaDataType.CAMPUS.name(), Campus.class);
+        this.putMetaData(MetaDataType.RECRUIT_TYPE.name(), RecruitType.class);
     }
 
     @Override
