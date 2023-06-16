@@ -1,11 +1,16 @@
 package com.ssafy.ssafsound.domain.auth.service.oauth;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -35,6 +40,8 @@ public class GithubOauthProvider implements OauthProvider {
     private String GITHUB_REDIRECT_URI;
     @Value("${oauth2.github.scope}")
     private String SCOPE;
+    @Value("${oauth2.github.client-key-url}")
+    private String GITHUB_USER_KEY;
 
     @Override
     public String getOauthUrl() {
@@ -63,20 +70,47 @@ public class GithubOauthProvider implements OauthProvider {
         parameters.set("redirect_uri", GITHUB_REDIRECT_URI);
         HttpEntity<MultiValueMap<String, Object>> restRequest = new HttpEntity<>(parameters);
         log.info("restRequest: " + restRequest);
+        ResponseEntity<String> apiResponse = restTemplate.postForEntity(GITHUB_TOKEN_URL, restRequest, String.class);
+        log.info("api body: " + apiResponse.getBody());
 
-        try {
-            ResponseEntity<String> apiResponse = restTemplate.postForEntity(GITHUB_TOKEN_URL, restRequest, String.class);
-            log.info("apiResponse: " + apiResponse);
-            log.info("api body: " + apiResponse.getBody());
-            return apiResponse.getBody();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new AuthException(GlobalErrorInfo.AUTH_SERVER_ERROR);
-        }
+        if(apiResponse.getBody() == null) throw new AuthException(GlobalErrorInfo.AUTH_SERVER_ERROR);
+
+        return parsingAccessToken(apiResponse.getBody());
     }
 
     @Override
     public String getUserOauthIdentifier(String accessToken) {
-        return null;
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization","Bearer "+accessToken);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<String> apiResponse = restTemplate.exchange(
+                    GITHUB_USER_KEY,
+                    HttpMethod.GET, request,
+                    String.class);
+            log.info("success:" + apiResponse.getBody());
+            String oauthIdentifier = parsingValue(apiResponse.getBody(), "login");
+            log.info("oauthIdentifier: " + oauthIdentifier);
+            return null;
+        } catch (Exception e) {
+            throw new AuthException(GlobalErrorInfo.AUTH_SERVER_ERROR);
+        }
+    }
+
+    public String parsingAccessToken(String response) {
+        for (String param : response.split("&")) {
+            String[] pair = param.split("=");
+            if (pair.length == 2 && pair[0].equals("access_token")) {
+                return pair[1];
+            }
+        }
+        throw new AuthException(GlobalErrorInfo.AUTH_SERVER_ERROR);
+    }
+
+    public String parsingValue(String response, String key) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> jsonMap = objectMapper.readValue(response, new TypeReference<>() {});
+        return (String) jsonMap.get(key);
     }
 }
