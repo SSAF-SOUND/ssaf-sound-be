@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.domain.auth.service.oauth;
 
 
+import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 
 public interface OauthProvider {
 
@@ -8,5 +9,5 @@ public interface OauthProvider {
 
     String getOauthAccessToken(String code);
 
-    String getUserOauthIdentifier(String accessToken);
+    PostMemberReqDto getUserOauthIdentifier(String accessToken, String oauthName);
 }

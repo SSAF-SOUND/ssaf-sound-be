@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
 import com.ssafy.ssafsound.domain.auth.exception.MemberErrorInfo;
+import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,14 +65,17 @@ public class KakaoOauthProvider implements OauthProvider {
     }
 
     @Override
-    public String getUserOauthIdentifier(String accessToken) {
+    public PostMemberReqDto getUserOauthIdentifier(String accessToken, String oauthName) {
         HttpEntity<MultiValueMap<String, String>> request = settingHeader(accessToken);
         try {
             ResponseEntity<String> apiResponse = restTemplate.exchange(
                     KAKAO_USER_KEY,
                     HttpMethod.GET, request,
                     String.class);
-            return parsingValue(apiResponse.getBody(), KAKAO_SECRET_KEY);
+            return PostMemberReqDto.builder()
+                    .oauthIdentifier(parsingValue(apiResponse.getBody(), KAKAO_SECRET_KEY))
+                    .oauthName(oauthName)
+                    .build();
         } catch (RestClientException | JsonProcessingException e) {
             throw new AuthException(MemberErrorInfo.AUTH_SERVER_ERROR);
         }
