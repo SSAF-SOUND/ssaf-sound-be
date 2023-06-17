@@ -7,7 +7,9 @@ import com.ssafy.ssafsound.domain.meta.validator.CheckRecruitLimitElement;
 import com.ssafy.ssafsound.domain.meta.validator.CheckRecruitType;
 import com.ssafy.ssafsound.domain.meta.validator.CheckSkills;
 import com.ssafy.ssafsound.domain.recruit.domain.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotEmpty;
@@ -19,6 +21,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PostRecruitReqDto {
 
     @NotEmpty
