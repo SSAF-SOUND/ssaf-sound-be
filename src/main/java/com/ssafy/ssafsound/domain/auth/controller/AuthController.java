@@ -4,8 +4,7 @@ import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedUser;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberReqDto;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberTokensResDto;
 import com.ssafy.ssafsound.domain.auth.service.AuthService;
-import com.ssafy.ssafsound.domain.auth.service.token.JwtTokenProvider;
-import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import com.ssafy.ssafsound.domain.member.service.MemberService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import org.springframework.web.bind.annotation.*;
@@ -19,12 +18,10 @@ public class AuthController {
 
     private final AuthService authService;
     private final MemberService memberService;
-    private final JwtTokenProvider jwtTokenProvider;
 
-    public AuthController(AuthService authService, MemberService memberService, JwtTokenProvider jwtTokenProvider) {
+    public AuthController(AuthService authService, MemberService memberService) {
         this.authService = authService;
         this.memberService = memberService;
-        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @GetMapping("/{oauthName}")
@@ -36,17 +33,10 @@ public class AuthController {
     @PostMapping("/callback")
     public EnvelopeResponse<CreateMemberTokensResDto> login(
             @Valid @RequestBody CreateMemberReqDto createMemberReqDto) {
-        String oauthIdentifier = authService.login(createMemberReqDto);
-        Member member = memberService.createMemberByOauthIdentifier(oauthIdentifier);
-        AuthenticatedUser authenticatedUser = AuthenticatedUser.of(member);
-
-        CreateMemberTokensResDto createMemberTokensResDto = memberService.createTokensByAuthenticatedUser(
-                authenticatedUser,
-                jwtTokenProvider.createAccessToken(authenticatedUser),
-                jwtTokenProvider.createRefreshToken());
-
+        PostMemberReqDto postMemberReqDto = authService.login(createMemberReqDto);
+        AuthenticatedUser authenticatedUser = memberService.createMemberByOauthIdentifier(postMemberReqDto);
         return EnvelopeResponse.<CreateMemberTokensResDto>builder()
-                .data(createMemberTokensResDto)
+                .data(authService.createToken(authenticatedUser))
                 .build();
     }
 }
