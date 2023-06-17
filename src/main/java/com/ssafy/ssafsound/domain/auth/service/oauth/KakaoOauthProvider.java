@@ -1,5 +1,8 @@
 package com.ssafy.ssafsound.domain.auth.service.oauth;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import lombok.RequiredArgsConstructor;
@@ -7,12 +10,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +26,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Component
 public class KakaoOauthProvider implements OauthProvider {
+
     private final RestTemplate restTemplate;
     @Value("${oauth2.kakao.url}")
     private String KAKAO_URL;
@@ -37,6 +42,9 @@ public class KakaoOauthProvider implements OauthProvider {
     private String RESPONSE_TYPE;
     @Value("${oauth2.kakao.grant_type}")
     private String GRANT_TYPE;
+    @Value("${oauth2.kakao.client-key-url}")
+    private String KAKAO_USER_KEY;
+
     @Override
     public String getOauthUrl() {
         Map<String, Object> params = new HashMap<>();
@@ -72,8 +80,8 @@ public class KakaoOauthProvider implements OauthProvider {
             ResponseEntity<String> apiResponse = restTemplate.postForEntity(KAKAO_TOKEN_URL, restRequest, String.class);
             log.info("apiResponse: " + apiResponse);
             log.info("api body: " + apiResponse.getBody());
-            return apiResponse.getBody();
-        } catch (Exception e) {
+            return parsingValue(apiResponse.getBody(), "access_token");
+        } catch (RestClientException | JsonProcessingException e) {
             log.error(e.getMessage());
             throw new AuthException(GlobalErrorInfo.AUTH_SERVER_ERROR);
         }
@@ -81,6 +89,29 @@ public class KakaoOauthProvider implements OauthProvider {
 
     @Override
     public String getUserOauthIdentifier(String accessToken) {
-        return null;
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        headers.add("Authorization","Bearer "+accessToken);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<String> apiResponse = restTemplate.exchange(
+                    KAKAO_USER_KEY,
+                    HttpMethod.GET, request,
+                    String.class);
+            log.info("success:" + apiResponse.getBody());
+            String oauthIdentifier = parsingValue(apiResponse.getBody(), "id");
+            log.info("oauthIdentifier: " + oauthIdentifier);
+            return oauthIdentifier;
+        } catch (RestClientException | JsonProcessingException e) {
+            log.error(e.getMessage());
+            throw new AuthException(GlobalErrorInfo.AUTH_SERVER_ERROR);
+        }
+    }
+
+    public String parsingValue(String response, String key) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> jsonMap = objectMapper.readValue(response, new TypeReference<>() {});
+        return String.valueOf(jsonMap.get(key));
     }
 }
