@@ -98,3 +98,4 @@ $RECYCLE.BIN/
 
 # Oauth Config Varable
 src/main/resources/application-oauth.yml
+src/main/resources/application-cloud.yml
