@@ -4,7 +4,8 @@ import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedUser;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberTokensResDto;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
-import com.ssafy.ssafsound.domain.member.repository.OauthTypeRepository;
+import com.ssafy.ssafsound.domain.member.repository.MemberRoleRepository;
+import com.ssafy.ssafsound.domain.member.repository.OAuthTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final OauthTypeRepository oauthTypeRepository;
+    private final OAuthTypeRepository oauthTypeRepository;
+    private final MemberRoleRepository memberRoleRepository;
+    
     @Transactional
      public AuthenticatedUser createMemberByOauthIdentifier(PostMemberReqDto postMemberReqDto) {
          return AuthenticatedUser.builder().build();
