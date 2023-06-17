@@ -64,18 +64,8 @@ public class KakaoOauthProvider implements OauthProvider {
 
     @Override
     public String getOauthAccessToken(String code) {
-        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-        HttpHeaders headers = new HttpHeaders();
-
-        code = URLDecoder.decode(code);
-        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
-        parameters.set("code", code);
-        parameters.set("client_id", KAKAO_CLIENT_ID);
-        parameters.set("redirect_uri", KAKAO_REDIRECT_URI);
-        parameters.set("grant_type", GRANT_TYPE);
-        HttpEntity<MultiValueMap<String, Object>> restRequest = new HttpEntity<>(parameters);
+        HttpEntity<MultiValueMap<String, Object>> restRequest = settingParameters(code);
         log.info("restRequest: " + restRequest);
-
         try {
             ResponseEntity<String> apiResponse = restTemplate.postForEntity(KAKAO_TOKEN_URL, restRequest, String.class);
             log.info("apiResponse: " + apiResponse);
@@ -89,11 +79,7 @@ public class KakaoOauthProvider implements OauthProvider {
 
     @Override
     public String getUserOauthIdentifier(String accessToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
-        headers.add("Authorization","Bearer "+accessToken);
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
-
+        HttpEntity<MultiValueMap<String, String>> request = settingHeader(accessToken);
         try {
             ResponseEntity<String> apiResponse = restTemplate.exchange(
                     KAKAO_USER_KEY,
@@ -113,5 +99,22 @@ public class KakaoOauthProvider implements OauthProvider {
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> jsonMap = objectMapper.readValue(response, new TypeReference<>() {});
         return String.valueOf(jsonMap.get(key));
+    }
+
+    public HttpEntity<MultiValueMap<String, Object>> settingParameters(String code) {
+        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+
+        code = URLDecoder.decode(code);
+        parameters.set("code", code);
+        parameters.set("client_id", KAKAO_CLIENT_ID);
+        parameters.set("redirect_uri", KAKAO_REDIRECT_URI);
+        parameters.set("grant_type", GRANT_TYPE);
+        return new HttpEntity<>(parameters);
+    }
+
+    public HttpEntity<MultiValueMap<String, String>> settingHeader(String accessToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization","Bearer "+accessToken);
+        return new HttpEntity<>(headers);
     }
 }
