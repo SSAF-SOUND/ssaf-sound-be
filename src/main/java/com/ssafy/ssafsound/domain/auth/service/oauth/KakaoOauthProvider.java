@@ -105,7 +105,6 @@ public class KakaoOauthProvider implements OauthProvider {
     public HttpEntity<MultiValueMap<String, Object>> settingParameters(String code) {
         MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
 
-        code = URLDecoder.decode(code);
         parameters.set("code", code);
         parameters.set("client_id", KAKAO_CLIENT_ID);
         parameters.set("redirect_uri", KAKAO_REDIRECT_URI);

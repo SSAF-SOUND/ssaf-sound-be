@@ -108,7 +108,6 @@ public class GoogleOauthProvider implements OauthProvider {
     public HttpEntity<MultiValueMap<String, Object>> settingParameters(String code) {
         MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
 
-        code = URLDecoder.decode(code);
         parameters.set("code", code);
         parameters.set("client_id", GOOGLE_CLIENT_ID);
         parameters.set("client_secret", GOOGLE_CLIENT_SECRET);

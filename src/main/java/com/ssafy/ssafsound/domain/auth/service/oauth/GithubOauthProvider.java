@@ -100,7 +100,6 @@ public class GithubOauthProvider implements OauthProvider {
     public HttpEntity<MultiValueMap<String, Object>> settingParameters(String code) {
         MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
 
-        code = URLDecoder.decode(code);
         parameters.set("code", code);
         parameters.set("client_id", GITHUB_CLIENT_ID);
         parameters.set("client_secret", GITHUB_CLIENT_SECRET);
