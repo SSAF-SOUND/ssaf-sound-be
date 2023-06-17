@@ -69,8 +69,10 @@ public class GoogleOauthProvider implements OauthProvider {
         try {
             ResponseEntity<String> apiResponse = restTemplate.postForEntity(GOOGLE_TOKEN_URL, restRequest, String.class);
             return parsingValue(apiResponse.getBody(), "access_token");
-        } catch (RestClientException | JsonProcessingException e) {
+        } catch (RestClientException e) {
             throw new AuthException(MemberErrorInfo.AUTH_SERVER_ERROR);
+        } catch (JsonProcessingException e) {
+            throw new AuthException(MemberErrorInfo.AUTH_SERVER_PARSING_ERROR);
         }
     }
 
@@ -83,8 +85,10 @@ public class GoogleOauthProvider implements OauthProvider {
                     HttpMethod.GET, request,
                     String.class);
             return parsingValue(apiResponse.getBody(), GOOGLE_SECRET_KEY);
-        } catch (RestClientException | JsonProcessingException e) {
+        } catch (RestClientException e) {
             throw new AuthException(MemberErrorInfo.AUTH_SERVER_ERROR);
+        } catch (JsonProcessingException e) {
+            throw new AuthException(MemberErrorInfo.AUTH_SERVER_PARSING_ERROR);
         }
     }
 

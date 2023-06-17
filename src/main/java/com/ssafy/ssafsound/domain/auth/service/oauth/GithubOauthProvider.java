@@ -52,7 +52,6 @@ public class GithubOauthProvider implements OauthProvider {
         params.put("client_id", GITHUB_CLIENT_ID);
         params.put("redirect_uri", GITHUB_REDIRECT_URI);
 
-
         String parameterString = params.entrySet().stream()
                 .map(x -> x.getKey() + "=" + x.getValue())
                 .collect(Collectors.joining("&"));
@@ -84,8 +83,10 @@ public class GithubOauthProvider implements OauthProvider {
                     request,
                     String.class);
             return parsingValue(apiResponse.getBody(), GITHUB_SECRET_KEY);
-        } catch (Exception e) {
+        } catch (RestClientException e) {
             throw new AuthException(MemberErrorInfo.AUTH_SERVER_ERROR);
+        } catch (JsonProcessingException e) {
+            throw new AuthException(MemberErrorInfo.AUTH_SERVER_PARSING_ERROR);
         }
     }
 

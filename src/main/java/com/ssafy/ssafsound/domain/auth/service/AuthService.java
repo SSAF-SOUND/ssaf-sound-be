@@ -21,7 +21,7 @@ public class AuthService {
     }
 
     public void sendRedirectURL(String oauthName, HttpServletResponse response) {
-        oauthProvider = oauthProviderFactory.of(oauthName);
+        oauthProvider = oauthProviderFactory.from(oauthName);
         try {
             String redirectURL = oauthProvider.getOauthUrl();
             response.sendRedirect(redirectURL);
@@ -31,11 +31,7 @@ public class AuthService {
     }
 
     public String login(CreateMemberReqDto createMemberReqDto) {
-        oauthProvider = oauthProviderFactory.of(createMemberReqDto.getOauthName());
-        if(oauthProvider == null) {
-            throw new AuthException(MemberErrorInfo.AUTH_VALUE_NOT_FOUND);
-        }
-        log.info("oauthProvider: " + oauthProvider.getClass());
+        oauthProvider = oauthProviderFactory.from(createMemberReqDto.getOauthName());
         String accessToken = oauthProvider.getOauthAccessToken(createMemberReqDto.getCode());;
         return oauthProvider.getUserOauthIdentifier(accessToken);
     }

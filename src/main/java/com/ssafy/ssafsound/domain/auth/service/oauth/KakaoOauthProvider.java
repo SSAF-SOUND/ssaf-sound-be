@@ -54,7 +54,6 @@ public class KakaoOauthProvider implements OauthProvider {
         params.put("redirect_uri", KAKAO_REDIRECT_URI);
         params.put("response_type", RESPONSE_TYPE);
 
-
         String parameterString = params.entrySet().stream()
                 .map(x -> x.getKey() + "=" + x.getValue())
                 .collect(Collectors.joining("&"));

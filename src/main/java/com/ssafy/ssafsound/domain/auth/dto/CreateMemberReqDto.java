@@ -5,7 +5,7 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 public class CreateMemberReqDto {
-    @NotBlank(message = "코드가 유효하지 않습니다.")
+    @NotBlank
     private String code;
 
     @NotBlank
