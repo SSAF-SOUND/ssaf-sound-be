@@ -65,15 +65,12 @@ public class GithubOauthProvider implements OauthProvider {
     @Override
     public String getOauthAccessToken(String code) {
         HttpEntity<MultiValueMap<String, Object>> restRequest = settingParameters(code);
-        log.info("restRequest: " + restRequest);
 
         try {
             ResponseEntity<String> apiResponse = restTemplate.postForEntity(GITHUB_TOKEN_URL, restRequest, String.class);
-            log.info("api body: " + apiResponse.getBody());
             if (apiResponse.getBody() == null) throw new AuthException();
             return parsingAccessToken(apiResponse.getBody());
         } catch (RestClientException | AuthException e) {
-            log.error(e.getMessage());
             throw new AuthException(GlobalErrorInfo.AUTH_SERVER_ERROR);
         }
     }
@@ -88,10 +85,7 @@ public class GithubOauthProvider implements OauthProvider {
                     HttpMethod.GET,
                     request,
                     String.class);
-            log.info("success:" + apiResponse.getBody());
-            String oauthIdentifier = parsingValue(apiResponse.getBody(), GITHUB_SECRET_KEY);
-            log.info("oauthIdentifier: " + oauthIdentifier);
-            return null;
+            return parsingValue(apiResponse.getBody(), GITHUB_SECRET_KEY);
         } catch (Exception e) {
             throw new AuthException(GlobalErrorInfo.AUTH_SERVER_ERROR);
         }

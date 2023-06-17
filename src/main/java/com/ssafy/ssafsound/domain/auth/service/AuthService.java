@@ -12,8 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 @Service
 public class AuthService {
+    
     private final OauthProviderFactory oauthProviderFactory;
-    private static OauthProvider oauthProvider;
+    private OauthProvider oauthProvider;
 
     public AuthService(OauthProviderFactory oauthProviderFactory) {
         this.oauthProviderFactory = oauthProviderFactory;

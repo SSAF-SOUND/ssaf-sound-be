@@ -67,17 +67,11 @@ public class GoogleOauthProvider implements OauthProvider {
     @Override
     public String getOauthAccessToken(String code) {
         HttpEntity<MultiValueMap<String, Object>> restRequest = settingParameters(code);
-        log.info("code: " + code);
-        log.info("restRequest: " + restRequest);
+
         try {
             ResponseEntity<String> apiResponse = restTemplate.postForEntity(GOOGLE_TOKEN_URL, restRequest, String.class);
-            log.info("apiResponse: " + apiResponse);
-            log.info("api body: " + apiResponse.getBody());
-            String accessToken = parsingValue(apiResponse.getBody(), "access_token");
-            log.info("access_token: " + accessToken);
-            return accessToken;
+            return parsingValue(apiResponse.getBody(), "access_token");
         } catch (RestClientException | JsonProcessingException e) {
-            log.error(e.getMessage());
             throw new AuthException(GlobalErrorInfo.AUTH_SERVER_ERROR);
         }
     }
@@ -90,10 +84,7 @@ public class GoogleOauthProvider implements OauthProvider {
                     GOOGLE_USER_KEY,
                     HttpMethod.GET, request,
                     String.class);
-            log.info("success:" + apiResponse.getBody());
-            String oauthIdentifier = parsingValue(apiResponse.getBody(), GOOGLE_SECRET_KEY);
-            log.info("oauthIdentifier: " + oauthIdentifier);
-            return oauthIdentifier;
+            return parsingValue(apiResponse.getBody(), GOOGLE_SECRET_KEY);
         } catch (RestClientException | JsonProcessingException e) {
             throw new AuthException(GlobalErrorInfo.AUTH_SERVER_ERROR);
         }

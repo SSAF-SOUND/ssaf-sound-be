@@ -66,14 +66,10 @@ public class KakaoOauthProvider implements OauthProvider {
     @Override
     public String getOauthAccessToken(String code) {
         HttpEntity<MultiValueMap<String, Object>> restRequest = settingParameters(code);
-        log.info("restRequest: " + restRequest);
         try {
             ResponseEntity<String> apiResponse = restTemplate.postForEntity(KAKAO_TOKEN_URL, restRequest, String.class);
-            log.info("apiResponse: " + apiResponse);
-            log.info("api body: " + apiResponse.getBody());
             return parsingValue(apiResponse.getBody(), "access_token");
         } catch (RestClientException | JsonProcessingException e) {
-            log.error(e.getMessage());
             throw new AuthException(GlobalErrorInfo.AUTH_SERVER_ERROR);
         }
     }
@@ -86,12 +82,8 @@ public class KakaoOauthProvider implements OauthProvider {
                     KAKAO_USER_KEY,
                     HttpMethod.GET, request,
                     String.class);
-            log.info("success:" + apiResponse.getBody());
-            String oauthIdentifier = parsingValue(apiResponse.getBody(), KAKAO_SECRET_KEY);
-            log.info("oauthIdentifier: " + oauthIdentifier);
-            return oauthIdentifier;
+            return parsingValue(apiResponse.getBody(), KAKAO_SECRET_KEY);
         } catch (RestClientException | JsonProcessingException e) {
-            log.error(e.getMessage());
             throw new AuthException(GlobalErrorInfo.AUTH_SERVER_ERROR);
         }
     }
