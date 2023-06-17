@@ -17,9 +17,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -46,17 +44,10 @@ public class GithubOauthProvider implements OauthProvider {
 
     @Override
     public String getOauthUrl() {
-        Map<String, Object> params = new HashMap<>();
-
-        params.put("scope", SCOPE);
-        params.put("client_id", GITHUB_CLIENT_ID);
-        params.put("redirect_uri", GITHUB_REDIRECT_URI);
-
-        String parameterString = params.entrySet().stream()
-                .map(x -> x.getKey() + "=" + x.getValue())
-                .collect(Collectors.joining("&"));
-
-        return GITHUB_URL + "?" + parameterString;
+        return new StringBuilder().append(GITHUB_URL).append("?")
+                .append("scope=").append(SCOPE).append("&")
+                .append("client_id=").append(GITHUB_CLIENT_ID).append("&")
+                .append("redirect_uri=").append(GITHUB_REDIRECT_URI).toString();
     }
 
     @Override

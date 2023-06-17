@@ -17,9 +17,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -48,18 +46,11 @@ public class GoogleOauthProvider implements OauthProvider {
 
     @Override
     public String getOauthUrl() {
-        Map<String, Object> params = new HashMap<>();
-
-        params.put("scope", GOOGLE_DATA_ACCESS_SCOPE);
-        params.put("response_type", GOOGLE_RESPONSE_TYPE);
-        params.put("client_id", GOOGLE_CLIENT_ID);
-        params.put("redirect_uri", GOOGLE_CLIENT_URL);
-
-        String parameterString = params.entrySet().stream()
-                .map(x -> x.getKey() + "=" + x.getValue())
-                .collect(Collectors.joining("&"));
-
-        return GOOGLE_URL + "?" + parameterString;
+        return new StringBuilder().append(GOOGLE_URL).append("?")
+                .append("scope=").append(GOOGLE_DATA_ACCESS_SCOPE).append("&")
+                .append("response_type=").append(GOOGLE_RESPONSE_TYPE).append("&")
+                .append("client_id=").append(GOOGLE_CLIENT_ID).append("&")
+                .append("redirect_uri=").append(GOOGLE_CLIENT_URL).toString();
     }
 
     @Override

@@ -17,9 +17,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -47,18 +45,11 @@ public class KakaoOauthProvider implements OauthProvider {
     private String KAKAO_SECRET_KEY;
     @Override
     public String getOauthUrl() {
-        Map<String, Object> params = new HashMap<>();
-
-        params.put("scope", SCOPE);
-        params.put("client_id", KAKAO_CLIENT_ID);
-        params.put("redirect_uri", KAKAO_REDIRECT_URI);
-        params.put("response_type", RESPONSE_TYPE);
-
-        String parameterString = params.entrySet().stream()
-                .map(x -> x.getKey() + "=" + x.getValue())
-                .collect(Collectors.joining("&"));
-
-        return KAKAO_URL + "?" + parameterString;
+        return new StringBuilder().append(KAKAO_URL).append("?")
+                .append("scope=").append(SCOPE).append("&")
+                .append("client_id=").append(KAKAO_CLIENT_ID).append("&")
+                .append("redirect_uri=").append(KAKAO_REDIRECT_URI).append("&")
+                .append("response_type=").append(RESPONSE_TYPE).toString();
     }
 
     @Override
