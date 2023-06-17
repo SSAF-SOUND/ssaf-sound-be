@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URLDecoder;
@@ -61,33 +62,29 @@ public class GithubOauthProvider implements OauthProvider {
 
     @Override
     public String getOauthAccessToken(String code) {
-        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-
-        code = URLDecoder.decode(code);
-        parameters.set("code", code);
-        parameters.set("client_id", GITHUB_CLIENT_ID);
-        parameters.set("client_secret", GITHUB_CLIENT_SECRET);
-        parameters.set("redirect_uri", GITHUB_REDIRECT_URI);
-        HttpEntity<MultiValueMap<String, Object>> restRequest = new HttpEntity<>(parameters);
+        HttpEntity<MultiValueMap<String, Object>> restRequest = settingParameters(code);
         log.info("restRequest: " + restRequest);
-        ResponseEntity<String> apiResponse = restTemplate.postForEntity(GITHUB_TOKEN_URL, restRequest, String.class);
-        log.info("api body: " + apiResponse.getBody());
 
-        if(apiResponse.getBody() == null) throw new AuthException(GlobalErrorInfo.AUTH_SERVER_ERROR);
-
-        return parsingAccessToken(apiResponse.getBody());
+        try {
+            ResponseEntity<String> apiResponse = restTemplate.postForEntity(GITHUB_TOKEN_URL, restRequest, String.class);
+            log.info("api body: " + apiResponse.getBody());
+            if (apiResponse.getBody() == null) throw new AuthException();
+            return parsingAccessToken(apiResponse.getBody());
+        } catch (RestClientException | AuthException e) {
+            log.error(e.getMessage());
+            throw new AuthException(GlobalErrorInfo.AUTH_SERVER_ERROR);
+        }
     }
 
     @Override
     public String getUserOauthIdentifier(String accessToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization","Bearer "+accessToken);
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
+        HttpEntity<MultiValueMap<String, String>> request = settingHeadersWithAccessToken(accessToken);
 
         try {
             ResponseEntity<String> apiResponse = restTemplate.exchange(
                     GITHUB_USER_KEY,
-                    HttpMethod.GET, request,
+                    HttpMethod.GET,
+                    request,
                     String.class);
             log.info("success:" + apiResponse.getBody());
             String oauthIdentifier = parsingValue(apiResponse.getBody(), "login");
@@ -98,6 +95,23 @@ public class GithubOauthProvider implements OauthProvider {
         }
     }
 
+    public HttpEntity<MultiValueMap<String, Object>> settingParameters(String code) {
+        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+
+        code = URLDecoder.decode(code);
+        parameters.set("code", code);
+        parameters.set("client_id", GITHUB_CLIENT_ID);
+        parameters.set("client_secret", GITHUB_CLIENT_SECRET);
+        parameters.set("redirect_uri", GITHUB_REDIRECT_URI);
+        return new HttpEntity<>(parameters);
+    }
+
+    public HttpEntity<MultiValueMap<String, String>> settingHeadersWithAccessToken(String accessToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization","Bearer "+accessToken);
+        return new HttpEntity<>(headers);
+    }
+
     public String parsingAccessToken(String response) {
         for (String param : response.split("&")) {
             String[] pair = param.split("=");
@@ -105,7 +119,7 @@ public class GithubOauthProvider implements OauthProvider {
                 return pair[1];
             }
         }
-        throw new AuthException(GlobalErrorInfo.AUTH_SERVER_ERROR);
+        throw new AuthException();
     }
 
     public String parsingValue(String response, String key) throws JsonProcessingException {
