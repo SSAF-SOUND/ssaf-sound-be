@@ -1,24 +1,22 @@
-package com.ssafy.ssafsound.domain.meta.validator;
+package com.ssafy.ssafsound.domain.recruit.validator;
 
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
-import com.ssafy.ssafsound.domain.recruit.dto.RecruitLimitElement;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.List;
 
 @RequiredArgsConstructor
-public class RecruitLimitElementValidator implements ConstraintValidator<CheckRecruitLimitElement, List<RecruitLimitElement>> {
+public class RecruitTypeValidator implements ConstraintValidator<CheckRecruitType, String> {
 
     private final MetaDataConsumer consumer;
 
     @Override
-    public boolean isValid(List<RecruitLimitElement> value, ConstraintValidatorContext context) {
+    public boolean isValid(String value, ConstraintValidatorContext context) {
         try {
-            value.forEach(element -> consumer.getMetaData(MetaDataType.RECRUIT_TYPE.name(), element.getRecruitType()));
+            consumer.getMetaData(MetaDataType.RECRUIT_TYPE.name(), value);
         } catch (ResourceNotFoundException e) {
             return false;
         }

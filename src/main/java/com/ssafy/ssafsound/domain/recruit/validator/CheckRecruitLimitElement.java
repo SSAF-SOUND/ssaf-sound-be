@@ -1,4 +1,4 @@
-package com.ssafy.ssafsound.domain.meta.validator;
+package com.ssafy.ssafsound.domain.recruit.validator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
