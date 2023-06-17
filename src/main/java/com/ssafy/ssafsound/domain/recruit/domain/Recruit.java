@@ -84,4 +84,12 @@ public class Recruit extends BaseTimeEntity {
     public void setRecruitSkill(List<RecruitSkill> skills) {
         this.skills = skills;
     }
+
+    public void setRecruitLimitations(List<RecruitLimitation> limitations) {
+        this.limitations = limitations;
+    }
+
+    public void addApplications(RecruitApplication application) {
+        this.applications.add(application);
+    }
 }
