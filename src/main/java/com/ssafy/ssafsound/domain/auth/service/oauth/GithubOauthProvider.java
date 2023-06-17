@@ -43,6 +43,8 @@ public class GithubOauthProvider implements OauthProvider {
     private String SCOPE;
     @Value("${oauth2.github.client-key-url}")
     private String GITHUB_USER_KEY;
+    @Value("${oauth2.github.secret-key}")
+    private String GITHUB_SECRET_KEY;
 
     @Override
     public String getOauthUrl() {
@@ -87,7 +89,7 @@ public class GithubOauthProvider implements OauthProvider {
                     request,
                     String.class);
             log.info("success:" + apiResponse.getBody());
-            String oauthIdentifier = parsingValue(apiResponse.getBody(), "login");
+            String oauthIdentifier = parsingValue(apiResponse.getBody(), GITHUB_SECRET_KEY);
             log.info("oauthIdentifier: " + oauthIdentifier);
             return null;
         } catch (Exception e) {

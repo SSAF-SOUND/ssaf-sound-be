@@ -43,13 +43,17 @@ public class GoogleOauthProvider implements OauthProvider {
     private String GOOGLE_DATA_ACCESS_SCOPE;
     @Value("${oauth2.google.client-key-url}")
     private String GOOGLE_USER_KEY;
+    @Value("${oauth2.google.secret-key}")
+    private String GOOGLE_SECRET_KEY;
+    @Value("${oauth2.google.response-type}")
+    private String GOOGLE_RESPONSE_TYPE;
 
     @Override
     public String getOauthUrl() {
         Map<String, Object> params = new HashMap<>();
 
         params.put("scope", GOOGLE_DATA_ACCESS_SCOPE);
-        params.put("response_type", "code");
+        params.put("response_type", GOOGLE_RESPONSE_TYPE);
         params.put("client_id", GOOGLE_CLIENT_ID);
         params.put("redirect_uri", GOOGLE_CLIENT_URL);
 
@@ -87,7 +91,7 @@ public class GoogleOauthProvider implements OauthProvider {
                     HttpMethod.GET, request,
                     String.class);
             log.info("success:" + apiResponse.getBody());
-            String oauthIdentifier = parsingValue(apiResponse.getBody(), "email");
+            String oauthIdentifier = parsingValue(apiResponse.getBody(), GOOGLE_SECRET_KEY);
             log.info("oauthIdentifier: " + oauthIdentifier);
             return oauthIdentifier;
         } catch (RestClientException | JsonProcessingException e) {

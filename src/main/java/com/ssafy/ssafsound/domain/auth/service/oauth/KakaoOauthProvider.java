@@ -44,7 +44,8 @@ public class KakaoOauthProvider implements OauthProvider {
     private String GRANT_TYPE;
     @Value("${oauth2.kakao.client-key-url}")
     private String KAKAO_USER_KEY;
-
+    @Value("${oauth2.kakao.secret-key}")
+    private String KAKAO_SECRET_KEY;
     @Override
     public String getOauthUrl() {
         Map<String, Object> params = new HashMap<>();
@@ -86,7 +87,7 @@ public class KakaoOauthProvider implements OauthProvider {
                     HttpMethod.GET, request,
                     String.class);
             log.info("success:" + apiResponse.getBody());
-            String oauthIdentifier = parsingValue(apiResponse.getBody(), "id");
+            String oauthIdentifier = parsingValue(apiResponse.getBody(), KAKAO_SECRET_KEY);
             log.info("oauthIdentifier: " + oauthIdentifier);
             return oauthIdentifier;
         } catch (RestClientException | JsonProcessingException e) {
