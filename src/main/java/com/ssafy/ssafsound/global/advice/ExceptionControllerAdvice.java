@@ -1,6 +1,8 @@
 package com.ssafy.ssafsound.global.advice;
 
+
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
+import com.ssafy.ssafsound.domain.lunch.exception.LunchException;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
@@ -24,10 +26,21 @@ public class ExceptionControllerAdvice {
                 .message(e.getInfo().getMessage())
                 .build();
     }
+  
+    @ExceptionHandler(LunchException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public EnvelopeResponse LunchExceptionHandler(LunchException e) {
+        log.error(e.getMessage());
+
+        return EnvelopeResponse.builder()
+                .code(e.getInfo().getCode())
+                .message((e.getInfo().getMessage()))
+                .build();
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public EnvelopeResponse BadRequestExceptionHandler(MethodArgumentNotValidException e){
+    public EnvelopeResponse BadRequestExceptionHandler(MethodArgumentNotValidException e) {
         log.error(e.getMessage());
         StringBuilder errorMessage = new StringBuilder();
         e.getBindingResult().getAllErrors().forEach((error) -> {
@@ -41,7 +54,7 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(RuntimeException.class)
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public EnvelopeResponse RuntimeExceptionHandler(RuntimeException e) {
         log.error(e.getMessage());
         return EnvelopeResponse.builder()

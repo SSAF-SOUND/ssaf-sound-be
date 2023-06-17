@@ -3,19 +3,20 @@ package com.ssafy.ssafsound.domain.lunch.domain;
 import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.meta.converter.CampusConverter;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Entity(name="lunch")
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Lunch extends BaseTimeEntity {
+public class Lunch {
 
     @Id
     @Column(name = "lunch_id")
@@ -36,4 +37,25 @@ public class Lunch extends BaseTimeEntity {
 
     @Convert(converter = CampusConverter.class)
     private MetaData campus;
+
+    @Column
+    private LocalDate createdAt;
+
+    @OneToMany(mappedBy = "lunch")
+    @Builder.Default
+    private List<LunchPoll> lunchPolls = new ArrayList<>();
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != getClass()) return false;
+
+        Lunch lunch = (Lunch) obj;
+        return this.getId() == lunch.getId();
+    }
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(getId());
+    }
 }
