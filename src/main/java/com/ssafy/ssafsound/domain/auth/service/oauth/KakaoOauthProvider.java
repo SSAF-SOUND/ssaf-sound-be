@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
-import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
+import com.ssafy.ssafsound.domain.auth.exception.MemberErrorInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +17,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -70,7 +69,7 @@ public class KakaoOauthProvider implements OauthProvider {
             ResponseEntity<String> apiResponse = restTemplate.postForEntity(KAKAO_TOKEN_URL, restRequest, String.class);
             return parsingValue(apiResponse.getBody(), "access_token");
         } catch (RestClientException | JsonProcessingException e) {
-            throw new AuthException(GlobalErrorInfo.AUTH_SERVER_ERROR);
+            throw new AuthException(MemberErrorInfo.AUTH_SERVER_ERROR);
         }
     }
 
@@ -84,7 +83,7 @@ public class KakaoOauthProvider implements OauthProvider {
                     String.class);
             return parsingValue(apiResponse.getBody(), KAKAO_SECRET_KEY);
         } catch (RestClientException | JsonProcessingException e) {
-            throw new AuthException(GlobalErrorInfo.AUTH_SERVER_ERROR);
+            throw new AuthException(MemberErrorInfo.AUTH_SERVER_ERROR);
         }
     }
 
