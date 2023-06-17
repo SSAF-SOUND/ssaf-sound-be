@@ -62,7 +62,7 @@ public class GoogleOauthProvider implements OauthProvider {
 
     @Override
     public String getOauthAccessToken(String code) {
-        HttpEntity<MultiValueMap<String, Object>> restRequest = settingParametersWithHeader(code);
+        HttpEntity<MultiValueMap<String, Object>> restRequest = settingParameters(code);
         log.info("code: " + code);
         log.info("restRequest: " + restRequest);
         try {
@@ -101,18 +101,16 @@ public class GoogleOauthProvider implements OauthProvider {
         return (String) jsonMap.get(key);
     }
     
-    public HttpEntity<MultiValueMap<String, Object>> settingParametersWithHeader(String code) {
+    public HttpEntity<MultiValueMap<String, Object>> settingParameters(String code) {
         MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-        HttpHeaders headers = new HttpHeaders();
 
         code = URLDecoder.decode(code);
-        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
         parameters.set("code", code);
         parameters.set("client_id", GOOGLE_CLIENT_ID);
         parameters.set("client_secret", GOOGLE_CLIENT_SECRET);
         parameters.set("redirect_uri", GOOGLE_CLIENT_URL);
         parameters.set("grant_type", "authorization_code");
-        return new HttpEntity<>(parameters, headers);
+        return new HttpEntity<>(parameters);
     }
 
     public HttpEntity<MultiValueMap<String, String>> settingHeader(String accessToken) {
