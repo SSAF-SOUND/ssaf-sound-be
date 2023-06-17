@@ -53,16 +53,16 @@ class PostRecruitReqDtoTest {
                 .stream().map(skill->skill.getSkill().getName()).collect(Collectors.toList());
 
         assertAll(
-                ()->assertEquals(convertResult.getCategory(), Category.STUDY),
+                ()->assertEquals(Category.STUDY, convertResult.getCategory()),
 
                 ()->{
                     if(freeQuestion == null) {
-                        assertEquals(questions.size(), 0);
+                        assertEquals(0, questions.size());
                     } else {
-                        assertEquals(questions.size(), freeQuestion.size());
+                        assertEquals(freeQuestion.size(), questions.size());
                         if (questions.size() != 0) {
                             for (int i = 0; i < questions.size(); ++i) {
-                                assertEquals(questions.get(i), freeQuestion.get(i));
+                                assertEquals(freeQuestion.get(i), questions.get(i));
                             }
                         }
                     }
@@ -70,12 +70,12 @@ class PostRecruitReqDtoTest {
 
                 ()->{
                     if(necessarySkills == null) {
-                        assertEquals(skills.size(), 0);
+                        assertEquals(0, skills.size());
                     } else {
-                        assertEquals(skills.size(), necessarySkills.size());
+                        assertEquals(necessarySkills.size(), skills.size());
                         if (skills.size() != 0) {
                             for (int i = 0; i < skills.size(); ++i) {
-                                assertEquals(skills.get(i), necessarySkills.get(i));
+                                assertEquals(necessarySkills.get(i), skills.get(i));
                             }
                         }
                     }
@@ -86,7 +86,6 @@ class PostRecruitReqDtoTest {
     static Stream<Arguments> invalidParameters() {
         List<String> necessarySkills = Arrays.stream(Skill.values()).map(Skill::getName).collect(Collectors.toList());
         List<String> freeQuestion = Collections.singletonList("프로젝트/스터디 등록자가 참여자에게 묻고 싶은 자유 질문");
-
         return Stream.of(
                 Arguments.of("엔티티 변환 Skill, Question Test", Category.STUDY.name(), LocalDate.now(),  "스터디/프로젝트 모집 제목", "컨텐츠", RecruitType.DESIGN.getName(), necessarySkills, freeQuestion),
                 Arguments.of("엔티티 변환 Skill, Question Test", Category.STUDY.name(), LocalDate.now(),  "스터디/프로젝트 모집 제목", "컨텐츠", RecruitType.DESIGN.getName(), null, null)
