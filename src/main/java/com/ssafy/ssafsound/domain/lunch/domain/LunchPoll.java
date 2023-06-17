@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.domain.lunch.domain;
 
-import com.ssafy.ssafsound.domain.BaseTimeEntity;
+import com.ssafy.ssafsound.domain.lunch.exception.LunchErrorInfo;
+import com.ssafy.ssafsound.domain.lunch.exception.LunchException;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,10 +13,9 @@ import java.time.LocalDate;
 
 @Entity(name="lunch_poll")
 @Getter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LunchPoll extends BaseTimeEntity {
+public class LunchPoll {
 
     @Id
     @Column(name = "lunch_poll_id")
@@ -32,4 +32,23 @@ public class LunchPoll extends BaseTimeEntity {
 
     @Column
     private LocalDate polledAt;
+
+    @Builder
+    public LunchPoll(Lunch lunch, Member member, LocalDate polledAt) {
+        this.lunch = lunch;
+        this.member = member;
+        this.polledAt = polledAt;
+
+        lunch.getLunchPolls().add(this);
+    }
+
+    public void setLunch(Lunch lunch){
+
+        if (this.lunch != null){
+            this.lunch.getLunchPolls().remove(this);
+        }
+
+        this.lunch = lunch;
+        lunch.getLunchPolls().add(this);
+    }
 }
