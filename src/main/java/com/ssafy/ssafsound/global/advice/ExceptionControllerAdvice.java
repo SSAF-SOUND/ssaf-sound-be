@@ -1,5 +1,7 @@
 package com.ssafy.ssafsound.global.advice;
 
+
+import com.ssafy.ssafsound.domain.auth.exception.AuthException;
 import com.ssafy.ssafsound.domain.lunch.exception.LunchException;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
@@ -15,9 +17,19 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ExceptionControllerAdvice {
 
+    @ExceptionHandler(AuthException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public EnvelopeResponse AuthExceptionHandler(AuthException e) {
+        log.error(e.getMessage());
+        return EnvelopeResponse.builder()
+                .code(e.getInfo().getCode())
+                .message(e.getInfo().getMessage())
+                .build();
+    }
+  
     @ExceptionHandler(LunchException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public EnvelopeResponse LunchExceptionHandler(LunchException e){
+    public EnvelopeResponse LunchExceptionHandler(LunchException e) {
         log.error(e.getMessage());
 
         return EnvelopeResponse.builder()
@@ -28,12 +40,16 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public EnvelopeResponse BadRequestExceptionHandler(MethodArgumentNotValidException e){
+    public EnvelopeResponse BadRequestExceptionHandler(MethodArgumentNotValidException e) {
         log.error(e.getMessage());
+        StringBuilder errorMessage = new StringBuilder();
+        e.getBindingResult().getAllErrors().forEach((error) -> {
+            errorMessage.append(error.getDefaultMessage());
+        });
 
         return EnvelopeResponse.builder()
                 .code(String.valueOf(HttpStatus.BAD_REQUEST.value()))
-                .message(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .message(errorMessage.toString())
                 .build();
     }
 

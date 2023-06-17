@@ -95,3 +95,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Oauth Config Varable
+src/main/resources/application-oauth.yml
