@@ -5,15 +5,13 @@ import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
-import com.ssafy.ssafsound.domain.recruit.domain.MatchStatus;
-import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
-import com.ssafy.ssafsound.domain.recruit.domain.RecruitApplication;
-import com.ssafy.ssafsound.domain.recruit.domain.RecruitLimitation;
+import com.ssafy.ssafsound.domain.recruit.domain.*;
 import com.ssafy.ssafsound.domain.recruit.dto.PostRecruitReqDto;
 import com.ssafy.ssafsound.domain.recruit.dto.RecruitLimitElement;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitApplicationRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitLimitationRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
+import com.ssafy.ssafsound.domain.recruit.repository.RecruitScrapRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +26,7 @@ public class RecruitService {
     private final RecruitRepository recruitRepository;
     private final RecruitLimitationRepository recruitLimitationRepository;
     private final RecruitApplicationRepository recruitApplicationRepository;
+    private final RecruitScrapRepository recruitScrapRepository;
     private final MemberRepository memberRepository;
     private final MetaDataConsumer metaDataConsumer;
 
@@ -42,6 +41,33 @@ public class RecruitService {
         recruitApplicationRepository.save(createRegisterRecruitApplication(recruit, register, registerRecruitType));
         recruitLimitationRepository.saveAll(createRecruitLimitations(recruit, postRecruitReqDto.getLimitations(), registerRecruitType));
         return recruit;
+    }
+
+    @Transactional
+    public boolean toggleRecruitScrap(Long recruitId, Long memberId) {
+        RecruitScrap recruitScrap = recruitScrapRepository.findByRecruitIdAndMemberId(recruitId, memberId)
+                .orElse(null);
+
+        return isPreExistRecruitScrap(recruitId, memberId, recruitScrap);
+    }
+
+    private boolean isPreExistRecruitScrap(Long recruitId, Long memberId, RecruitScrap recruitScrap) {
+        if(recruitScrap != null) {
+            recruitScrapRepository.delete(recruitScrap);
+            return true;
+        } else {
+            saveRecruitScrap(recruitId, memberId);
+            return false;
+        }
+    }
+
+    private void saveRecruitScrap(Long recruitId, Long memberId) {
+        RecruitScrap recruitScrap;
+        recruitScrap = RecruitScrap.builder()
+                .member(memberRepository.getReferenceById(memberId))
+                .recruit(recruitRepository.getReferenceById(recruitId))
+                .build();
+        recruitScrapRepository.save(recruitScrap);
     }
 
     private RecruitApplication createRegisterRecruitApplication(Recruit recruit, Member register, String registerRecruitType) {

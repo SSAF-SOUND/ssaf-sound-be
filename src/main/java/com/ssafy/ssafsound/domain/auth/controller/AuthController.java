@@ -36,8 +36,8 @@ public class AuthController {
             @Valid @RequestBody CreateMemberReqDto createMemberReqDto,
             HttpServletResponse response) {
         PostMemberReqDto postMemberReqDto = authService.login(createMemberReqDto);
-        AuthenticatedMember authenticatedUser = memberService.createMemberByOauthIdentifier(postMemberReqDto);
-        CreateMemberTokensResDto createMemberTokensResDto = authService.createToken(authenticatedUser);
+        AuthenticatedMember authenticatedMember = memberService.createMemberByOauthIdentifier(postMemberReqDto);
+        CreateMemberTokensResDto createMemberTokensResDto = authService.createToken(authenticatedMember);
         Cookie accessTokenCookie = setCookieWithOptions("accessToken", createMemberTokensResDto.getAccessToken());
         Cookie refreshTokenCookie = setCookieWithOptions("refreshToken", createMemberTokensResDto.getRefreshToken());
         response.addCookie(accessTokenCookie);

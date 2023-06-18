@@ -8,15 +8,13 @@ import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.domain.RecruitType;
 import com.ssafy.ssafsound.domain.meta.domain.Skill;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
-import com.ssafy.ssafsound.domain.recruit.domain.Category;
-import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
-import com.ssafy.ssafsound.domain.recruit.domain.RecruitApplication;
-import com.ssafy.ssafsound.domain.recruit.domain.RecruitLimitation;
+import com.ssafy.ssafsound.domain.recruit.domain.*;
 import com.ssafy.ssafsound.domain.recruit.dto.PostRecruitReqDto;
 import com.ssafy.ssafsound.domain.recruit.dto.RecruitLimitElement;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitApplicationRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitLimitationRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
+import com.ssafy.ssafsound.domain.recruit.repository.RecruitScrapRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,6 +46,9 @@ class RecruitServiceTest {
     private RecruitApplicationRepository recruitApplicationRepository;
 
     @Mock
+    private RecruitScrapRepository recruitScrapRepository;
+
+    @Mock
     private MemberRepository memberRepository;
 
     @Mock
@@ -57,6 +58,10 @@ class RecruitServiceTest {
     private RecruitService recruitService;
 
     private Member member = Member.builder().id(1L).build();
+
+    private Recruit recruit = Recruit.builder().id(1L).build();
+
+    private RecruitScrap recruitScrap = RecruitScrap.builder().member(member).recruit(recruit).build();
 
     private final PostRecruitReqDto postRecruitReqDto = new PostRecruitReqDto(
             Category.STUDY.name(), LocalDate.now(),  "스터디/프로젝트 모집 제목", "컨텐츠",
@@ -69,6 +74,8 @@ class RecruitServiceTest {
         // Repository Mocking
         Mockito.lenient().when(memberRepository.findById(1L)).thenReturn(java.util.Optional.ofNullable(member));
         Mockito.lenient().when(memberRepository.findById(2L)).thenThrow(new RuntimeException());
+
+        Mockito.lenient().when(recruitScrapRepository.findByRecruitIdAndMemberId(1L, 1L)).thenReturn(java.util.Optional.ofNullable(recruitScrap));
 
         // MetaData Consumer Mocking
         Arrays.stream(RecruitType.values()).forEach(recruitType -> Mockito.lenient()
@@ -119,5 +126,20 @@ class RecruitServiceTest {
                 .build();
 
         assertThrows(RuntimeException.class, ()-> recruitService.saveRecruit(notExistMember, postRecruitReqDto));
+    }
+
+    @DisplayName("사용자 리크루팅 스크랩 등록")
+    @Test
+    void Given_MemberIdAndRecruitId_When_TryToggleRecruitScrap_Then_InsertRecruitScrap() {
+        Long recruitId = 2L, memberId = 1L;
+        recruitService.toggleRecruitScrap(recruitId, memberId);
+        assertFalse(recruitService.toggleRecruitScrap(recruitId, memberId));
+    }
+
+    @DisplayName("사용자 리크루팅 스크랩 취소(토글)")
+    @Test
+    void Given_MemberIdAndRecruitId_When_TryToggleRecruitScrap_Then_DeleteRecruitScrap() {
+        Long recruitId = 1L, memberId = 1L;
+        assertTrue(recruitService.toggleRecruitScrap(recruitId, memberId));
     }
 }
