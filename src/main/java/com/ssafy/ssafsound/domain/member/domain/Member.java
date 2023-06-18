@@ -41,7 +41,7 @@ public class Member extends BaseTimeEntity {
     private MetaData campus;
 
     @Enumerated(EnumType.STRING)
-    private OauthType oauthType;
+    private OAuthType oauthType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_role_id")

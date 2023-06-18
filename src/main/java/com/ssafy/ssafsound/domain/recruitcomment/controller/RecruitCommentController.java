@@ -1,6 +1,6 @@
 package com.ssafy.ssafsound.domain.recruitcomment.controller;
 
-import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedUser;
+import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PatchRecruitCommentReqDto;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitCommentReqDto;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitCommentResDto;
@@ -17,30 +17,37 @@ public class RecruitCommentController {
     private final RecruitCommentService recruitCommentService;
 
     @PostMapping("/recruits/{recruitId}/comments")
-    public EnvelopeResponse<PostRecruitCommentResDto> saveRecruitComment(@PathVariable Long recruitId, AuthenticatedUser userInfo,
+    public EnvelopeResponse<PostRecruitCommentResDto> saveRecruitComment(@PathVariable Long recruitId, AuthenticatedMember memberInfo,
                                                                          @RequestBody PostRecruitCommentReqDto dto) {
-        userInfo = AuthenticatedUser.builder().memberId(1L).build();
+        memberInfo = AuthenticatedMember.builder().memberId(1L).build();
         return EnvelopeResponse.<PostRecruitCommentResDto>builder()
                 .code(String.valueOf(HttpStatus.OK))
                 .message("success")
-                .data(recruitCommentService.saveRecruitComment(recruitId, userInfo, dto))
+                .data(recruitCommentService.saveRecruitComment(recruitId, memberInfo, dto))
                 .build();
     }
 
     @DeleteMapping("/recruit-comments/{recruitCommentId}")
-    public EnvelopeResponse<Void> deleteRecruitComment(@PathVariable Long recruitCommentId, AuthenticatedUser userInfo) {
-        userInfo = AuthenticatedUser.builder().memberId(1L).build();
-        recruitCommentService.deleteRecruitComment(recruitCommentId, userInfo);
+    public EnvelopeResponse<Void> deleteRecruitComment(@PathVariable Long recruitCommentId, AuthenticatedMember memberInfo) {
+        memberInfo = AuthenticatedMember.builder().memberId(1L).build();
+        recruitCommentService.deleteRecruitComment(recruitCommentId, memberInfo);
 
         return EnvelopeResponse.<Void>builder().build();
     }
 
     @PatchMapping("/recruit-comments/{recruitCommentId}")
-    public EnvelopeResponse<Void> updateRecruitComment(@PathVariable Long recruitCommentId, AuthenticatedUser userInfo,
+    public EnvelopeResponse<Void> updateRecruitComment(@PathVariable Long recruitCommentId, AuthenticatedMember memberInfo,
                                                        @RequestBody PatchRecruitCommentReqDto dto) {
-        userInfo = AuthenticatedUser.builder().memberId(1L).build();
-        recruitCommentService.updateRecruitComment(recruitCommentId, userInfo, dto);
+        memberInfo = AuthenticatedMember.builder().memberId(1L).build();
+        recruitCommentService.updateRecruitComment(recruitCommentId, memberInfo, dto);
 
+        return EnvelopeResponse.<Void>builder().build();
+    }
+
+    @PostMapping("/recruit-comments/{recruitCommentId}/like")
+    public EnvelopeResponse<Void> toggleRecruitCommentLike(@PathVariable Long recruitCommentId, AuthenticatedMember memberInfo) {
+        memberInfo = AuthenticatedMember.builder().memberId(1L).build();
+        recruitCommentService.toggleRecruitCommentLike(recruitCommentId, memberInfo.getMemberId());
         return EnvelopeResponse.<Void>builder().build();
     }
 }
