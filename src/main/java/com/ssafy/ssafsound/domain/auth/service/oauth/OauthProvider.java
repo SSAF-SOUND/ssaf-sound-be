@@ -9,5 +9,5 @@ public interface OauthProvider {
 
     String getOauthAccessToken(String code);
 
-    PostMemberReqDto getUserOauthIdentifier(String accessToken, String oauthName);
+    PostMemberReqDto getMemberOauthIdentifier(String accessToken, String oauthName);
 }

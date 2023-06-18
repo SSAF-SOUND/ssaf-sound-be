@@ -18,7 +18,7 @@ public class AppleOauthProvider implements OauthProvider {
     }
 
     @Override
-    public PostMemberReqDto getUserOauthIdentifier(String accessToken, String oauthName) {
+    public PostMemberReqDto getMemberOauthIdentifier(String accessToken, String oauthName) {
         return null;
     }
 }

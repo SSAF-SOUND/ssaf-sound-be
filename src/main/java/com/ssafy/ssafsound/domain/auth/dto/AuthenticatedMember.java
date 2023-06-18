@@ -10,13 +10,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthenticatedUser {
+public class AuthenticatedMember {
     private Long memberId;
 
     private String memberRole;
 
-    public static AuthenticatedUser of(Member member) {
-        return AuthenticatedUser.builder()
+    public static AuthenticatedMember of(Member member) {
+        return AuthenticatedMember.builder()
                 .memberId(member.getId())
                 .memberRole(member.getRole().getRoleType())
                 .build();

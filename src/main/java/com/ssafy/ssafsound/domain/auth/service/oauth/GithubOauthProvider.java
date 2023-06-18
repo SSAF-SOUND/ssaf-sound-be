@@ -65,7 +65,7 @@ public class GithubOauthProvider implements OauthProvider {
     }
 
     @Override
-    public PostMemberReqDto getUserOauthIdentifier(String accessToken, String oauthName) {
+    public PostMemberReqDto getMemberOauthIdentifier(String accessToken, String oauthName) {
         HttpEntity<MultiValueMap<String, String>> request = settingHeadersWithAccessToken(accessToken);
 
         try {

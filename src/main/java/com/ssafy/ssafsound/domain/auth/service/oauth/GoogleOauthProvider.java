@@ -69,7 +69,7 @@ public class GoogleOauthProvider implements OauthProvider {
     }
 
     @Override
-    public PostMemberReqDto getUserOauthIdentifier(String accessToken, String oauthName) {
+    public PostMemberReqDto getMemberOauthIdentifier(String accessToken, String oauthName) {
         HttpEntity<MultiValueMap<String, String>> request = settingHeader(accessToken);
         try {
             ResponseEntity<String> apiResponse = restTemplate.exchange(

@@ -1,6 +1,6 @@
 package com.ssafy.ssafsound.domain.auth.controller;
 
-import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedUser;
+import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberReqDto;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberTokensResDto;
 import com.ssafy.ssafsound.domain.auth.service.AuthService;
@@ -36,7 +36,7 @@ public class AuthController {
             @Valid @RequestBody CreateMemberReqDto createMemberReqDto,
             HttpServletResponse response) {
         PostMemberReqDto postMemberReqDto = authService.login(createMemberReqDto);
-        AuthenticatedUser authenticatedUser = memberService.createMemberByOauthIdentifier(postMemberReqDto);
+        AuthenticatedMember authenticatedUser = memberService.createMemberByOauthIdentifier(postMemberReqDto);
         CreateMemberTokensResDto createMemberTokensResDto = authService.createToken(authenticatedUser);
         Cookie accessTokenCookie = setCookieWithOptions("accessToken", createMemberTokensResDto.getAccessToken());
         Cookie refreshTokenCookie = setCookieWithOptions("refreshToken", createMemberTokensResDto.getRefreshToken());

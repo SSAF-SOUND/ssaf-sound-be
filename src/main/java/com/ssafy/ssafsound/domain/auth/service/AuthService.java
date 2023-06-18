@@ -1,6 +1,6 @@
 package com.ssafy.ssafsound.domain.auth.service;
 
-import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedUser;
+import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberReqDto;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberTokensResDto;
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthService {
 
     private final OauthProviderFactory oauthProviderFactory;
-    private OauthProvider oauthProvider;
     private final JwtTokenProvider jwtTokenProvider;
 
     public AuthService(OauthProviderFactory oauthProviderFactory, JwtTokenProvider jwtTokenProvider) {
@@ -27,7 +26,7 @@ public class AuthService {
     }
 
     public void sendRedirectURL(String oauthName, HttpServletResponse response) {
-        oauthProvider = oauthProviderFactory.from(oauthName);
+        OauthProvider oauthProvider = oauthProviderFactory.from(oauthName);
         try {
             String redirectURL = oauthProvider.getOauthUrl();
             response.sendRedirect(redirectURL);
@@ -37,14 +36,14 @@ public class AuthService {
     }
 
     public PostMemberReqDto login(CreateMemberReqDto createMemberReqDto) {
-        oauthProvider = oauthProviderFactory.from(createMemberReqDto.getOauthName());
+        OauthProvider oauthProvider = oauthProviderFactory.from(createMemberReqDto.getOauthName());
         String accessToken = oauthProvider.getOauthAccessToken(createMemberReqDto.getCode());;
-        return oauthProvider.getUserOauthIdentifier(accessToken, createMemberReqDto.getOauthName());
+        return oauthProvider.getMemberOauthIdentifier(accessToken, createMemberReqDto.getOauthName());
     }
 
-    public CreateMemberTokensResDto createToken(AuthenticatedUser authenticatedUser) {
+    public CreateMemberTokensResDto createToken(AuthenticatedMember authenticatedMember) {
         return CreateMemberTokensResDto.builder()
-                .accessToken(jwtTokenProvider.createAccessToken(authenticatedUser))
+                .accessToken(jwtTokenProvider.createAccessToken(authenticatedMember))
                 .refreshToken(jwtTokenProvider.createRefreshToken())
                 .build();
     }

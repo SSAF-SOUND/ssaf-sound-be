@@ -1,6 +1,6 @@
 package com.ssafy.ssafsound.domain.member.service;
 
-import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedUser;
+import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.domain.MemberRole;
@@ -20,13 +20,13 @@ public class MemberService {
     private final MemberRoleRepository memberRoleRepository;
 
     @Transactional
-     public AuthenticatedUser createMemberByOauthIdentifier(PostMemberReqDto postMemberReqDto) {
+     public AuthenticatedMember createMemberByOauthIdentifier(PostMemberReqDto postMemberReqDto) {
         Member member = postMemberReqDto.createMember();
         MemberRole memberRole = findMemberRoleByRoleName("user");
 
         member.setMemberRole(memberRole);
         memberRepository.save(member);
-        return AuthenticatedUser.builder()
+        return AuthenticatedMember.builder()
                 .memberId(member.getId())
                 .memberRole(memberRole.getRoleType())
                 .build();

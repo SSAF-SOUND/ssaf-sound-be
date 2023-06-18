@@ -1,6 +1,6 @@
 package com.ssafy.ssafsound.domain.auth.service.token;
 
-import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedUser;
+import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -28,7 +28,7 @@ public class JwtTokenProvider {
         this.refreshTokenValidTime = refreshTokenValidTime;
     }
 
-    public String createAccessToken(AuthenticatedUser authenticatedUser) {
+    public String createAccessToken(AuthenticatedMember authenticatedUser) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + accessTokenValidTime);
 
@@ -56,7 +56,7 @@ public class JwtTokenProvider {
         return null;
     }
 
-    public AuthenticatedUser getParsedClaims(String token) {
+    public AuthenticatedMember getParsedClaims(String token) {
         return null;
     }
 
