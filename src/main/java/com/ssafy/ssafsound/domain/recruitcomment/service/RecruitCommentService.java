@@ -51,7 +51,7 @@ public class RecruitCommentService {
     }
 
     @Transactional
-    public void updateRecruitComment(Long recruitCommentId, AuthenticatedUser userInfo, PatchRecruitCommentReqDto patchRecruitCommentReqDto) {
+    public RecruitComment updateRecruitComment(Long recruitCommentId, AuthenticatedUser userInfo, PatchRecruitCommentReqDto patchRecruitCommentReqDto) {
         RecruitComment recruitComment = recruitCommentRepository.findById(recruitCommentId)
                 .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
@@ -60,5 +60,6 @@ public class RecruitCommentService {
         } else {
             throw new RecruitException(RecruitErrorInfo.NOT_AUTHORIZATION_MEMBER);
         }
+        return recruitComment;
     }
 }
