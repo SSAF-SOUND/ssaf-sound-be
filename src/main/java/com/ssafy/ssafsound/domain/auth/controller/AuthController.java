@@ -9,6 +9,7 @@ import com.ssafy.ssafsound.domain.member.service.MemberService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -32,11 +33,25 @@ public class AuthController {
 
     @PostMapping("/callback")
     public EnvelopeResponse<CreateMemberTokensResDto> login(
-            @Valid @RequestBody CreateMemberReqDto createMemberReqDto) {
+            @Valid @RequestBody CreateMemberReqDto createMemberReqDto,
+            HttpServletResponse response) {
         PostMemberReqDto postMemberReqDto = authService.login(createMemberReqDto);
         AuthenticatedUser authenticatedUser = memberService.createMemberByOauthIdentifier(postMemberReqDto);
+        CreateMemberTokensResDto createMemberTokensResDto = authService.createToken(authenticatedUser);
+        Cookie accessTokenCookie = setCookieWithOptions("accessToken", createMemberTokensResDto.getAccessToken());
+        Cookie refreshTokenCookie = setCookieWithOptions("refreshToken", createMemberTokensResDto.getRefreshToken());
+        response.addCookie(accessTokenCookie);
+        response.addCookie(refreshTokenCookie);
         return EnvelopeResponse.<CreateMemberTokensResDto>builder()
-                .data(authService.createToken(authenticatedUser))
+                .data(createMemberTokensResDto)
                 .build();
+    }
+
+    public Cookie setCookieWithOptions(String name, String value) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        return cookie;
     }
 }
