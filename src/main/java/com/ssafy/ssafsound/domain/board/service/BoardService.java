@@ -11,10 +11,10 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class BoardService {
     private final BoardRepository boardRepository;
 
+    @Transactional(readOnly = true)
     public GetBoardListResDto findBoards() {
         return new GetBoardListResDto(boardRepository.findAll()
                 .stream()
