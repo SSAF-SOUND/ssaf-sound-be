@@ -1,32 +1,65 @@
 package com.ssafy.ssafsound.domain.auth.service.token;
 
-import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedUser;
+import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
+import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.util.Date;
 
 @Component
-public class JwtTokenProvider implements TokenManager {
+public class JwtTokenProvider {
+    private final Key key;
+    private final long accessTokenValidTime;
+    private final long  refreshTokenValidTime;
 
-    @Override
-    public String createAccessToken(AuthenticatedUser authenticatedUser) {
-        return null;
+    public JwtTokenProvider(
+            @Value("${jwt.token.secret}")
+            String key,
+            @Value("${jwt.token.expire-access}")
+            long accessTokenValidTime,
+            @Value("${jwt.token.expire-refresh}")
+            long refreshTokenValidTime) {
+        byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
+        this.key = Keys.hmacShaKeyFor(keyBytes);
+        this.accessTokenValidTime = accessTokenValidTime;
+        this.refreshTokenValidTime = refreshTokenValidTime;
     }
 
-    @Override
+    public String createAccessToken(AuthenticatedMember authenticatedUser) {
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + accessTokenValidTime);
+
+        return Jwts.builder()
+                .claim("id", authenticatedUser.getMemberId())
+                .claim("role", authenticatedUser.getMemberRole())
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(key)
+                .compact();
+    }
+
     public String createRefreshToken() {
-        return null;
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + refreshTokenValidTime);
+
+        return Jwts.builder()
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(key)
+                .compact();
     }
 
-    @Override
     public String getPayload() {
         return null;
     }
 
-    @Override
-    public AuthenticatedUser getParsedClaims(String token) {
+    public AuthenticatedMember getParsedClaims(String token) {
         return null;
     }
 
-    @Override
     public boolean isValid(String token) {
         return false;
     }

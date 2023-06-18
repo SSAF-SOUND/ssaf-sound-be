@@ -98,6 +98,7 @@ $RECYCLE.BIN/
 
 # Oauth Config Varable
 src/main/resources/application-oauth.yml
+src/main/resources/application-security.yml
 
-# local Setting
+# Local Setting File
 src/main/resources/application-local.yml
