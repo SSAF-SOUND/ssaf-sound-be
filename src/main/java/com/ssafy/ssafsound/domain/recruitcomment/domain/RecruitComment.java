@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLDelete(sql = "UPDATE recruit_comment SET deleted_comment = true WHERE recruit_comment_id = ?")
 public class RecruitComment extends BaseTimeEntity {
 
     @Id
@@ -30,7 +32,8 @@ public class RecruitComment extends BaseTimeEntity {
     private String content;
 
     @Column
-    private Boolean deletedComment;
+    @Builder.Default
+    private Boolean deletedComment = Boolean.FALSE;
 
     @OneToMany(mappedBy = "commentGroup")
     @Builder.Default

@@ -3,6 +3,8 @@ package com.ssafy.ssafsound.domain.recruitcomment.service;
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedUser;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
+import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
+import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruitcomment.domain.RecruitComment;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitCommentReqDto;
@@ -31,5 +33,16 @@ public class RecruitCommentService {
         recruitComment.setWriter(writer);
         recruitCommentRepository.save(recruitComment);
         return PostRecruitCommentResDto.from(recruitComment);
+    }
+
+    public void deleteRecruitComment(Long recruitCommentId, AuthenticatedUser userInfo) {
+        RecruitComment recruitComment = recruitCommentRepository.findById(recruitCommentId)
+                .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+
+        if(recruitComment.getMember().getId().equals(userInfo.getMemberId())) {
+            recruitCommentRepository.delete(recruitComment);
+        } else {
+            throw new RecruitException(RecruitErrorInfo.NOT_AUTHORIZATION_MEMBER);
+        }
     }
 }
