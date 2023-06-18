@@ -1,15 +1,17 @@
 package com.ssafy.ssafsound.domain.recruitcomment.service;
 
-import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedUser;
+import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruitcomment.domain.RecruitComment;
+import com.ssafy.ssafsound.domain.recruitcomment.domain.RecruitCommentLike;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PatchRecruitCommentReqDto;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitCommentReqDto;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitCommentResDto;
+import com.ssafy.ssafsound.domain.recruitcomment.repository.RecruitCommentLikeRepository;
 import com.ssafy.ssafsound.domain.recruitcomment.repository.RecruitCommentRepository;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
@@ -32,6 +34,9 @@ class RecruitCommentServiceTest {
 
     @Mock
     RecruitCommentRepository recruitCommentRepository;
+
+    @Mock
+    RecruitCommentLikeRepository recruitCommentLikeRepository;
 
     @Mock
     RecruitRepository recruitRepository;
@@ -60,6 +65,11 @@ class RecruitCommentServiceTest {
             .content("댓글테스트")
             .build();
 
+    RecruitCommentLike recruitCommentLike = RecruitCommentLike.builder()
+            .member(member1)
+            .recruitComment(commentGroup)
+            .build();
+
     @BeforeEach
     void setStubAndFixture() {
         commentGroup.setCommentGroup(commentGroup);
@@ -73,12 +83,14 @@ class RecruitCommentServiceTest {
 
         Mockito.lenient().when(recruitCommentRepository.getReferenceById(1L)).thenReturn(commentGroup);
         Mockito.lenient().when(recruitCommentRepository.findById(1L)).thenReturn(Optional.ofNullable(commentGroup));
+
+        Mockito.lenient().when(recruitCommentLikeRepository.findByRecruitCommentIdAndMemberId(1L, 1L)).thenReturn(Optional.ofNullable(recruitCommentLike));
     }
 
     @DisplayName("유효한 사용자 리크루팅 QNA 질문(댓글) 등록")
     @Test
     void Given_ValidMemberAndDto_When_InsertRecruitComment_Then_Success() {
-        AuthenticatedUser userInfo = AuthenticatedUser.builder()
+        AuthenticatedMember userInfo = AuthenticatedMember.builder()
                 .memberId(1L)
                 .build();
 
@@ -97,7 +109,7 @@ class RecruitCommentServiceTest {
     @DisplayName("유효하지 않은 사용자 리크루팅 QNA 질문(댓글) 등록")
     @Test
     void Given_NotValidMemberAndDto_When_InsertRecruitComment_Then_Fail() {
-        AuthenticatedUser userInfo = AuthenticatedUser.builder()
+        AuthenticatedMember userInfo = AuthenticatedMember.builder()
                 .memberId(3L)
                 .build();
 
@@ -109,7 +121,7 @@ class RecruitCommentServiceTest {
     @DisplayName("존재하지 않은 리크루팅에 대한 QNA 질문(댓글) 등록")
     @Test
     void Given_NotValidRecruitAndDto_When_InsertRecruitComment_Then_Fail() {
-        AuthenticatedUser userInfo = AuthenticatedUser.builder()
+        AuthenticatedMember userInfo = AuthenticatedMember.builder()
                 .memberId(1L)
                 .build();
 
@@ -122,7 +134,7 @@ class RecruitCommentServiceTest {
     @DisplayName("사용자 리크루팅 QNA 답변(대댓글) 등록")
     @Test
     void Given_ValidMemberAndDto_When_InsertAnswerOtherRecruitComment_Then_Success() {
-        AuthenticatedUser userInfo = AuthenticatedUser.builder()
+        AuthenticatedMember userInfo = AuthenticatedMember.builder()
                 .memberId(1L)
                 .build();
 
@@ -137,7 +149,7 @@ class RecruitCommentServiceTest {
     @DisplayName("유효한 사용자 리크루팅 댓글 삭제")
     @Test
     void Given_ValidMemberAndDto_When_DeleteRecruitComment_Then_Success() {
-        AuthenticatedUser userInfo = AuthenticatedUser.builder()
+        AuthenticatedMember userInfo = AuthenticatedMember.builder()
                 .memberId(1L)
                 .build();
 
@@ -147,7 +159,7 @@ class RecruitCommentServiceTest {
     @DisplayName("유효하지 않은 사용자 리크루팅 댓글 삭제")
     @Test
     void Given_NotValidMemberAndDto_When_DeleteRecruitComment_Then_Fail() {
-        AuthenticatedUser userInfo = AuthenticatedUser.builder()
+        AuthenticatedMember userInfo = AuthenticatedMember.builder()
                 .memberId(2L)
                 .build();
 
@@ -157,7 +169,7 @@ class RecruitCommentServiceTest {
     @DisplayName("유효한 사용자 리크루팅 댓글 업데이트")
     @Test
     void Given_ValidMemberAndDto_When_UpdateRecruitComment_Then_Success() {
-        AuthenticatedUser userInfo = AuthenticatedUser.builder()
+        AuthenticatedMember userInfo = AuthenticatedMember.builder()
                 .memberId(1L)
                 .build();
 
@@ -171,12 +183,26 @@ class RecruitCommentServiceTest {
     @DisplayName("유효하지 않은 사용자 리크루팅 댓글 업데이트")
     @Test
     void Given_NotValidMemberAndDto_When_UpdateRecruitComment_Then_Success() {
-        AuthenticatedUser userInfo = AuthenticatedUser.builder()
+        AuthenticatedMember userInfo = AuthenticatedMember.builder()
                 .memberId(2L)
                 .build();
 
         PatchRecruitCommentReqDto dto = new PatchRecruitCommentReqDto("자신이등록하지않은글");
 
         assertThrows(RecruitException.class, ()->recruitCommentService.updateRecruitComment(1L, userInfo, dto));
+    }
+
+    @DisplayName("리크루트 QNA 좋아요 등록 테스트")
+    @Test
+    void Given_MemberIdAndRecruitCommentId_When_TryToggleRecruitCommentLike_Then_InsertRecruitCommentLike() {
+        Long recruitCommentId = 2L, memberId = 1L;
+        assertFalse(recruitCommentService.toggleRecruitCommentLike(recruitCommentId, memberId));
+    }
+
+    @DisplayName("리크루트 QNA 좋아요 등록취소 테스트")
+    @Test
+    void Given_MemberIdAndRecruitCommentId_When_TryToggleRecruitCommentLike_Then_DeleteRecruitLike() {
+        Long recruitCommentId = 1L, memberId = 1L;
+        assertTrue(recruitCommentService.toggleRecruitCommentLike(recruitCommentId, memberId));
     }
 }
