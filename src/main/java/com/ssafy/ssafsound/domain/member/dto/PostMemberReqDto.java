@@ -3,7 +3,7 @@ package com.ssafy.ssafsound.domain.member.dto;
 
 import com.ssafy.ssafsound.domain.member.domain.AccountState;
 import com.ssafy.ssafsound.domain.member.domain.Member;
-import com.ssafy.ssafsound.domain.member.domain.OauthType;
+import com.ssafy.ssafsound.domain.member.domain.OAuthType;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -23,7 +23,7 @@ public class PostMemberReqDto {
         return Member.builder()
                 .oauthIdentifier(oauthIdentifier)
                 .accountState(AccountState.NORMAL)
-                .oauthType(OauthType.valueOf(oauthName.toUpperCase()))
+                .oauthType(OAuthType.valueOf(oauthName.toUpperCase()))
                 .build();
     }
 }

@@ -28,13 +28,13 @@ public class JwtTokenProvider {
         this.refreshTokenValidTime = refreshTokenValidTime;
     }
 
-    public String createAccessToken(AuthenticatedMember authenticatedUser) {
+    public String createAccessToken(AuthenticatedMember authenticatedMember) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + accessTokenValidTime);
 
         return Jwts.builder()
-                .claim("id", authenticatedUser.getMemberId())
-                .claim("role", authenticatedUser.getMemberRole())
+                .claim("id", authenticatedMember.getMemberId())
+                .claim("role", authenticatedMember.getMemberRole())
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(key)
