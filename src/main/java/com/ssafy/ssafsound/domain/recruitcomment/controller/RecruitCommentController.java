@@ -32,10 +32,7 @@ public class RecruitCommentController {
         userInfo = AuthenticatedUser.builder().memberId(1L).build();
         recruitCommentService.deleteRecruitComment(recruitCommentId, userInfo);
 
-        return EnvelopeResponse.<Void>builder()
-                .code(String.valueOf(HttpStatus.OK))
-                .message("success")
-                .build();
+        return EnvelopeResponse.<Void>builder().build();
     }
 
     @PatchMapping("/recruit-comments/{recruitCommentId}")
@@ -44,9 +41,6 @@ public class RecruitCommentController {
         userInfo = AuthenticatedUser.builder().memberId(1L).build();
         recruitCommentService.updateRecruitComment(recruitCommentId, userInfo, dto);
 
-        return EnvelopeResponse.<Void>builder()
-                .code(String.valueOf(HttpStatus.OK))
-                .message("success")
-                .build();
+        return EnvelopeResponse.<Void>builder().build();
     }
 }
