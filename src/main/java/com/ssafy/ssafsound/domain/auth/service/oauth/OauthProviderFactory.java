@@ -1,8 +1,8 @@
 package com.ssafy.ssafsound.domain.auth.service.oauth;
 
-import com.ssafy.ssafsound.domain.auth.domain.OauthType;
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
 import com.ssafy.ssafsound.domain.auth.exception.MemberErrorInfo;
+import com.ssafy.ssafsound.domain.member.domain.OauthType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

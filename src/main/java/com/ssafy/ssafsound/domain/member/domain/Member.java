@@ -40,9 +40,8 @@ public class Member extends BaseTimeEntity {
     @Convert(converter = CampusConverter.class)
     private MetaData campus;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "oauth_type_id")
-    private OAuthType oAuthType;
+    @Enumerated(EnumType.STRING)
+    private OauthType oauthType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_role_id")
@@ -60,4 +59,8 @@ public class Member extends BaseTimeEntity {
 
     @Column
     private Boolean publicProfile;
+
+    public void setMemberRole(MemberRole memberRole) {
+        this.role = memberRole;
+    }
 }

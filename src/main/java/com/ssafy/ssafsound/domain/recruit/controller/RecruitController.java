@@ -1,6 +1,6 @@
 package com.ssafy.ssafsound.domain.recruit.controller;
 
-import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedUser;
+import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.recruit.dto.PostRecruitReqDto;
 import com.ssafy.ssafsound.domain.recruit.service.RecruitService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
@@ -18,7 +18,7 @@ public class RecruitController {
     private final RecruitService recruitService;
 
     @PostMapping("")
-    public EnvelopeResponse<Void> saveRecruit(AuthenticatedUser userInfo, @Valid @RequestBody PostRecruitReqDto recruitReqDto) {
+    public EnvelopeResponse<Void> saveRecruit(AuthenticatedMember userInfo, @Valid @RequestBody PostRecruitReqDto recruitReqDto) {
         recruitService.saveRecruit(userInfo, recruitReqDto);
         return EnvelopeResponse.<Void>builder()
                 .code(String.valueOf(HttpStatus.OK))

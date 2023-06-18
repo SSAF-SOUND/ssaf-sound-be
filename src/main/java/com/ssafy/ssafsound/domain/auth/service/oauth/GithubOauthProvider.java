@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
 import com.ssafy.ssafsound.domain.auth.exception.MemberErrorInfo;
+import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,7 +65,7 @@ public class GithubOauthProvider implements OauthProvider {
     }
 
     @Override
-    public String getUserOauthIdentifier(String accessToken) {
+    public PostMemberReqDto getMemberOauthIdentifier(String accessToken, String oauthName) {
         HttpEntity<MultiValueMap<String, String>> request = settingHeadersWithAccessToken(accessToken);
 
         try {
@@ -73,7 +74,10 @@ public class GithubOauthProvider implements OauthProvider {
                     HttpMethod.GET,
                     request,
                     String.class);
-            return parsingValue(apiResponse.getBody(), GITHUB_SECRET_KEY);
+            return PostMemberReqDto.builder()
+                    .oauthIdentifier(parsingValue(apiResponse.getBody(), GITHUB_SECRET_KEY))
+                    .oauthName(oauthName)
+                    .build();
         } catch (RestClientException e) {
             throw new AuthException(MemberErrorInfo.AUTH_SERVER_ERROR);
         } catch (JsonProcessingException e) {
