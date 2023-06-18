@@ -1,24 +1,15 @@
 package com.ssafy.ssafsound.domain.member.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+public enum OauthType {
+    GOOGLE("google"), GITHUB("github"), KAKAO("kakao"), APPLE("apple");
 
-import javax.persistence.*;
+    private final String oauthName;
 
-@Entity(name="oauth_type")
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class OAuthType {
+    OauthType(String oauthName) {
+        this.oauthName = oauthName;
+    }
 
-    @Id
-    @Column(name = "oauth_type_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    @Column(name = "name", length = 16)
-    private String name;
+    public boolean isEqual(String oauthName) {
+        return this.oauthName.equals(oauthName);
+    }
 }
