@@ -3,6 +3,7 @@ package com.ssafy.ssafsound.infra.storage.service;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.infra.exception.InfraErrorInfo;
 import com.ssafy.ssafsound.infra.exception.InfraException;
 import lombok.RequiredArgsConstructor;
@@ -43,13 +44,13 @@ public class AwsS3StorageService implements StorageService{
     }
 
     @Override
-    public String putObject(MultipartFile multipartFile, String uploadDir, Long memberId) {
+    public String putObject(MultipartFile multipartFile, MetaData uploadDir, Long memberId) {
 
         if (multipartFile == null || multipartFile.isEmpty()){
             throw new InfraException(InfraErrorInfo.STORAGE_STORE_INVALID_OBJECT);
         }
 
-        String fileName = makeFileName(multipartFile.getOriginalFilename(), uploadDir, String.valueOf(memberId));
+        String fileName = makeFileName(multipartFile.getOriginalFilename(), uploadDir.getName(), String.valueOf(memberId));
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
@@ -65,6 +66,8 @@ public class AwsS3StorageService implements StorageService{
         } catch (IOException e){
             log.error(e.getMessage());
             throw new RuntimeException();
+        } catch (Exception e){
+            e.printStackTrace();
         }
 
         log.info("S3 저장 성공 : {} 객체 저장", fileName);
@@ -73,9 +76,9 @@ public class AwsS3StorageService implements StorageService{
     }
 
     @Override
-    public void deleteObject(String originalFilename)  {
+    public void deleteObject(String storageFilename)  {
         try{
-            amazonS3.deleteObject(bucket, originalFilename);
+            amazonS3.deleteObject(bucket, storageFilename);
         } catch (AmazonServiceException e){
             log.error(e.getMessage());
             throw new InfraException(InfraErrorInfo.STORAGE_SERVICE_ERROR);
