@@ -42,7 +42,14 @@ public class JwtTokenProvider {
     }
 
     public String createRefreshToken() {
-        return null;
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + refreshTokenValidTime);
+
+        return Jwts.builder()
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(key)
+                .compact();
     }
 
     public String getPayload() {
