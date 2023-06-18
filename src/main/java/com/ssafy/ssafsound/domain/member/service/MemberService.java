@@ -1,11 +1,11 @@
 package com.ssafy.ssafsound.domain.member.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedUser;
-import com.ssafy.ssafsound.domain.auth.dto.CreateMemberTokensResDto;
+import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.domain.MemberRole;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRoleRepository;
-import com.ssafy.ssafsound.domain.member.repository.OAuthTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,18 +15,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final OAuthTypeRepository oauthTypeRepository;
     private final MemberRoleRepository memberRoleRepository;
-    
+
     @Transactional
      public AuthenticatedUser createMemberByOauthIdentifier(PostMemberReqDto postMemberReqDto) {
-         return AuthenticatedUser.builder().build();
+        Member member = postMemberReqDto.createMember();
+        MemberRole memberRole = findMemberRoleByRoleName("user");
+
+        member.setMemberRole(memberRole);
+        memberRepository.save(member);
+        return AuthenticatedUser.builder()
+                .memberId(member.getId())
+                .memberRole(memberRole.getRoleType())
+                .build();
      }
 
-    public CreateMemberTokensResDto createTokensByAuthenticatedUser(AuthenticatedUser authenticatedUser, String accessToken, String refreshToken) {
-        return CreateMemberTokensResDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+    public MemberRole findMemberRoleByRoleName(String roleType) {
+        return memberRoleRepository.findByRoleType(roleType).orElseThrow(RuntimeException::new);
     }
 }
