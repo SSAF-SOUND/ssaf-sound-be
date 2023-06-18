@@ -1,6 +1,6 @@
 package com.ssafy.ssafsound.domain.recruit.service;
 
-import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedUser;
+import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
@@ -32,7 +32,7 @@ public class RecruitService {
     private final MetaDataConsumer metaDataConsumer;
 
     @Transactional
-    public Recruit saveRecruit(AuthenticatedUser userInfo, PostRecruitReqDto postRecruitReqDto) {
+    public Recruit saveRecruit(AuthenticatedMember userInfo, PostRecruitReqDto postRecruitReqDto) {
         Recruit recruit = postRecruitReqDto.createRecruitFromPredefinedMetadata(metaDataConsumer);
         Member register = memberRepository.findById(userInfo.getMemberId()).orElseThrow(RuntimeException::new);
         recruit.setRegister(register);

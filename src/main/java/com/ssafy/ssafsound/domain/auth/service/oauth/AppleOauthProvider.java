@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.auth.service.oauth;
 
+import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +18,7 @@ public class AppleOauthProvider implements OauthProvider {
     }
 
     @Override
-    public String getUserOauthIdentifier(String accessToken) {
+    public PostMemberReqDto getMemberOauthIdentifier(String accessToken, String oauthName) {
         return null;
     }
 }

@@ -1,6 +1,6 @@
 package com.ssafy.ssafsound.domain.recruit.service;
 
-import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedUser;
+import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
@@ -79,7 +79,7 @@ class RecruitServiceTest {
     @DisplayName("토큰과 정상 리크루트글 등록 요청이 넘어온 경우 리크루트 글 등록 성공")
     @Test
     void Given_AuthenticatedMemberAndPostRecruitReqDto_When_SaveRecruitService_Then_Success() {
-        AuthenticatedUser existUser = AuthenticatedUser.builder()
+        AuthenticatedMember existUser = AuthenticatedMember.builder()
                 .memberId(1L)
                 .build();
 
@@ -114,7 +114,7 @@ class RecruitServiceTest {
     @DisplayName("토큰으로부터 얻은 사용자 정보가 유효하지 않은 경우 리크루트글 등록 실패")
     @Test
     void Given_EmptyAuthenticatedMemberAndPostRecruitReqDto_When_SaveRecruitService_Then_ThrowException() {
-        AuthenticatedUser notExistMember = AuthenticatedUser.builder()
+        AuthenticatedMember notExistMember = AuthenticatedMember.builder()
                 .memberId(2L)
                 .build();
 

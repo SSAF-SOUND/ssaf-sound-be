@@ -1,6 +1,6 @@
 package com.ssafy.ssafsound.domain.lunch.controller;
 
-import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedUser;
+import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListReqDto;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchResDto;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListResDto;
@@ -37,7 +37,7 @@ public class LunchController {
     }
 
     @PostMapping("/poll/{lunchId}")
-    public EnvelopeResponse<PostLunchPollResDto> postLunchPoll(AuthenticatedUser user, @PathVariable @NumberFormat Long lunchId){
+    public EnvelopeResponse<PostLunchPollResDto> postLunchPoll(AuthenticatedMember user, @PathVariable @NumberFormat Long lunchId){
 
         return EnvelopeResponse.<PostLunchPollResDto>builder()
                 .data(lunchService.saveLunchPoll(user.getMemberId(), lunchId))
