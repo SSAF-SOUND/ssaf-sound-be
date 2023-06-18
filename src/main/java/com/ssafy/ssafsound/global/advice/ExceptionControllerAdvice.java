@@ -3,6 +3,7 @@ package com.ssafy.ssafsound.global.advice;
 
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
 import com.ssafy.ssafsound.domain.lunch.exception.LunchException;
+import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
@@ -16,6 +17,16 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class ExceptionControllerAdvice {
+
+    @ExceptionHandler(MemberException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public EnvelopeResponse MemberExceptionHandler(MemberException e) {
+        log.error(e.getMessage());
+        return EnvelopeResponse.builder()
+                .code(e.getInfo().getCode())
+                .message(e.getInfo().getMessage())
+                .build();
+    }
 
     @ExceptionHandler(AuthException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

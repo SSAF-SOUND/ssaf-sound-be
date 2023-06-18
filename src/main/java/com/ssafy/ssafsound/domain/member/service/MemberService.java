@@ -1,9 +1,11 @@
 package com.ssafy.ssafsound.domain.member.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedUser;
+import com.ssafy.ssafsound.domain.auth.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.domain.MemberRole;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
+import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRoleRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,6 @@ public class MemberService {
      }
 
     public MemberRole findMemberRoleByRoleName(String roleType) {
-        return memberRoleRepository.findByRoleType(roleType).orElseThrow(RuntimeException::new);
+        return memberRoleRepository.findByRoleType(roleType).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_ROLE_TYPE_NOT_FOUND));
     }
 }
