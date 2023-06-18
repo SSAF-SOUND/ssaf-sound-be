@@ -7,6 +7,7 @@ import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,6 +22,7 @@ public class ExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public EnvelopeResponse AuthExceptionHandler(AuthException e) {
         log.error(e.getMessage());
+
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
                 .message(e.getInfo().getMessage())
@@ -42,6 +44,7 @@ public class ExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse BadRequestExceptionHandler(MethodArgumentNotValidException e) {
         log.error(e.getMessage());
+
         StringBuilder errorMessage = new StringBuilder();
         e.getBindingResult().getAllErrors().forEach((error) -> {
             errorMessage.append(error.getDefaultMessage());
@@ -57,6 +60,7 @@ public class ExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public EnvelopeResponse RuntimeExceptionHandler(RuntimeException e) {
         log.error(e.getMessage());
+
         return EnvelopeResponse.builder()
                 .code(GlobalErrorInfo.INTERNAL_SERVER_ERROR.getCode())
                 .message(GlobalErrorInfo.INTERNAL_SERVER_ERROR.getMessage())
@@ -67,9 +71,21 @@ public class ExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public EnvelopeResponse ResourceNotFoundExceptionHandler(ResourceNotFoundException e) {
         log.error(e.getMessage());
+
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
                 .message(e.getInfo().getMessage())
+                .build();
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public EnvelopeResponse DataIntegrityViolationExceptionHandler(DataIntegrityViolationException e) {
+        log.error(e.getMessage());
+
+        return EnvelopeResponse.builder()
+                .code(GlobalErrorInfo.NOT_FOUND.getCode())
+                .message(GlobalErrorInfo.NOT_FOUND.getMessage())
                 .build();
     }
 }

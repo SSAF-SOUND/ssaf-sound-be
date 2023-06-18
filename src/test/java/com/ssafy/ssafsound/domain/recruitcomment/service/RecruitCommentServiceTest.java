@@ -1,0 +1,182 @@
+package com.ssafy.ssafsound.domain.recruitcomment.service;
+
+import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedUser;
+import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
+import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
+import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
+import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
+import com.ssafy.ssafsound.domain.recruitcomment.domain.RecruitComment;
+import com.ssafy.ssafsound.domain.recruitcomment.dto.PatchRecruitCommentReqDto;
+import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitCommentReqDto;
+import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitCommentResDto;
+import com.ssafy.ssafsound.domain.recruitcomment.repository.RecruitCommentRepository;
+import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
+import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
+
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@ExtendWith(MockitoExtension.class)
+class RecruitCommentServiceTest {
+
+    @Mock
+    RecruitCommentRepository recruitCommentRepository;
+
+    @Mock
+    RecruitRepository recruitRepository;
+
+    @Mock
+    MemberRepository memberRepository;
+
+    @InjectMocks
+    RecruitCommentService recruitCommentService;
+
+    Member member1 = Member.builder()
+            .id(1L)
+            .nickname("khs")
+            .build();
+
+    Member member2 = Member.builder()
+            .id(2L)
+            .nickname("kds")
+            .build();
+
+    Recruit recruit = new Recruit();
+
+    RecruitComment commentGroup = RecruitComment.builder()
+            .id(1L)
+            .member(member1)
+            .content("댓글테스트")
+            .build();
+
+    @BeforeEach
+    void setStubAndFixture() {
+        commentGroup.setCommentGroup(commentGroup);
+
+        Mockito.lenient().when(memberRepository.findById(1L)).thenReturn(Optional.ofNullable(member1));
+        Mockito.lenient().when(memberRepository.findById(2L)).thenReturn(Optional.ofNullable(member2));
+        Mockito.lenient().when(memberRepository.findById(3L)).thenThrow(new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+
+        Mockito.lenient().when(recruitRepository.getReferenceById(1L)).thenReturn(recruit);
+        Mockito.lenient().when(recruitRepository.getReferenceById(2L)).thenThrow(new DataIntegrityViolationException(""));
+
+        Mockito.lenient().when(recruitCommentRepository.getReferenceById(1L)).thenReturn(commentGroup);
+        Mockito.lenient().when(recruitCommentRepository.findById(1L)).thenReturn(Optional.ofNullable(commentGroup));
+    }
+
+    @DisplayName("유효한 사용자 리크루팅 QNA 질문(댓글) 등록")
+    @Test
+    void Given_ValidMemberAndDto_When_InsertRecruitComment_Then_Success() {
+        AuthenticatedUser userInfo = AuthenticatedUser.builder()
+                .memberId(1L)
+                .build();
+
+        PostRecruitCommentReqDto recruitCommentReqDto = new PostRecruitCommentReqDto("댓글테스트", -1L);
+
+        PostRecruitCommentResDto response = recruitCommentService.saveRecruitComment(1L, userInfo, recruitCommentReqDto);
+
+        assertAll(
+                ()->assertEquals(member1.getNickname(), response.getNickName()),
+                ()->assertEquals(member1.getId(), response.getMemberId()),
+                // 리크루트 QNA 질문 등록의 경우 페이지네이션을 위해 자기 자신을 CommentGroup으로 가진다.
+                ()->assertEquals(commentGroup.getContent(), response.getContent())
+        );
+    }
+
+    @DisplayName("유효하지 않은 사용자 리크루팅 QNA 질문(댓글) 등록")
+    @Test
+    void Given_NotValidMemberAndDto_When_InsertRecruitComment_Then_Fail() {
+        AuthenticatedUser userInfo = AuthenticatedUser.builder()
+                .memberId(3L)
+                .build();
+
+        PostRecruitCommentReqDto recruitCommentReqDto = new PostRecruitCommentReqDto("댓글테스트", -1L);
+
+        assertThrows(ResourceNotFoundException.class, ()-> recruitCommentService.saveRecruitComment(1L, userInfo, recruitCommentReqDto));
+    }
+
+    @DisplayName("존재하지 않은 리크루팅에 대한 QNA 질문(댓글) 등록")
+    @Test
+    void Given_NotValidRecruitAndDto_When_InsertRecruitComment_Then_Fail() {
+        AuthenticatedUser userInfo = AuthenticatedUser.builder()
+                .memberId(1L)
+                .build();
+
+        PostRecruitCommentReqDto recruitCommentReqDto = new PostRecruitCommentReqDto("댓글테스트", -1L);
+
+        assertThrows(DataIntegrityViolationException.class, ()-> recruitCommentService.saveRecruitComment(2L, userInfo, recruitCommentReqDto));
+    }
+
+
+    @DisplayName("사용자 리크루팅 QNA 답변(대댓글) 등록")
+    @Test
+    void Given_ValidMemberAndDto_When_InsertAnswerOtherRecruitComment_Then_Success() {
+        AuthenticatedUser userInfo = AuthenticatedUser.builder()
+                .memberId(1L)
+                .build();
+
+        PostRecruitCommentReqDto recruitCommentReqDto = new PostRecruitCommentReqDto("댓글테스트", 1L);
+
+        PostRecruitCommentResDto response = recruitCommentService.saveRecruitComment(1L, userInfo, recruitCommentReqDto);
+
+        // 리크루팅 QNA 답변(대댓글)은 질문(댓글)의 PK를 CommentGroup으로 가진다.
+        assertEquals(commentGroup.getId(), response.getCommentGroup());
+    }
+
+    @DisplayName("유효한 사용자 리크루팅 댓글 삭제")
+    @Test
+    void Given_ValidMemberAndDto_When_DeleteRecruitComment_Then_Success() {
+        AuthenticatedUser userInfo = AuthenticatedUser.builder()
+                .memberId(1L)
+                .build();
+
+        assertDoesNotThrow(()->recruitCommentService.deleteRecruitComment(1L, userInfo));
+    }
+
+    @DisplayName("유효하지 않은 사용자 리크루팅 댓글 삭제")
+    @Test
+    void Given_NotValidMemberAndDto_When_DeleteRecruitComment_Then_Fail() {
+        AuthenticatedUser userInfo = AuthenticatedUser.builder()
+                .memberId(2L)
+                .build();
+
+        assertThrows(RecruitException.class, ()->recruitCommentService.deleteRecruitComment(1L, userInfo));
+    }
+
+    @DisplayName("유효한 사용자 리크루팅 댓글 업데이트")
+    @Test
+    void Given_ValidMemberAndDto_When_UpdateRecruitComment_Then_Success() {
+        AuthenticatedUser userInfo = AuthenticatedUser.builder()
+                .memberId(1L)
+                .build();
+
+        PatchRecruitCommentReqDto dto = new PatchRecruitCommentReqDto("업데이트");
+
+        RecruitComment afterUpdateRecruitComment = recruitCommentService.updateRecruitComment(1L, userInfo, dto);
+
+        assertEquals("업데이트", afterUpdateRecruitComment.getContent());
+    }
+
+    @DisplayName("유효하지 않은 사용자 리크루팅 댓글 업데이트")
+    @Test
+    void Given_NotValidMemberAndDto_When_UpdateRecruitComment_Then_Success() {
+        AuthenticatedUser userInfo = AuthenticatedUser.builder()
+                .memberId(2L)
+                .build();
+
+        PatchRecruitCommentReqDto dto = new PatchRecruitCommentReqDto("자신이등록하지않은글");
+
+        assertThrows(RecruitException.class, ()->recruitCommentService.updateRecruitComment(1L, userInfo, dto));
+    }
+}
