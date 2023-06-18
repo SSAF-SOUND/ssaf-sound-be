@@ -71,4 +71,8 @@ public class RecruitComment extends BaseTimeEntity {
         }
         this.member = member;
     }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
 }
