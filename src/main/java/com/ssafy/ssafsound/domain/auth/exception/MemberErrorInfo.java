@@ -9,7 +9,8 @@ public enum MemberErrorInfo {
     AUTH_SERVER_PARSING_ERROR("702", "서버에서 파싱하는데 문제가 발생했습니다."),
     MEMBER_ROLE_TYPE_NOT_FOUND("703", "멤버 권한을 찾을 수 없는 문제가 발생했습니다."),
     MEMBER_NOT_FOUND_BY_ID("704", "멤버를 찾을 수 없습니다."),
-    AUTH_TOKEN_NOT_FOUND("705", "토큰이 유효하지 않습니다.");
+    AUTH_TOKEN_NOT_FOUND("705", "토큰이 유효하지 않습니다."),
+    AUTH_TOKEN_TIME_OUT("706", "토큰이 만료됐습니다.");
     private String code;
     private String message;
 
