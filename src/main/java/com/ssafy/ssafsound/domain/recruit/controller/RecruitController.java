@@ -32,28 +32,24 @@ public class RecruitController {
 
     @PostMapping("/recruits/{recruitId}/application")
     public EnvelopeResponse<Void> saveRecruitApplication(@PathVariable Long recruitId, AuthenticatedMember memberInfo, @RequestBody PostRecruitApplicationReqDto dto) {
-        memberInfo = AuthenticatedMember.builder().memberId(2L).build();
         recruitService.saveRecruitApplication(recruitId, memberInfo.getMemberId(), dto);
         return EnvelopeResponse.<Void>builder().build();
     }
 
     @PatchMapping("/recruit-applications/{recruitApplicationId}/approve")
     public EnvelopeResponse<Void> approveRecruitApplicationByRegister(@PathVariable Long recruitApplicationId, AuthenticatedMember memberInfo) {
-        memberInfo = AuthenticatedMember.builder().memberId(1L).build();
         recruitService.approveRecruitApplicationByRegister(recruitApplicationId, memberInfo.getMemberId(), MatchStatus.WAITING_APPLICANT);
         return EnvelopeResponse.<Void>builder().build();
     }
 
     @PatchMapping("/recruit-applications/{recruitApplicationId}/join")
     public EnvelopeResponse<Void> joinRecruitApplication(@PathVariable Long recruitApplicationId, AuthenticatedMember memberInfo) {
-        memberInfo = AuthenticatedMember.builder().memberId(2L).build();
         recruitService.joinRecruitApplication(recruitApplicationId, memberInfo.getMemberId(), MatchStatus.DONE);
         return EnvelopeResponse.<Void>builder().build();
     }
 
     @PatchMapping("/recruit-applications/{recruitApplicationId}/reject")
     public EnvelopeResponse<Void> rejectRecruitApplication(@PathVariable Long recruitApplicationId, AuthenticatedMember memberInfo) {
-        memberInfo = AuthenticatedMember.builder().memberId(2L).build();
         recruitService.rejectRecruitApplication(recruitApplicationId, memberInfo.getMemberId(), MatchStatus.REJECT);
         return EnvelopeResponse.<Void>builder().build();
     }
