@@ -42,7 +42,7 @@ public class AuthInterceptor implements HandlerInterceptor {
          */
 
         String token =  AuthorizationExtractor.extractToken("accessToken", request);
-        if(isInValidToken(token)) {
+        if(isInvalidToken(token)) {
             throw new AuthException(MemberErrorInfo.AUTH_TOKEN_NOT_FOUND);
         }
         return true;
@@ -81,7 +81,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         return !cookies.hasMoreElements();
     }
 
-    private boolean isInValidToken(String token) {
+    private boolean isInvalidToken(String token) {
         return !jwtTokenProvider.isValid(token);
     }
 }

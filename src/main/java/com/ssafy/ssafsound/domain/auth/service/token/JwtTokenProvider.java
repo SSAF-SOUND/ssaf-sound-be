@@ -66,7 +66,7 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {
-            throw new AuthException(MemberErrorInfo.AUTH_TOKEN_TIME_OUT);
+            throw new AuthException(MemberErrorInfo.AUTH_TOKEN_EXPIRED);
         }
         Long memberId = claims.get("memberId", Long.class);
         String memberRole = claims.get("memberRole", String.class);
