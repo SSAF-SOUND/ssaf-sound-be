@@ -7,6 +7,7 @@ import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
+import com.ssafy.ssafsound.infra.exception.InfraException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -97,6 +98,17 @@ public class ExceptionControllerAdvice {
         return EnvelopeResponse.builder()
                 .code(GlobalErrorInfo.NOT_FOUND.getCode())
                 .message(GlobalErrorInfo.NOT_FOUND.getMessage())
+                .build();
+    }
+
+    @ExceptionHandler(InfraException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public EnvelopeResponse InfraExceptionHandler(InfraException e){
+        log.error(e.getMessage());
+
+        return EnvelopeResponse.builder()
+                .code(e.getInfo().getCode())
+                .message(e.getInfo().getMessage())
                 .build();
     }
 }
