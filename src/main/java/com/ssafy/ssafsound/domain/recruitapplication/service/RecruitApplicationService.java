@@ -80,9 +80,9 @@ public class RecruitApplicationService {
 
         changeRecruitApplicationState(recruitApplication, memberId, status,
                 (entity, mid)-> {
-                    boolean isNotRegisterAndParticipants = (!entity.getMember().getId().equals(mid) && !entity.getRecruit().getMember().getId().equals(mid));
-                    boolean isNotValidMatchStatus = (!entity.getMatchStatus().equals(MatchStatus.WAITING_REGISTER_APPROVE) && !entity.getMatchStatus().equals(MatchStatus.WAITING_APPLICANT));
-                    return isNotRegisterAndParticipants || isNotValidMatchStatus;
+                    boolean isNotValidRegisterAndState = (!entity.getRecruit().getMember().getId().equals(mid) && !entity.getMatchStatus().equals(MatchStatus.WAITING_REGISTER_APPROVE));
+                    boolean isNotValidParticipantAndStatus = (!entity.getMember().getId().equals(mid) && !entity.getMatchStatus().equals(MatchStatus.WAITING_APPLICANT));
+                    return isNotValidRegisterAndState && isNotValidParticipantAndStatus;
                 });
     }
 
