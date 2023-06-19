@@ -6,12 +6,17 @@ import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.domain.recruit.domain.*;
+import com.ssafy.ssafsound.domain.recruit.dto.PostRecruitApplicationReqDto;
 import com.ssafy.ssafsound.domain.recruit.dto.PostRecruitReqDto;
 import com.ssafy.ssafsound.domain.recruit.dto.RecruitLimitElement;
+import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
+import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitApplicationRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitLimitationRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitScrapRepository;
+import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
+import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +54,30 @@ public class RecruitService {
                 .orElse(null);
 
         return isPreExistRecruitScrap(recruitId, memberId, recruitScrap);
+    }
+
+    @Transactional
+    public RecruitApplication saveRecruitApplication(Long recruitId, Long memberId, PostRecruitApplicationReqDto dto) {
+        Recruit recruit = recruitRepository.findByIdUsingFetchJoinRecruitLimitation(recruitId)
+                .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+
+        String recruitType = dto.getRecruitType();
+        if(!isRecruitingType(recruitType, recruit)) {
+            throw new RecruitException(RecruitErrorInfo.NOT_RECRUITING_TYPE);
+        }
+
+        RecruitApplication recruitApplication = dto.createRecruitApplicationFromPredefinedMetadata(
+                memberRepository.getReferenceById(memberId),
+                recruit,
+                metaDataConsumer.getMetaData(MetaDataType.RECRUIT_TYPE.name(), recruitType));
+
+        recruitApplicationRepository.save(recruitApplication);
+        return recruitApplication;
+    }
+
+    private boolean isRecruitingType(String recruitType, Recruit recruit) {
+        return recruit.getLimitations().stream()
+                .anyMatch(limit -> limit.getType().getName().equals(recruitType));
     }
 
     private boolean isPreExistRecruitScrap(Long recruitId, Long memberId, RecruitScrap recruitScrap) {

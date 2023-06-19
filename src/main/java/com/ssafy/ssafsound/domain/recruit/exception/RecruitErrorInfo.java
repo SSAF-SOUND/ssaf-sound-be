@@ -8,7 +8,8 @@ public enum RecruitErrorInfo {
     INVALID_CHANGE_MEMBER_OPERATION("901","유효하지 않은 사용자 정보입니다."),
     INVALID_CHANGE_COMMENT_GROUP_OPERATION("902","유효하지 않은 리크루트 QNA 입니다."),
     INVALID_CHANGE_RECRUIT_OPERATION("903","유효하지 스터티/프로젝트 모집글입니다."),
-    NOT_AUTHORIZATION_MEMBER("904","삭제 권한이 없는 사용자입니다.");
+    NOT_AUTHORIZATION_MEMBER("904","삭제 권한이 없는 사용자입니다."),
+    NOT_RECRUITING_TYPE("905", "해당 스터디/프로젝트에서 모집하지 않는 역할군입니다.");
 
     private final String code;
     private final String message;
