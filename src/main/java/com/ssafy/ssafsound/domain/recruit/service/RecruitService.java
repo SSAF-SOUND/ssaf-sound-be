@@ -78,19 +78,36 @@ public class RecruitService {
     @Transactional
     public RecruitApplication approveRecruitApplicationByRegister(Long recruitApplicationId, Long memberId, MatchStatus status) {
         RecruitApplication recruitApplication = recruitApplicationRepository.findByIdFetchRecruitWriter(recruitApplicationId)
-                .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
         return changeRecruitApplicationState(recruitApplication, memberId, status,
-                (entity, mid)-> !entity.getRecruit().getMember().getId().equals(mid));
+                (entity, mid) -> {
+                    boolean isNotRegister = !entity.getRecruit().getMember().getId().equals(mid);
+                    boolean isNotValidMatchStatus = !entity.getMatchStatus().equals(MatchStatus.WAITING_REGISTER_APPROVE);
+                    return isNotRegister || isNotValidMatchStatus;
+                });
     }
 
     @Transactional
     public RecruitApplication joinRecruitApplication(Long recruitApplicationId, Long memberId, MatchStatus status) {
-        RecruitApplication recruitApplication = recruitApplicationRepository.findByIdFetchJoinMember(recruitApplicationId)
+        RecruitApplication recruitApplication = recruitApplicationRepository.findByIdAndMemberId(recruitApplicationId, memberId)
                 .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
         return changeRecruitApplicationState(recruitApplication, memberId, status,
-                (entity, mid)-> !entity.getMember().getId().equals(mid));
+                (entity, mid)-> !entity.getMatchStatus().equals(MatchStatus.WAITING_APPLICANT));
+    }
+
+    @Transactional
+    public RecruitApplication rejectRecruitApplication(Long recruitApplicationId, Long memberId, MatchStatus status) {
+        RecruitApplication recruitApplication = recruitApplicationRepository.findByIdAndMemberIdFetchRecruitWriter(recruitApplicationId, memberId)
+                .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+
+        return changeRecruitApplicationState(recruitApplication, memberId, status,
+                (entity, mid)-> {
+                    boolean isNotRegisterAndParticipants = (!entity.getMember().getId().equals(mid) && !entity.getRecruit().getMember().getId().equals(mid));
+                    boolean isNotValidMatchStatus = (!entity.getMatchStatus().equals(MatchStatus.WAITING_REGISTER_APPROVE) && !entity.getMatchStatus().equals(MatchStatus.WAITING_APPLICANT));
+                    return isNotRegisterAndParticipants || isNotValidMatchStatus;
+                });
     }
 
     private RecruitApplication changeRecruitApplicationState(RecruitApplication recruitApplication, Long memberId,

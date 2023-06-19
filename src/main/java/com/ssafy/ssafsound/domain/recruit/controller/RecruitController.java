@@ -50,4 +50,11 @@ public class RecruitController {
         recruitService.joinRecruitApplication(recruitApplicationId, memberInfo.getMemberId(), MatchStatus.DONE);
         return EnvelopeResponse.<Void>builder().build();
     }
+
+    @PatchMapping("/recruit-applications/{recruitApplicationId}/reject")
+    public EnvelopeResponse<Void> rejectRecruitApplication(@PathVariable Long recruitApplicationId, AuthenticatedMember memberInfo) {
+        memberInfo = AuthenticatedMember.builder().memberId(2L).build();
+        recruitService.rejectRecruitApplication(recruitApplicationId, memberInfo.getMemberId(), MatchStatus.REJECT);
+        return EnvelopeResponse.<Void>builder().build();
+    }
 }
