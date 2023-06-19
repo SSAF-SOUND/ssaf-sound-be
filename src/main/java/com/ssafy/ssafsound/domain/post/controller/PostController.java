@@ -1,8 +1,6 @@
 package com.ssafy.ssafsound.domain.post.controller;
 
 import com.ssafy.ssafsound.domain.post.dto.GetPostListResDto;
-import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
-import com.ssafy.ssafsound.domain.post.exception.PostException;
 import com.ssafy.ssafsound.domain.post.service.PostService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
