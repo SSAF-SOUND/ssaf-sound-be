@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface RecruitRepository extends JpaRepository<Recruit, Long> {
-    @Query("SELECT r FROM recruit r left join fetch r.limitations")
+    @Query("SELECT r FROM recruit r left join fetch r.limitations where r.id = :recruitId")
     Optional<Recruit> findByIdUsingFetchJoinRecruitLimitation(Long recruitId);
 }

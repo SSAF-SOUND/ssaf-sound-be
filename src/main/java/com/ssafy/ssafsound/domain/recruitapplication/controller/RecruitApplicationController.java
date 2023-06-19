@@ -16,6 +16,7 @@ public class RecruitApplicationController {
 
     @PostMapping("/recruits/{recruitId}/application")
     public EnvelopeResponse<Void> saveRecruitApplication(@PathVariable Long recruitId, AuthenticatedMember memberInfo, @RequestBody PostRecruitApplicationReqDto dto) {
+        memberInfo = AuthenticatedMember.builder().memberId(2L).build();
         recruitApplicationService.saveRecruitApplication(recruitId, memberInfo.getMemberId(), dto);
         return EnvelopeResponse.<Void>builder().build();
     }

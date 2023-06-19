@@ -4,8 +4,11 @@ import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
+import com.ssafy.ssafsound.domain.recruit.domain.RecruitQuestion;
+import com.ssafy.ssafsound.domain.recruit.domain.RecruitQuestionReply;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
+import com.ssafy.ssafsound.domain.recruit.repository.RecruitQuestReplyRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
@@ -17,19 +20,23 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class RecruitApplicationService {
 
     private final RecruitRepository recruitRepository;
+    private final RecruitQuestReplyRepository recruitQuestReplyRepository;
     private final RecruitApplicationRepository recruitApplicationRepository;
     private final MemberRepository memberRepository;
     private final MetaDataConsumer metaDataConsumer;
+
     @Transactional
-    public RecruitApplication saveRecruitApplication(Long recruitId, Long memberId, PostRecruitApplicationReqDto dto) {
+    public void saveRecruitApplication(Long recruitId, Long memberId, PostRecruitApplicationReqDto dto) {
         Recruit recruit = recruitRepository.findByIdUsingFetchJoinRecruitLimitation(recruitId)
                 .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
-
         String recruitType = dto.getRecruitType();
         if(!isRecruitingType(recruitType, recruit)) {
             throw new RecruitException(RecruitErrorInfo.NOT_RECRUITING_TYPE);
@@ -39,17 +46,17 @@ public class RecruitApplicationService {
                 memberRepository.getReferenceById(memberId),
                 recruit,
                 metaDataConsumer.getMetaData(MetaDataType.RECRUIT_TYPE.name(), recruitType));
-
+        List<RecruitQuestionReply> participantAnswers = makeRecruitQuestionReplies(dto, recruit, recruitApplication);
         recruitApplicationRepository.save(recruitApplication);
-        return recruitApplication;
+        recruitQuestReplyRepository.saveAll(participantAnswers);
     }
 
     @Transactional
-    public RecruitApplication approveRecruitApplicationByRegister(Long recruitApplicationId, Long memberId, MatchStatus status) {
+    public void approveRecruitApplicationByRegister(Long recruitApplicationId, Long memberId, MatchStatus status) {
         RecruitApplication recruitApplication = recruitApplicationRepository.findByIdFetchRecruitWriter(recruitApplicationId)
                 .orElseThrow(() -> new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
-        return changeRecruitApplicationState(recruitApplication, memberId, status,
+        changeRecruitApplicationState(recruitApplication, memberId, status,
                 (entity, mid) -> {
                     boolean isNotRegister = !entity.getRecruit().getMember().getId().equals(mid);
                     boolean isNotValidMatchStatus = !entity.getMatchStatus().equals(MatchStatus.WAITING_REGISTER_APPROVE);
@@ -58,20 +65,20 @@ public class RecruitApplicationService {
     }
 
     @Transactional
-    public RecruitApplication joinRecruitApplication(Long recruitApplicationId, Long memberId, MatchStatus status) {
+    public void joinRecruitApplication(Long recruitApplicationId, Long memberId, MatchStatus status) {
         RecruitApplication recruitApplication = recruitApplicationRepository.findByIdAndMemberId(recruitApplicationId, memberId)
                 .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
-        return changeRecruitApplicationState(recruitApplication, memberId, status,
+        changeRecruitApplicationState(recruitApplication, memberId, status,
                 (entity, mid)-> !entity.getMatchStatus().equals(MatchStatus.WAITING_APPLICANT));
     }
 
     @Transactional
-    public RecruitApplication rejectRecruitApplication(Long recruitApplicationId, Long memberId, MatchStatus status) {
+    public void rejectRecruitApplication(Long recruitApplicationId, Long memberId, MatchStatus status) {
         RecruitApplication recruitApplication = recruitApplicationRepository.findByIdAndMemberIdFetchRecruitWriter(recruitApplicationId, memberId)
                 .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
-        return changeRecruitApplicationState(recruitApplication, memberId, status,
+        changeRecruitApplicationState(recruitApplication, memberId, status,
                 (entity, mid)-> {
                     boolean isNotRegisterAndParticipants = (!entity.getMember().getId().equals(mid) && !entity.getRecruit().getMember().getId().equals(mid));
                     boolean isNotValidMatchStatus = (!entity.getMatchStatus().equals(MatchStatus.WAITING_REGISTER_APPROVE) && !entity.getMatchStatus().equals(MatchStatus.WAITING_APPLICANT));
@@ -79,17 +86,38 @@ public class RecruitApplicationService {
                 });
     }
 
-    private RecruitApplication changeRecruitApplicationState(RecruitApplication recruitApplication, Long memberId,
-                                                             MatchStatus status, RecruitApplicationValidator validator) {
+    private void changeRecruitApplicationState(RecruitApplication recruitApplication, Long memberId,
+                                               MatchStatus status, RecruitApplicationValidator validator) {
         if(validator.hasError(recruitApplication, memberId)) {
             throw new RecruitException(RecruitErrorInfo.INVALID_CHANGE_MEMBER_OPERATION);
         }
         recruitApplication.changeStatus(status);
-        return recruitApplication;
     }
 
     private boolean isRecruitingType(String recruitType, Recruit recruit) {
         return recruit.getLimitations().stream()
                 .anyMatch(limit -> limit.getType().getName().equals(recruitType));
+    }
+
+    private List<RecruitQuestionReply>  makeRecruitQuestionReplies(PostRecruitApplicationReqDto dto, Recruit recruit, RecruitApplication recruitApplication) {
+        List<RecruitQuestionReply> replies = new ArrayList<>();
+        List<RecruitQuestion> recruitQuestion = recruit.getQuestions();
+        List<String> answers = dto.getContents();
+
+        int len = recruitQuestion.size();
+        if(answers.size() != len) {
+            throw new RecruitException(RecruitErrorInfo.NOT_SAME_LENGTH_RECRUIT_QUESTION_ANSWER);
+        }
+
+        for(int i=0; i<len; ++i) {
+            replies.add(
+                    RecruitQuestionReply.builder()
+                            .application(recruitApplication)
+                            .question(recruitQuestion.get(i))
+                            .content(dto.getContents().get(i))
+                            .build()
+            );
+        }
+        return replies;
     }
 }
