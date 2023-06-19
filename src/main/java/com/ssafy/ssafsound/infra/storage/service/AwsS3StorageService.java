@@ -4,6 +4,7 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
+import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.infra.exception.InfraErrorInfo;
 import com.ssafy.ssafsound.infra.exception.InfraException;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.Normalizer;
 import java.util.UUID;
 
@@ -56,18 +58,22 @@ public class AwsS3StorageService implements StorageService{
         metadata.setContentLength(multipartFile.getSize());
         metadata.setContentType(multipartFile.getContentType());
 
-        try {
-            amazonS3.putObject(bucket, fileName, multipartFile.getInputStream(), metadata);
+        try (InputStream inputStream = multipartFile.getInputStream()) {
 
-        } catch (AmazonServiceException e){
+            amazonS3.putObject(bucket, fileName, inputStream, metadata);
+
+        } catch (AmazonServiceException e) {
             log.error(e.getMessage());
             throw new InfraException(InfraErrorInfo.STORAGE_SERVICE_ERROR);
 
-        } catch (IOException e){
+        } catch (IOException e) {
             log.error(e.getMessage());
-            throw new RuntimeException();
-        } catch (Exception e){
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
+
         }
 
         log.info("S3 저장 성공 : {} 객체 저장", fileName);
