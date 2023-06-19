@@ -1,8 +1,9 @@
-package com.ssafy.ssafsound.domain.recruit.domain;
+package com.ssafy.ssafsound.domain.recruitapplication.domain;
 
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.meta.converter.RecruitTypeConverter;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
+import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

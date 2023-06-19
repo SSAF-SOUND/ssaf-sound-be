@@ -1,6 +1,6 @@
-package com.ssafy.ssafsound.domain.recruit.repository;
+package com.ssafy.ssafsound.domain.recruitapplication.repository;
 
-import com.ssafy.ssafsound.domain.recruit.domain.RecruitApplication;
+import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

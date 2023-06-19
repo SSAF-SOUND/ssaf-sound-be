@@ -1,6 +1,6 @@
-package com.ssafy.ssafsound.domain.recruit.service;
+package com.ssafy.ssafsound.domain.recruitapplication.service;
 
-import com.ssafy.ssafsound.domain.recruit.domain.RecruitApplication;
+import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 
 public interface RecruitApplicationValidator {

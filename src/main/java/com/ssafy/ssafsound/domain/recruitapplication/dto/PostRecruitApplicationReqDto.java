@@ -1,10 +1,10 @@
-package com.ssafy.ssafsound.domain.recruit.dto;
+package com.ssafy.ssafsound.domain.recruitapplication.dto;
 
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
-import com.ssafy.ssafsound.domain.recruit.domain.MatchStatus;
+import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
-import com.ssafy.ssafsound.domain.recruit.domain.RecruitApplication;
+import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -4,6 +4,7 @@ import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
+import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
