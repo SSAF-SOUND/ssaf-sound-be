@@ -1,6 +1,9 @@
 package com.ssafy.ssafsound.domain.auth.service.token;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -31,7 +34,6 @@ public class JwtTokenProvider {
     public String createAccessToken(AuthenticatedMember authenticatedMember) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + accessTokenValidTime);
-
         return Jwts.builder()
                 .claim("id", authenticatedMember.getMemberId())
                 .claim("role", authenticatedMember.getMemberRole())
@@ -61,6 +63,15 @@ public class JwtTokenProvider {
     }
 
     public boolean isValid(String token) {
-        return false;
+        try {
+            Jws<Claims> claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+
+            return claims.getBody().getExpiration().after(new Date());
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
     }
 }

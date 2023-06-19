@@ -42,9 +42,8 @@ public class AuthInterceptor implements HandlerInterceptor {
          */
 
         String token =  AuthorizationExtractor.extractToken("accessToken", request);
-
         if(isInValidToken(token)) {
-            return false;
+            throw new AuthException(MemberErrorInfo.AUTH_TOKEN_NOT_FOUND);
         }
         return true;
     }
