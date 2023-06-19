@@ -38,4 +38,8 @@ public class RecruitApplication {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public void changeStatus(MatchStatus matchStatus) {
+        this.matchStatus = matchStatus;
+    }
 }

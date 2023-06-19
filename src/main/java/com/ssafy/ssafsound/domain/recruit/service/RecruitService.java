@@ -75,6 +75,33 @@ public class RecruitService {
         return recruitApplication;
     }
 
+    @Transactional
+    public RecruitApplication approveRecruitApplicationByRegister(Long recruitApplicationId, Long memberId, MatchStatus status) {
+        RecruitApplication recruitApplication = recruitApplicationRepository.findByIdFetchRecruitWriter(recruitApplicationId)
+                .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+
+        return changeRecruitApplicationState(recruitApplication, memberId, status,
+                (entity, mid)-> !entity.getRecruit().getMember().getId().equals(mid));
+    }
+
+    @Transactional
+    public RecruitApplication joinRecruitApplication(Long recruitApplicationId, Long memberId, MatchStatus status) {
+        RecruitApplication recruitApplication = recruitApplicationRepository.findByIdFetchJoinMember(recruitApplicationId)
+                .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+
+        return changeRecruitApplicationState(recruitApplication, memberId, status,
+                (entity, mid)-> !entity.getMember().getId().equals(mid));
+    }
+
+    private RecruitApplication changeRecruitApplicationState(RecruitApplication recruitApplication, Long memberId,
+                                                             MatchStatus status, RecruitApplicationValidator validator) {
+        if(validator.hasError(recruitApplication, memberId)) {
+            throw new RecruitException(RecruitErrorInfo.INVALID_CHANGE_MEMBER_OPERATION);
+        }
+        recruitApplication.changeStatus(status);
+        return recruitApplication;
+    }
+
     private boolean isRecruitingType(String recruitType, Recruit recruit) {
         return recruit.getLimitations().stream()
                 .anyMatch(limit -> limit.getType().getName().equals(recruitType));
