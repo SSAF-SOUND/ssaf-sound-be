@@ -1,22 +1,25 @@
 package com.ssafy.ssafsound.global.interceptor;
 
+import com.ssafy.ssafsound.domain.auth.exception.AuthException;
+import com.ssafy.ssafsound.domain.auth.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.auth.service.token.JwtTokenProvider;
 import com.ssafy.ssafsound.domain.auth.validator.AuthorizationExtractor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Objects;
+import java.util.Enumeration;
 
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AuthInterceptor implements HandlerInterceptor {
     private final JwtTokenProvider jwtTokenProvider;
+    private static final String COOKIE = "Set-Cookie";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -30,11 +33,15 @@ public class AuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        if (isNotExistHeader(request)) {
-            return false;
+        if (isNotExistCookie(request)) {
+            throw new AuthException(MemberErrorInfo.AUTH_TOKEN_NOT_FOUND);
         }
 
-        String token =  AuthorizationExtractor.extractAccessToken(request);
+        /**
+         * 차 후, 이 곳에 리프레시 토큰 재발급 요청이 왔으면 리프레시 토큰 검증로직 추가 예정
+         */
+
+        String token =  AuthorizationExtractor.extractToken("accessToken", request);
 
         if(isInValidToken(token)) {
             return false;
@@ -70,9 +77,9 @@ public class AuthInterceptor implements HandlerInterceptor {
         return request.getRequestURI().contains("/posts") && request.getMethod().equalsIgnoreCase("GET");
     }
 
-    private boolean isNotExistHeader(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        return Objects.isNull(authorizationHeader);
+    private boolean isNotExistCookie(HttpServletRequest request) {
+        Enumeration<String> cookies = request.getHeaders(COOKIE);
+        return !cookies.hasMoreElements();
     }
 
     private boolean isInValidToken(String token) {

@@ -50,6 +50,7 @@ public class AuthController {
     public Cookie setCookieWithOptions(String name, String value) {
         Cookie cookie = new Cookie(name, value);
         cookie.setHttpOnly(true);
+        cookie.setMaxAge(2629744);
         cookie.setSecure(true);
         cookie.setPath("/");
         return cookie;
