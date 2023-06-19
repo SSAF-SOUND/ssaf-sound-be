@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum PostErrorInfo {
-    NO_BOARD_ID("801", "존재하지 않는 게시글 입니다.");
+    INVALID_POST("802", "존재하지 않는 게시글 입니다.");
 
     private final String code;
     private final String message;
