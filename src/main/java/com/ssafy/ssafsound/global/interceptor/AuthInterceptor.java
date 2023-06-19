@@ -9,9 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Enumeration;
 
 
 @Slf4j
@@ -77,8 +77,8 @@ public class AuthInterceptor implements HandlerInterceptor {
     }
 
     private boolean isNotExistCookie(HttpServletRequest request) {
-        Enumeration<String> cookies = request.getHeaders(COOKIE);
-        return !cookies.hasMoreElements();
+        Cookie[] cookies = request.getCookies();
+        return !(cookies.length > 0);
     }
 
     private boolean isInvalidToken(String token) {
