@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class RecruitApplicationController {
 
-    private RecruitApplicationService recruitApplicationService;
+    private final RecruitApplicationService recruitApplicationService;
 
     @PostMapping("/recruits/{recruitId}/application")
     public EnvelopeResponse<Void> saveRecruitApplication(@PathVariable Long recruitId, AuthenticatedMember memberInfo, @RequestBody PostRecruitApplicationReqDto dto) {
