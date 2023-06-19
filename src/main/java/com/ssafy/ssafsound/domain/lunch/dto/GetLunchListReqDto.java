@@ -16,6 +16,6 @@ public class GetLunchListReqDto {
     @NotBlank
     private String campus;
 
-    @DateTimeFormat(pattern = "yyyyMMdd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 }
