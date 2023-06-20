@@ -1,7 +1,9 @@
 package com.ssafy.ssafsound.domain.auth.service.token;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
-import io.jsonwebtoken.Jwts;
+import com.ssafy.ssafsound.domain.auth.exception.AuthException;
+import com.ssafy.ssafsound.domain.auth.exception.MemberErrorInfo;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.security.Keys;
@@ -31,10 +33,9 @@ public class JwtTokenProvider {
     public String createAccessToken(AuthenticatedMember authenticatedMember) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + accessTokenValidTime);
-
         return Jwts.builder()
-                .claim("id", authenticatedMember.getMemberId())
-                .claim("role", authenticatedMember.getMemberRole())
+                .claim("memberId", authenticatedMember.getMemberId())
+                .claim("memberRole", authenticatedMember.getMemberRole())
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(key)
@@ -57,10 +58,35 @@ public class JwtTokenProvider {
     }
 
     public AuthenticatedMember getParsedClaims(String token) {
-        return null;
+        Claims claims;
+        try {
+            claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            throw new AuthException(MemberErrorInfo.AUTH_TOKEN_EXPIRED);
+        }
+        Long memberId = claims.get("memberId", Long.class);
+        String memberRole = claims.get("memberRole", String.class);
+
+        return AuthenticatedMember.builder()
+                .memberId(memberId)
+                .memberRole(memberRole)
+                .build();
     }
 
     public boolean isValid(String token) {
-        return false;
+        try {
+            Jws<Claims> claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+
+            return claims.getBody().getExpiration().after(new Date());
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
     }
 }

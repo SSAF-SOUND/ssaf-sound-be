@@ -38,6 +38,7 @@ public class AuthController {
         PostMemberReqDto postMemberReqDto = authService.login(createMemberReqDto);
         AuthenticatedMember authenticatedMember = memberService.createMemberByOauthIdentifier(postMemberReqDto);
         CreateMemberTokensResDto createMemberTokensResDto = authService.createToken(authenticatedMember);
+        memberService.saveTokenByMember(authenticatedMember, createMemberTokensResDto.getAccessToken(), createMemberTokensResDto.getRefreshToken());
         Cookie accessTokenCookie = setCookieWithOptions("accessToken", createMemberTokensResDto.getAccessToken());
         Cookie refreshTokenCookie = setCookieWithOptions("refreshToken", createMemberTokensResDto.getRefreshToken());
         response.addCookie(accessTokenCookie);
@@ -50,6 +51,7 @@ public class AuthController {
     public Cookie setCookieWithOptions(String name, String value) {
         Cookie cookie = new Cookie(name, value);
         cookie.setHttpOnly(true);
+        cookie.setMaxAge(2629744);
         cookie.setSecure(true);
         cookie.setPath("/");
         return cookie;
