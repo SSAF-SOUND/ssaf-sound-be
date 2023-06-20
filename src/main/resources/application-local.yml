@@ -19,6 +19,7 @@ spring:
       enabled: true
 
   config:
-    import: 
+    import:
         - application-oauth.yml
+        - application-security.yml
         - application-cloud.yml
