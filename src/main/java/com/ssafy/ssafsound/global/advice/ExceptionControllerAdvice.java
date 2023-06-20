@@ -116,7 +116,18 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(BoardException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public EnvelopeResponse PostExceptionHandler(BoardException e){
+    public EnvelopeResponse BoardExceptionHandler(BoardException e){
+        log.error(e.getMessage());
+
+        return EnvelopeResponse.builder()
+                .code(e.getInfo().getCode())
+                .message(e.getInfo().getMessage())
+                .build();
+    }
+
+    @ExceptionHandler(PostException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public EnvelopeResponse PostExceptionHandler(PostException e){
         log.error(e.getMessage());
 
         return EnvelopeResponse.builder()

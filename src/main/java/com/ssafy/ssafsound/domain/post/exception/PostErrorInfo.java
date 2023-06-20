@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum PostErrorInfo {
-    INVALID_POST("802", "존재하지 않는 게시글 입니다.");
+    INVALID_POST("802", "게시물을 찾을 수 없습니다.");
 
     private final String code;
     private final String message;
