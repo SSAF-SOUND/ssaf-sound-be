@@ -41,7 +41,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public GetPostDetailListResDto findPost(Long postId, AuthenticatedMember authenticatedMember) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException(PostErrorInfo.INVALID_POST));
+                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND));
 
         return new GetPostDetailListResDto(Optional.of(post)
                 .stream()
