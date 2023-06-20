@@ -43,7 +43,7 @@ public class AuthService {
 
     public PostMemberReqDto login(CreateMemberReqDto createMemberReqDto) {
         OauthProvider oauthProvider = oauthProviderFactory.from(createMemberReqDto.getOauthName());
-        String accessToken = oauthProvider.getOauthAccessToken(createMemberReqDto.getCode());;
+        String accessToken = oauthProvider.getOauthAccessToken(createMemberReqDto.getCode());
         return oauthProvider.getMemberOauthIdentifier(accessToken, createMemberReqDto.getOauthName());
     }
 
@@ -63,5 +63,10 @@ public class AuthService {
                 memberTokenRepository.deleteById(authenticatedMember.getMemberId());
             }
         }
+    }
+
+    @Transactional(readOnly = true)
+    public void validateRefreshToken(String refreshToken) {
+
     }
 }
