@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.recruit.domain;
 
+import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

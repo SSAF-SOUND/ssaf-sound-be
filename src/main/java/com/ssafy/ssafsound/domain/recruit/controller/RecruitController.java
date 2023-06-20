@@ -16,15 +16,15 @@ public class RecruitController {
 
     private final RecruitService recruitService;
 
-    @PostMapping("")
-    public EnvelopeResponse<Void> saveRecruit(AuthenticatedMember userInfo, @Valid @RequestBody PostRecruitReqDto recruitReqDto) {
-        recruitService.saveRecruit(userInfo, recruitReqDto);
+    @PostMapping
+    public EnvelopeResponse<Void> saveRecruit(AuthenticatedMember memberInfo, @Valid @RequestBody PostRecruitReqDto recruitReqDto) {
+        recruitService.saveRecruit(memberInfo, recruitReqDto);
         return EnvelopeResponse.<Void>builder().build();
     }
 
-    @PostMapping("/recruits/{recruitId}/scrap")
-    public EnvelopeResponse<Void> toggleRecruitScrap(@PathVariable Long recruitId, AuthenticatedMember userInfo) {
-        recruitService.toggleRecruitScrap(recruitId, userInfo.getMemberId());
+    @PostMapping("/{recruitId}/scrap")
+    public EnvelopeResponse<Void> toggleRecruitScrap(@PathVariable Long recruitId, AuthenticatedMember memberInfo) {
+        recruitService.toggleRecruitScrap(recruitId, memberInfo.getMemberId());
         return EnvelopeResponse.<Void>builder().build();
     }
 }
