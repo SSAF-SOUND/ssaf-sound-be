@@ -2,9 +2,11 @@ package com.ssafy.ssafsound.global.advice;
 
 
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
+import com.ssafy.ssafsound.domain.board.exception.BoardException;
 import com.ssafy.ssafsound.domain.lunch.exception.LunchException;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
+import com.ssafy.ssafsound.domain.post.exception.PostException;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
@@ -117,6 +119,16 @@ public class ExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public EnvelopeResponse RecruitExceptionHandler(RecruitException e) {
         e.printStackTrace();
+        return EnvelopeResponse.builder()
+                .code(e.getInfo().getCode())
+                .message(e.getInfo().getMessage())
+                .build();
+    }
+
+    @ExceptionHandler(BoardException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public EnvelopeResponse PostExceptionHandler(BoardException e) {
+        log.error(e.getMessage());
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
                 .message(e.getInfo().getMessage())
