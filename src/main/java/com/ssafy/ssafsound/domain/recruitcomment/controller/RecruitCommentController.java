@@ -19,7 +19,6 @@ public class RecruitCommentController {
     @PostMapping("/recruits/{recruitId}/comments")
     public EnvelopeResponse<PostRecruitCommentResDto> saveRecruitComment(@PathVariable Long recruitId, AuthenticatedMember memberInfo,
                                                                          @RequestBody PostRecruitCommentReqDto dto) {
-        memberInfo = AuthenticatedMember.builder().memberId(1L).build();
         return EnvelopeResponse.<PostRecruitCommentResDto>builder()
                 .code(String.valueOf(HttpStatus.OK))
                 .message("success")
@@ -29,24 +28,19 @@ public class RecruitCommentController {
 
     @DeleteMapping("/recruit-comments/{recruitCommentId}")
     public EnvelopeResponse<Void> deleteRecruitComment(@PathVariable Long recruitCommentId, AuthenticatedMember memberInfo) {
-        memberInfo = AuthenticatedMember.builder().memberId(1L).build();
         recruitCommentService.deleteRecruitComment(recruitCommentId, memberInfo);
-
         return EnvelopeResponse.<Void>builder().build();
     }
 
     @PatchMapping("/recruit-comments/{recruitCommentId}")
     public EnvelopeResponse<Void> updateRecruitComment(@PathVariable Long recruitCommentId, AuthenticatedMember memberInfo,
                                                        @RequestBody PatchRecruitCommentReqDto dto) {
-        memberInfo = AuthenticatedMember.builder().memberId(1L).build();
         recruitCommentService.updateRecruitComment(recruitCommentId, memberInfo, dto);
-
         return EnvelopeResponse.<Void>builder().build();
     }
 
     @PostMapping("/recruit-comments/{recruitCommentId}/like")
     public EnvelopeResponse<Void> toggleRecruitCommentLike(@PathVariable Long recruitCommentId, AuthenticatedMember memberInfo) {
-        memberInfo = AuthenticatedMember.builder().memberId(1L).build();
         recruitCommentService.toggleRecruitCommentLike(recruitCommentId, memberInfo.getMemberId());
         return EnvelopeResponse.<Void>builder().build();
     }
