@@ -9,8 +9,12 @@ import com.ssafy.ssafsound.domain.auth.service.oauth.OauthProvider;
 import com.ssafy.ssafsound.domain.auth.service.oauth.OauthProviderFactory;
 import com.ssafy.ssafsound.domain.auth.service.token.JwtTokenProvider;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
+import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
@@ -19,10 +23,12 @@ public class AuthService {
 
     private final OauthProviderFactory oauthProviderFactory;
     private final JwtTokenProvider jwtTokenProvider;
+    private final MemberTokenRepository memberTokenRepository;
 
-    public AuthService(OauthProviderFactory oauthProviderFactory, JwtTokenProvider jwtTokenProvider) {
+    public AuthService(OauthProviderFactory oauthProviderFactory, JwtTokenProvider jwtTokenProvider, MemberTokenRepository memberTokenRepository) {
         this.oauthProviderFactory = oauthProviderFactory;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.memberTokenRepository = memberTokenRepository;
     }
 
     public void sendRedirectURL(String oauthName, HttpServletResponse response) {
@@ -46,5 +52,16 @@ public class AuthService {
                 .accessToken(jwtTokenProvider.createAccessToken(authenticatedMember))
                 .refreshToken(jwtTokenProvider.createRefreshToken())
                 .build();
+    }
+
+    @Transactional
+    public void deleteTokensByCookie(Cookie[] cookies) {
+        for (Cookie cookie : cookies) {
+            String token = cookie.getValue();
+            if (jwtTokenProvider.isValid(token) && cookie.getName().equals("accessToken")) {
+                AuthenticatedMember authenticatedMember = jwtTokenProvider.getParsedClaims(token);
+                memberTokenRepository.deleteById(authenticatedMember.getMemberId());
+            }
+        }
     }
 }

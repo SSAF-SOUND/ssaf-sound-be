@@ -53,7 +53,9 @@ public class AuthController {
     @GetMapping("/logout")
     public EnvelopeResponse logout(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
-        if (!Objects.nonNull(cookies)) {
+
+        if (Objects.nonNull(cookies)) {
+            authService.deleteTokensByCookie(cookies);
             Cookie accessTokenCookie = deleteCookie("accessToken", null);
             Cookie refreshTokenCookie = deleteCookie("refreshToken", null);
             response.addCookie(accessTokenCookie);
