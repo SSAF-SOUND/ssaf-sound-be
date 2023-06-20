@@ -30,7 +30,7 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public EnvelopeResponse<GetPostDetailListResDto> findPost(@Authentication AuthenticatedMember authenticatedMember, @PathVariable Long postId) {
+    public EnvelopeResponse<GetPostDetailListResDto> findPost(AuthenticatedMember authenticatedMember, @PathVariable Long postId) {
         return EnvelopeResponse.<GetPostDetailListResDto>builder()
                 .data(postService.findPost(postId, authenticatedMember))
                 .build();
