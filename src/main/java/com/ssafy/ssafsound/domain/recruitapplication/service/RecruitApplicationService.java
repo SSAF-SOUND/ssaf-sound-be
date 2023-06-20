@@ -14,6 +14,7 @@ import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.PostRecruitApplicationReqDto;
 import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicationRepository;
+import com.ssafy.ssafsound.domain.recruitapplication.validator.RecruitApplicationValidator;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -34,19 +35,19 @@ public class RecruitApplicationService {
     private final MetaDataConsumer metaDataConsumer;
 
     @Transactional
-    public void saveRecruitApplication(Long recruitId, Long memberId, PostRecruitApplicationReqDto dto) {
+    public void saveRecruitApplication(Long recruitId, Long memberId, PostRecruitApplicationReqDto postRecruitApplicationReqDto) {
         Recruit recruit = recruitRepository.findByIdUsingFetchJoinRecruitLimitation(recruitId)
                 .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
-        String recruitType = dto.getRecruitType();
+        String recruitType = postRecruitApplicationReqDto.getRecruitType();
         if(!isRecruitingType(recruitType, recruit)) {
             throw new RecruitException(RecruitErrorInfo.NOT_RECRUITING_TYPE);
         }
 
-        RecruitApplication recruitApplication = dto.createRecruitApplicationFromPredefinedMetadata(
+        RecruitApplication recruitApplication = postRecruitApplicationReqDto.createRecruitApplicationFromPredefinedMetadata(
                 memberRepository.getReferenceById(memberId),
                 recruit,
                 metaDataConsumer.getMetaData(MetaDataType.RECRUIT_TYPE.name(), recruitType));
-        List<RecruitQuestionReply> participantAnswers = makeRecruitQuestionReplies(dto, recruit, recruitApplication);
+        List<RecruitQuestionReply> participantAnswers = makeRecruitQuestionReplies(postRecruitApplicationReqDto, recruit, recruitApplication);
         recruitApplicationRepository.save(recruitApplication);
         recruitQuestReplyRepository.saveAll(participantAnswers);
     }

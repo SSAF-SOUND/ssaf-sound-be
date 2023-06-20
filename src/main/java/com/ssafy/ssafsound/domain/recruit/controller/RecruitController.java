@@ -10,19 +10,19 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/recruits")
 @RequiredArgsConstructor
 public class RecruitController {
 
     private final RecruitService recruitService;
 
-    @PostMapping("/recruits")
+    @PostMapping
     public EnvelopeResponse<Void> saveRecruit(AuthenticatedMember memberInfo, @Valid @RequestBody PostRecruitReqDto recruitReqDto) {
         recruitService.saveRecruit(memberInfo, recruitReqDto);
         return EnvelopeResponse.<Void>builder().build();
     }
 
-    @PostMapping("/recruits/{recruitId}/scrap")
+    @PostMapping("/{recruitId}/scrap")
     public EnvelopeResponse<Void> toggleRecruitScrap(@PathVariable Long recruitId, AuthenticatedMember memberInfo) {
         recruitService.toggleRecruitScrap(recruitId, memberInfo.getMemberId());
         return EnvelopeResponse.<Void>builder().build();
