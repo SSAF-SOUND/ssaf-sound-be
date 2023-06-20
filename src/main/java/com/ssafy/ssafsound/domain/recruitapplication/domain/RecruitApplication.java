@@ -23,9 +23,6 @@ public class RecruitApplication {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private Boolean publicProfile;
-
     @Enumerated(EnumType.STRING)
     private MatchStatus matchStatus;
 

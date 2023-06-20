@@ -18,15 +18,13 @@ import java.util.List;
 public class PostRecruitApplicationReqDto {
 
     private String recruitType;
-    private Boolean publicProfile;
-    private List<String> contents = new ArrayList<>();
+    private final List<String> contents = new ArrayList<>();
 
     public RecruitApplication createRecruitApplicationFromPredefinedMetadata(Member member, Recruit recruit, MetaData recruitType) {
         return RecruitApplication.builder()
                 .member(member)
                 .recruit(recruit)
                 .type(recruitType)
-                .publicProfile(this.publicProfile)
                 .matchStatus(MatchStatus.WAITING_REGISTER_APPROVE)
                 .build();
     }
