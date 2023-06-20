@@ -4,7 +4,6 @@ import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.validator.Authentication;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailListResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostListResDto;
-import com.ssafy.ssafsound.domain.post.dto.GetPostReqDto;
 import com.ssafy.ssafsound.domain.post.service.PostService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
@@ -32,12 +31,6 @@ public class PostController {
 
     @GetMapping("/{postId}")
     public EnvelopeResponse<GetPostDetailListResDto> findPost(@Authentication AuthenticatedMember authenticatedMember, @PathVariable Long postId) {
-//        AuthenticatedMember authenticatedMember = AuthenticatedMember.builder()
-//                .memberId(1L)
-//                .memberRole("NORMAL")
-//                .build();
-//
-//        log.info("사용자 정보 : " + authenticatedMember.getMemberId() + " / " + authenticatedMember.getMemberRole());
         return EnvelopeResponse.<GetPostDetailListResDto>builder()
                 .data(postService.findPost(postId, authenticatedMember))
                 .build();
