@@ -87,6 +87,16 @@ public class RecruitApplicationService {
                 });
     }
 
+    @Transactional
+    public void cancelRecruitApplicationByParticipant(Long recruitApplicationId, Long memberId, MatchStatus status) {
+        RecruitApplication recruitApplication = recruitApplicationRepository.findByIdAndMemberId(recruitApplicationId, memberId)
+                .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+
+        changeRecruitApplicationState(recruitApplication, memberId, status,
+                (entity, mid)-> recruitApplication.getMatchStatus() != MatchStatus.WAITING_REGISTER_APPROVE
+        );
+    }
+
     private void changeRecruitApplicationState(RecruitApplication recruitApplication, Long memberId,
                                                MatchStatus status, RecruitApplicationValidator validator) {
         if(validator.hasError(recruitApplication, memberId)) {
