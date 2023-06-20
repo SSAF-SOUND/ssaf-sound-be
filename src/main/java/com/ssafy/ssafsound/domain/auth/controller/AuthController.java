@@ -10,8 +10,10 @@ import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/auth")
@@ -48,10 +50,31 @@ public class AuthController {
                 .build();
     }
 
+    @GetMapping("/logout")
+    public EnvelopeResponse logout(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        if (!Objects.nonNull(cookies)) {
+            Cookie accessTokenCookie = deleteCookie("accessToken", null);
+            Cookie refreshTokenCookie = deleteCookie("refreshToken", null);
+            response.addCookie(accessTokenCookie);
+            response.addCookie(refreshTokenCookie);
+        }
+        return EnvelopeResponse.builder().build();
+    }
+
     public Cookie setCookieWithOptions(String name, String value) {
         Cookie cookie = new Cookie(name, value);
         cookie.setHttpOnly(true);
         cookie.setMaxAge(2629744);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        return cookie;
+    }
+
+    public Cookie deleteCookie(String name, String value) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);
         cookie.setSecure(true);
         cookie.setPath("/");
         return cookie;
