@@ -1,7 +1,7 @@
 package com.ssafy.ssafsound.domain.auth.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
-import com.ssafy.ssafsound.domain.auth.dto.CreateAccessTokenResDto;
+import com.ssafy.ssafsound.domain.auth.dto.CreateMemberAccessTokenResDto;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberReqDto;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberTokensResDto;
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
@@ -78,13 +78,13 @@ public class AuthService {
     }
 
     @Transactional
-    public CreateAccessTokenResDto reIssueAccessToken(Long memberId) {
+    public CreateMemberAccessTokenResDto reissueAccessToken(Long memberId) {
         MemberToken memberToken = memberTokenRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_TOKEN_NOT_FOUND));
         Member member = memberToken.getMember();
         String accessToken = jwtTokenProvider.createAccessToken(AuthenticatedMember.of(member));
         memberToken.changeAccessTokenByRefreshToken(accessToken);
         memberTokenRepository.save(memberToken);
-        return CreateAccessTokenResDto.of(accessToken);
+        return CreateMemberAccessTokenResDto.of(accessToken);
     }
 
     public boolean isNotEqualRefreshToken(String refreshTokenByCookie, String refreshTokenBySaved) {

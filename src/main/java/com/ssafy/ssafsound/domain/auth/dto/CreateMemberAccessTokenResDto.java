@@ -5,11 +5,11 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class CreateAccessTokenResDto {
+public class CreateMemberAccessTokenResDto {
     private String accessToken;
 
-    public static CreateAccessTokenResDto of(String accessToken) {
-        return CreateAccessTokenResDto.builder()
+    public static CreateMemberAccessTokenResDto of(String accessToken) {
+        return CreateMemberAccessTokenResDto.builder()
                 .accessToken(accessToken)
                 .build();
     }
