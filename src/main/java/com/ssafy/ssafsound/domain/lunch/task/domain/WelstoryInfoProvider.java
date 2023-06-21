@@ -2,11 +2,11 @@ package com.ssafy.ssafsound.domain.lunch.task.domain;
 
 import com.ssafy.ssafsound.domain.lunch.exception.LunchErrorInfo;
 import com.ssafy.ssafsound.domain.lunch.exception.LunchException;
-import com.ssafy.ssafsound.domain.meta.domain.Campus;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -38,7 +38,7 @@ public class WelstoryInfoProvider implements ScrapInfoProvider{
 
         try {
             ResponseEntity<Map> response = restTemplate.postForEntity(
-                    this.info.get("url"),
+                    this.credentials.url,
                     new HttpEntity<>(parameters),
                     Map.class
             );
@@ -52,7 +52,7 @@ public class WelstoryInfoProvider implements ScrapInfoProvider{
     }
 
     @Override
-    public Map<String, String> scrapLunchInfo(MetaData campus) {
+    public JSONObject scrapLunchInfo(MetaData campus) {
 
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
         HttpHeaders headers = getSessionHeader();
@@ -65,7 +65,7 @@ public class WelstoryInfoProvider implements ScrapInfoProvider{
 
         return restTemplate.getForEntity(
                 this.info.get("url"),
-                Map.class,
+                JSONObject.class,
                 httpEntity).getBody();
     }
 

@@ -16,6 +16,6 @@ public class ScrapInfoProviderFactory {
     }
 
     public ScrapInfoProvider getProviderFrom(String providerType) {
-        this.scrapInfosProviders.get(providerType);
+        return this.scrapInfosProviders.get(providerType);
     }
 }

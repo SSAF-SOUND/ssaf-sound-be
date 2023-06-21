@@ -1,9 +1,8 @@
 package com.ssafy.ssafsound.domain.lunch.task.domain;
 
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
-
-import java.util.Map;
+import org.json.JSONObject;
 
 public interface ScrapInfoProvider {
-    Map scrapLunchInfo(MetaData campus);
+    JSONObject scrapLunchInfo(MetaData campus);
 }
