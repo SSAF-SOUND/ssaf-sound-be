@@ -18,6 +18,8 @@ import com.ssafy.ssafsound.domain.post.repository.HotPostRepository;
 import com.ssafy.ssafsound.domain.post.repository.PostLikeRepository;
 import com.ssafy.ssafsound.domain.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +28,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PostService {
+    @Value("${spring.constant.post.HOT_POST_LIKE}")
+    private Integer HOT_POST_LIKE;
+
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
@@ -93,7 +99,7 @@ public class PostService {
 
 
     private boolean isSelectedHotPost(Long postId) {
-        return postLikeRepository.countByPostId(postId) >= 10;
+        return postLikeRepository.countByPostId(postId) >= HOT_POST_LIKE;
     }
 
     private void saveHotPost(Long postId) {

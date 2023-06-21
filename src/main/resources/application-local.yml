@@ -4,6 +4,10 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
 
+  constant:
+    post:
+      HOT_POST_LIKE: 10
+
   jpa:
     hibernate:
       ddl-auto: create
