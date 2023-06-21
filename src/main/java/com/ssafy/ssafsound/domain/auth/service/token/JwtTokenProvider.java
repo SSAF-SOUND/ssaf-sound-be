@@ -42,11 +42,12 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String createRefreshToken() {
+    public String createRefreshToken(AuthenticatedMember authenticatedMember) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + refreshTokenValidTime);
 
         return Jwts.builder()
+                .claim("memberId", authenticatedMember.getMemberId())
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(key)

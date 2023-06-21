@@ -13,7 +13,6 @@ import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
@@ -50,7 +49,7 @@ public class AuthService {
     public CreateMemberTokensResDto createToken(AuthenticatedMember authenticatedMember) {
         return CreateMemberTokensResDto.builder()
                 .accessToken(jwtTokenProvider.createAccessToken(authenticatedMember))
-                .refreshToken(jwtTokenProvider.createRefreshToken())
+                .refreshToken(jwtTokenProvider.createRefreshToken(authenticatedMember))
                 .build();
     }
 
