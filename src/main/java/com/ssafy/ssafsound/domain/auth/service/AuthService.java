@@ -15,13 +15,10 @@ import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
-@Slf4j
 @Service
 public class AuthService {
 
@@ -59,14 +56,15 @@ public class AuthService {
     }
 
     @Transactional
-    public void deleteTokensByCookie(Cookie[] cookies) {
-        for (Cookie cookie : cookies) {
-            String token = cookie.getValue();
-            if (jwtTokenProvider.isValid(token) && cookie.getName().equals("accessToken")) {
-                AuthenticatedMember authenticatedMember = jwtTokenProvider.getParsedClaims(token);
-                memberTokenRepository.deleteById(authenticatedMember.getMemberId());
-            }
+    public void deleteTokens(String accessToken, String refreshToken) {
+        Long memberId = null;
+        if (jwtTokenProvider.isValid(accessToken)) {
+            AuthenticatedMember authenticatedMember = jwtTokenProvider.getParsedClaims(accessToken);
+            memberId = authenticatedMember.getMemberId();
+        } else if (jwtTokenProvider.isValid(refreshToken)) {
+            memberId = jwtTokenProvider.getMemberIdByRefreshToken(refreshToken);
         }
+        if(memberId != null) memberTokenRepository.deleteById(memberId);
     }
 
     @Transactional(readOnly = true)

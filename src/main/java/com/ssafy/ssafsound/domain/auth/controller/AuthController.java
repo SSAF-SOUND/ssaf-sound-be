@@ -5,17 +5,13 @@ import com.ssafy.ssafsound.domain.auth.dto.CreateMemberAccessTokenResDto;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberReqDto;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberTokensResDto;
 import com.ssafy.ssafsound.domain.auth.service.AuthService;
-import com.ssafy.ssafsound.domain.auth.validator.AuthorizationExtractor;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import com.ssafy.ssafsound.domain.member.service.MemberService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/auth")
@@ -36,19 +32,19 @@ public class AuthController {
     }
 
     @GetMapping("/logout")
-    public EnvelopeResponse logout(HttpServletRequest request, HttpServletResponse response) {
-        Cookie[] cookies = request.getCookies();
+    public EnvelopeResponse logout(@CookieValue(value = "accessToken", defaultValue = "") String accessToken,
+                                   @CookieValue(value = "refreshToken", defaultValue = "") String refreshToken,
+                                   HttpServletResponse response) {
 
-        if (Objects.nonNull(cookies)) {
-            authService.deleteTokensByCookie(cookies);
+        if (!accessToken.equals("") || !refreshToken.equals("")) {
+            authService.deleteTokens(accessToken, refreshToken);
             setResponseWithCookies(response, null, null);
         }
         return EnvelopeResponse.builder().build();
     }
 
     @GetMapping("/reissue")
-    public EnvelopeResponse<CreateMemberAccessTokenResDto> reissue(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = AuthorizationExtractor.extractToken("refreshToken", request);
+    public EnvelopeResponse<CreateMemberAccessTokenResDto> reissue(@CookieValue("refreshToken") String refreshToken, HttpServletResponse response) {
         Long memberId = authService.validateRefreshToken(refreshToken);
         CreateMemberAccessTokenResDto createMemberAccessTokenResDto = authService.reissueAccessToken(memberId);
         Cookie accessTokenCookie = setCookieWithOptions("accessToken", createMemberAccessTokenResDto.getAccessToken());
