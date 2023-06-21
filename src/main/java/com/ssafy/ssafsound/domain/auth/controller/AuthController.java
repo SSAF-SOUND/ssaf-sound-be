@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.domain.auth.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
+import com.ssafy.ssafsound.domain.auth.dto.CreateAccessTokenResDto;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberReqDto;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberTokensResDto;
 import com.ssafy.ssafsound.domain.auth.service.AuthService;
@@ -49,10 +50,14 @@ public class AuthController {
     }
 
     @GetMapping("/reissue")
-    public EnvelopeResponse<CreateMemberTokensResDto> reissue(HttpServletRequest request) {
+    public EnvelopeResponse<CreateAccessTokenResDto> reIssue(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = AuthorizationExtractor.extractToken("refreshToken", request);
-        authService.validateRefreshToken(refreshToken);
-        return EnvelopeResponse.<CreateMemberTokensResDto>builder()
+        Long memberId = authService.validateRefreshToken(refreshToken);
+        CreateAccessTokenResDto createAccessTokenResDto = authService.reIssueAccessToken(memberId);
+        Cookie accessTokenCookie = setCookieWithOptions("accessToken", createAccessTokenResDto.getAccessToken());
+        response.addCookie(accessTokenCookie);
+        return EnvelopeResponse.<CreateAccessTokenResDto>builder()
+                .data(createAccessTokenResDto)
                 .build();
     }
 
