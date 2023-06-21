@@ -1,7 +1,7 @@
 package com.ssafy.ssafsound.domain.auth.validator;
 
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
-import com.ssafy.ssafsound.domain.auth.exception.MemberErrorInfo;
+import com.ssafy.ssafsound.domain.auth.exception.AuthErrorInfo;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import javax.servlet.http.Cookie;
@@ -18,6 +18,6 @@ public class AuthorizationExtractor {
                 return cookie.getValue();
             }
         }
-        throw new AuthException(MemberErrorInfo.AUTH_TOKEN_NOT_FOUND);
+        throw new AuthException(AuthErrorInfo.AUTH_TOKEN_INVALID);
     }
 }
