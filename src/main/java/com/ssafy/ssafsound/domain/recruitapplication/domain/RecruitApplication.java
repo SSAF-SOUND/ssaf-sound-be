@@ -1,8 +1,9 @@
-package com.ssafy.ssafsound.domain.recruit.domain;
+package com.ssafy.ssafsound.domain.recruitapplication.domain;
 
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.meta.converter.RecruitTypeConverter;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
+import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +23,9 @@ public class RecruitApplication {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
+    private Boolean publicProfile;
+
     @Enumerated(EnumType.STRING)
     private MatchStatus matchStatus;
 
@@ -35,4 +39,8 @@ public class RecruitApplication {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public void changeStatus(MatchStatus matchStatus) {
+        this.matchStatus = matchStatus;
+    }
 }
