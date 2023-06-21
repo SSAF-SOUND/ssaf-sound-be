@@ -114,6 +114,6 @@ public class GithubOauthProvider implements OauthProvider {
     public String parsingValue(String response, String key) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> jsonMap = objectMapper.readValue(response, new TypeReference<>() {});
-        return (String) jsonMap.get(key);
+        return String.valueOf(jsonMap.get(key));
     }
 }
