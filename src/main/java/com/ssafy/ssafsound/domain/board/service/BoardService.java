@@ -16,9 +16,11 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     public GetBoardListResDto findBoards() {
-        return new GetBoardListResDto(boardRepository.findAll()
-                .stream()
-                .map(GetBoardResDto::fromEntity)
-                .collect(Collectors.toList()));
+        return GetBoardListResDto.builder()
+                .boards(boardRepository.findAll()
+                        .stream()
+                        .map(GetBoardResDto::fromEntity)
+                        .collect(Collectors.toList()))
+                .build();
     }
 }
