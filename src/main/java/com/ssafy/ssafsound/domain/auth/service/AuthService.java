@@ -8,7 +8,9 @@ import com.ssafy.ssafsound.domain.auth.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.auth.service.oauth.OauthProvider;
 import com.ssafy.ssafsound.domain.auth.service.oauth.OauthProviderFactory;
 import com.ssafy.ssafsound.domain.auth.service.token.JwtTokenProvider;
+import com.ssafy.ssafsound.domain.member.domain.MemberToken;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
+import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -66,6 +68,12 @@ public class AuthService {
 
     @Transactional(readOnly = true)
     public void validateRefreshToken(String refreshToken) {
+        Long memberId = jwtTokenProvider.getMemberIdByRefreshToken(refreshToken);
+        MemberToken memberToken = memberTokenRepository.findById(memberId).orElseThrow(() -> new MemberException());
+        if(isNotEqualRefreshToken(refreshToken, memberToken.getRefreshToken())) throw new AuthException();
+    }
 
+    public boolean isNotEqualRefreshToken(String refreshTokenByCookie, String refreshTokenBySaved) {
+        return !refreshTokenByCookie.equals(refreshTokenBySaved);
     }
 }

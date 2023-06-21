@@ -54,8 +54,18 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String getPayload() {
-        return null;
+    public Long getMemberIdByRefreshToken(String token) {
+        Claims claims;
+        try {
+            claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            throw new AuthException(MemberErrorInfo.AUTH_TOKEN_EXPIRED);
+        }
+        return claims.get("memberId", Long.class);
     }
 
     public AuthenticatedMember getParsedClaims(String token) {
