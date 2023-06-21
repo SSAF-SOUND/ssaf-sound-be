@@ -24,15 +24,9 @@ public class PostController {
                 .build();
     }
 
-    @PostMapping("{postId}/scrap")
+    @PostMapping("/{postId}/scrap")
     public EnvelopeResponse<Void> postScrap(AuthenticatedMember authenticatedMember, @PathVariable Long postId) {
-        AuthenticatedMember tempMember = AuthenticatedMember.builder()
-                .memberId(1L)
-                .memberRole("NORMAL")
-                .build();
-        log.info("스크랩 실행");
-
-        postService.postScrap(postId, tempMember.getMemberId());
+        postService.postScrap(postId, authenticatedMember.getMemberId());
         return EnvelopeResponse.<Void>builder()
                 .build();
     }
