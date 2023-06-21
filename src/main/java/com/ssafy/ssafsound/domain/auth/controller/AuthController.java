@@ -41,10 +41,7 @@ public class AuthController {
 
         if (Objects.nonNull(cookies)) {
             authService.deleteTokensByCookie(cookies);
-            Cookie accessTokenCookie = deleteCookie("accessToken", null);
-            Cookie refreshTokenCookie = deleteCookie("refreshToken", null);
-            response.addCookie(accessTokenCookie);
-            response.addCookie(refreshTokenCookie);
+            setResponseWithCookies(response, null, null);
         }
         return EnvelopeResponse.builder().build();
     }
@@ -69,13 +66,23 @@ public class AuthController {
         AuthenticatedMember authenticatedMember = memberService.createMemberByOauthIdentifier(postMemberReqDto);
         CreateMemberTokensResDto createMemberTokensResDto = authService.createToken(authenticatedMember);
         memberService.saveTokenByMember(authenticatedMember, createMemberTokensResDto.getAccessToken(), createMemberTokensResDto.getRefreshToken());
-        Cookie accessTokenCookie = setCookieWithOptions("accessToken", createMemberTokensResDto.getAccessToken());
-        Cookie refreshTokenCookie = setCookieWithOptions("refreshToken", createMemberTokensResDto.getRefreshToken());
-        response.addCookie(accessTokenCookie);
-        response.addCookie(refreshTokenCookie);
+        setResponseWithCookies(response, createMemberTokensResDto.getAccessToken(), createMemberTokensResDto.getRefreshToken());
         return EnvelopeResponse.<CreateMemberTokensResDto>builder()
                 .data(createMemberTokensResDto)
                 .build();
+    }
+
+    public void setResponseWithCookies(HttpServletResponse response, String accessToken, String refreshToken) {
+        Cookie accessTokenCookie, refreshTokenCookie;
+        if (accessToken == null && refreshToken == null) {
+            accessTokenCookie = deleteCookie("accessToken", null);
+            refreshTokenCookie = deleteCookie("refreshToken", null);
+        } else {
+            accessTokenCookie = setCookieWithOptions("accessToken", accessToken);
+            refreshTokenCookie = setCookieWithOptions("refreshToken", refreshToken);
+        }
+        response.addCookie(accessTokenCookie);
+        response.addCookie(refreshTokenCookie);
     }
 
     public Cookie setCookieWithOptions(String name, String value) {
