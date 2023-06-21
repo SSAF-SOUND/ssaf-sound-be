@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.domain.auth.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
+import com.ssafy.ssafsound.domain.auth.dto.CreateAccessTokenResDto;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberReqDto;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberTokensResDto;
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
@@ -8,6 +9,7 @@ import com.ssafy.ssafsound.domain.auth.exception.AuthErrorInfo;
 import com.ssafy.ssafsound.domain.auth.service.oauth.OauthProvider;
 import com.ssafy.ssafsound.domain.auth.service.oauth.OauthProviderFactory;
 import com.ssafy.ssafsound.domain.auth.service.token.JwtTokenProvider;
+import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.domain.MemberToken;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
@@ -68,10 +70,21 @@ public class AuthService {
     }
 
     @Transactional(readOnly = true)
-    public void validateRefreshToken(String refreshToken) {
+    public Long validateRefreshToken(String refreshToken) {
         Long memberId = jwtTokenProvider.getMemberIdByRefreshToken(refreshToken);
         MemberToken memberToken = memberTokenRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_TOKEN_NOT_FOUND));
         if(isNotEqualRefreshToken(refreshToken, memberToken.getRefreshToken())) throw new AuthException(AuthErrorInfo.AUTH_TOKEN_INVALID);
+        return memberId;
+    }
+
+    @Transactional
+    public CreateAccessTokenResDto reIssueAccessToken(Long memberId) {
+        MemberToken memberToken = memberTokenRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_TOKEN_NOT_FOUND));
+        Member member = memberToken.getMember();
+        String accessToken = jwtTokenProvider.createAccessToken(AuthenticatedMember.of(member));
+        memberToken.changeByRefreshToken(accessToken);
+        memberTokenRepository.save(memberToken);
+        return CreateAccessTokenResDto.of(accessToken);
     }
 
     public boolean isNotEqualRefreshToken(String refreshTokenByCookie, String refreshTokenBySaved) {
