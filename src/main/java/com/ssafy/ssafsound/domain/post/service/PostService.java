@@ -32,10 +32,12 @@ public class PostService {
         boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorInfo.NO_BOARD_ID));
 
-        return new GetPostListResDto(postRepository.findAllByBoardId(boardId, pageable)
-                .stream()
-                .map(GetPostResDto::from)
-                .collect(Collectors.toList()));
+        return GetPostListResDto.builder()
+                .posts(postRepository.findAllByBoardId(boardId, pageable)
+                        .stream()
+                        .map(GetPostResDto::from)
+                        .collect(Collectors.toList()))
+                .build();
     }
 
     @Transactional(readOnly = true)
@@ -43,9 +45,11 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND));
 
-        return new GetPostDetailListResDto(Optional.of(post)
-                .stream()
-                .map(p -> GetPostDetailResDto.from(p, authenticatedMember))
-                .collect(Collectors.toList()));
+        return GetPostDetailListResDto.builder()
+                .post(Optional.of(post)
+                        .stream()
+                        .map(p -> GetPostDetailResDto.from(p, authenticatedMember))
+                        .collect(Collectors.toList()))
+                .build();
     }
 }
