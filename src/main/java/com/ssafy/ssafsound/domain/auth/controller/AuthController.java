@@ -5,6 +5,7 @@ import com.ssafy.ssafsound.domain.auth.dto.CreateMemberAccessTokenResDto;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberReqDto;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberTokensResDto;
 import com.ssafy.ssafsound.domain.auth.service.AuthService;
+import com.ssafy.ssafsound.domain.auth.service.CookieProvider;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import com.ssafy.ssafsound.domain.member.service.MemberService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
@@ -19,10 +20,12 @@ public class AuthController {
 
     private final AuthService authService;
     private final MemberService memberService;
+    private final CookieProvider cookieProvider;
 
-    public AuthController(AuthService authService, MemberService memberService) {
+    public AuthController(AuthService authService, MemberService memberService, CookieProvider cookieProvider) {
         this.authService = authService;
         this.memberService = memberService;
+        this.cookieProvider = cookieProvider;
     }
 
     @GetMapping("/{oauthName}")
@@ -38,7 +41,7 @@ public class AuthController {
 
         if (!accessToken.equals("") || !refreshToken.equals("")) {
             authService.deleteTokens(accessToken, refreshToken);
-            setResponseWithCookies(response, null, null);
+            cookieProvider.setResponseWithCookies(response, null, null);
         }
         return EnvelopeResponse.builder().build();
     }
@@ -47,7 +50,7 @@ public class AuthController {
     public EnvelopeResponse<CreateMemberAccessTokenResDto> reissue(@CookieValue("refreshToken") String refreshToken, HttpServletResponse response) {
         Long memberId = authService.validateRefreshToken(refreshToken);
         CreateMemberAccessTokenResDto createMemberAccessTokenResDto = authService.reissueAccessToken(memberId);
-        Cookie accessTokenCookie = setCookieWithOptions("accessToken", createMemberAccessTokenResDto.getAccessToken());
+        Cookie accessTokenCookie = cookieProvider.setCookieWithOptions("accessToken", createMemberAccessTokenResDto.getAccessToken());
         response.addCookie(accessTokenCookie);
         return EnvelopeResponse.<CreateMemberAccessTokenResDto>builder()
                 .data(createMemberAccessTokenResDto)
@@ -62,40 +65,9 @@ public class AuthController {
         AuthenticatedMember authenticatedMember = memberService.createMemberByOauthIdentifier(postMemberReqDto);
         CreateMemberTokensResDto createMemberTokensResDto = authService.createToken(authenticatedMember);
         memberService.saveTokenByMember(authenticatedMember, createMemberTokensResDto.getAccessToken(), createMemberTokensResDto.getRefreshToken());
-        setResponseWithCookies(response, createMemberTokensResDto.getAccessToken(), createMemberTokensResDto.getRefreshToken());
+        cookieProvider.setResponseWithCookies(response, createMemberTokensResDto.getAccessToken(), createMemberTokensResDto.getRefreshToken());
         return EnvelopeResponse.<CreateMemberTokensResDto>builder()
                 .data(createMemberTokensResDto)
                 .build();
-    }
-
-    public void setResponseWithCookies(HttpServletResponse response, String accessToken, String refreshToken) {
-        Cookie accessTokenCookie, refreshTokenCookie;
-        if (accessToken == null && refreshToken == null) {
-            accessTokenCookie = deleteCookie("accessToken", null);
-            refreshTokenCookie = deleteCookie("refreshToken", null);
-        } else {
-            accessTokenCookie = setCookieWithOptions("accessToken", accessToken);
-            refreshTokenCookie = setCookieWithOptions("refreshToken", refreshToken);
-        }
-        response.addCookie(accessTokenCookie);
-        response.addCookie(refreshTokenCookie);
-    }
-
-    public Cookie setCookieWithOptions(String name, String value) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(2629744);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        return cookie;
-    }
-
-    public Cookie deleteCookie(String name, String value) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(0);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        return cookie;
     }
 }
