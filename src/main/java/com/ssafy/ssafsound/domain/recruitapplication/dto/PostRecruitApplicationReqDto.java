@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -18,7 +17,7 @@ import java.util.List;
 public class PostRecruitApplicationReqDto {
 
     private String recruitType;
-    private final List<String> contents = new ArrayList<>();
+    private List<String> contents;
 
     public RecruitApplication createRecruitApplicationFromPredefinedMetadata(Member member, Recruit recruit, MetaData recruitType) {
         return RecruitApplication.builder()

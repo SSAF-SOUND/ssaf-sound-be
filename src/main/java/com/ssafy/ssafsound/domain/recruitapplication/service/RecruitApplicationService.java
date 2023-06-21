@@ -10,7 +10,7 @@ import com.ssafy.ssafsound.domain.recruit.domain.RecruitQuestion;
 import com.ssafy.ssafsound.domain.recruit.domain.RecruitQuestionReply;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
-import com.ssafy.ssafsound.domain.recruit.repository.RecruitQuestReplyRepository;
+import com.ssafy.ssafsound.domain.recruit.repository.RecruitQuestionReplyRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
@@ -32,7 +32,7 @@ import java.util.List;
 public class RecruitApplicationService {
 
     private final RecruitRepository recruitRepository;
-    private final RecruitQuestReplyRepository recruitQuestReplyRepository;
+    private final RecruitQuestionReplyRepository recruitQuestionReplyRepository;
     private final RecruitApplicationRepository recruitApplicationRepository;
     private final MemberRepository memberRepository;
     private final MetaDataConsumer metaDataConsumer;
@@ -52,7 +52,7 @@ public class RecruitApplicationService {
                 metaDataConsumer.getMetaData(MetaDataType.RECRUIT_TYPE.name(), recruitType));
         List<RecruitQuestionReply> participantAnswers = makeRecruitQuestionReplies(postRecruitApplicationReqDto, recruit, recruitApplication);
         recruitApplicationRepository.save(recruitApplication);
-        recruitQuestReplyRepository.saveAll(participantAnswers);
+        recruitQuestionReplyRepository.saveAll(participantAnswers);
     }
 
     @Transactional
@@ -82,13 +82,13 @@ public class RecruitApplicationService {
 
     @Transactional
     public void rejectRecruitApplication(Long recruitApplicationId, Long memberId, MatchStatus status) {
-        RecruitApplication recruitApplication = recruitApplicationRepository.findByIdAndMemberIdFetchRecruitWriter(recruitApplicationId, memberId)
+        RecruitApplication recruitApplication = recruitApplicationRepository.findByIdAndMemberIdFetchRecruitWriter(recruitApplicationId)
                 .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
         changeRecruitApplicationState(recruitApplication, memberId, status,
                 (entity, mid)-> {
-                    boolean isNotValidRegisterAndState = (!entity.getRecruit().getMember().getId().equals(mid) && !entity.getMatchStatus().equals(MatchStatus.WAITING_REGISTER_APPROVE));
-                    boolean isNotValidParticipantAndStatus = (!entity.getMember().getId().equals(mid) && !entity.getMatchStatus().equals(MatchStatus.WAITING_APPLICANT));
+                    boolean isNotValidRegisterAndState = (!entity.getRecruit().getMember().getId().equals(mid) || !entity.getMatchStatus().equals(MatchStatus.WAITING_REGISTER_APPROVE));
+                    boolean isNotValidParticipantAndStatus = (!entity.getMember().getId().equals(mid) || !entity.getMatchStatus().equals(MatchStatus.WAITING_APPLICANT));
                     return isNotValidRegisterAndState && isNotValidParticipantAndStatus;
                 });
     }
@@ -116,7 +116,7 @@ public class RecruitApplicationService {
 
         for(RecruitLimitation recruitLimitation: recruitLimitations) {
             if(!recruitLimitation.getType().getName().equals(recruitType)) continue;
-            if(recruitLimitation.getLimitation() < recruitLimitation.getCurrentNumber()) return true;
+            if(recruitLimitation.getCurrentNumber() < recruitLimitation.getLimitation()) return true;
             throw new RecruitException(RecruitErrorInfo.IS_ALREADY_FULL);
         }
         return false;
@@ -125,7 +125,7 @@ public class RecruitApplicationService {
     private RecruitLimitation getNotFullRecruitLimitation(Recruit recruit, MetaData recruitType) {
         RecruitLimitation recruitLimitation = recruit.getLimitations()
                 .stream()
-                .filter(limit -> limit.getType() == recruitType)
+                .filter(limit -> limit.getType().getName().equals(recruitType.getName()))
                 .findFirst().orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
         if(recruitLimitation.getCurrentNumber() >= recruitLimitation.getLimitation()) {

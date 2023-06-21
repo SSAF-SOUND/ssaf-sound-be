@@ -12,8 +12,8 @@ public interface RecruitApplicationRepository extends JpaRepository<RecruitAppli
     @Query("SELECT r FROM recruit_application r left join fetch r.recruit left join r.recruit.member where r.id = :recruitApplicationId")
     Optional<RecruitApplication> findByIdFetchRecruitWriter(Long recruitApplicationId);
 
-    @Query("SELECT r FROM recruit_application r left join fetch r.recruit left join r.recruit.member where r.id = :recruitApplicationId and r.member.id = :memberId")
-    Optional<RecruitApplication> findByIdAndMemberIdFetchRecruitWriter(Long recruitApplicationId, Long memberId);
+    @Query("SELECT r FROM recruit_application r left join r.member left join fetch r.recruit left join r.recruit.member where r.id = :recruitApplicationId")
+    Optional<RecruitApplication> findByIdAndMemberIdFetchRecruitWriter(Long recruitApplicationId);
 
     Optional<RecruitApplication> findByIdAndMemberId(Long recruitApplicationId, Long memberId);
 }
