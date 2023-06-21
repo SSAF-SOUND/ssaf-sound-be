@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthException extends RuntimeException {
-    private MemberErrorInfo info;
+    private AuthErrorInfo info;
 }

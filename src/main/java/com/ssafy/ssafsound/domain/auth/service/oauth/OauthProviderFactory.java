@@ -1,7 +1,7 @@
 package com.ssafy.ssafsound.domain.auth.service.oauth;
 
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
-import com.ssafy.ssafsound.domain.auth.exception.MemberErrorInfo;
+import com.ssafy.ssafsound.domain.auth.exception.AuthErrorInfo;
 import com.ssafy.ssafsound.domain.member.domain.OAuthType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -27,7 +27,7 @@ public class OauthProviderFactory {
 
     public OauthProvider from(String oAuthType) {
         OAuthType enumType = Arrays.stream(OAuthType.values()).filter(type -> type.isEqual(oAuthType)).findFirst().orElse(null);
-        if(enumType == null) throw new AuthException(MemberErrorInfo.AUTH_VALUE_NOT_FOUND);
+        if(enumType == null) throw new AuthException(AuthErrorInfo.AUTH_VALUE_NOT_FOUND);
         return this.oauthProviderMap.get(enumType);
     }
 }

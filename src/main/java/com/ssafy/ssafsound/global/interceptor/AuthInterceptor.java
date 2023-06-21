@@ -1,7 +1,7 @@
 package com.ssafy.ssafsound.global.interceptor;
 
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
-import com.ssafy.ssafsound.domain.auth.exception.MemberErrorInfo;
+import com.ssafy.ssafsound.domain.auth.exception.AuthErrorInfo;
 import com.ssafy.ssafsound.domain.auth.service.token.JwtTokenProvider;
 import com.ssafy.ssafsound.domain.auth.validator.AuthorizationExtractor;
 import lombok.RequiredArgsConstructor;
@@ -66,6 +66,6 @@ public class AuthInterceptor implements HandlerInterceptor {
     }
 
     public void validToken(String token) {
-        if(!jwtTokenProvider.isValid(token)) throw new AuthException(MemberErrorInfo.AUTH_TOKEN_EXPIRED);
+        if(!jwtTokenProvider.isValid(token)) throw new AuthException(AuthErrorInfo.AUTH_TOKEN_EXPIRED);
     }
 }
