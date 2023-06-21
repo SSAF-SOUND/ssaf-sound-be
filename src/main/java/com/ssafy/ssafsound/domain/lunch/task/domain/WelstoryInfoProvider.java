@@ -2,8 +2,10 @@ package com.ssafy.ssafsound.domain.lunch.task.domain;
 
 import com.ssafy.ssafsound.domain.lunch.exception.LunchErrorInfo;
 import com.ssafy.ssafsound.domain.lunch.exception.LunchException;
+import com.ssafy.ssafsound.domain.meta.domain.Campus;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.HttpEntity;
@@ -23,6 +25,7 @@ import java.util.Map;
 @Component
 @ConfigurationProperties(prefix = "scrap.welstory")
 @RequiredArgsConstructor
+@Setter
 public class WelstoryInfoProvider implements ScrapInfoProvider{
 
     private final RestTemplate restTemplate;

@@ -14,4 +14,8 @@ public class ScrapInfoProviderFactory {
         this.scrapInfosProviders.put("welstory", welstoryInfoProvider);
         this.scrapInfosProviders.put("freshmeal", freshmealInfoProvider);
     }
+
+    public ScrapInfoProvider getProviderFrom(String providerType) {
+        this.scrapInfosProviders.get(providerType);
+    }
 }

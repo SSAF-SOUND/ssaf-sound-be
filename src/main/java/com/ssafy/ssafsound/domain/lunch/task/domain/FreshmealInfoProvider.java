@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.domain.lunch.task.domain;
 
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -15,6 +16,7 @@ import java.util.Map;
 @Component
 @ConfigurationProperties(prefix = "scrap.freshmeal")
 @RequiredArgsConstructor
+@Setter
 public class FreshmealInfoProvider implements ScrapInfoProvider{
 
     private final RestTemplate restTemplate;
