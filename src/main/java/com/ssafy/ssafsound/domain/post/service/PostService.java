@@ -5,6 +5,7 @@ import com.ssafy.ssafsound.domain.board.exception.BoardErrorInfo;
 import com.ssafy.ssafsound.domain.board.exception.BoardException;
 import com.ssafy.ssafsound.domain.board.repository.BoardRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
+import com.ssafy.ssafsound.domain.post.domain.HotPost;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.domain.PostLike;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailListResDto;
@@ -13,6 +14,7 @@ import com.ssafy.ssafsound.domain.post.dto.GetPostListResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
 import com.ssafy.ssafsound.domain.post.exception.PostException;
+import com.ssafy.ssafsound.domain.post.repository.HotPostRepository;
 import com.ssafy.ssafsound.domain.post.repository.PostLikeRepository;
 import com.ssafy.ssafsound.domain.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class PostService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
+    private final HotPostRepository hotPostRepository;
 
 
     @Transactional(readOnly = true)
@@ -62,15 +65,18 @@ public class PostService {
     public void postLike(Long postId, Long memberId) {
         PostLike postLike = postLikeRepository.findByPostIdAndMemberId(postId, memberId)
                 .orElse(null);
-        togglePostScrap(postId, memberId, postLike);
+        togglePostLike(postId, memberId, postLike);
     }
 
-    private void togglePostScrap(Long postId, Long memberId, PostLike postLike) {
+    private void togglePostLike(Long postId, Long memberId, PostLike postLike) {
         if (postLike != null) {
             deleteLike(postLike);
             return;
         }
         saveLike(postId, memberId);
+        if (isSelectedHotPost(postId)) {
+            saveHotPost(postId);
+        }
     }
 
     private void saveLike(Long postId, Long memberId) {
@@ -83,5 +89,18 @@ public class PostService {
 
     private void deleteLike(PostLike postLike) {
         postLikeRepository.delete(postLike);
+    }
+
+
+    private boolean isSelectedHotPost(Long postId) {
+        return postLikeRepository.countByPostId(postId) >= 10;
+    }
+
+    private void saveHotPost(Long postId) {
+        HotPost hotPost = HotPost.builder()
+                .post(postRepository.findById(postId).
+                        orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND)))
+                .build();
+        hotPostRepository.save(hotPost);
     }
 }
