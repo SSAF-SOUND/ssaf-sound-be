@@ -1,11 +1,10 @@
 package com.ssafy.ssafsound.domain.member.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
-import com.ssafy.ssafsound.domain.auth.exception.AuthException;
-import com.ssafy.ssafsound.domain.auth.exception.AuthErrorInfo;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.domain.MemberRole;
 import com.ssafy.ssafsound.domain.member.domain.MemberToken;
+import com.ssafy.ssafsound.domain.member.domain.OAuthType;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
@@ -15,6 +14,8 @@ import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,27 +27,46 @@ public class MemberService {
 
     @Transactional
      public AuthenticatedMember createMemberByOauthIdentifier(PostMemberReqDto postMemberReqDto) {
-        Member member = postMemberReqDto.createMember();
         MemberRole memberRole = findMemberRoleByRoleName("user");
-
-        member.setMemberRole(memberRole);
-        memberRepository.save(member);
+        Optional<Member> optionalMember = memberRepository.findByOauthIdentifier(postMemberReqDto.getOauthIdentifier());
+        Member member;
+        if (optionalMember.isPresent()) {
+             member = optionalMember.get();
+             if(isInvalidOauthLogin(member, postMemberReqDto)) throw new MemberException(MemberErrorInfo.MEMBER_OAUTH_NOT_FOUND);
+        } else {
+            member = postMemberReqDto.createMember();
+            member.setMemberRole(memberRole);
+            memberRepository.save(member);
+        }
         return AuthenticatedMember.of(member);
      }
 
     @Transactional
     public void saveTokenByMember(AuthenticatedMember authenticatedMember, String accessToken, String refreshToken) {
-        Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+        Optional<MemberToken> memberTokenOptional = memberTokenRepository.findById(authenticatedMember.getMemberId());
+        MemberToken memberToken;
 
-        MemberToken memberToken = MemberToken.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .member(member)
-                .build();
+        if (memberTokenOptional.isPresent()) {
+            memberToken = memberTokenOptional.get();
+            memberToken.changeAccessTokenByLogin(accessToken);
+            memberToken.changeRefreshTokenByLogin(refreshToken);
+        } else {
+            Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+            memberToken = MemberToken.builder()
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .member(member)
+                    .build();
+        }
         memberTokenRepository.save(memberToken);
     }
 
     public MemberRole findMemberRoleByRoleName(String roleType) {
         return memberRoleRepository.findByRoleType(roleType).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_ROLE_TYPE_NOT_FOUND));
+    }
+
+    public boolean isInvalidOauthLogin(Member member, PostMemberReqDto postMemberReqDto) {
+        OAuthType oAuthType = member.getOauthType();
+        return !member.getOauthIdentifier().equals(postMemberReqDto.getOauthIdentifier()) || !oAuthType.isEqual(postMemberReqDto.getOauthName());
     }
 }
