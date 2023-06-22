@@ -1,11 +1,9 @@
 package com.ssafy.ssafsound.domain.member.dto;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@NoArgsConstructor
+@Builder
 @Getter
 public class SSAFYInfo {
 
@@ -13,4 +11,5 @@ public class SSAFYInfo {
     private boolean isMajor;
     private String campus;
     private String certificationState;
+    private String majorType;
 }

@@ -34,7 +34,12 @@ public class GetMemberResDto {
                 .memberRole(memberRole.getRoleType())
                 .nickname(member.getNickname())
                 .ssafyMember(member.getSsafyMember())
-                .ssafyInfo(new SSAFYInfo(member.getSemester(), member.getMajor(), member.getCampus().getName(), member.getCertificationState().name()))
+                .ssafyInfo(SSAFYInfo.builder()
+                        .semester(member.getSemester())
+                        .isMajor(member.getMajor())
+                        .campus(member.getCampus().getName())
+                        .certificationState(member.getCertificationState().name())
+                        .build())
                 .build();
     }
 }
