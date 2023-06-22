@@ -104,7 +104,7 @@ public class RecruitApplicationService {
         );
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public GetRecruitParticipantsResDto getRecruitParticipants(Long recruitId) {
         List<RecruitApplication> recruitApplications = recruitApplicationRepository
                 .findByRecruitIdAndMatchStatusFetchMember(recruitId, MatchStatus.DONE);

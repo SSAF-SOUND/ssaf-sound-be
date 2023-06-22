@@ -76,7 +76,7 @@ public class RecruitCommentService {
         return isPreExistRecruitCommentLike(recruitCommentId, memberId, recruitCommentLike);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public GetRecruitCommentsResDto getRecruitComments(Long recruitId) {
         List<RecruitComment> recruitComments = recruitCommentRepository.findByRecruitIdFetchJoinMemberAndReplies(recruitId);
         return GetRecruitCommentsResDto.from(recruitComments);
