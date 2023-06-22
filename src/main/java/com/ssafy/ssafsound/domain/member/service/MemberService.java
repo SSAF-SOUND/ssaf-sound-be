@@ -5,6 +5,7 @@ import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.domain.MemberRole;
 import com.ssafy.ssafsound.domain.member.domain.MemberToken;
 import com.ssafy.ssafsound.domain.member.domain.OAuthType;
+import com.ssafy.ssafsound.domain.member.dto.GetMemberResDto;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
@@ -26,12 +27,13 @@ public class MemberService {
     private final MemberTokenRepository memberTokenRepository;
 
     @Transactional
-     public AuthenticatedMember createMemberByOauthIdentifier(PostMemberReqDto postMemberReqDto) {
+    public AuthenticatedMember createMemberByOauthIdentifier(PostMemberReqDto postMemberReqDto) {
         Optional<Member> optionalMember = memberRepository.findByOauthIdentifier(postMemberReqDto.getOauthIdentifier());
         Member member;
         if (optionalMember.isPresent()) {
-             member = optionalMember.get();
-             if(isInvalidOauthLogin(member, postMemberReqDto)) throw new MemberException(MemberErrorInfo.MEMBER_OAUTH_NOT_FOUND);
+            member = optionalMember.get();
+            if (isInvalidOauthLogin(member, postMemberReqDto))
+                throw new MemberException(MemberErrorInfo.MEMBER_OAUTH_NOT_FOUND);
         } else {
             MemberRole memberRole = findMemberRoleByRoleName("user");
             member = postMemberReqDto.createMember();
@@ -39,7 +41,7 @@ public class MemberService {
             memberRepository.save(member);
         }
         return AuthenticatedMember.of(member);
-     }
+    }
 
     @Transactional
     public void saveTokenByMember(AuthenticatedMember authenticatedMember, String accessToken, String refreshToken) {
@@ -61,6 +63,7 @@ public class MemberService {
         memberTokenRepository.save(memberToken);
     }
 
+    @Transactional(readOnly = true)
     public MemberRole findMemberRoleByRoleName(String roleType) {
         return memberRoleRepository.findByRoleType(roleType).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_ROLE_TYPE_NOT_FOUND));
     }
@@ -68,5 +71,31 @@ public class MemberService {
     public boolean isInvalidOauthLogin(Member member, PostMemberReqDto postMemberReqDto) {
         OAuthType oAuthType = member.getOauthType();
         return !member.getOauthIdentifier().equals(postMemberReqDto.getOauthIdentifier()) || !oAuthType.isEqual(postMemberReqDto.getOauthName());
+    }
+    @Transactional(readOnly = true)
+    public GetMemberResDto getMemberInformation(AuthenticatedMember authenticatedMember) {
+        Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+        MemberRole memberRole = member.getRole();
+
+        if (isNotInputMemberInformation(member)) {
+            return GetMemberResDto.fromGeneralUser(member, memberRole);
+        } else if(isGeneralMemberInformation(member)){
+            return GetMemberResDto.fromGeneralUser(member, memberRole);
+        } else if (isSSAFYMemberInformation(member)) {
+            return GetMemberResDto.fromSSAFYUser(member, memberRole);
+        }
+        throw new MemberException(MemberErrorInfo.MEMBER_INFORMATION_ERROR);
+    }
+
+    public boolean isNotInputMemberInformation(Member member) {
+        return member.getSsafyMember() == null && member.getNickname() == null;
+    }
+
+    public boolean isGeneralMemberInformation(Member member) {
+        return !member.getSsafyMember() && member.getNickname() != null;
+    }
+
+    public boolean isSSAFYMemberInformation(Member member) {
+        return member.getSsafyMember() && member.getNickname() != null;
     }
 }
