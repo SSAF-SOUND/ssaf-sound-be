@@ -37,12 +37,7 @@ public class PostController {
 
     @PostMapping("/{postId}/like")
     public EnvelopeResponse<Void> postLike(AuthenticatedMember authenticatedMember, @PathVariable Long postId) {
-        AuthenticatedMember tempMember = AuthenticatedMember.builder()
-                .memberId(1L)
-                .memberRole("NORMAL")
-                .build();
-
-        postService.postLike(postId, tempMember.getMemberId());
+        postService.postLike(postId, authenticatedMember.getMemberId());
         return EnvelopeResponse.<Void>builder()
                 .build();
     }
