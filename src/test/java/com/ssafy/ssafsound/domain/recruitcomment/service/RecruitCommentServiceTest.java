@@ -1,6 +1,8 @@
 package com.ssafy.ssafsound.domain.recruitcomment.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
+import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
+import com.ssafy.ssafsound.domain.member.domain.MajorType;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
@@ -8,6 +10,7 @@ import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruitcomment.domain.RecruitComment;
 import com.ssafy.ssafsound.domain.recruitcomment.domain.RecruitCommentLike;
+import com.ssafy.ssafsound.domain.recruitcomment.dto.GetRecruitCommentsResDto;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PatchRecruitCommentReqDto;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitCommentReqDto;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitCommentResDto;
@@ -25,6 +28,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,14 +56,29 @@ class RecruitCommentServiceTest {
     Member member1 = Member.builder()
             .id(1L)
             .nickname("khs")
+            .ssafyMember(true)
+            .certificationState(AuthenticationStatus.CERTIFIED)
+            .major(true)
+            .majorType(new MajorType(1, "Test"))
             .build();
 
     Member member2 = Member.builder()
             .id(2L)
             .nickname("kds")
+            .ssafyMember(true)
+            .certificationState(AuthenticationStatus.CERTIFIED)
+            .major(true)
+            .majorType(new MajorType(1, "Test"))
             .build();
 
-    Recruit recruit = new Recruit();
+    Recruit recruit = Recruit.builder()
+            .id(1L)
+            .member(member1)
+            .startDateTime(LocalDate.now().atStartOfDay())
+            .endDateTime(LocalDate.now().plusDays(3).atTime(LocalTime.MAX))
+            .view(0L)
+            .deletedRecruit(false)
+            .build();
 
     RecruitComment commentGroup = RecruitComment.builder()
             .id(1L)
@@ -70,9 +91,45 @@ class RecruitCommentServiceTest {
             .recruitComment(commentGroup)
             .build();
 
+    List<RecruitComment> comments = List.of(
+            RecruitComment.builder()
+                    .id(1L)
+                    .content("리크루트 Question1 Fixture")
+                    .recruit(recruit)
+                    .deletedComment(false)
+                    .member(member2)
+                    .build(),
+            RecruitComment.builder()
+                    .id(2L)
+                    .content("리크루트 Answer1 Fixture")
+                    .recruit(recruit)
+                    .deletedComment(false)
+                    .member(member1)
+                    .build(),
+            RecruitComment.builder()
+                    .id(3L)
+                    .content("리크루트 Question2 Fixture")
+                    .recruit(recruit)
+                    .deletedComment(true)
+                    .member(member2)
+                    .build(),
+            RecruitComment.builder()
+                    .id(4L)
+                    .content("리크루트 Answer2 Fixture")
+                    .recruit(recruit)
+                    .deletedComment(false)
+                    .member(member1)
+                    .build()
+    );
+
     @BeforeEach
     void setStubAndFixture() {
         commentGroup.setCommentGroup(commentGroup);
+
+        comments.get(0).setCommentGroup(comments.get(0));
+        comments.get(1).setCommentGroup(comments.get(0));
+        comments.get(2).setCommentGroup(comments.get(2));
+        comments.get(3).setCommentGroup(comments.get(2));
 
         Mockito.lenient().when(memberRepository.findById(1L)).thenReturn(Optional.ofNullable(member1));
         Mockito.lenient().when(memberRepository.findById(2L)).thenReturn(Optional.ofNullable(member2));
@@ -83,6 +140,7 @@ class RecruitCommentServiceTest {
 
         Mockito.lenient().when(recruitCommentRepository.getReferenceById(1L)).thenReturn(commentGroup);
         Mockito.lenient().when(recruitCommentRepository.findById(1L)).thenReturn(Optional.ofNullable(commentGroup));
+        Mockito.lenient().when(recruitCommentRepository.findByRecruitIdFetchJoinMemberAndReplies(1L)).thenReturn(comments);
 
         Mockito.lenient().when(recruitCommentLikeRepository.findByRecruitCommentIdAndMemberId(1L, 1L)).thenReturn(Optional.ofNullable(recruitCommentLike));
     }
@@ -204,5 +262,17 @@ class RecruitCommentServiceTest {
     void Given_MemberIdAndRecruitCommentId_When_TryToggleRecruitCommentLike_Then_DeleteRecruitLike() {
         Long recruitCommentId = 1L, memberId = 1L;
         assertTrue(recruitCommentService.toggleRecruitCommentLike(recruitCommentId, memberId));
+    }
+
+    @DisplayName("리크루트 QNA 리스트 조회")
+    @Test
+    void Given_RecruitComments_When_TryGetRecruitComments_Then_Success() {
+        GetRecruitCommentsResDto recruitComments = recruitCommentService.getRecruitComments(1L);
+
+        assertAll(
+                ()->assertEquals(2, recruitComments.getRecruitComments().size()),
+                ()-> recruitComments.getRecruitComments()
+                        .forEach(recruitCommentElement -> assertEquals(1, recruitCommentElement.getChildren().size()))
+        );
     }
 }

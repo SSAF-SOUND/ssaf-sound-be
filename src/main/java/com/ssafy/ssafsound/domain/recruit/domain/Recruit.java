@@ -48,9 +48,6 @@ public class Recruit extends BaseTimeEntity {
     @Column
     private Boolean deletedRecruit;
 
-    @Column
-    private Boolean finishedRecruit;
-
     @OneToMany(mappedBy = "recruit", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @Builder.Default
     private List<RecruitSkill> skills = new ArrayList<>();
@@ -92,5 +89,22 @@ public class Recruit extends BaseTimeEntity {
 
     public void addApplications(RecruitApplication application) {
         this.applications.add(application);
+    }
+
+    public boolean isFinishedRecruit() {
+        boolean isExpirationDate = LocalDateTime.now().isAfter(this.getEndDateTime());
+
+        long notFullRecruitTypeCnt = this.getLimitations().stream().filter(recruitLimitation ->
+                recruitLimitation.getCurrentNumber() < recruitLimitation.getLimitation()
+        ).count();
+        return isExpirationDate || (notFullRecruitTypeCnt == 0);
+    }
+
+    public void increaseView() {
+        this.view++;
+    }
+
+    public void delete() {
+        this.deletedRecruit = true;
     }
 }
