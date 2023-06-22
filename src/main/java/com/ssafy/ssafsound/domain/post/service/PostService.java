@@ -31,8 +31,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class PostService {
-    @Value("${spring.constant.post.HOT_POST_LIKE}")
-    private Integer HOT_POST_LIKE;
+    @Value("${spring.constant.post.HOT_POST_LIKES_THRESHOLD}")
+    private Long HOT_POST_LIKES_THRESHOLD;
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
@@ -99,7 +99,7 @@ public class PostService {
 
 
     private boolean isSelectedHotPost(Long postId) {
-        return postLikeRepository.countByPostId(postId) >= HOT_POST_LIKE;
+        return postLikeRepository.countByPostId(postId) >= HOT_POST_LIKES_THRESHOLD;
     }
 
     private void saveHotPost(Long postId) {
@@ -108,5 +108,10 @@ public class PostService {
                         orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND)))
                 .build();
         hotPostRepository.save(hotPost);
+    }
+
+    @Transactional
+    public void deleteHotPost(Long threshold){
+        hotPostRepository.deleteAllIdWithDecreasedLikes(threshold);
     }
 }
