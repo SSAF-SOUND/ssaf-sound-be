@@ -8,6 +8,7 @@ import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruitcomment.domain.RecruitComment;
 import com.ssafy.ssafsound.domain.recruitcomment.domain.RecruitCommentLike;
+import com.ssafy.ssafsound.domain.recruitcomment.dto.GetRecruitCommentsResDto;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PatchRecruitCommentReqDto;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitCommentReqDto;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitCommentResDto;
@@ -18,6 +19,8 @@ import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -71,6 +74,12 @@ public class RecruitCommentService {
         RecruitCommentLike recruitCommentLike = recruitCommentLikeRepository
                 .findByRecruitCommentIdAndMemberId(recruitCommentId, memberId).orElse(null);
         return isPreExistRecruitCommentLike(recruitCommentId, memberId, recruitCommentLike);
+    }
+
+    @Transactional
+    public GetRecruitCommentsResDto getRecruitComments(Long recruitId) {
+        List<RecruitComment> recruitComments = recruitCommentRepository.findByRecruitIdFetchJoinMemberAndReplies(recruitId);
+        return GetRecruitCommentsResDto.from(recruitComments);
     }
 
     private boolean isPreExistRecruitCommentLike(Long recruitCommentId, Long memberId, RecruitCommentLike recruitCommentLike) {
