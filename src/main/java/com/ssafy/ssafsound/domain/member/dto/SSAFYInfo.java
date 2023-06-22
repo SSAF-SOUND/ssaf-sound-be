@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class SSAFYInfo {
 
-    private Integer year;
+    private Integer semester;
     private boolean isMajor;
     private String campus;
     private String certificationState;
