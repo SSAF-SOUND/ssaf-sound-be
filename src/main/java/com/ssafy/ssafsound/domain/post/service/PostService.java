@@ -44,7 +44,7 @@ public class PostService {
 
     private void togglePostScrap(Long postId, Long memberId, PostScrap postScrap) {
         if (postScrap != null) {
-            deleteScrap(postScrap);
+            deleteScrapIfAlreadyExists(postScrap);
             return;
         }
         saveScrap(postId, memberId);
@@ -58,7 +58,7 @@ public class PostService {
         postScrapRepository.save(postScrap);
     }
 
-    private void deleteScrap(PostScrap postScrap) {
+    private void deleteScrapIfAlreadyExists(PostScrap postScrap) {
         postScrapRepository.delete(postScrap);
     }
 
