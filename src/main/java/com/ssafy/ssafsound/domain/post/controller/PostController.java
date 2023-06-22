@@ -38,6 +38,9 @@ public class PostController {
     @PostMapping("/{postId}/like")
     public EnvelopeResponse<Void> postLike(AuthenticatedMember authenticatedMember, @PathVariable Long postId) {
         postService.postLike(postId, authenticatedMember.getMemberId());
+        return EnvelopeResponse.<Void>builder()
+                .build();
+    }
 
     @PostMapping("/{postId}/scrap")
     public EnvelopeResponse<Void> postScrap(AuthenticatedMember authenticatedMember, @PathVariable Long postId) {

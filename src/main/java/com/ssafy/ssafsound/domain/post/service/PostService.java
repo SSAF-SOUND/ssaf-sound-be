@@ -42,7 +42,6 @@ public class PostService {
     private final PostLikeRepository postLikeRepository;
     private final HotPostRepository hotPostRepository;
     private final PostScrapRepository postScrapRepository;
-    private final MemberRepository memberRepository;
 
     @Transactional(readOnly = true)
     public GetPostListResDto findPosts(Long boardId, Pageable pageable) {
