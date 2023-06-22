@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.domain.recruitapplication.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
+import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitParticipantsResDto;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.PostRecruitApplicationReqDto;
 import com.ssafy.ssafsound.domain.recruitapplication.service.RecruitApplicationService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
@@ -44,5 +45,12 @@ public class RecruitApplicationController {
     public EnvelopeResponse<Void> cancelRecruitApplicationByParticipant(@PathVariable Long recruitApplicationId, AuthenticatedMember memberInfo) {
         recruitApplicationService.cancelRecruitApplicationByParticipant(recruitApplicationId, memberInfo.getMemberId(), MatchStatus.CANCEL);
         return EnvelopeResponse.<Void>builder().build();
+    }
+
+    @GetMapping("/recruits/{recruitId}/members")
+    public EnvelopeResponse<GetRecruitParticipantsResDto> getRecruitParticipants(@PathVariable Long recruitId) {
+        return EnvelopeResponse.<GetRecruitParticipantsResDto>builder()
+                .data(recruitApplicationService.getRecruitParticipants(recruitId))
+                .build();
     }
 }
