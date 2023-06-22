@@ -39,4 +39,10 @@ public class RecruitApplicationController {
         recruitApplicationService.rejectRecruitApplication(recruitApplicationId, memberInfo.getMemberId(), MatchStatus.REJECT);
         return EnvelopeResponse.<Void>builder().build();
     }
+
+    @PatchMapping("/recruit-applications/{recruitApplicationId}/cancel")
+    public EnvelopeResponse<Void> cancelRecruitApplicationByParticipant(@PathVariable Long recruitApplicationId, AuthenticatedMember memberInfo) {
+        recruitApplicationService.cancelRecruitApplicationByParticipant(recruitApplicationId, memberInfo.getMemberId(), MatchStatus.CANCEL);
+        return EnvelopeResponse.<Void>builder().build();
+    }
 }

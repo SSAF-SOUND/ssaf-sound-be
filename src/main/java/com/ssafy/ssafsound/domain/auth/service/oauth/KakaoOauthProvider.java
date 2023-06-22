@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
-import com.ssafy.ssafsound.domain.auth.exception.MemberErrorInfo;
+import com.ssafy.ssafsound.domain.auth.exception.AuthErrorInfo;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +60,7 @@ public class KakaoOauthProvider implements OauthProvider {
             ResponseEntity<String> apiResponse = restTemplate.postForEntity(KAKAO_TOKEN_URL, restRequest, String.class);
             return parsingValue(apiResponse.getBody(), "access_token");
         } catch (RestClientException | JsonProcessingException e) {
-            throw new AuthException(MemberErrorInfo.AUTH_SERVER_ERROR);
+            throw new AuthException(AuthErrorInfo.AUTH_SERVER_ERROR);
         }
     }
 
@@ -77,7 +77,7 @@ public class KakaoOauthProvider implements OauthProvider {
                     .oauthName(oauthName)
                     .build();
         } catch (RestClientException | JsonProcessingException e) {
-            throw new AuthException(MemberErrorInfo.AUTH_SERVER_ERROR);
+            throw new AuthException(AuthErrorInfo.AUTH_SERVER_ERROR);
         }
     }
 
