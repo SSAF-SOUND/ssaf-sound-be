@@ -1,7 +1,6 @@
 package com.ssafy.ssafsound.domain.post.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
-import com.ssafy.ssafsound.domain.auth.validator.Authentication;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailListResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostListResDto;
 import com.ssafy.ssafsound.domain.post.service.PostService;
@@ -35,6 +34,10 @@ public class PostController {
                 .data(postService.findPost(postId, authenticatedMember))
                 .build();
     }
+
+    @PostMapping("/{postId}/like")
+    public EnvelopeResponse<Void> postLike(AuthenticatedMember authenticatedMember, @PathVariable Long postId) {
+        postService.postLike(postId, authenticatedMember.getMemberId());
 
     @PostMapping("/{postId}/scrap")
     public EnvelopeResponse<Void> postScrap(AuthenticatedMember authenticatedMember, @PathVariable Long postId) {
