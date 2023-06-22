@@ -24,6 +24,7 @@ public class GetRecruitDetailResDto {
     private String recruitStart;
     private String recruitEnd;
     private List<RecruitSkillElement> skills;
+    private List<RecruitLimitElement> limits;
     private long memberId;
     private String nickName;
     private boolean ssafyMember;
@@ -37,6 +38,9 @@ public class GetRecruitDetailResDto {
         Member register = recruit.getMember();
         List<RecruitSkillElement> skills = recruit.getSkills().stream()
                 .map(RecruitSkillElement::from)
+                .collect(Collectors.toList());
+        List<RecruitLimitElement> limits = recruit.getLimitations().stream()
+                .map(RecruitLimitElement::from)
                 .collect(Collectors.toList());
 
         return GetRecruitDetailResDto.builder()
@@ -52,6 +56,7 @@ public class GetRecruitDetailResDto {
                 .recruitEnd(recruit.getEndDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .finishedRecruit(recruit.isFinishedRecruit())
                 .skills(skills)
+                .limits(limits)
                 .view(recruit.getView())
                 .build();
     }
