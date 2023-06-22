@@ -2,7 +2,7 @@ package com.ssafy.ssafsound.domain.auth.service.token;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
-import com.ssafy.ssafsound.domain.auth.exception.MemberErrorInfo;
+import com.ssafy.ssafsound.domain.auth.exception.AuthErrorInfo;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -42,19 +42,30 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String createRefreshToken() {
+    public String createRefreshToken(AuthenticatedMember authenticatedMember) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + refreshTokenValidTime);
 
         return Jwts.builder()
+                .claim("memberId", authenticatedMember.getMemberId())
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(key)
                 .compact();
     }
 
-    public String getPayload() {
-        return null;
+    public Long getMemberIdByRefreshToken(String token) {
+        Claims claims;
+        try {
+            claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            throw new AuthException(AuthErrorInfo.AUTH_TOKEN_EXPIRED);
+        }
+        return claims.get("memberId", Long.class);
     }
 
     public AuthenticatedMember getParsedClaims(String token) {
@@ -66,7 +77,7 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {
-            throw new AuthException(MemberErrorInfo.AUTH_TOKEN_EXPIRED);
+            throw new AuthException(AuthErrorInfo.AUTH_TOKEN_EXPIRED);
         }
         Long memberId = claims.get("memberId", Long.class);
         String memberRole = claims.get("memberRole", String.class);

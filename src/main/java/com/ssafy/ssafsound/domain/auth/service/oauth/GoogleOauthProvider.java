@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
-import com.ssafy.ssafsound.domain.auth.exception.MemberErrorInfo;
+import com.ssafy.ssafsound.domain.auth.exception.AuthErrorInfo;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,9 +62,9 @@ public class GoogleOauthProvider implements OauthProvider {
             ResponseEntity<String> apiResponse = restTemplate.postForEntity(GOOGLE_TOKEN_URL, restRequest, String.class);
             return parsingValue(apiResponse.getBody(), "access_token");
         } catch (RestClientException e) {
-            throw new AuthException(MemberErrorInfo.AUTH_SERVER_ERROR);
+            throw new AuthException(AuthErrorInfo.AUTH_SERVER_ERROR);
         } catch (JsonProcessingException e) {
-            throw new AuthException(MemberErrorInfo.AUTH_SERVER_PARSING_ERROR);
+            throw new AuthException(AuthErrorInfo.AUTH_SERVER_PARSING_ERROR);
         }
     }
 
@@ -81,9 +81,9 @@ public class GoogleOauthProvider implements OauthProvider {
                     .oauthName(oauthName)
                     .build();
         } catch (RestClientException e) {
-            throw new AuthException(MemberErrorInfo.AUTH_SERVER_ERROR);
+            throw new AuthException(AuthErrorInfo.AUTH_SERVER_ERROR);
         } catch (JsonProcessingException e) {
-            throw new AuthException(MemberErrorInfo.AUTH_SERVER_PARSING_ERROR);
+            throw new AuthException(AuthErrorInfo.AUTH_SERVER_PARSING_ERROR);
         }
     }
 

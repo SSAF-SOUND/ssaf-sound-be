@@ -28,4 +28,16 @@ public class MemberToken {
     @MapsId
     @JoinColumn(name="member_id")
     private Member member;
+
+    public void changeAccessTokenByRefreshToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public void changeAccessTokenByLogin(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public void changeRefreshTokenByLogin(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }
