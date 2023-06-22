@@ -33,4 +33,8 @@ public class RecruitLimitation {
 
     @Convert(converter = RecruitTypeConverter.class)
     private MetaData type;
+
+    public void increaseCurrentNumber() {
+        this.currentNumber++;
+    }
 }
