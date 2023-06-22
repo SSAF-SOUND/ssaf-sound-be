@@ -12,8 +12,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity(name="recruit_comment")
 @Getter
@@ -34,10 +32,6 @@ public class RecruitComment extends BaseTimeEntity {
     @Column
     @Builder.Default
     private Boolean deletedComment = Boolean.FALSE;
-
-    @OneToMany(mappedBy = "commentGroup")
-    @Builder.Default
-    List<RecruitComment> replies = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_group", referencedColumnName = "recruit_comment_id")

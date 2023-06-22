@@ -1,10 +1,12 @@
 package com.ssafy.ssafsound.domain.recruitapplication.repository;
 
+import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -16,4 +18,7 @@ public interface RecruitApplicationRepository extends JpaRepository<RecruitAppli
     Optional<RecruitApplication> findByIdAndMemberIdFetchRecruitWriter(Long recruitApplicationId);
 
     Optional<RecruitApplication> findByIdAndMemberId(Long recruitApplicationId, Long memberId);
+
+    @Query("SELECT r FROM recruit_application r left join fetch r.member as m left join fetch m.majorType where r.recruit.id = :recruitId and r.matchStatus = :matchStatus")
+    List<RecruitApplication> findByRecruitIdAndMatchStatusFetchMember(Long recruitId, MatchStatus matchStatus);
 }

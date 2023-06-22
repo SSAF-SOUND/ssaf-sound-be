@@ -1,5 +1,7 @@
 package com.ssafy.ssafsound.domain.recruitapplication.service;
 
+import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
+import com.ssafy.ssafsound.domain.member.domain.MajorType;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
@@ -55,11 +57,19 @@ class RecruitApplicationServiceTest {
     Member register = Member.builder()
             .id(1L)
             .nickname("khs")
+            .ssafyMember(true)
+            .certificationState(AuthenticationStatus.CERTIFIED)
+            .major(true)
+            .majorType(new MajorType(1, "자바전공"))
             .build();
 
     Member participant = Member.builder()
             .id(2L)
             .nickname("kds")
+            .ssafyMember(true)
+            .certificationState(AuthenticationStatus.CERTIFIED)
+            .major(false)
+            .majorType(null)
             .build();
 
     Recruit recruit = Recruit.builder()
@@ -90,6 +100,20 @@ class RecruitApplicationServiceTest {
             .type(new MetaData(RecruitType.DESIGN))
             .build());
 
+    List<RecruitApplication> recruitApplications = List.of(
+            RecruitApplication.builder()
+                    .matchStatus(MatchStatus.DONE)
+                    .member(register)
+                    .type(new MetaData(RecruitType.DESIGN))
+                    .recruit(recruit)
+                    .build(),
+            RecruitApplication.builder()
+                    .matchStatus(MatchStatus.DONE)
+                    .member(participant)
+                    .type(new MetaData(RecruitType.DESIGN))
+                    .recruit(recruit)
+                    .build()
+    );
     @BeforeEach
     void setUpStubAndFixture() {
         // SetUp Fixture
@@ -105,6 +129,8 @@ class RecruitApplicationServiceTest {
                 .thenReturn(java.util.Optional.ofNullable(recruitApplication));
         Mockito.lenient().when(recruitApplicationRepository.findByIdAndMemberIdFetchRecruitWriter(1L))
                 .thenReturn(java.util.Optional.ofNullable(recruitApplication));
+        Mockito.lenient().when(recruitApplicationRepository.findByRecruitIdAndMatchStatusFetchMember(1L, MatchStatus.DONE))
+                .thenReturn(recruitApplications);
 
         Mockito.lenient().when(memberRepository.getReferenceById(1L)).thenReturn(register);
         Mockito.lenient().when(memberRepository.getReferenceById(2L)).thenReturn(participant);
@@ -260,5 +286,14 @@ class RecruitApplicationServiceTest {
         assertThrows(RecruitException.class,
                 ()->recruitApplicationService.rejectRecruitApplication(1L, 1L, MatchStatus.REJECT)
         );
+    }
+
+    @DisplayName("리크루트 참여자 목록 조회")
+    @Test
+    void Given_RecruitId_When_GetRecruitParticipants_Then_Success() {
+        recruitApplicationService.getRecruitParticipants(1L);
+        assertDoesNotThrow(()->{
+            recruitApplicationService.getRecruitParticipants(1L);
+        });
     }
 }

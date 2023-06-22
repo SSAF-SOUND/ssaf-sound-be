@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.domain.recruitcomment.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
+import com.ssafy.ssafsound.domain.recruitcomment.dto.GetRecruitCommentsResDto;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PatchRecruitCommentReqDto;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitCommentReqDto;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitCommentResDto;
@@ -43,5 +44,12 @@ public class RecruitCommentController {
     public EnvelopeResponse<Void> toggleRecruitCommentLike(@PathVariable Long recruitCommentId, AuthenticatedMember memberInfo) {
         recruitCommentService.toggleRecruitCommentLike(recruitCommentId, memberInfo.getMemberId());
         return EnvelopeResponse.<Void>builder().build();
+    }
+
+    @GetMapping("/recruits/{recruitId}/comments")
+    public EnvelopeResponse<GetRecruitCommentsResDto> getRecruitComments(@PathVariable Long recruitId) {
+        return EnvelopeResponse.<GetRecruitCommentsResDto>builder()
+                .data(recruitCommentService.getRecruitComments(recruitId))
+                .build();
     }
 }

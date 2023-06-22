@@ -14,6 +14,7 @@ import com.ssafy.ssafsound.domain.recruit.repository.RecruitQuestionReplyReposit
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
+import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitParticipantsResDto;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.PostRecruitApplicationReqDto;
 import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicationRepository;
 import com.ssafy.ssafsound.domain.recruitapplication.validator.RecruitApplicationValidator;
@@ -101,6 +102,14 @@ public class RecruitApplicationService {
         changeRecruitApplicationState(recruitApplication, memberId, status,
                 (entity, mid)-> recruitApplication.getMatchStatus() != MatchStatus.WAITING_REGISTER_APPROVE
         );
+    }
+
+    @Transactional(readOnly = true)
+    public GetRecruitParticipantsResDto getRecruitParticipants(Long recruitId) {
+        List<RecruitApplication> recruitApplications = recruitApplicationRepository
+                .findByRecruitIdAndMatchStatusFetchMember(recruitId, MatchStatus.DONE);
+
+        return GetRecruitParticipantsResDto.from(recruitApplications);
     }
 
     private void changeRecruitApplicationState(RecruitApplication recruitApplication, Long memberId,
