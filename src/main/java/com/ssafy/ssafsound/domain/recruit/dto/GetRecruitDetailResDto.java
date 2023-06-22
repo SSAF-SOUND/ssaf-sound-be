@@ -5,7 +5,7 @@ import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.format.DateTimeFormatter;
@@ -13,9 +13,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-@AllArgsConstructor
+@Builder
 public class GetRecruitDetailResDto {
-    private final RecruitDetail recruit;
+
+    private long recruitId;
+    private String title;
+    private String content;
+    private Long view;
+    private boolean finishedRecruit;
+    private String recruitStart;
+    private String recruitEnd;
+    private List<RecruitSkillElement> skills;
+    private long memberId;
+    private String nickName;
+    private boolean ssafyMember;
+    private boolean certification;
+    private Integer year;
 
     public static GetRecruitDetailResDto from(Recruit recruit) {
 
@@ -26,7 +39,7 @@ public class GetRecruitDetailResDto {
                 .map(RecruitSkillElement::from)
                 .collect(Collectors.toList());
 
-        return new GetRecruitDetailResDto(RecruitDetail.builder()
+        return GetRecruitDetailResDto.builder()
                 .recruitId(recruit.getId())
                 .title(recruit.getTitle())
                 .content(recruit.getContent())
@@ -40,6 +53,6 @@ public class GetRecruitDetailResDto {
                 .finishedRecruit(recruit.isFinishedRecruit())
                 .skills(skills)
                 .view(recruit.getView())
-                .build());
+                .build();
     }
 }

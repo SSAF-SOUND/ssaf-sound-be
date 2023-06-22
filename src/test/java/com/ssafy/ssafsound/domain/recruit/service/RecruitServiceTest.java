@@ -10,7 +10,6 @@ import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.domain.recruit.domain.*;
 import com.ssafy.ssafsound.domain.recruit.dto.GetRecruitDetailResDto;
 import com.ssafy.ssafsound.domain.recruit.dto.PostRecruitReqDto;
-import com.ssafy.ssafsound.domain.recruit.dto.RecruitDetail;
 import com.ssafy.ssafsound.domain.recruit.dto.RecruitLimitElement;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicationRepository;
@@ -192,11 +191,10 @@ class RecruitServiceTest {
     @Test
     void Given_RecruitId_When_GetRecruitDetail_Then_Success() {
         GetRecruitDetailResDto dto = recruitService.getRecruitDetail(2L);
-        RecruitDetail recruitDetail = dto.getRecruit();
 
         assertAll(
-                ()->assertEquals(1L, recruitDetail.getView()),
-                ()->assertEquals(false, recruitDetail.isFinishedRecruit())
+                ()->assertEquals(1L, dto.getView()),
+                ()->assertEquals(false, dto.isFinishedRecruit())
         );
     }
 
