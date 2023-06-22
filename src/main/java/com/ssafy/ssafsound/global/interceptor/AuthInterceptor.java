@@ -22,7 +22,6 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class AuthInterceptor implements HandlerInterceptor {
     private final JwtTokenProvider jwtTokenProvider;
-    private static final String COOKIE = "Set-Cookie";
 
     private final List<String> excludePathByClientGetRequest = List.of("/auth", "/recruits", "/comments", "/lunch", "/meta", "/members", "/posts");
     @Override
