@@ -18,5 +18,5 @@ public interface HotPostRepository extends JpaRepository<HotPost, Long> {
             "  GROUP BY h.id " +
             "  HAVING COUNT(p.id) < :threshold " +
             ")")
-    void deleteAllIdWithDecreasedLikes(@Param("threshold") Long threshold);
+    void deleteAllWithDecreasedLikes(@Param("threshold") Long threshold);
 }

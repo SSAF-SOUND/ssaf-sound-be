@@ -112,6 +112,6 @@ public class PostService {
 
     @Transactional
     public void deleteHotPost(Long threshold){
-        hotPostRepository.deleteAllIdWithDecreasedLikes(threshold);
+        hotPostRepository.deleteAllWithDecreasedLikes(threshold);
     }
 }
