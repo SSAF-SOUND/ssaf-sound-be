@@ -35,4 +35,11 @@ public class PostController {
                 .data(postService.findPost(postId, authenticatedMember))
                 .build();
     }
+
+    @PostMapping("/{postId}/scrap")
+    public EnvelopeResponse<Void> postScrap(AuthenticatedMember authenticatedMember, @PathVariable Long postId) {
+        postService.postScrap(postId, authenticatedMember.getMemberId());
+        return EnvelopeResponse.<Void>builder()
+                .build();
+    }
 }
