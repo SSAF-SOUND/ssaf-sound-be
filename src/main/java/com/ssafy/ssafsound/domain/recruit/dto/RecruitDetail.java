@@ -11,6 +11,7 @@ public class RecruitDetail {
     private long recruitId;
     private String title;
     private String content;
+    private Long view;
     private boolean finishedRecruit;
     private String recruitStart;
     private String recruitEnd;

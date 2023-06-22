@@ -3,6 +3,8 @@ package com.ssafy.ssafsound.domain.recruit.dto;
 import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
+import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
+import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -16,6 +18,8 @@ public class GetRecruitDetailResDto {
     private final RecruitDetail recruit;
 
     public static GetRecruitDetailResDto from(Recruit recruit) {
+
+        if(recruit.getDeletedRecruit()) throw new RecruitException(RecruitErrorInfo.IS_DELETED);
 
         Member register = recruit.getMember();
         List<RecruitSkillElement> skills = recruit.getSkills().stream()
@@ -35,6 +39,7 @@ public class GetRecruitDetailResDto {
                 .recruitEnd(recruit.getEndDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .finishedRecruit(recruit.isFinishedRecruit())
                 .skills(skills)
+                .view(recruit.getView())
                 .build());
     }
 }

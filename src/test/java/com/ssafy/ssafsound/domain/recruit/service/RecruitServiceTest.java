@@ -1,21 +1,24 @@
 package com.ssafy.ssafsound.domain.recruit.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
+import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
+import com.ssafy.ssafsound.domain.member.domain.MajorType;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
-import com.ssafy.ssafsound.domain.meta.domain.MetaData;
-import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
-import com.ssafy.ssafsound.domain.meta.domain.RecruitType;
-import com.ssafy.ssafsound.domain.meta.domain.Skill;
+import com.ssafy.ssafsound.domain.meta.domain.*;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.domain.recruit.domain.*;
+import com.ssafy.ssafsound.domain.recruit.dto.GetRecruitDetailResDto;
 import com.ssafy.ssafsound.domain.recruit.dto.PostRecruitReqDto;
+import com.ssafy.ssafsound.domain.recruit.dto.RecruitDetail;
 import com.ssafy.ssafsound.domain.recruit.dto.RecruitLimitElement;
+import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicationRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitLimitationRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitScrapRepository;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
+import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +29,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -58,9 +62,43 @@ class RecruitServiceTest {
     @InjectMocks
     private RecruitService recruitService;
 
-    private Member member = Member.builder().id(1L).build();
+    private Member member = Member.builder()
+            .id(1L)
+            .nickname("khs")
+            .semester(9)
+            .ssafyMember(true)
+            .certificationState(AuthenticationStatus.CERTIFIED)
+            .major(true)
+            .majorType(MajorType.builder().build())
+            .campus(new MetaData(Campus.SEOUL))
+            .build();
 
-    private Recruit recruit = Recruit.builder().id(1L).build();
+    private Recruit recruit = Recruit.builder()
+            .id(1L)
+            .build();
+
+    private Recruit savedRecruit = Recruit.builder()
+            .id(2L)
+            .view(0L)
+            .member(member)
+            .deletedRecruit(false)
+            .startDateTime(LocalDate.now().atStartOfDay())
+            .endDateTime(LocalDate.now().plusDays(3).atTime(LocalTime.MAX))
+            .build();
+
+    private List<RecruitLimitation> limits = List.of(RecruitLimitation.builder()
+            .recruit(savedRecruit)
+            .limitation(2)
+            .currentNumber(0)
+            .type(new MetaData(RecruitType.DESIGN))
+            .build());
+
+    private List<RecruitSkill> skills = List.of(RecruitSkill.builder()
+            .recruit(savedRecruit)
+            .id(1L)
+            .recruit(savedRecruit)
+            .skill(new MetaData(RecruitType.BACK_END))
+            .build());
 
     private RecruitScrap recruitScrap = RecruitScrap.builder().member(member).recruit(recruit).build();
 
@@ -72,11 +110,17 @@ class RecruitServiceTest {
 
     @BeforeEach
     void setStub() {
+        savedRecruit.setRecruitLimitations(limits);
+        savedRecruit.setRecruitSkill(skills);
+
         // Repository Mocking
         Mockito.lenient().when(memberRepository.findById(1L)).thenReturn(java.util.Optional.ofNullable(member));
         Mockito.lenient().when(memberRepository.findById(2L)).thenThrow(new RuntimeException());
 
         Mockito.lenient().when(recruitScrapRepository.findByRecruitIdAndMemberId(1L, 1L)).thenReturn(java.util.Optional.ofNullable(recruitScrap));
+
+        Mockito.lenient().when(recruitRepository.findByIdUsingFetchJoinRegisterAndRecruitLimitation(2L))
+                .thenReturn(java.util.Optional.ofNullable(savedRecruit));
 
         // MetaData Consumer Mocking
         Arrays.stream(RecruitType.values()).forEach(recruitType -> Mockito.lenient()
@@ -142,5 +186,31 @@ class RecruitServiceTest {
     void Given_MemberIdAndRecruitId_When_TryToggleRecruitScrap_Then_DeleteRecruitScrap() {
         Long recruitId = 1L, memberId = 1L;
         assertTrue(recruitService.toggleRecruitScrap(recruitId, memberId));
+    }
+
+    @DisplayName("리크루트 상세 조회")
+    @Test
+    void Given_RecruitId_When_GetRecruitDetail_Then_Success() {
+        GetRecruitDetailResDto dto = recruitService.getRecruitDetail(2L);
+        RecruitDetail recruitDetail = dto.getRecruit();
+
+        assertAll(
+                ()->assertEquals(1L, recruitDetail.getView()),
+                ()->assertEquals(false, recruitDetail.isFinishedRecruit())
+        );
+    }
+
+    @DisplayName("존재하지 않는 리크루트에 대한 상세 조회 실패")
+    @Test
+    void Given_NotExistRecruitId_When_GetRecruitDetail_Then_Fail() {
+        assertThrows(ResourceNotFoundException.class, ()->recruitService.getRecruitDetail(1L));
+    }
+
+
+    @DisplayName("삭제된 리크루트 상세 조회시 null값 return")
+    @Test
+    void Given_DeletedRecruitId_When_GetRecruitDetail_Then_Fail() {
+        savedRecruit.delete();
+        assertThrows(RecruitException.class, ()->recruitService.getRecruitDetail(2L));
     }
 }

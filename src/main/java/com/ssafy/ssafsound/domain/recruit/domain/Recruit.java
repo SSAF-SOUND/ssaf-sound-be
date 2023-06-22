@@ -103,4 +103,8 @@ public class Recruit extends BaseTimeEntity {
     public void increaseView() {
         this.view++;
     }
+
+    public void delete() {
+        this.deletedRecruit = true;
+    }
 }
