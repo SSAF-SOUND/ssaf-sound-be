@@ -86,11 +86,11 @@ public class PostService {
     }
 
     private void saveLike(Long postId, Long memberId) {
-        PostLike postScrap = PostLike.builder()
+        PostLike postLike = PostLike.builder()
                 .post(postRepository.getReferenceById(postId))
                 .member(memberRepository.getReferenceById(memberId))
                 .build();
-        postLikeRepository.save(postScrap);
+        postLikeRepository.save(postLike);
     }
 
     private void deleteLike(PostLike postLike) {
@@ -111,7 +111,7 @@ public class PostService {
     }
 
     @Transactional
-    public void deleteHotPost(Long threshold){
-        hotPostRepository.deleteAllWithDecreasedLikes(threshold);
+    public void deleteBelowThresholdHotPosts(Long threshold){
+        hotPostRepository.deleteBelowThresholdHotPosts(threshold);
     }
 }
