@@ -10,6 +10,8 @@ public class SSAFYInfo {
     private Integer semester;
     private boolean isMajor;
     private String campus;
-    private String certificationState;
-    private String majorType;
+    @Builder.Default
+    private String certificationState = null;
+    @Builder.Default
+    private String majorType = null;
 }
