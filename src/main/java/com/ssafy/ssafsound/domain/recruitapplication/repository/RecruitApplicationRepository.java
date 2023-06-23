@@ -23,7 +23,7 @@ public interface RecruitApplicationRepository extends JpaRepository<RecruitAppli
     @Query("SELECT r FROM recruit_application r left join fetch r.member as m left join fetch m.majorType where r.recruit.id = :recruitId and r.matchStatus = :matchStatus")
     List<RecruitApplication> findByRecruitIdAndMatchStatusFetchMember(Long recruitId, MatchStatus matchStatus);
 
-    @Query("SELECT new com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement(r.id, r.matchStatus, r.type, m.id, m.nickname, m.semester, m.major, m.campus, m.certificationState, mj.name, rp.content, rq.content, r.isLike) from recruit_application r  " +
+    @Query("SELECT new com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement(r.id, r.type, r.matchStatus, r.type, m.id, m.nickname, m.semester, m.major, m.campus, m.certificationState, mj.name, rp.content, rq.content, r.isLike) from recruit_application r  " +
             "inner join r.member as m " +
             "inner join m.majorType as mj " +
             "left outer join recruit_question_reply as rp on r.id = rp.application.id " +

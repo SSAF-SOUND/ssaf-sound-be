@@ -13,6 +13,9 @@ public class RecruitApplicationElement {
     private Long recruitApplicationId;
 
     @JsonProperty
+    private String recruitType;
+
+    @JsonProperty
     private MatchStatus matchStatus;
 
     @JsonProperty
@@ -36,13 +39,14 @@ public class RecruitApplicationElement {
     @JsonProperty
     private Boolean isLike;
 
-    public RecruitApplicationElement(Long recruitApplicationId, MatchStatus matchStatus, MetaData type,
+    public RecruitApplicationElement(Long recruitApplicationId, MetaData recruitType, MatchStatus matchStatus, MetaData type,
                                      Long memberId, String nickName,
                                      Integer semester, Boolean major, MetaData campus,
                                      AuthenticationStatus certificationState, String majorType,
                                      String reply, String question, Boolean isLike) {
 
         this.recruitApplicationId = recruitApplicationId;
+        this.recruitType = recruitType.getName();
         this.matchStatus = matchStatus;
         this.type = type;
         this.memberId = memberId;
