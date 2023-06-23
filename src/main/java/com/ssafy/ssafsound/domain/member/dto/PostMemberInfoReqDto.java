@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.member.dto;
 
+import com.ssafy.ssafsound.domain.member.validator.Semester;
 import lombok.Builder;
 import lombok.Getter;
 import javax.validation.constraints.NotNull;
@@ -16,6 +17,7 @@ public class PostMemberInfoReqDto {
     @NotNull
     private Boolean ssafyMember;
 
+    @Semester
     private Integer semester;
 
     private Boolean isMajor;
