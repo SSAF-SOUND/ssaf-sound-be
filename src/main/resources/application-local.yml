@@ -4,6 +4,16 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
 
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
+
+  constant:
+    post:
+      HOT_POST_LIKES_THRESHOLD: 10
+
   jpa:
     hibernate:
       ddl-auto: create
@@ -20,6 +30,6 @@ spring:
 
   config:
     import:
-        - application-oauth.yml
-        - application-security.yml
-        - application-cloud.yml
+      - application-oauth.yml
+      - application-security.yml
+      - application-cloud.yml
