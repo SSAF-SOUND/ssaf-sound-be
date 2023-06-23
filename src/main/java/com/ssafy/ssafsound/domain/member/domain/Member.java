@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity(name="member")
+@Table(indexes = @Index(name = "nickname_index", columnList = "nickname", unique = true))
 @Getter
 @Builder
 @NoArgsConstructor
