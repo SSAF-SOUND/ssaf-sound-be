@@ -58,7 +58,7 @@ public class RecruitApplicationController {
     @GetMapping("/recruit-applications")
     public EnvelopeResponse<GetRecruitApplicationsResDto> getRecruitApplications(@RequestParam Long recruitId, AuthenticatedMember authenticatedMember) {
         return EnvelopeResponse.<GetRecruitApplicationsResDto>builder()
-                .data(recruitApplicationService.getRecruitApplications(recruitId, authenticatedMember.getMemberId()))
+                .data(recruitApplicationService.getRecruitApplications(recruitId, 1L))
                 .build();
     }
 
