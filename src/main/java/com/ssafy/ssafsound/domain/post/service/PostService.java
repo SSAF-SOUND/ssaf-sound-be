@@ -5,27 +5,28 @@ import com.ssafy.ssafsound.domain.board.exception.BoardErrorInfo;
 import com.ssafy.ssafsound.domain.board.exception.BoardException;
 import com.ssafy.ssafsound.domain.board.repository.BoardRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
-import com.ssafy.ssafsound.domain.post.domain.HotPost;
-import com.ssafy.ssafsound.domain.post.domain.PostScrap;
-import com.ssafy.ssafsound.domain.post.domain.Post;
-import com.ssafy.ssafsound.domain.post.domain.PostLike;
-import com.ssafy.ssafsound.domain.post.dto.GetPostDetailListResDto;
-import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
-import com.ssafy.ssafsound.domain.post.dto.GetPostListResDto;
-import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
+import com.ssafy.ssafsound.domain.meta.domain.MetaData;
+import com.ssafy.ssafsound.domain.meta.domain.UploadDirectory;
+import com.ssafy.ssafsound.domain.meta.dto.UploadFileInfo;
+import com.ssafy.ssafsound.domain.post.domain.*;
+import com.ssafy.ssafsound.domain.post.dto.*;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
 import com.ssafy.ssafsound.domain.post.exception.PostException;
-import com.ssafy.ssafsound.domain.post.repository.HotPostRepository;
-import com.ssafy.ssafsound.domain.post.repository.PostLikeRepository;
-import com.ssafy.ssafsound.domain.post.repository.PostRepository;
-import com.ssafy.ssafsound.domain.post.repository.PostScrapRepository;
+import com.ssafy.ssafsound.domain.post.repository.*;
+import com.ssafy.ssafsound.infra.storage.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.net.URLEncoder;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -38,10 +39,13 @@ public class PostService {
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
+    private final StorageService awsS3StorageSerive;
+
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
     private final HotPostRepository hotPostRepository;
     private final PostScrapRepository postScrapRepository;
+    private final PostImageRepository postImageRepository;
 
     @Transactional(readOnly = true)
     public GetPostListResDto findPosts(Long boardId, Pageable pageable) {
@@ -113,7 +117,7 @@ public class PostService {
     }
 
     @Transactional
-    public void deleteBelowThresholdHotPosts(Long threshold){
+    public void deleteBelowThresholdHotPosts(Long threshold) {
         hotPostRepository.deleteBelowThresholdHotPosts(threshold);
     }
 
@@ -141,6 +145,56 @@ public class PostService {
 
     private void deleteScrapIfAlreadyExists(PostScrap postScrap) {
         postScrapRepository.delete(postScrap);
+    }
+
+    @Transactional
+    public Long writePost(Long boardId, PostPostWriteReqDto postPostWriteReqDto, List<MultipartFile> images, Long memberId) {
+        List<UploadFileInfo> uploadFileInfos = new ArrayList<>();
+        try {
+            uploadFileInfos = uploadImages(images, memberId);
+
+            Post post = Post.builder()
+                    .board(boardRepository.getReferenceById(boardId))
+                    .member(memberRepository.getReferenceById(memberId))
+                    .title(postPostWriteReqDto.getTitle())
+                    .content(postPostWriteReqDto.getContent())
+                    .anonymous(postPostWriteReqDto.isAnonymous())
+                    .build();
+            Long postId = postRepository.save(post).getId();
+
+            List<PostImage> postImages = new ArrayList<>();
+            for (UploadFileInfo uploadFileInfo : uploadFileInfos) {
+                PostImage postImage = PostImage.builder()
+                        .post(post)
+                        .imagePath(uploadFileInfo.getFilePath())
+                        .imageUrl(uploadFileInfo.getFileUrl())
+                        .build();
+                postImages.add(postImage);
+            }
+            postImageRepository.saveAll(postImages);
+            return postId;
+
+        } catch (Exception e) {
+            deleteImages(uploadFileInfos);
+            return null;
+        }
+    }
+
+    private List<UploadFileInfo> uploadImages(List<MultipartFile> images, Long memberId) {
+        List<UploadFileInfo> uploadFileInfos = new ArrayList<>();
+
+        MetaData metaData = new MetaData(UploadDirectory.POST);
+        for (MultipartFile image : images) {
+            UploadFileInfo uploadFileInfo = awsS3StorageSerive.putObject(image, metaData, memberId);
+            uploadFileInfos.add(uploadFileInfo);
+        }
+        return uploadFileInfos;
+    }
+
+    private void deleteImages(List<UploadFileInfo> uploadFileInfos) {
+        for (UploadFileInfo uploadFileInfo : uploadFileInfos) {
+            awsS3StorageSerive.deleteObject(uploadFileInfo.getFilePath());
+        }
     }
 
 }
