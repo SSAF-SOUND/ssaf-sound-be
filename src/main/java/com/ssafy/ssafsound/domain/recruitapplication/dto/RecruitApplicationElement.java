@@ -1,0 +1,55 @@
+package com.ssafy.ssafsound.domain.recruitapplication.dto;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
+import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
+import com.ssafy.ssafsound.domain.meta.domain.MetaData;
+import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
+
+public class RecruitApplicationElement {
+    @JsonProperty
+    private Long recruitApplicationId;
+
+    @JsonProperty
+    private MatchStatus matchStatus;
+
+    @JsonProperty
+    private MetaData type;
+
+    @JsonProperty
+    private Long memberId;
+
+    @JsonProperty
+    private String nickName;
+
+    @JsonProperty
+    private SSAFYInfo ssafyInfo;
+
+    @JsonProperty
+    private String reply;
+
+    @JsonProperty
+    private String question;
+
+    public RecruitApplicationElement(Long recruitApplicationId, MatchStatus matchStatus, MetaData type,
+                                     Long memberId, String nickName,
+                                     Integer semester, Boolean major, MetaData campus,
+                                     AuthenticationStatus certificationState, String majorType,
+                                     String reply, String question) {
+
+        this.recruitApplicationId = recruitApplicationId;
+        this.matchStatus = matchStatus;
+        this.type = type;
+        this.memberId = memberId;
+        this.nickName = nickName;
+        this.ssafyInfo = SSAFYInfo.builder()
+                .semester(semester)
+                .isMajor(major)
+                .campus(campus == null ? null : campus.getName())
+                .certificationState(certificationState == null ? null : certificationState.name())
+                .majorType(majorType)
+                .build();
+        this.reply = reply;
+        this.question = question;
+    }
+}

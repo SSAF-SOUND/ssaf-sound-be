@@ -14,6 +14,7 @@ import com.ssafy.ssafsound.domain.recruit.repository.RecruitQuestionReplyReposit
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
+import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitApplicationsResDto;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitParticipantsResDto;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.PostRecruitApplicationReqDto;
 import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicationRepository;
@@ -110,6 +111,11 @@ public class RecruitApplicationService {
                 .findByRecruitIdAndMatchStatusFetchMember(recruitId, MatchStatus.DONE);
 
         return GetRecruitParticipantsResDto.from(recruitApplications);
+    }
+
+    @Transactional(readOnly = true)
+    public GetRecruitApplicationsResDto getRecruitApplications(Long recruitId, Long memberId) {
+        return new GetRecruitApplicationsResDto(recruitApplicationRepository.findByRecruitIdAndRegisterMemberIdWithQuestionReply(recruitId, memberId));
     }
 
     private void changeRecruitApplicationState(RecruitApplication recruitApplication, Long memberId,
