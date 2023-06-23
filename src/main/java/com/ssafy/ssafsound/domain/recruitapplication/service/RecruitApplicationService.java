@@ -118,6 +118,15 @@ public class RecruitApplicationService {
         return new GetRecruitApplicationsResDto(recruitApplicationRepository.findByRecruitIdAndRegisterMemberIdWithQuestionReply(recruitId, memberId));
     }
 
+    @Transactional
+    public void toggleRecruitApplicationLike(Long recruitApplicationId, Long memberId) {
+        RecruitApplication recruitApplication = recruitApplicationRepository.findByIdFetchRecruitWriter(recruitApplicationId)
+                .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+
+        if(!recruitApplication.getRecruit().getMember().getId().equals(memberId)) throw new RecruitException(RecruitErrorInfo.INVALID_CHANGE_MEMBER_OPERATION);
+        recruitApplication.toggleLike();
+    }
+
     private void changeRecruitApplicationState(RecruitApplication recruitApplication, Long memberId,
                                                MatchStatus status, RecruitApplicationValidator validator) {
         if(validator.hasError(recruitApplication, memberId)) {

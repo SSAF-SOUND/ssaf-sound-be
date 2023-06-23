@@ -5,7 +5,9 @@ import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
 import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
+import lombok.Getter;
 
+@Getter
 public class RecruitApplicationElement {
     @JsonProperty
     private Long recruitApplicationId;

@@ -61,4 +61,11 @@ public class RecruitApplicationController {
                 .data(recruitApplicationService.getRecruitApplications(recruitId, authenticatedMember.getMemberId()))
                 .build();
     }
+
+    @PostMapping("/recruit-applications/{recruitApplicationId}/like")
+    public EnvelopeResponse<Void> toggleRecruitApplicationLike(@PathVariable Long recruitApplicationId, AuthenticatedMember authenticatedMember) {
+        recruitApplicationService.toggleRecruitApplicationLike(recruitApplicationId, authenticatedMember.getMemberId());
+        return EnvelopeResponse.<Void>builder()
+                .build();
+    }
 }
