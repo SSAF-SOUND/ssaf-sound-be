@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.member.dto;
 
+import com.ssafy.ssafsound.domain.member.validator.Campus;
 import com.ssafy.ssafsound.domain.member.validator.Semester;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,5 +23,6 @@ public class PostMemberInfoReqDto {
 
     private Boolean isMajor;
 
+    @Campus
     private String campus;
 }
