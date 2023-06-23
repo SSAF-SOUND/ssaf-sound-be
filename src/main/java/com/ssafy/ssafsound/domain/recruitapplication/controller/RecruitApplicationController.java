@@ -5,6 +5,7 @@ import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitApplicationsResDto;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitParticipantsResDto;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.PostRecruitApplicationReqDto;
+import com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement;
 import com.ssafy.ssafsound.domain.recruitapplication.service.RecruitApplicationService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
@@ -66,6 +67,13 @@ public class RecruitApplicationController {
     public EnvelopeResponse<Void> toggleRecruitApplicationLike(@PathVariable Long recruitApplicationId, AuthenticatedMember authenticatedMember) {
         recruitApplicationService.toggleRecruitApplicationLike(recruitApplicationId, authenticatedMember.getMemberId());
         return EnvelopeResponse.<Void>builder()
+                .build();
+    }
+
+    @GetMapping("/recruit-applications/{recruitApplicationId}")
+    public EnvelopeResponse<RecruitApplicationElement> getRecruitApplicationByIdAndRegisterId(@PathVariable Long recruitApplicationId, AuthenticatedMember authenticatedMember) {
+        return EnvelopeResponse.<RecruitApplicationElement>builder()
+                .data(recruitApplicationService.getRecruitApplicationByIdAndRegisterId(recruitApplicationId, 1L))
                 .build();
     }
 }

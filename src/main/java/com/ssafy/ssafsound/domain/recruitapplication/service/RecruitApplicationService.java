@@ -17,6 +17,7 @@ import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitApplicationsResDto;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitParticipantsResDto;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.PostRecruitApplicationReqDto;
+import com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement;
 import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicationRepository;
 import com.ssafy.ssafsound.domain.recruitapplication.validator.RecruitApplicationValidator;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
@@ -125,6 +126,11 @@ public class RecruitApplicationService {
 
         if(!recruitApplication.getRecruit().getMember().getId().equals(memberId)) throw new RecruitException(RecruitErrorInfo.INVALID_CHANGE_MEMBER_OPERATION);
         recruitApplication.toggleLike();
+    }
+
+    @Transactional(readOnly = true)
+    public RecruitApplicationElement getRecruitApplicationByIdAndRegisterId(Long recruitApplicationId, Long registerId) {
+        return recruitApplicationRepository.findByRecruitApplicationIdAndRegisterId(recruitApplicationId, registerId);
     }
 
     private void changeRecruitApplicationState(RecruitApplication recruitApplication, Long memberId,
