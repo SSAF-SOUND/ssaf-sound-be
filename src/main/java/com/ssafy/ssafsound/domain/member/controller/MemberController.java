@@ -26,8 +26,10 @@ public class MemberController {
     }
 
     @PostMapping
-    public EnvelopeResponse postMemberInformation(@Authentication AuthenticatedMember authenticatedMember,
+    public EnvelopeResponse<GetMemberResDto> postMemberInformation(@Authentication AuthenticatedMember authenticatedMember,
                                                   @Valid @RequestBody PostMemberInfoReqDto postMemberInfoReqDto) {
-        return EnvelopeResponse.builder().build();
+        return EnvelopeResponse.<GetMemberResDto>builder()
+                .data(memberService.postMemberInformation(authenticatedMember, postMemberInfoReqDto))
+                .build();
     }
 }
