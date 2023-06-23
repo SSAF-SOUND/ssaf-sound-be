@@ -1,17 +1,18 @@
 package com.ssafy.ssafsound.domain.member.validator;
 
+import org.springframework.beans.factory.annotation.Value;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class SemesterValidator implements ConstraintValidator<Semester, Integer> {
 
+    @Value("${spring.constant.semester.MIN_SEMESTER}")
+    private Integer MIN_SEMESTER;
+    @Value("${spring.constant.semester.MAX_SEMESTER}")
+    private Integer MAX_SEMESTER;
     @Override
     public boolean isValid(Integer value, ConstraintValidatorContext context) {
         if(value == null) return  true;
-        Pattern pattern = Pattern.compile("^(?:[1-9]|10)$");
-        Matcher matcher = pattern.matcher(String.valueOf(value));
-        return matcher.matches();
+        return value >= MIN_SEMESTER && value <= MAX_SEMESTER;
     }
 }
