@@ -11,10 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @Slf4j
@@ -70,16 +68,17 @@ public class PostController {
     }
 
     @PostMapping
-    public EnvelopeResponse<Long> writePost(@Valid @RequestPart("data") PostPostWriteReqDto postPostWriteReqDto,
-                                            @RequestPart List<MultipartFile> images,
+    public EnvelopeResponse<Long> writePost(@Valid @ModelAttribute PostPostWriteReqDto postPostWriteReqDto,
                                             @RequestParam Long boardId, AuthenticatedMember authenticatedMember) {
         AuthenticatedMember testMember = AuthenticatedMember.builder()
                 .memberId(1L)
                 .memberRole("NORMAL")
                 .build();
 
+        log.info("컨트롤러 수행");
+
         return EnvelopeResponse.<Long>builder()
-                .data(postService.writePost(boardId, testMember.getMemberId(), postPostWriteReqDto, images))
+                .data(postService.writePost(boardId, testMember.getMemberId(), postPostWriteReqDto, postPostWriteReqDto.getImages()))
                 .build();
     }
 }
