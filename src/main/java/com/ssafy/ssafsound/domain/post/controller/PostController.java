@@ -33,36 +33,23 @@ public class PostController {
 
     @GetMapping("/{postId}")
     public EnvelopeResponse<GetPostDetailListResDto> findPost(AuthenticatedMember authenticatedMember, @PathVariable Long postId) {
-        AuthenticatedMember testMember = AuthenticatedMember.builder()
-                .memberId(1L)
-                .memberRole("NORMAL")
-                .build();
-
         return EnvelopeResponse.<GetPostDetailListResDto>builder()
-                .data(postService.findPost(postId, testMember))
+                .data(postService.findPost(postId, authenticatedMember))
                 .build();
     }
 
     @PostMapping("/{postId}/like")
     public EnvelopeResponse<Void> postLike(AuthenticatedMember authenticatedMember, @PathVariable Long postId) {
-        AuthenticatedMember testMember = AuthenticatedMember.builder()
-                .memberId(1L)
-                .memberRole("NORMAL")
-                .build();
+        postService.postLike(postId, authenticatedMember.getMemberId());
 
-        postService.postLike(postId, testMember.getMemberId());
         return EnvelopeResponse.<Void>builder()
                 .build();
     }
 
     @PostMapping("/{postId}/scrap")
     public EnvelopeResponse<Void> postScrap(AuthenticatedMember authenticatedMember, @PathVariable Long postId) {
-        AuthenticatedMember testMember = AuthenticatedMember.builder()
-                .memberId(1L)
-                .memberRole("NORMAL")
-                .build();
+        postService.postScrap(postId, authenticatedMember.getMemberId());
 
-        postService.postScrap(postId, testMember.getMemberId());
         return EnvelopeResponse.<Void>builder()
                 .build();
     }
@@ -74,8 +61,6 @@ public class PostController {
                 .memberId(1L)
                 .memberRole("NORMAL")
                 .build();
-
-        log.info("컨트롤러 수행");
 
         return EnvelopeResponse.<Long>builder()
                 .data(postService.writePost(boardId, testMember.getMemberId(), postPostWriteReqDto, postPostWriteReqDto.getImages()))
