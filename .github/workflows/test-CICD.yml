@@ -58,11 +58,11 @@ jobs:
         run: |
           cd ./src/main/resources
           touch ./$APPLICATION_OAUTH_FILENAME
-          echo "$APPLICATION_OAUTH" | base64 --decode > ./$APPLICATION_OAUTH_FILENAME
+          echo "$APPLICATION_OAUTH" > ./$APPLICATION_OAUTH_FILENAME
           touch ./$APPLICATION_CLOUD_FILENAME
-          echo "$APPLICATION_CLOUD" | base64 --decode > ./$APPLICATION_CLOUD_FILENAME
+          echo "$APPLICATION_CLOUD" > ./$APPLICATION_CLOUD_FILENAME
           touch ./$APPLICATION_SECURITY_FILENAME
-          echo "$APPLICATION_SECURITY" | base64 --decode > ./$APPLICATION_SECURITY_FILENAME
+          echo "$APPLICATION_SECURITY" > ./$APPLICATION_SECURITY_FILENAME
         shell: bash
 
       # (4) gradlew 권한 설정
