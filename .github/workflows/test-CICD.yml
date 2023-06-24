@@ -14,14 +14,15 @@ env:
   S3_BUCKET_NAME: ssaf-sound-deploy-s3-bucket
   CODE_DEPLOY_APPLICATION_NAME:	ssaf-sound-codedeploy-app
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: ssaf-sound-deployment-group
+  APPLICATION_DIR: src/main/resources
   APPLICATION_OAUTH: ${{ secrets.APPLICATION_OAUTH }}
   APPLICATION_OAUTH_FILENAME: application-oauth.yml
   APPLICATION_CLOUD: ${{ secrets.APPLICATION_CLOUD }}
   APPLICATION_CLOUD_FILENAME: application-cloud.yml
   APPLICATION_SECURITY: ${{ secrets.APPLICATION_SECURITY }}
   APPLICATION_SECURITY_FILENAME: application-security.yml
-  APPLICATION_SCRAP: ${{secrets.APPLICATION_SCRAP}}
-  APPLICATION_SCRAP_FILENAME: application-scrap.yml
+  APPLICATION_SCRAPER: ${{secrets.APPLICATION_SCRAPER}}
+  APPLICATION_SCRAPER_FILENAME: application-scraper.yml
 
 permissions:
   id-token: write
@@ -56,17 +57,12 @@ jobs:
           distribution: 'temurin'
 
       # (3) 환경변수 파일 생성
-      - name: Copy Properties
+      - name: Copy properties
         run: |
-          cd ./src/main/resources
-          touch ./$APPLICATION_OAUTH_FILENAME
-          echo "$APPLICATION_OAUTH" > ./$APPLICATION_OAUTH_FILENAME
-          touch ./$APPLICATION_CLOUD_FILENAME
-          echo "$APPLICATION_CLOUD" > ./$APPLICATION_CLOUD_FILENAME
-          touch ./$APPLICATION_SECURITY_FILENAME
-          echo "$APPLICATION_SECURITY" > ./$APPLICATION_SECURITY_FILENAME
-          touch ./$APPLICATION_SCRAP_FILENAME
-          echo "$APPLICATION_SCRAP > ./$APPLICATION_SCRAP_FILENAME
+          echo $APPLICATION_OAUTH | base64 --decode > $APPLICATION_OAUTH_DIR/$APPLICATION_OAUTH_FILENAME &&
+          echo $APPLICATION_CLOUD | base64 --decode > $APPLICATION_CLOUD_DIR/$APPLICATION_CLOUD_FILENAME &&
+          echo $APPLICATION_SECURITY | base64 --decode > $APPLICATION_SECURITY_DIR/$APPLICATION_SECURITY_FILENAME &&
+          echo $APPLICATION_SCRAPER | base64 --decode > $APPLICATION_SCRAPER_DIR/$APPLICATION_SCRAPER_FILENAME
         shell: bash
 
       # (4) gradlew 권한 설정
@@ -78,6 +74,14 @@ jobs:
         uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
         with:
           arguments: clean build -x test
+
+      # (6) 전송할 파일 디렉토리 생성
+      - name: Make file directory for transfer
+        run: mkdir deploy && cp build/libs/*.jar deploy/ && cp appspec.yml deploy/ && cp script/deploy.sh deploy/
+
+      # (7) 압축
+      - name: Make zip
+        run: zip -r -qq -j SSAF-SOUND-APP.zip deploy
 
   deploy:
     name: Deploy
@@ -98,20 +102,15 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # (3) 빌드 결과물을 S3 버킷에 업로드
+      # (3) 빌드 결과물을 카피 방식으로 S3 버킷에 업로드
       - name: Upload to AWS S3
-        run: |
-          aws deploy push \
-            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
-            --ignore-hidden-files \
-            --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
-            --source .
+        run: aws s3 cp --region $AWS_REGION SSAF-SOUND-APP.zip s3://$S3_BUCKET_NAME/SSAF-SOUND-APP.zip
 
       # (4) S3 버킷에 있는 파일을 대상으로 CodeDeploy 실행
       - name: Deploy to AWS EC2 from S3
         run: |
           aws deploy create-deployment \
             --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
-            --deployment-config-name CodeDeployDefault.AllAtOnce \
+            --deployment-config-name CodeDeployDefault.AllAtOnce -file-exists-behavior OVERWRITE \
             --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
-            --s3-location bucket=$S3_BUCKET_NAME,key=$GITHUB_SHA.zip,bundleType=zip
+            --s3-location bucket=$S3_BUCKET_NAME,key=SSAF-SOUND-APP.zip,bundleType=zip
