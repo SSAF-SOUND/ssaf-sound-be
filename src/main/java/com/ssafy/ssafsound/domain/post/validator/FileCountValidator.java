@@ -1,7 +1,5 @@
 package com.ssafy.ssafsound.domain.post.validator;
 
-import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
-import com.ssafy.ssafsound.domain.post.exception.PostException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 

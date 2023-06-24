@@ -3,10 +3,8 @@ package com.ssafy.ssafsound.domain.post.validator;
 import org.apache.tika.Tika;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 

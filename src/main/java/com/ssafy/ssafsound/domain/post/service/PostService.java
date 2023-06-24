@@ -1,7 +1,6 @@
 package com.ssafy.ssafsound.domain.post.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
-import com.ssafy.ssafsound.domain.board.domain.Board;
 import com.ssafy.ssafsound.domain.board.exception.BoardErrorInfo;
 import com.ssafy.ssafsound.domain.board.exception.BoardException;
 import com.ssafy.ssafsound.domain.board.repository.BoardRepository;
@@ -23,13 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -153,20 +146,16 @@ public class PostService {
     @Transactional
     public Long writePost(Long boardId, Long memberId, PostPostWriteReqDto postPostWriteReqDto, List<MultipartFile> images) {
         if (isImageIncluded(images)) {
-            log.info("이미지가 포함되었습니다.");
-            // 1. 파일 검증
+            // 1. 파일 변환(webp)
 
-            // 2. 파일 변환(webp)
-
-            // 3. 게시글 등록
+            // 2. 게시글 등록
             Post post = savePost(boardId, memberId, postPostWriteReqDto);
 
-            // 4. 이미지 s3에 업로드 및 URL 등록
+            // 3. 이미지 s3에 업로드 및 URL 등록
             List<String> imageUrls = uploadPostImages(post, memberId, images);
             return post.getId();
         }
 
-        log.info("이미지가 포함되지 않았습니다.");
         Post post = savePost(boardId, memberId, postPostWriteReqDto);
         return post.getId();
     }
