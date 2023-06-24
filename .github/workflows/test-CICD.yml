@@ -58,9 +58,11 @@ jobs:
       - name: Copy Properties
         run: |
           cd $PROPERTIES_DIR
-          touch $APPLICATION_OAUTH $APPLICATION_CLOUD $APPLICATION_SECURITY
+          touch $APPLICATION_OAUTH
           echo $APPLICATION_OAUTH | base64 --decode > $PROPERTIES_DIR/$APPLICATION_OAUTH_FILENAME
+          touch $APPLICATION_CLOUD
           echo $APPLICATION_CLOUD | base64 --decode > $PROPERTIES_DIR/$APPLICATION_CLOUD_FILENAME
+          touch $APPLICATION_SECURITY
           echo $APPLICATION_SECURITY | base64 --decode > $PROPERTIES_DIR/$APPLICATION_SECURITY_FILENAME
         shell: bash
 
