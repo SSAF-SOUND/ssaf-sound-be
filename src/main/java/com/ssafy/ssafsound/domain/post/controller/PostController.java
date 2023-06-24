@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -69,24 +70,16 @@ public class PostController {
     }
 
     @PostMapping
-    public EnvelopeResponse writePost(@RequestPart("data") PostPostWriteReqDto postPostWriteReqDto, @RequestPart List<MultipartFile> images,
-                                      @RequestParam Long boardId, AuthenticatedMember authenticatedMember) {
+    public EnvelopeResponse<Long> writePost(@Valid @RequestPart("data") PostPostWriteReqDto postPostWriteReqDto,
+                                            @RequestPart List<MultipartFile> images,
+                                            @RequestParam Long boardId, AuthenticatedMember authenticatedMember) {
         AuthenticatedMember testMember = AuthenticatedMember.builder()
                 .memberId(1L)
                 .memberRole("NORMAL")
                 .build();
 
-        log.info("글쓰기 컨트롤러");
-        log.info("boardId: " + boardId);
-        log.info("제목 : " + postPostWriteReqDto.getTitle());
-        log.info("내용 : " + postPostWriteReqDto.getContent());
-        log.info("익명 : " + postPostWriteReqDto.isAnonymous());
-        for (MultipartFile image : images) {
-            log.info("이미지 : " + image.getOriginalFilename());
-        }
-
-        return EnvelopeResponse.builder()
-                .data(postService.writePost(boardId, postPostWriteReqDto, images, testMember.getMemberId()))
+        return EnvelopeResponse.<Long>builder()
+                .data(postService.writePost(boardId, testMember.getMemberId(), postPostWriteReqDto, images))
                 .build();
     }
 }

@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.domain.post.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
+import com.ssafy.ssafsound.domain.board.domain.Board;
 import com.ssafy.ssafsound.domain.board.exception.BoardErrorInfo;
 import com.ssafy.ssafsound.domain.board.exception.BoardException;
 import com.ssafy.ssafsound.domain.board.repository.BoardRepository;
@@ -23,10 +24,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -148,53 +151,62 @@ public class PostService {
     }
 
     @Transactional
-    public Long writePost(Long boardId, PostPostWriteReqDto postPostWriteReqDto, List<MultipartFile> images, Long memberId) {
-        List<UploadFileInfo> uploadFileInfos = new ArrayList<>();
-        try {
-            uploadFileInfos = uploadImages(images, memberId);
+    public Long writePost(Long boardId, Long memberId, PostPostWriteReqDto postPostWriteReqDto, List<MultipartFile> images) {
+        if (isImageIncluded(images)) {
+            log.info("이미지가 포함되었습니다.");
+            // 1. 파일 검증
 
-            Post post = Post.builder()
-                    .board(boardRepository.getReferenceById(boardId))
-                    .member(memberRepository.getReferenceById(memberId))
-                    .title(postPostWriteReqDto.getTitle())
-                    .content(postPostWriteReqDto.getContent())
-                    .anonymous(postPostWriteReqDto.isAnonymous())
-                    .build();
-            Long postId = postRepository.save(post).getId();
+            // 2. 파일 변환(webp)
 
-            List<PostImage> postImages = new ArrayList<>();
-            for (UploadFileInfo uploadFileInfo : uploadFileInfos) {
-                PostImage postImage = PostImage.builder()
-                        .post(post)
-                        .imagePath(uploadFileInfo.getFilePath())
-                        .imageUrl(uploadFileInfo.getFileUrl())
-                        .build();
-                postImages.add(postImage);
-            }
-            postImageRepository.saveAll(postImages);
-            return postId;
+            // 3. 게시글 등록
+            Post post = savePost(boardId, memberId, postPostWriteReqDto);
 
-        } catch (Exception e) {
-            deleteImages(uploadFileInfos);
-            return null;
+            // 4. 이미지 s3에 업로드 및 URL 등록
+            List<String> imageUrls = uploadPostImages(post, memberId, images);
+            return post.getId();
         }
+
+        log.info("이미지가 포함되지 않았습니다.");
+        Post post = savePost(boardId, memberId, postPostWriteReqDto);
+        return post.getId();
     }
 
-    private List<UploadFileInfo> uploadImages(List<MultipartFile> images, Long memberId) {
-        List<UploadFileInfo> uploadFileInfos = new ArrayList<>();
-
-        MetaData metaData = new MetaData(UploadDirectory.POST);
+    private boolean isImageIncluded(List<MultipartFile> images) {
         for (MultipartFile image : images) {
-            UploadFileInfo uploadFileInfo = awsS3StorageSerive.putObject(image, metaData, memberId);
-            uploadFileInfos.add(uploadFileInfo);
+            if (image.isEmpty())
+                return false;
         }
-        return uploadFileInfos;
+        return true;
     }
 
-    private void deleteImages(List<UploadFileInfo> uploadFileInfos) {
-        for (UploadFileInfo uploadFileInfo : uploadFileInfos) {
-            awsS3StorageSerive.deleteObject(uploadFileInfo.getFilePath());
-        }
+    private List<String> uploadPostImages(Post post, Long memberId, List<MultipartFile> images) {
+        MetaData metaData = new MetaData(UploadDirectory.POST);
+        return images.stream()
+                .map(image -> awsS3StorageSerive.putObject(image, metaData, memberId))
+                .map(uploadFileInfo -> savePostImage(post, uploadFileInfo))
+                .map(PostImage::getImageUrl)
+                .collect(Collectors.toList());
+    }
+
+    private PostImage savePostImage(Post post, UploadFileInfo uploadFileInfo) {
+        return postImageRepository.save(PostImage.builder()
+                .post(post)
+                .imagePath(uploadFileInfo.getFilePath())
+                .imageUrl(uploadFileInfo.getFileUrl())
+                .build());
+    }
+
+    private Post savePost(Long boardId, Long memberId, PostPostWriteReqDto postPostWriteReqDto) {
+        return postRepository.save(Post.builder()
+                .board(boardRepository.findById(boardId).orElseThrow(
+                        () -> new BoardException(BoardErrorInfo.NO_BOARD_ID)
+                ))
+                .member(memberRepository.getReferenceById(memberId))
+                .title(postPostWriteReqDto.getTitle())
+                .content(postPostWriteReqDto.getContent())
+                .deletedPost(false)
+                .anonymous(postPostWriteReqDto.isAnonymous())
+                .build());
     }
 
 }
