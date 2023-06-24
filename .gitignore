@@ -103,3 +103,4 @@ src/main/resources/application-security.yml
 # Local Setting File
 src/main/resources/application-local.yml
 src/main/resources/application-cloud.yml
+src/main/resources/application-scraper.yml
