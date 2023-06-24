@@ -20,7 +20,6 @@ env:
   APPLICATION_CLOUD_FILENAME: application-cloud.yml
   APPLICATION_SECURITY: ${{ secrets.APPLICATION_SECURITY }}
   APPLICATION_SECURITY_FILENAME: application-security.yml
-  PROPERTIES_DIR: ./src/main/resources
 
 permissions:
   id-token: write
@@ -57,7 +56,7 @@ jobs:
       # (3) 환경변수 파일 생성
       - name: Copy Properties
         run: |
-          cd $PROPERTIES_DIR
+          cd ./src/main/resources
           touch ./$APPLICATION_OAUTH_FILENAME
           echo "$APPLICATION_OAUTH" | base64 --decode > ./$APPLICATION_OAUTH_FILENAME
           touch ./$APPLICATION_CLOUD_FILENAME
