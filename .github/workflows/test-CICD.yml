@@ -20,6 +20,8 @@ env:
   APPLICATION_CLOUD_FILENAME: application-cloud.yml
   APPLICATION_SECURITY: ${{ secrets.APPLICATION_SECURITY }}
   APPLICATION_SECURITY_FILENAME: application-security.yml
+  APPLICATION_SCRAP: ${{secrets.APPLICATION_SCRAP}}
+  APPLICATION_SCRAP_FILENAME: application-scrap.yml
 
 permissions:
   id-token: write
@@ -63,6 +65,8 @@ jobs:
           echo "$APPLICATION_CLOUD" > ./$APPLICATION_CLOUD_FILENAME
           touch ./$APPLICATION_SECURITY_FILENAME
           echo "$APPLICATION_SECURITY" > ./$APPLICATION_SECURITY_FILENAME
+          touch ./$APPLICATION_SCRAP_FILENAME
+          echo "$APPLICATION_SCRAP > ./$APPLICATION_SCRAP_FILENAME
         shell: bash
 
       # (4) gradlew 권한 설정
