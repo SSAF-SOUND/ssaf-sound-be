@@ -6,12 +6,17 @@ import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.domain.recruit.domain.*;
+import com.ssafy.ssafsound.domain.recruit.dto.GetRecruitDetailResDto;
 import com.ssafy.ssafsound.domain.recruit.dto.PostRecruitReqDto;
 import com.ssafy.ssafsound.domain.recruit.dto.RecruitLimitElement;
-import com.ssafy.ssafsound.domain.recruit.repository.RecruitApplicationRepository;
+import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicationRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitLimitationRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitScrapRepository;
+import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
+import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
+import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
+import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +54,14 @@ public class RecruitService {
                 .orElse(null);
 
         return isPreExistRecruitScrap(recruitId, memberId, recruitScrap);
+    }
+
+    @Transactional
+    public GetRecruitDetailResDto getRecruitDetail(Long recruitId) {
+        Recruit recruit = recruitRepository.findByIdUsingFetchJoinRegisterAndRecruitLimitation(recruitId)
+                .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+        recruit.increaseView();
+        return GetRecruitDetailResDto.from(recruit);
     }
 
     private boolean isPreExistRecruitScrap(Long recruitId, Long memberId, RecruitScrap recruitScrap) {

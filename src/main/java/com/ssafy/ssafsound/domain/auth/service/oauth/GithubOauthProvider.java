@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
-import com.ssafy.ssafsound.domain.auth.exception.MemberErrorInfo;
+import com.ssafy.ssafsound.domain.auth.exception.AuthErrorInfo;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +60,7 @@ public class GithubOauthProvider implements OauthProvider {
             if (apiResponse.getBody() == null) throw new AuthException();
             return parsingAccessToken(apiResponse.getBody());
         } catch (RestClientException | AuthException e) {
-            throw new AuthException(MemberErrorInfo.AUTH_SERVER_ERROR);
+            throw new AuthException(AuthErrorInfo.AUTH_SERVER_ERROR);
         }
     }
 
@@ -79,9 +79,9 @@ public class GithubOauthProvider implements OauthProvider {
                     .oauthName(oauthName)
                     .build();
         } catch (RestClientException e) {
-            throw new AuthException(MemberErrorInfo.AUTH_SERVER_ERROR);
+            throw new AuthException(AuthErrorInfo.AUTH_SERVER_ERROR);
         } catch (JsonProcessingException e) {
-            throw new AuthException(MemberErrorInfo.AUTH_SERVER_PARSING_ERROR);
+            throw new AuthException(AuthErrorInfo.AUTH_SERVER_PARSING_ERROR);
         }
     }
 
@@ -114,6 +114,6 @@ public class GithubOauthProvider implements OauthProvider {
     public String parsingValue(String response, String key) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> jsonMap = objectMapper.readValue(response, new TypeReference<>() {});
-        return (String) jsonMap.get(key);
+        return String.valueOf(jsonMap.get(key));
     }
 }

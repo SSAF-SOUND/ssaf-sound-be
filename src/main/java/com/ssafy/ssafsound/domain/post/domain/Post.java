@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.domain.post.domain;
 
 import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.board.domain.Board;
+import com.ssafy.ssafsound.domain.comment.domain.Comment;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -54,5 +55,9 @@ public class Post extends BaseTimeEntity {
     private List<PostLike> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
-    private List<PostReport> reports = new ArrayList<>();
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post")
+    private List<PostScrap> scraps = new ArrayList<>();
+
 }

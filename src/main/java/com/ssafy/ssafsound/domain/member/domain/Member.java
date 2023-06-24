@@ -58,7 +58,7 @@ public class Member extends BaseTimeEntity {
     private Boolean major;
 
     @Column
-    private Boolean publicProfile;
+    private Boolean publicPortfolio;
 
     public void setMemberRole(MemberRole memberRole) {
         this.role = memberRole;

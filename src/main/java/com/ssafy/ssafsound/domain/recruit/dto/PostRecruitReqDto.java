@@ -58,7 +58,6 @@ public class PostRecruitReqDto {
                 .startDateTime(LocalDateTime.now())
                 .endDateTime(recruitEnd.atTime(LocalTime.MAX))
                 .deletedRecruit(false)
-                .finishedRecruit(false)
                 .build();
 
         setRecruitQuestions(recruit);
