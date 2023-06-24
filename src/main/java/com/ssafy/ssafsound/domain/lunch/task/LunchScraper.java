@@ -85,7 +85,7 @@ public class LunchScraper {
     }
 
     // 매주 토요일 03:02 프레시밀 스크래핑
-    @Scheduled(cron = "0 2 3 * * 6")
+    @Scheduled(cron = "0 2 3 ? * SAT")
     public void scrapFreshmeal(){
         ScrapInfoProvider freshmealInfoProvider = scrapInfoProviderFactory.getProviderFrom("freshmeal");
 
