@@ -14,6 +14,13 @@ env:
   S3_BUCKET_NAME: ssaf-sound-deploy-s3-bucket
   CODE_DEPLOY_APPLICATION_NAME:	ssaf-sound-codedeploy-app
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: ssaf-sound-deployment-group
+  APPLICATION_OAUTH: ${{ secrets.APPLICATION_OAUTH }}
+  APPLICATION_OAUTH_FILENAME: application-oauth.yml
+  APPLICATION_CLOUD: ${{ secrets.APPLICATION_CLOUD }}
+  APPLICATION_CLOUD_FILENAME: application-cloud.yml
+  APPLICATION_SECURITY: ${{ secrets.APPLICATION_SECURITY }}
+  APPLICATION_SECURITY_FILENAME: application-security.yml
+  PROPERTIES_DIR: ./src/main/resources
 
 permissions:
   id-token: write
@@ -49,17 +56,13 @@ jobs:
 
       # (3) 환경변수 파일 생성
       - name: Copy Properties
-        env:
-          APPLICATION_OAUTH: ${{ secrets.APPLICATION_OAUTH }}
-          APPLICATION_OAUTH_FILENAME: application-oauth.yml
-          APPLICATION_CLOUD: ${{ secrets.APPLICATION_CLOUD }}
-          APPLICATION_CLOUD_FILENAME: application-cloud.yml
-          APPLICATION_SECURITY: ${{ secrets.APPLICATION_SECURITY }}
-          APPLICATION_SECURITY_FILENAME: application-security.yml
-          PROPERTIES_DIR: src/main/resources
-        run: echo $APPLICATION_OAUTH | base64 --decode > $PROPERTIES_DIR/$APPLICATION_OAUTH_FILENAME &&
-          echo $APPLICATION_CLOUD | base64 --decode > $PROPERTIES_DIR/$APPLICATION_CLOUD_FILENAME &&
+        run: |
+          cd $PROPERTIES_DIR
+          touch $APPLICATION_OAUTH $APPLICATION_CLOUD $APPLICATION_SECURITY
+          echo $APPLICATION_OAUTH | base64 --decode > $PROPERTIES_DIR/$APPLICATION_OAUTH_FILENAME
+          echo $APPLICATION_CLOUD | base64 --decode > $PROPERTIES_DIR/$APPLICATION_CLOUD_FILENAME
           echo $APPLICATION_SECURITY | base64 --decode > $PROPERTIES_DIR/$APPLICATION_SECURITY_FILENAME
+        shell: bash
 
       # (4) gradlew 권한 설정
       - name: Grant execute permission for gradlew
