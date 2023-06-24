@@ -14,6 +14,11 @@ spring:
     post:
       HOT_POST_LIKES_THRESHOLD: 10
 
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
   jpa:
     hibernate:
       ddl-auto: create
