@@ -1,7 +1,6 @@
 package com.ssafy.ssafsound.domain.lunch.task.dto;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ssafy.ssafsound.domain.lunch.domain.Lunch;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
@@ -28,6 +27,7 @@ public class GetFreshmealResDto implements GetScrapResDto{
 
         private Map<String, BoxedMeal> dailyMeal = new HashMap<>();
 
+        // json 객체의 프로퍼티들을 Map에 맵핑하기 위한 setter 설정
         @JsonAnySetter
         public void put(String key, BoxedMeal value) {
             dailyMeal.put(key, value);
