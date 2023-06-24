@@ -1,7 +1,5 @@
 package com.ssafy.ssafsound.domain.lunch.domain;
 
-import com.ssafy.ssafsound.domain.BaseTimeEntity;
-import com.ssafy.ssafsound.domain.lunch.dto.GetLunchScrapResDto;
 import com.ssafy.ssafsound.domain.meta.converter.CampusConverter;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import lombok.*;
@@ -30,7 +28,7 @@ public class Lunch {
     @Column
     private String mainMenu;
 
-    @Column
+    @Column(length = 1023)
     private String extraMenu;
 
     @Column

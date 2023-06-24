@@ -1,88 +1,105 @@
 package com.ssafy.ssafsound.domain.lunch.task.domain;
 
-import com.ssafy.ssafsound.domain.lunch.exception.LunchErrorInfo;
-import com.ssafy.ssafsound.domain.lunch.exception.LunchException;
-import com.ssafy.ssafsound.domain.meta.domain.MetaData;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ssafy.ssafsound.domain.lunch.task.dto.GetScrapReqDto;
+import com.ssafy.ssafsound.domain.lunch.task.dto.GetScrapResDto;
+import com.ssafy.ssafsound.domain.lunch.task.dto.GetWelstoryResDto;
+import com.ssafy.ssafsound.global.common.json.JsonParser;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONObject;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
 @Component
-@ConfigurationProperties(prefix = "scrap.welstory")
 @RequiredArgsConstructor
-@Setter
 public class WelstoryInfoProvider implements ScrapInfoProvider{
 
     private final RestTemplate restTemplate;
-    private Map<String, String> info;
-    private Credentials credentials;
-    private Map<String, String> restaurantCode;
+    private final WelstoryProperties welstoryProperties;
 
-    public HttpHeaders getSessionHeader(){
-        MultiValueMap<String, String> parameters = makeLoginParameters();
+    private HttpEntity header;
+
+    @Override
+    public GetScrapResDto scrapLunchInfo(GetScrapReqDto getScrapReqDto) {
+
+        Map<String, String> parameters = makeScrapParameters(getScrapReqDto);
+        String url = makeUri(this.welstoryProperties.getInfo().get("url"), parameters);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                header,
+                String.class);
 
         try {
-            ResponseEntity<Map> response = restTemplate.postForEntity(
-                    this.credentials.url,
-                    new HttpEntity<>(parameters),
-                    Map.class
-            );
-
-            return response.getHeaders();
-
-        } catch (RestClientException e) {
+            return JsonParser.getMapper().readValue(response.getBody(), GetWelstoryResDto.class);
+        } catch (JsonProcessingException e) {
             log.error(e.getMessage());
-            throw new LunchException(LunchErrorInfo.SCRAPING_ERROR);
+            e.printStackTrace();
+
+            throw new RuntimeException();
         }
     }
 
-    @Override
-    public JSONObject scrapLunchInfo(MetaData campus) {
+    public void setSessionHeader() {
+        HttpHeaders header = new HttpHeaders();
 
-        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-        HttpHeaders headers = getSessionHeader();
+        header.add("Cookie",getJSESSIONID());
+        header.add("Content-Type","application/json");
+        header.add("Accept", MediaType.APPLICATION_JSON_VALUE);
 
-        parameters.set("menuDt", LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-        parameters.set("menuMealType", this.info.get("menuMealType"));
-        parameters.set("restaurantCode", this.restaurantCode.get(campus.getName()));
-
-        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(parameters, headers);
-
-        return restTemplate.getForEntity(
-                this.info.get("url"),
-                JSONObject.class,
-                httpEntity).getBody();
+        this.header = new HttpEntity(header);
     }
 
-    private MultiValueMap<String, String> makeLoginParameters(){
-        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+    private String getJSESSIONID(){
+        Map<String, String> parameters = makeLoginParameters();
 
-        parameters.set("username", this.credentials.username);
-        parameters.set("password", this.credentials.password);
-        parameters.set("remember-me",this.credentials.rememberMe);
+        String url = makeUri(this.welstoryProperties.getCredentials().getUrl(), parameters);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                null,
+                String.class
+        );
+
+        return response.getHeaders().getFirst(HttpHeaders.SET_COOKIE);
+    }
+
+    private Map<String, String> makeLoginParameters() {
+        Map<String, String> parameters = new HashMap<>();
+
+        parameters.put("username", this.welstoryProperties.getCredentials().getUsername());
+        parameters.put("password", this.welstoryProperties.getCredentials().getPassword());
+        parameters.put("remember-me", this.welstoryProperties.getCredentials().getRememberMe());
 
         return parameters;
     }
 
-    private static class Credentials{
-        String url;
-        String username;
-        String password;
-        String rememberMe;
+    private Map<String, String> makeScrapParameters(GetScrapReqDto getScrapReqDto) {
+        Map<String, String> parameters = new HashMap<>();
+
+        parameters.put("menuDt", getScrapReqDto.getMenuDt().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+        parameters.put("menuMealType", this.welstoryProperties.getInfo().get("menuMealType"));
+        parameters.put("restaurantCode", this.welstoryProperties.getRestaurantCode().get(getScrapReqDto.getCampus().getName()));
+
+        return parameters;
+    }
+
+    private String makeUri(String baseUri, Map<String, String> parameters){
+
+        UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(baseUri);
+        for (Map.Entry<String, String> entry : parameters.entrySet()) {
+            uri.queryParam(entry.getKey(), entry.getValue());
+        }
+
+        return uri.toUriString();
     }
 }
