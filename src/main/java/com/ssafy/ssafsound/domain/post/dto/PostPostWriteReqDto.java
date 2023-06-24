@@ -25,8 +25,8 @@ public class PostPostWriteReqDto {
 
     private boolean anonymous;
 
-    @CheckFileCount(maxFileCount = 1)
-    @CheckFileSize(maxFileSize = 50 * 1024)
+    @CheckFileCount(maxFileCount = 10)
+    @CheckFileSize(maxFileSize = 50 * 1024 * 1024)
     @CheckImageExtension
     @CheckImage
     private List<MultipartFile> images;
