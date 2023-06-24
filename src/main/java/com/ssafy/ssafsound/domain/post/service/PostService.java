@@ -172,11 +172,7 @@ public class PostService {
     }
 
     private boolean isImageIncluded(List<MultipartFile> images) {
-        for (MultipartFile image : images) {
-            if (image.isEmpty())
-                return false;
-        }
-        return true;
+        return !images.get(0).isEmpty();
     }
 
     private List<String> uploadPostImages(Post post, Long memberId, List<MultipartFile> images) {
