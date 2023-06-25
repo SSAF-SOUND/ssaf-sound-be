@@ -26,10 +26,10 @@ public class MemberController {
     }
 
     @PatchMapping
-    public EnvelopeResponse<GetMemberResDto> postMemberInformation(@Authentication AuthenticatedMember authenticatedMember,
-                                                  @Valid @RequestBody PostMemberInfoReqDto postMemberInfoReqDto) {
+    public EnvelopeResponse<GetMemberResDto> registerMemberInformation(@Authentication AuthenticatedMember authenticatedMember,
+                                                                       @Valid @RequestBody PostMemberInfoReqDto postMemberInfoReqDto) {
         return EnvelopeResponse.<GetMemberResDto>builder()
-                .data(memberService.postMemberInformation(authenticatedMember, postMemberInfoReqDto))
+                .data(memberService.registerMemberInformation(authenticatedMember, postMemberInfoReqDto))
                 .build();
     }
 }

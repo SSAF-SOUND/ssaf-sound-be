@@ -67,18 +67,16 @@ public class MemberService {
     }
 
     @Transactional
-    public GetMemberResDto postMemberInformation(AuthenticatedMember authenticatedMember, PostMemberInfoReqDto postMemberInfoReqDto) {
+    public GetMemberResDto registerMemberInformation(AuthenticatedMember authenticatedMember, PostMemberInfoReqDto postMemberInfoReqDto) {
         boolean existNickname = memberRepository.existsByNickname(postMemberInfoReqDto.getNickname());
         if(existNickname) throw new MemberException(MemberErrorInfo.MEMBER_NICKNAME_DUPLICATION);
         Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
         MemberRole memberRole = member.getRole();
         if (postMemberInfoReqDto.getSsafyMember()) {
             member.setSSAFYMemberInformation(postMemberInfoReqDto, metaDataConsumer);
-            memberRepository.save(member);
             return GetMemberResDto.fromSSAFYUser(member, memberRole);
         } else {
             member.setGeneralMemberInformation(postMemberInfoReqDto);
-            memberRepository.save(member);
             return GetMemberResDto.fromGeneralUser(member, memberRole);
         }
     }
