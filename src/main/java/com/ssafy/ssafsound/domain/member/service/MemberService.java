@@ -107,7 +107,7 @@ public class MemberService {
     public PostNicknameResDto checkNicknamePossible(PostNicknameReqDto postNicknameReqDto) {
         boolean isExistNickname = memberRepository.existsByNickname(postNicknameReqDto.getNickname());
         if (isExistNickname) {
-            return PostNicknameResDto.of(false);
+            throw new MemberException(MemberErrorInfo.MEMBER_NICKNAME_DUPLICATION);
         } else {
             return PostNicknameResDto.of(true);
         }
