@@ -25,6 +25,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(authInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/auth/callback")
+                .excludePathPatterns("/members/nickname")
                 .excludePathPatterns("/boards");
     }
 
