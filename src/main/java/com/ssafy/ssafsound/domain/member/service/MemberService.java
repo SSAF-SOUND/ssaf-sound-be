@@ -5,9 +5,7 @@ import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.domain.MemberRole;
 import com.ssafy.ssafsound.domain.member.domain.MemberToken;
 import com.ssafy.ssafsound.domain.member.domain.OAuthType;
-import com.ssafy.ssafsound.domain.member.dto.GetMemberResDto;
-import com.ssafy.ssafsound.domain.member.dto.PostMemberInfoReqDto;
-import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
+import com.ssafy.ssafsound.domain.member.dto.*;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
@@ -103,6 +101,16 @@ public class MemberService {
             return GetMemberResDto.fromSSAFYUser(member, memberRole);
         }
         throw new MemberException(MemberErrorInfo.MEMBER_INFORMATION_ERROR);
+    }
+
+    @Transactional(readOnly = true)
+    public PostNicknameResDto checkNicknamePossible(PostNicknameReqDto postNicknameReqDto) {
+        boolean isExistNickname = memberRepository.existsByNickname(postNicknameReqDto.getNickname());
+        if (isExistNickname) {
+            return PostNicknameResDto.of(false);
+        } else {
+            return PostNicknameResDto.of(true);
+        }
     }
 
     public boolean isNotInputMemberInformation(Member member) {
