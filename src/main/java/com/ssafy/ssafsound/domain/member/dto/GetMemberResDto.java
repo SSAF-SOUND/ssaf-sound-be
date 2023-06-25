@@ -38,7 +38,6 @@ public class GetMemberResDto {
                         .semester(member.getSemester())
                         .isMajor(member.getMajor())
                         .campus(member.getCampus().getName())
-                        .certificationState(member.getCertificationState().name())
                         .build())
                 .build();
     }
