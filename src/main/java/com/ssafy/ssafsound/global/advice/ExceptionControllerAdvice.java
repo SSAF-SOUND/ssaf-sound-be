@@ -26,7 +26,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(MemberException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public EnvelopeResponse MemberExceptionHandler(MemberException e) {
-        log.error(e.getMessage());
+        log.error(e.getInfo().getMessage());
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
                 .message(e.getInfo().getMessage())
@@ -36,7 +36,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(AuthException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public EnvelopeResponse AuthExceptionHandler(AuthException e) {
-        log.error(e.getMessage());
+        log.error(e.getInfo().getMessage());
 
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())

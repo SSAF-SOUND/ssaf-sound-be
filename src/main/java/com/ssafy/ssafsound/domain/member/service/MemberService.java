@@ -6,12 +6,14 @@ import com.ssafy.ssafsound.domain.member.domain.MemberRole;
 import com.ssafy.ssafsound.domain.member.domain.MemberToken;
 import com.ssafy.ssafsound.domain.member.domain.OAuthType;
 import com.ssafy.ssafsound.domain.member.dto.GetMemberResDto;
+import com.ssafy.ssafsound.domain.member.dto.PostMemberInfoReqDto;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRoleRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
+import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberRoleRepository memberRoleRepository;
     private final MemberTokenRepository memberTokenRepository;
+    private final MetaDataConsumer metaDataConsumer;
 
     @Transactional
     public AuthenticatedMember createMemberByOauthIdentifier(PostMemberReqDto postMemberReqDto) {
@@ -61,6 +64,21 @@ public class MemberService {
                     .build();
         }
         memberTokenRepository.save(memberToken);
+    }
+
+    @Transactional
+    public GetMemberResDto registerMemberInformation(AuthenticatedMember authenticatedMember, PostMemberInfoReqDto postMemberInfoReqDto) {
+        boolean existNickname = memberRepository.existsByNickname(postMemberInfoReqDto.getNickname());
+        if(existNickname) throw new MemberException(MemberErrorInfo.MEMBER_NICKNAME_DUPLICATION);
+        Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+        MemberRole memberRole = member.getRole();
+        if (postMemberInfoReqDto.getSsafyMember()) {
+            member.setSSAFYMemberInformation(postMemberInfoReqDto, metaDataConsumer);
+            return GetMemberResDto.fromSSAFYUser(member, memberRole);
+        } else {
+            member.setGeneralMemberInformation(postMemberInfoReqDto);
+            return GetMemberResDto.fromGeneralUser(member, memberRole);
+        }
     }
 
     @Transactional(readOnly = true)
