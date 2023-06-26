@@ -5,20 +5,14 @@ import com.ssafy.ssafsound.domain.board.exception.BoardErrorInfo;
 import com.ssafy.ssafsound.domain.board.exception.BoardException;
 import com.ssafy.ssafsound.domain.board.repository.BoardRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
-import com.ssafy.ssafsound.domain.post.domain.HotPost;
-import com.ssafy.ssafsound.domain.post.domain.PostScrap;
-import com.ssafy.ssafsound.domain.post.domain.Post;
-import com.ssafy.ssafsound.domain.post.domain.PostLike;
+import com.ssafy.ssafsound.domain.post.domain.*;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailListResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostListResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
 import com.ssafy.ssafsound.domain.post.exception.PostException;
-import com.ssafy.ssafsound.domain.post.repository.HotPostRepository;
-import com.ssafy.ssafsound.domain.post.repository.PostLikeRepository;
-import com.ssafy.ssafsound.domain.post.repository.PostRepository;
-import com.ssafy.ssafsound.domain.post.repository.PostScrapRepository;
+import com.ssafy.ssafsound.domain.post.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,6 +36,7 @@ public class PostService {
     private final PostLikeRepository postLikeRepository;
     private final HotPostRepository hotPostRepository;
     private final PostScrapRepository postScrapRepository;
+    private final PostReportRepository postReportRepository;
 
     @Transactional(readOnly = true)
     public GetPostListResDto findPosts(Long boardId, Pageable pageable) {
@@ -141,6 +136,20 @@ public class PostService {
 
     private void deleteScrapIfAlreadyExists(PostScrap postScrap) {
         postScrapRepository.delete(postScrap);
+    }
+
+    public Long reportPost(Long postId, Long memberId, String content){
+        if (postReportRepository.countByPostId(postId) >= 1){
+            throw new PostException(PostErrorInfo.DUPLICATE_REPORT);
+        }
+
+        PostReport postReport = PostReport.builder()
+                .post(postRepository.getReferenceById(postId))
+                .member(memberRepository.getReferenceById(memberId))
+                .content(content)
+                .build();
+
+        return postReportRepository.save(postReport).getId();
     }
 
 }
