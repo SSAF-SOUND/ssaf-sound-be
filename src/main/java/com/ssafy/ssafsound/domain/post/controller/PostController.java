@@ -3,6 +3,7 @@ package com.ssafy.ssafsound.domain.post.controller;
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailListResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostListResDto;
+import com.ssafy.ssafsound.domain.post.dto.PostPostReportReqDto;
 import com.ssafy.ssafsound.domain.post.service.PostService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @Slf4j
@@ -46,6 +49,20 @@ public class PostController {
     public EnvelopeResponse<Void> postScrap(AuthenticatedMember authenticatedMember, @PathVariable Long postId) {
         postService.postScrap(postId, authenticatedMember.getMemberId());
         return EnvelopeResponse.<Void>builder()
+                .build();
+    }
+
+    @PostMapping("/{postId}/report")
+    public EnvelopeResponse<Long> reportPost(AuthenticatedMember authenticatedMember, @PathVariable Long postId,
+                                             @Valid @RequestBody PostPostReportReqDto postPostReportReqDto) {
+
+        AuthenticatedMember tempMember = AuthenticatedMember.builder()
+                .memberId(1L)
+                .memberRole("NORMAL")
+                .build();
+
+        return EnvelopeResponse.<Long>builder()
+                .data(postService.reportPost(postId, tempMember.getMemberId(), postPostReportReqDto.getContent()))
                 .build();
     }
 }
