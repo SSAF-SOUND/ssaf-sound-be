@@ -30,7 +30,7 @@ permissions:
 
 jobs:
   build:
-    name: Build
+    name: CI & CD
     runs-on: ubuntu-latest
     steps:
       # (0) 시간 출력
@@ -85,18 +85,7 @@ jobs:
       - name: Make zip
         run: zip -r -qq -j SSAF-SOUND-APP.zip deploy
 
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    environment: production
-    needs: Build
-
-    steps:
-      # (1) 기본 체크아웃
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      # (2) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
+      # (8) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -104,11 +93,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # (3) 빌드 결과물을 카피 방식으로 S3 버킷에 업로드
+      # (9) 빌드 결과물을 카피 방식으로 S3 버킷에 업로드
       - name: Upload to AWS S3
         run: aws s3 cp --region $AWS_REGION SSAF-SOUND-APP.zip s3://$S3_BUCKET_NAME/SSAF-SOUND-APP.zip
 
-      # (4) S3 버킷에 있는 파일을 대상으로 CodeDeploy 실행
+      # (10) S3 버킷에 있는 파일을 대상으로 CodeDeploy 실행
       - name: Deploy to AWS EC2 from S3
         run: |
           aws deploy create-deployment \
