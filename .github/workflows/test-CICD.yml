@@ -78,8 +78,8 @@ jobs:
         run: mkdir deploy &&
           cp build/libs/*.jar deploy/ &&
           cp appspec.yml deploy/ &&
-          cp script/start.sh deploy/ &&
-          cp script/start.sh deploy/
+          cp scripts/start.sh deploy/ &&
+          cp scripts/start.sh deploy/
 
       # (7) 압축
       - name: Make zip
