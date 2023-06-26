@@ -101,6 +101,6 @@ jobs:
       - name: Deploy to AWS EC2 from S3
         run: |
           aws deploy create-deployment --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }}
-            --deployment-config-name CodeDeployDefault.AllAtOnce -file-exists-behavior OVERWRITE
+            --deployment-config-name CodeDeployDefault.AllAtOnce --file-exists-behavior OVERWRITE
             --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }}
             --s3-location bucket=$S3_BUCKET_NAME,key=SSAF-SOUND-APP.zip,bundleType=zip
