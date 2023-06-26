@@ -1,4 +1,4 @@
-package com.ssafy.ssafsound.domain.post.validator;
+package com.ssafy.ssafsound.global.validator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -9,9 +9,9 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = ImageValidator.class)
-public @interface CheckImage {
-    String message() default "이미지 파일이 아닙니다.";
+@Constraint(validatedBy = ImageExtensionValidator.class)
+public @interface CheckImageExtension {
+    String message() default "해당 파일 확장자는 지원하지 않습니다.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

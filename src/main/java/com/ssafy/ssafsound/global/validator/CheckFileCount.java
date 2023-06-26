@@ -1,4 +1,4 @@
-package com.ssafy.ssafsound.domain.post.validator;
+package com.ssafy.ssafsound.global.validator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -9,9 +9,11 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = ImageExtensionValidator.class)
-public @interface CheckImageExtension {
-    String message() default "해당 파일 확장자는 지원하지 않습니다.";
+@Constraint(validatedBy = FileCountValidator.class)
+public @interface CheckFileCount {
+    String message() default "파일 개수를 초과했습니다.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
+
+    int maxFileCount();
 }

@@ -1,9 +1,9 @@
 package com.ssafy.ssafsound.domain.post.dto;
 
-import com.ssafy.ssafsound.domain.post.validator.CheckFileCount;
-import com.ssafy.ssafsound.domain.post.validator.CheckFileSize;
-import com.ssafy.ssafsound.domain.post.validator.CheckImage;
-import com.ssafy.ssafsound.domain.post.validator.CheckImageExtension;
+import com.ssafy.ssafsound.global.validator.CheckFileCount;
+import com.ssafy.ssafsound.global.validator.CheckFileSize;
+import com.ssafy.ssafsound.global.validator.CheckImage;
+import com.ssafy.ssafsound.global.validator.CheckImageExtension;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;

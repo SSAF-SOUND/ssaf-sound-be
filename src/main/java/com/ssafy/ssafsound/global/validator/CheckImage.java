@@ -1,4 +1,4 @@
-package com.ssafy.ssafsound.domain.post.validator;
+package com.ssafy.ssafsound.global.validator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -9,11 +9,9 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = FileSizeValidator.class)
-public @interface CheckFileSize {
-    String message() default "파일이 제한된 용량을 초과했습니다.";
+@Constraint(validatedBy = ImageValidator.class)
+public @interface CheckImage {
+    String message() default "이미지 파일이 아닙니다.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
-
-    long maxFileSize(); // 최대 파일 용량
 }

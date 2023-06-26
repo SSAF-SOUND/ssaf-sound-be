@@ -1,4 +1,4 @@
-package com.ssafy.ssafsound.domain.post.validator;
+package com.ssafy.ssafsound.global.validator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -9,11 +9,11 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = FileCountValidator.class)
-public @interface CheckFileCount {
-    String message() default "파일 개수를 초과했습니다.";
+@Constraint(validatedBy = FileSizeValidator.class)
+public @interface CheckFileSize {
+    String message() default "파일이 제한된 용량을 초과했습니다.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 
-    int maxFileCount();
+    long maxFileSize(); // 최대 파일 용량
 }

@@ -1,4 +1,4 @@
-package com.ssafy.ssafsound.domain.post.validator;
+package com.ssafy.ssafsound.global.validator;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
