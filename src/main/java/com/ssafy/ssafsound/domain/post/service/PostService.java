@@ -146,12 +146,10 @@ public class PostService {
     @Transactional
     public Long writePost(Long boardId, Long memberId, PostPostWriteReqDto postPostWriteReqDto, List<MultipartFile> images) {
         if (isImageIncluded(images)) {
-            // 1. 파일 변환(webp)
-
-            // 2. 게시글 등록
+            // 1. 게시글 등록
             Post post = savePost(boardId, memberId, postPostWriteReqDto);
 
-            // 3. 이미지 s3에 업로드 및 URL 등록
+            // 2. 이미지 s3에 업로드 및 URL 등록
             List<String> imageUrls = uploadPostImages(post, memberId, images);
             return post.getId();
         }
