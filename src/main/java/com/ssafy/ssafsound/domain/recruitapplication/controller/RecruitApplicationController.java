@@ -2,8 +2,10 @@ package com.ssafy.ssafsound.domain.recruitapplication.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
+import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitApplicationsResDto;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitParticipantsResDto;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.PostRecruitApplicationReqDto;
+import com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement;
 import com.ssafy.ssafsound.domain.recruitapplication.service.RecruitApplicationService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +53,27 @@ public class RecruitApplicationController {
     public EnvelopeResponse<GetRecruitParticipantsResDto> getRecruitParticipants(@PathVariable Long recruitId) {
         return EnvelopeResponse.<GetRecruitParticipantsResDto>builder()
                 .data(recruitApplicationService.getRecruitParticipants(recruitId))
+                .build();
+    }
+
+    @GetMapping("/recruit-applications")
+    public EnvelopeResponse<GetRecruitApplicationsResDto> getRecruitApplications(@RequestParam Long recruitId, AuthenticatedMember authenticatedMember) {
+        return EnvelopeResponse.<GetRecruitApplicationsResDto>builder()
+                .data(recruitApplicationService.getRecruitApplications(recruitId, 1L))
+                .build();
+    }
+
+    @PostMapping("/recruit-applications/{recruitApplicationId}/like")
+    public EnvelopeResponse<Void> toggleRecruitApplicationLike(@PathVariable Long recruitApplicationId, AuthenticatedMember authenticatedMember) {
+        recruitApplicationService.toggleRecruitApplicationLike(recruitApplicationId, authenticatedMember.getMemberId());
+        return EnvelopeResponse.<Void>builder()
+                .build();
+    }
+
+    @GetMapping("/recruit-applications/{recruitApplicationId}")
+    public EnvelopeResponse<RecruitApplicationElement> getRecruitApplicationByIdAndRegisterId(@PathVariable Long recruitApplicationId, AuthenticatedMember authenticatedMember) {
+        return EnvelopeResponse.<RecruitApplicationElement>builder()
+                .data(recruitApplicationService.getRecruitApplicationByIdAndRegisterId(recruitApplicationId, 1L))
                 .build();
     }
 }
