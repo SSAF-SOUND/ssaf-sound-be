@@ -57,13 +57,9 @@ public class PostController {
     @PostMapping
     public EnvelopeResponse<Long> writePost(@Valid @ModelAttribute PostPostWriteReqDto postPostWriteReqDto,
                                             @RequestParam Long boardId, AuthenticatedMember authenticatedMember) {
-        AuthenticatedMember testMember = AuthenticatedMember.builder()
-                .memberId(1L)
-                .memberRole("NORMAL")
-                .build();
 
         return EnvelopeResponse.<Long>builder()
-                .data(postService.writePost(boardId, testMember.getMemberId(), postPostWriteReqDto, postPostWriteReqDto.getImages()))
+                .data(postService.writePost(boardId, authenticatedMember.getMemberId(), postPostWriteReqDto, postPostWriteReqDto.getImages()))
                 .build();
     }
 }
