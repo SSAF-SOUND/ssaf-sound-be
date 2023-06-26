@@ -56,13 +56,8 @@ public class PostController {
     public EnvelopeResponse<Long> reportPost(AuthenticatedMember authenticatedMember, @PathVariable Long postId,
                                              @Valid @RequestBody PostPostReportReqDto postPostReportReqDto) {
 
-        AuthenticatedMember tempMember = AuthenticatedMember.builder()
-                .memberId(1L)
-                .memberRole("NORMAL")
-                .build();
-
         return EnvelopeResponse.<Long>builder()
-                .data(postService.reportPost(postId, tempMember.getMemberId(), postPostReportReqDto.getContent()))
+                .data(postService.reportPost(postId, authenticatedMember.getMemberId(), postPostReportReqDto.getContent()))
                 .build();
     }
 }

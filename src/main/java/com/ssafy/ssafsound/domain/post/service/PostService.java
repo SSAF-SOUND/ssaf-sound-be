@@ -108,7 +108,7 @@ public class PostService {
     }
 
     @Transactional
-    public void deleteBelowThresholdHotPosts(Long threshold){
+    public void deleteBelowThresholdHotPosts(Long threshold) {
         hotPostRepository.deleteBelowThresholdHotPosts(threshold);
     }
 
@@ -138,8 +138,8 @@ public class PostService {
         postScrapRepository.delete(postScrap);
     }
 
-    public Long reportPost(Long postId, Long memberId, String content){
-        if (postReportRepository.countByPostId(postId) >= 1){
+    public Long reportPost(Long postId, Long memberId, String content) {
+        if (postReportRepository.countByPostId(postId) >= 1) {
             throw new PostException(PostErrorInfo.DUPLICATE_REPORT);
         }
 
