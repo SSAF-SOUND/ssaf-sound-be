@@ -75,7 +75,11 @@ jobs:
 
       # (6) 전송할 파일 디렉토리 생성
       - name: Make file directory for transfer
-        run: mkdir deploy && cp build/libs/*.jar deploy/ && cp appspec.yml deploy/ && cp script/deploy.sh deploy/
+        run: mkdir deploy &&
+          cp build/libs/*.jar deploy/ &&
+          cp appspec.yml deploy/ &&
+          cp script/start.sh deploy/ &&
+          cp script/start.sh deploy/
 
       # (7) 압축
       - name: Make zip
