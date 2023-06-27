@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.domain.recruit.domain;
 
 import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.recruit.dto.PatchRecruitReqDto;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -98,6 +100,12 @@ public class Recruit extends BaseTimeEntity {
                 recruitLimitation.getCurrentNumber() < recruitLimitation.getLimitation()
         ).count();
         return isExpirationDate || (notFullRecruitTypeCnt == 0);
+    }
+
+    public void update(PatchRecruitReqDto patchRecruitReqDto) {
+        this.endDateTime = patchRecruitReqDto.getRecruitEnd().atTime(LocalTime.MAX);
+        this.title = patchRecruitReqDto.getTitle();
+        this.content = patchRecruitReqDto.getContent();
     }
 
     public void increaseView() {

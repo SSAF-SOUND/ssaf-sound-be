@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.domain.recruit.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.recruit.dto.GetRecruitDetailResDto;
+import com.ssafy.ssafsound.domain.recruit.dto.PatchRecruitReqDto;
 import com.ssafy.ssafsound.domain.recruit.dto.PostRecruitReqDto;
 import com.ssafy.ssafsound.domain.recruit.service.RecruitService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
@@ -34,5 +35,17 @@ public class RecruitController {
         return EnvelopeResponse.<GetRecruitDetailResDto>builder()
                 .data(recruitService.getRecruitDetail(recruitId))
                 .build();
+    }
+
+    @PatchMapping("/{recruitId}")
+    public EnvelopeResponse<Void> updateRecruit(@PathVariable Long recruitId, AuthenticatedMember memberInfo, @RequestBody PatchRecruitReqDto patchRecruitReqDto) {
+        recruitService.updateRecruit(recruitId, memberInfo.getMemberId(), patchRecruitReqDto);
+        return EnvelopeResponse.<Void>builder().build();
+    }
+
+    @DeleteMapping("/{recruitId}")
+    public EnvelopeResponse<Void> deleteRecruit(@PathVariable Long recruitId, AuthenticatedMember memberInfo) {
+        recruitService.deleteRecruit(recruitId, memberInfo.getMemberId());
+        return EnvelopeResponse.<Void>builder().build();
     }
 }

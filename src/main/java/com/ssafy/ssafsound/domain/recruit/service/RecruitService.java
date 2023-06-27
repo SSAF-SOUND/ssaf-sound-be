@@ -7,8 +7,11 @@ import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.domain.recruit.domain.*;
 import com.ssafy.ssafsound.domain.recruit.dto.GetRecruitDetailResDto;
+import com.ssafy.ssafsound.domain.recruit.dto.PatchRecruitReqDto;
 import com.ssafy.ssafsound.domain.recruit.dto.PostRecruitReqDto;
 import com.ssafy.ssafsound.domain.recruit.dto.RecruitLimitElement;
+import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
+import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicationRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitLimitationRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,9 +41,10 @@ public class RecruitService {
 
     @Transactional
     public Recruit saveRecruit(AuthenticatedMember userInfo, PostRecruitReqDto postRecruitReqDto) {
-        Recruit recruit = postRecruitReqDto.createRecruitFromPredefinedMetadata(metaDataConsumer);
+        Recruit recruit = postRecruitReqDto.to();
         Member register = memberRepository.findById(userInfo.getMemberId()).orElseThrow(RuntimeException::new);
         recruit.setRegister(register);
+        setRecruitSkillFromPredefinedMetaData(metaDataConsumer, recruit, postRecruitReqDto.getSkills());
         recruitRepository.save(recruit);
 
         String registerRecruitType = postRecruitReqDto.getRegisterRecruitType();
@@ -62,6 +67,48 @@ public class RecruitService {
                 .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
         recruit.increaseView();
         return GetRecruitDetailResDto.from(recruit);
+    }
+
+    @Transactional
+    public void updateRecruit(Long recruitId, Long memberId, PatchRecruitReqDto recruitReqDto) {
+        Recruit recruit = recruitRepository.findByIdUsingFetchJoinRegisterAndRecruitLimitation(recruitId)
+                .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+
+        setRecruitSkillFromPredefinedMetaData(metaDataConsumer, recruit, recruitReqDto.getSkills());
+        updateRecruitLimitations(recruitReqDto, recruit);
+        recruit.update(recruitReqDto);
+    }
+
+    @Transactional
+    public void deleteRecruit(Long recruitId, Long memberId) {
+        Recruit recruit = recruitRepository.findById(recruitId)
+                .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+        if(!recruit.getMember().getId().equals(memberId)) throw new RecruitException(RecruitErrorInfo.INVALID_CHANGE_MEMBER_OPERATION);
+        recruit.delete();
+    }
+
+    private void updateRecruitLimitations(PatchRecruitReqDto recruitReqDto, Recruit recruit) {
+        Map<String, Integer> prevLimits = recruit.getLimitations()
+                .stream().collect(Collectors.toMap((limit)->limit.getType().getName(), RecruitLimitation::getLimitation));
+        List<RecruitLimitation> updateLimitations = createRecruitLimitations(recruit, recruitReqDto.getLimitations(), null);
+        for(RecruitLimitation updateLimitation: updateLimitations) {
+            Integer limit = prevLimits.get(updateLimitation.getType().getName());
+            if(limit == null) continue;
+            if(limit > updateLimitation.getLimitation()) throw new RecruitException(RecruitErrorInfo.NOT_BELOW_PREV_LIMITATIONS);
+        }
+
+        recruit.setRecruitLimitations(updateLimitations);
+    }
+
+    private void setRecruitSkillFromPredefinedMetaData(MetaDataConsumer consumer, Recruit recruit, List<String> skills) {
+        if(skills == null) return;
+        List<RecruitSkill> recruitSkills = skills.stream().map((skill)->(
+                RecruitSkill.builder()
+                        .recruit(recruit)
+                        .skill(consumer.getMetaData(MetaDataType.SKILL.name(), skill)))
+                .build()
+        ).collect(Collectors.toList());
+        recruit.setRecruitSkill(recruitSkills);
     }
 
     private boolean isPreExistRecruitScrap(Long recruitId, Long memberId, RecruitScrap recruitScrap) {
