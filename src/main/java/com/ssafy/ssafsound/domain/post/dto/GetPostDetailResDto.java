@@ -26,7 +26,7 @@ public class GetPostDetailResDto {
     private boolean modified;
     private boolean scraped;
     private boolean liked;
-    private List<ImagePath> images;
+    private List<ImageUrl> images;
 
     public static GetPostDetailResDto from(Post post, AuthenticatedMember authenticatedMember) {
         boolean modified = post.getModifiedAt() != null;
@@ -46,7 +46,7 @@ public class GetPostDetailResDto {
                 .modified(modified)
                 .scraped(scraped)
                 .liked(liked)
-                .images(findImagePaths(post))
+                .images(findImageUrls(post))
                 .build();
     }
 
@@ -68,9 +68,9 @@ public class GetPostDetailResDto {
         return false;
     }
 
-    private static List<ImagePath> findImagePaths(Post post) {
+    private static List<ImageUrl> findImageUrls(Post post) {
         return post.getImages().stream()
-                .map(i -> new ImagePath(i.getImagePath()))
+                .map(i -> new ImageUrl(i.getImageUrl()))
                 .collect(Collectors.toList());
     }
 }

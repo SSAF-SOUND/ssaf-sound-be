@@ -27,5 +27,8 @@ public class PostImage {
     private String imagePath;
 
     @Column
+    private String imageUrl;
+
+    @Column
     private Integer renderOrder;
 }

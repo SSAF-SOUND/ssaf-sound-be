@@ -4,6 +4,7 @@ import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailListResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostListResDto;
 import com.ssafy.ssafsound.domain.post.dto.PostPostReportReqDto;
+import com.ssafy.ssafsound.domain.post.dto.PostPostWriteReqDto;
 import com.ssafy.ssafsound.domain.post.service.PostService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,7 @@ public class PostController {
     @PostMapping("/{postId}/like")
     public EnvelopeResponse<Void> postLike(AuthenticatedMember authenticatedMember, @PathVariable Long postId) {
         postService.postLike(postId, authenticatedMember.getMemberId());
+
         return EnvelopeResponse.<Void>builder()
                 .build();
     }
@@ -48,6 +50,7 @@ public class PostController {
     @PostMapping("/{postId}/scrap")
     public EnvelopeResponse<Void> postScrap(AuthenticatedMember authenticatedMember, @PathVariable Long postId) {
         postService.postScrap(postId, authenticatedMember.getMemberId());
+
         return EnvelopeResponse.<Void>builder()
                 .build();
     }
@@ -58,6 +61,15 @@ public class PostController {
 
         return EnvelopeResponse.<Long>builder()
                 .data(postService.reportPost(postId, authenticatedMember.getMemberId(), postPostReportReqDto.getContent()))
+                .build();
+    }
+      
+    @PostMapping
+    public EnvelopeResponse<Long> writePost(@Valid @ModelAttribute PostPostWriteReqDto postPostWriteReqDto,
+                                            @RequestParam Long boardId, AuthenticatedMember authenticatedMember) {
+
+        return EnvelopeResponse.<Long>builder()
+                .data(postService.writePost(boardId, authenticatedMember.getMemberId(), postPostWriteReqDto, postPostWriteReqDto.getImages()))
                 .build();
     }
 }

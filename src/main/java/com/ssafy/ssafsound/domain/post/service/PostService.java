@@ -13,13 +13,20 @@ import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
 import com.ssafy.ssafsound.domain.post.exception.PostException;
 import com.ssafy.ssafsound.domain.post.repository.*;
+import com.ssafy.ssafsound.domain.meta.domain.MetaData;
+import com.ssafy.ssafsound.domain.meta.domain.UploadDirectory;
+import com.ssafy.ssafsound.domain.meta.dto.UploadFileInfo;
+import com.ssafy.ssafsound.domain.post.dto.*;
+import com.ssafy.ssafsound.infra.storage.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -32,11 +39,14 @@ public class PostService {
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
+    private final StorageService awsS3StorageSerive;
+
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
     private final HotPostRepository hotPostRepository;
     private final PostScrapRepository postScrapRepository;
     private final PostReportRepository postReportRepository;
+    private final PostImageRepository postImageRepository;
 
     @Transactional(readOnly = true)
     public GetPostListResDto findPosts(Long boardId, Pageable pageable) {
@@ -150,6 +160,55 @@ public class PostService {
                 .build();
 
         return postReportRepository.save(postReport).getId();
+    }
+
+    @Transactional
+    public Long writePost(Long boardId, Long memberId, PostPostWriteReqDto postPostWriteReqDto, List<MultipartFile> images) {
+        if (isImageIncluded(images)) {
+            // 1. 게시글 등록
+            Post post = savePost(boardId, memberId, postPostWriteReqDto);
+
+            // 2. 이미지 s3에 업로드 및 URL 등록
+            List<String> imageUrls = uploadPostImages(post, memberId, images);
+            return post.getId();
+        }
+
+        Post post = savePost(boardId, memberId, postPostWriteReqDto);
+        return post.getId();
+    }
+
+    private boolean isImageIncluded(List<MultipartFile> images) {
+        return !images.get(0).isEmpty();
+    }
+
+    private List<String> uploadPostImages(Post post, Long memberId, List<MultipartFile> images) {
+        MetaData metaData = new MetaData(UploadDirectory.POST);
+        return images.stream()
+                .map(image -> awsS3StorageSerive.putObject(image, metaData, memberId))
+                .map(uploadFileInfo -> savePostImage(post, uploadFileInfo))
+                .map(PostImage::getImageUrl)
+                .collect(Collectors.toList());
+    }
+
+    private PostImage savePostImage(Post post, UploadFileInfo uploadFileInfo) {
+        return postImageRepository.save(PostImage.builder()
+                .post(post)
+                .imagePath(uploadFileInfo.getFilePath())
+                .imageUrl(uploadFileInfo.getFileUrl())
+                .build());
+    }
+
+    private Post savePost(Long boardId, Long memberId, PostPostWriteReqDto postPostWriteReqDto) {
+        return postRepository.save(Post.builder()
+                .board(boardRepository.findById(boardId).orElseThrow(
+                        () -> new BoardException(BoardErrorInfo.NO_BOARD_ID)
+                ))
+                .member(memberRepository.getReferenceById(memberId))
+                .title(postPostWriteReqDto.getTitle())
+                .content(postPostWriteReqDto.getContent())
+                .deletedPost(false)
+                .anonymous(postPostWriteReqDto.isAnonymous())
+                .build());
     }
 
 }
