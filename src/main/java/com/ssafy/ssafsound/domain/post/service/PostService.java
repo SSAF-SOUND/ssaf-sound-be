@@ -139,7 +139,7 @@ public class PostService {
     }
 
     public Long reportPost(Long postId, Long memberId, String content) {
-        if (postReportRepository.countByPostId(postId) >= 1) {
+        if (postReportRepository.existsByPostIdAndMemberId(postId, memberId)) {
             throw new PostException(PostErrorInfo.DUPLICATE_REPORT);
         }
 
