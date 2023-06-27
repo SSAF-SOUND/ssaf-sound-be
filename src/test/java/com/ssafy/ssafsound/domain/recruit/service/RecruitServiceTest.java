@@ -9,6 +9,7 @@ import com.ssafy.ssafsound.domain.meta.domain.*;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.domain.recruit.domain.*;
 import com.ssafy.ssafsound.domain.recruit.dto.GetRecruitDetailResDto;
+import com.ssafy.ssafsound.domain.recruit.dto.PatchRecruitReqDto;
 import com.ssafy.ssafsound.domain.recruit.dto.PostRecruitReqDto;
 import com.ssafy.ssafsound.domain.recruit.dto.RecruitLimitElement;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
@@ -117,9 +118,9 @@ class RecruitServiceTest {
         Mockito.lenient().when(memberRepository.findById(2L)).thenThrow(new RuntimeException());
 
         Mockito.lenient().when(recruitScrapRepository.findByRecruitIdAndMemberId(1L, 1L)).thenReturn(java.util.Optional.ofNullable(recruitScrap));
-
         Mockito.lenient().when(recruitRepository.findByIdUsingFetchJoinRegisterAndRecruitLimitation(2L))
                 .thenReturn(java.util.Optional.ofNullable(savedRecruit));
+        Mockito.lenient().when(recruitRepository.findById(2L)).thenReturn(java.util.Optional.ofNullable(savedRecruit));
 
         // MetaData Consumer Mocking
         Arrays.stream(RecruitType.values()).forEach(recruitType -> Mockito.lenient()
@@ -216,11 +217,77 @@ class RecruitServiceTest {
         assertThrows(ResourceNotFoundException.class, ()->recruitService.getRecruitDetail(1L));
     }
 
-
     @DisplayName("삭제된 리크루트 상세 조회시 null값 return")
     @Test
     void Given_DeletedRecruitId_When_GetRecruitDetail_Then_Fail() {
         savedRecruit.delete();
         assertThrows(RecruitException.class, ()->recruitService.getRecruitDetail(2L));
+    }
+
+    @DisplayName("리크루트 삭제")
+    @Test
+    void Given_RecruitIdAndRegisterId_WhenDeleteRecruitThen_Success() {
+        assertAll(
+                ()->assertDoesNotThrow(()-> recruitService.deleteRecruit(2L, 1L)),
+                ()->assertEquals(true, savedRecruit.getDeletedRecruit())
+        );
+    }
+
+    @DisplayName("등록자가 아닌 사용자의 리크루트 삭제 요청 실패")
+    @Test
+    void Given_NotValidRegisterId_WhenDeleteRecruitThen_Success() {
+        assertThrows(RecruitException.class, ()->recruitService.deleteRecruit(2L, 2L));
+    }
+
+    @DisplayName("리크루트 수정")
+    @Test
+    void Given_RecruitIdAndRegisterIdAndPatchRecruitDtoWhenDeleteRecruitThen_Success() {
+        List<RecruitLimitElement> limits = List.of(
+                new RecruitLimitElement(RecruitType.BACK_END.getName(), 3),
+                new RecruitLimitElement(RecruitType.DESIGN.getName(), 3)
+        );
+
+        List<String> skills = Arrays.stream(Skill.values()).map(Skill::getName).collect(Collectors.toList());
+
+        PatchRecruitReqDto patchRecruitReqDto = new PatchRecruitReqDto("PROJECT",
+                LocalDate.now(), "제목 수정", "컨텐츠 수정", skills, limits);
+
+        recruitService.updateRecruit(2L, 1L, patchRecruitReqDto);
+
+        assertAll(
+                ()-> assertEquals("제목 수정", savedRecruit.getTitle()),
+                ()-> assertEquals("컨텐츠 수정", savedRecruit.getContent()),
+                ()-> assertEquals(2, savedRecruit.getLimitations().size())
+        );
+    }
+
+    @DisplayName("기존 존재하는 인원 제한 이하로 설정된 리크루트 수정 실패")
+    @Test
+    void Given_BelowRecruitLimitAndPatchRecruitDtoWhenDeleteRecruitThen_Fail() {
+        List<RecruitLimitElement> limits = List.of(
+                new RecruitLimitElement(RecruitType.DESIGN.getName(), 1)
+        );
+
+        List<String> skills = Arrays.stream(Skill.values()).map(Skill::getName).collect(Collectors.toList());
+
+        PatchRecruitReqDto patchRecruitReqDto = new PatchRecruitReqDto("PROJECT",
+                LocalDate.now(), "제목 수정", "컨텐츠 수정", skills, limits);
+
+        assertThrows(RecruitException.class, ()->recruitService.updateRecruit(2L, 1L, patchRecruitReqDto));
+    }
+
+    @DisplayName("기존에 존재하는 모집군을 삭제하는 리크루트 수정 실패")
+    @Test
+    void Given_NotIncludePrevExistLimitAndPatchRecruitDtoWhenDeleteRecruitThen_Fail() {
+        List<RecruitLimitElement> limits = List.of(
+                new RecruitLimitElement(RecruitType.BACK_END.getName(), 3)
+        );
+
+        List<String> skills = Arrays.stream(Skill.values()).map(Skill::getName).collect(Collectors.toList());
+
+        PatchRecruitReqDto patchRecruitReqDto = new PatchRecruitReqDto("PROJECT",
+                LocalDate.now(), "제목 수정", "컨텐츠 수정", skills, limits);
+
+        assertThrows(RecruitException.class, ()->recruitService.updateRecruit(2L, 1L, patchRecruitReqDto));
     }
 }

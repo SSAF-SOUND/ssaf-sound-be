@@ -26,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,6 +75,7 @@ public class RecruitService {
     public void updateRecruit(Long recruitId, Long memberId, PatchRecruitReqDto recruitReqDto) {
         Recruit recruit = recruitRepository.findByIdUsingFetchJoinRegisterAndRecruitLimitation(recruitId)
                 .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+        if(!recruit.getMember().getId().equals(memberId)) throw new RecruitException(RecruitErrorInfo.INVALID_CHANGE_MEMBER_OPERATION);
 
         setRecruitSkillFromPredefinedMetaData(metaDataConsumer, recruit, recruitReqDto.getSkills());
         updateRecruitLimitations(recruitReqDto, recruit);
@@ -88,15 +91,19 @@ public class RecruitService {
     }
 
     private void updateRecruitLimitations(PatchRecruitReqDto recruitReqDto, Recruit recruit) {
-        Map<String, Integer> prevLimits = recruit.getLimitations()
-                .stream().collect(Collectors.toMap((limit)->limit.getType().getName(), RecruitLimitation::getLimitation));
+        List<RecruitLimitation> prevLimitations = recruit.getLimitations();
         List<RecruitLimitation> updateLimitations = createRecruitLimitations(recruit, recruitReqDto.getLimitations(), null);
-        for(RecruitLimitation updateLimitation: updateLimitations) {
-            Integer limit = prevLimits.get(updateLimitation.getType().getName());
-            if(limit == null) continue;
-            if(limit > updateLimitation.getLimitation()) throw new RecruitException(RecruitErrorInfo.NOT_BELOW_PREV_LIMITATIONS);
-        }
 
+        for(RecruitLimitation prevLimitation: prevLimitations) {
+            RecruitLimitation updateInfo = updateLimitations.stream().filter(updateLimit ->
+                    updateLimit.getType().getName()
+                            .equals(prevLimitation.getType().getName()))
+                    .findAny().orElseThrow(()->new RecruitException(RecruitErrorInfo.NOT_BELOW_PREV_LIMITATIONS));
+
+            if(updateInfo.getLimitation() < prevLimitation.getLimitation()) {
+                throw new RecruitException(RecruitErrorInfo.NOT_BELOW_PREV_LIMITATIONS);
+            }
+        }
         recruit.setRecruitLimitations(updateLimitations);
     }
 
