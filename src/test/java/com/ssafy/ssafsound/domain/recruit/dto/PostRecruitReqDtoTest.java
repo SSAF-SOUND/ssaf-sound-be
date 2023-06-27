@@ -46,11 +46,9 @@ class PostRecruitReqDtoTest {
             Mockito.lenient().when(metaDataConsumer.getMetaData(MetaDataType.SKILL.name(), skill.getName())).thenReturn(new MetaData(skill));
         });
 
-        Recruit convertResult = dto.createRecruitFromPredefinedMetadata(metaDataConsumer);
+        Recruit convertResult = dto.to();
         List<String> questions = convertResult.getQuestions().stream()
                 .map(RecruitQuestion::getContent).collect(Collectors.toList());
-        List<String> skills = convertResult.getSkills()
-                .stream().map(skill->skill.getSkill().getName()).collect(Collectors.toList());
 
         assertAll(
                 ()->assertEquals(Category.STUDY, convertResult.getCategory()),
@@ -63,19 +61,6 @@ class PostRecruitReqDtoTest {
                         if (questions.size() != 0) {
                             for (int i = 0; i < questions.size(); ++i) {
                                 assertEquals(freeQuestion.get(i), questions.get(i));
-                            }
-                        }
-                    }
-                },
-
-                ()->{
-                    if(necessarySkills == null) {
-                        assertEquals(0, skills.size());
-                    } else {
-                        assertEquals(necessarySkills.size(), skills.size());
-                        if (skills.size() != 0) {
-                            for (int i = 0; i < skills.size(); ++i) {
-                                assertEquals(necessarySkills.get(i), skills.get(i));
                             }
                         }
                     }

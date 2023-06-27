@@ -125,6 +125,10 @@ class RecruitServiceTest {
         Arrays.stream(RecruitType.values()).forEach(recruitType -> Mockito.lenient()
                 .when(metaDataConsumer.getMetaData(MetaDataType.RECRUIT_TYPE.name(), recruitType.getName()))
                 .thenReturn(new MetaData(recruitType)));
+
+        Arrays.stream(Skill.values()).forEach(skill -> Mockito.lenient()
+                .when(metaDataConsumer.getMetaData(MetaDataType.SKILL.name(), skill.getName()))
+                .thenReturn(new MetaData(skill)));
     }
 
     @DisplayName("토큰과 정상 리크루트글 등록 요청이 넘어온 경우 리크루트 글 등록 성공")
@@ -157,6 +161,14 @@ class RecruitServiceTest {
                         } else {
                             assertEquals(0, recruitLimitation.getCurrentNumber());
                         }
+                    }
+                },
+                ()-> {
+                    List<RecruitSkill> skills = recruit.getSkills();
+                    Skill[] allSkill = Skill.values();
+                    int len = skills.size();
+                    for(int i=0; i<len; ++i) {
+                        assertEquals(allSkill[i].getName(), skills.get(i).getSkill().getName());
                     }
                 }
         );
