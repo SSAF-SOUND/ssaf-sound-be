@@ -1,4 +1,3 @@
-
 logging:
   level:
     com:
@@ -28,7 +27,7 @@ spring:
 
   config:
     import:
-      - application-oauth.yml
-      - application-cloud.yml
-      - application-security.yml
-      - application-scraper.yml
+        - application-oauth.yml
+        - application-cloud.yml
+        - application-security.yml
+        - application-scraper.yml

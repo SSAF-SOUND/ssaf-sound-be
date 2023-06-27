@@ -9,14 +9,14 @@ import lombok.Getter;
 public class GetLunchResDto {
     private String mainMenu;
     private String extraMenu;
-    private String menuKcal;
+    private String sumKcal;
 
     public static GetLunchResDto of(Lunch lunch){
 
         return GetLunchResDto.builder()
                 .mainMenu(lunch.getMainMenu())
                 .extraMenu(lunch.getExtraMenu())
-                .menuKcal(lunch.getMenuKcal())
+                .sumKcal(lunch.getSumKcal())
                 .build();
     }
 }

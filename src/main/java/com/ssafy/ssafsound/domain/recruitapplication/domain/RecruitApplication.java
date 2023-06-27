@@ -37,7 +37,15 @@ public class RecruitApplication {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Column
+    @Builder.Default
+    private Boolean isLike = Boolean.FALSE;
+
     public void changeStatus(MatchStatus matchStatus) {
         this.matchStatus = matchStatus;
+    }
+
+    public void toggleLike() {
+        this.isLike = !this.isLike;
     }
 }

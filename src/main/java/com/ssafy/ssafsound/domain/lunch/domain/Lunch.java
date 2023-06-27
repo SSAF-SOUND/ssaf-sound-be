@@ -1,6 +1,5 @@
 package com.ssafy.ssafsound.domain.lunch.domain;
 
-import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.meta.converter.CampusConverter;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import lombok.*;
@@ -24,16 +23,19 @@ public class Lunch {
     private Long id;
 
     @Column
-    private String mainMenu;
+    private String course;
 
     @Column
+    private String mainMenu;
+
+    @Column(length = 1023)
     private String extraMenu;
 
     @Column
     private String imagePath;
 
     @Column
-    private String menuKcal;
+    private String sumKcal;
 
     @Convert(converter = CampusConverter.class)
     private MetaData campus;

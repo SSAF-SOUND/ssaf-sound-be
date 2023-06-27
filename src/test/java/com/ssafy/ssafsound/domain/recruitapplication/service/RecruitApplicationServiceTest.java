@@ -87,6 +87,7 @@ class RecruitApplicationServiceTest {
 
     RecruitApplication recruitApplication = RecruitApplication.builder()
             .id(1L)
+            .isLike(false)
             .matchStatus(MatchStatus.WAITING_REGISTER_APPROVE)
             .recruit(recruit)
             .type(new MetaData(RecruitType.DESIGN))
@@ -295,5 +296,22 @@ class RecruitApplicationServiceTest {
         assertDoesNotThrow(()->{
             recruitApplicationService.getRecruitParticipants(1L);
         });
+    }
+
+    @DisplayName("등록자 리크루트 참여 좋아요 토글")
+    @Test
+    void Given_RecruitApplicationIdAndRegisterId_When_GetRecruitApplicationLikeThen_Success() {
+        assertAll(
+                ()-> assertDoesNotThrow(()-> recruitApplicationService.toggleRecruitApplicationLike(1L, 1L)),
+                ()->assertEquals(true, recruitApplication.getIsLike())
+        );
+    }
+
+    @DisplayName("비정상 사용자 등록자 리크루트 참여 좋아요 토글 요청")
+    @Test
+    void Given_RecruitApplicationIdAndNotValidMemberId_When_GetRecruitApplicationLikeThen_Fail() {
+        assertThrows(RecruitException.class,
+                ()-> recruitApplicationService.toggleRecruitApplicationLike(1L, 2L)
+        );
     }
 }
