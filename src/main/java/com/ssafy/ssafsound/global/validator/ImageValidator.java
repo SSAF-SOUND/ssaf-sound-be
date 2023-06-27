@@ -1,16 +1,18 @@
 package com.ssafy.ssafsound.global.validator;
 
 import org.apache.tika.Tika;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class ImageValidator implements ConstraintValidator<CheckImage, List<MultipartFile>> {
+    @Value("${spring.constant.global.validator.IMAGE_EXTENSIONS}")
+    private List<String> IMAGE_EXTENSIONS;
 
     @Override
     public boolean isValid(List<MultipartFile> files, ConstraintValidatorContext context) {
@@ -18,14 +20,12 @@ public class ImageValidator implements ConstraintValidator<CheckImage, List<Mult
             return true;
         }
 
-        List<String> imageExtensions = Arrays.asList("jpg", "jpeg", "png", "bmp", "webp");
-
 
         for (MultipartFile file : files) {
             // 확장자 검증
             String fileName = file.getOriginalFilename();
             String extension = Objects.requireNonNull(fileName).substring(fileName.lastIndexOf(".") + 1);
-            if (!imageExtensions.contains(extension.toLowerCase()))
+            if (!IMAGE_EXTENSIONS.contains(extension.toLowerCase()))
                 return false;
 
             try {
