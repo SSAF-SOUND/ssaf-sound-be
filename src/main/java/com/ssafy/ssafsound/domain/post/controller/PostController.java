@@ -75,13 +75,9 @@ public class PostController {
 
     @DeleteMapping("/{postId}")
     public EnvelopeResponse<Long> deletePost(AuthenticatedMember authenticatedMember, @PathVariable Long postId) {
-        AuthenticatedMember tempMember = AuthenticatedMember.builder()
-                .memberId(1L)
-                .memberRole("user")
-                .build();
 
         return EnvelopeResponse.<Long>builder()
-                .data(postService.deletePost(postId, tempMember.getMemberId()))
+                .data(postService.deletePost(postId, authenticatedMember.getMemberId()))
                 .build();
     }
 }
