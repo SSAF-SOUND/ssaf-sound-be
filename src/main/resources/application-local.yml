@@ -1,23 +1,16 @@
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
+
 spring:
   datasource:
-    url: jdbc:h2:mem:db;MODE=MYSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    driver-class-name: org.h2.Driver
+    url: "jdbc:h2:mem:db;MODE=MYSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
+    driver-class-name: "org.h2.Driver"
     username: sa
-
-  batch:
-    job:
-      enabled: false
-    jdbc:
-      initialize-schema: always
-
-  constant:
-    post:
-      HOT_POST_LIKES_THRESHOLD: 10
-
-  servlet:
-    multipart:
-      max-file-size: 100MB
-      max-request-size: 100MB
 
   jpa:
     hibernate:
@@ -36,5 +29,6 @@ spring:
   config:
     import:
       - application-oauth.yml
-      - application-security.yml
       - application-cloud.yml
+      - application-security.yml
+      - application-scraper.yml
