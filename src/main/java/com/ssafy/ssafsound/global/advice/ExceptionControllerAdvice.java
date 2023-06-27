@@ -14,6 +14,7 @@ import com.ssafy.ssafsound.infra.exception.InfraException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -43,7 +44,7 @@ public class ExceptionControllerAdvice {
                 .message(e.getInfo().getMessage())
                 .build();
     }
-  
+
     @ExceptionHandler(LunchException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse LunchExceptionHandler(LunchException e) {
@@ -140,10 +141,21 @@ public class ExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse PostExceptionHandler(PostException e){
         log.error(e.getMessage());
-      
+
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
                 .message(e.getInfo().getMessage())
+                .build();
+    }
+
+    @ExceptionHandler(BindException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public EnvelopeResponse BindExceptionHandler(BindException e) {
+        log.error(e.getMessage());
+
+        return EnvelopeResponse.builder()
+                .code(GlobalErrorInfo.BAD_REQUEST.getCode())
+                .message(e.getBindingResult().getAllErrors().get(0).getDefaultMessage())
                 .build();
     }
 }

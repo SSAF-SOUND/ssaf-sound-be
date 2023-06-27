@@ -23,7 +23,7 @@ public class GetPostResDto {
     private String thumbnail;
 
     public static GetPostResDto from(Post post) {
-        String thumbnail = findThumbnailPath(post);
+        String thumbnail = findThumbnailUrl(post);
 
         return GetPostResDto.builder()
                 .boardTitle(post.getBoard().getTitle())
@@ -39,10 +39,10 @@ public class GetPostResDto {
                 .build();
     }
 
-    private static String findThumbnailPath(Post post) {
+    private static String findThumbnailUrl(Post post) {
         List<PostImage> images = post.getImages();
         if (images.size() >= 1)
-            return images.get(0).getImagePath();
+            return images.get(0).getImageUrl();
         return null;
     }
 }

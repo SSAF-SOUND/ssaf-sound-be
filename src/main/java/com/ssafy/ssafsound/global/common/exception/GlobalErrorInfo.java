@@ -5,7 +5,9 @@ import lombok.Getter;
 @Getter
 public enum GlobalErrorInfo {
     INTERNAL_SERVER_ERROR("500","Internal Server Error"),
+    BAD_REQUEST("400", "Bad Request"),
     NOT_FOUND("404","Resource Not Found Error");
+
 
     private String code;
     private String message;
