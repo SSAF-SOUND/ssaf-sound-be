@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -18,6 +20,8 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLDelete(sql = "UPDATE post SET deleted_post = true WHERE post_id = ?")
+@Where(clause = "deleted_post = false")
 public class Post extends BaseTimeEntity {
 
     @Id
@@ -35,7 +39,7 @@ public class Post extends BaseTimeEntity {
     private Long view;
 
     @Column
-    private Boolean deletedPost;
+    private Boolean deletedPost = Boolean.FALSE;
 
     @Column
     private Boolean anonymous;
@@ -47,6 +51,9 @@ public class Post extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @OneToOne(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private HotPost hotPost;
 
     @OneToMany(mappedBy = "post")
     private List<PostImage> images = new ArrayList<>();
