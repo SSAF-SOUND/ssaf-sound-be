@@ -49,7 +49,7 @@ public class PostRecruitReqDto {
     @CheckRecruitLimitElement
     private List<RecruitLimitElement> limitations = new ArrayList<>();
 
-    public Recruit createRecruitFromPredefinedMetadata(MetaDataConsumer consumer) {
+    public Recruit to() {
         Recruit recruit = Recruit.builder()
                 .view(0L)
                 .category(Category.valueOf(category))
@@ -61,20 +61,7 @@ public class PostRecruitReqDto {
                 .build();
 
         setRecruitQuestions(recruit);
-        setRecruitSkillFromPredefinedMetaData(consumer, recruit);
         return recruit;
-    }
-
-    private void setRecruitSkillFromPredefinedMetaData(MetaDataConsumer consumer, Recruit recruit) {
-        if(skills == null) return;
-
-        List<RecruitSkill> recruitSkills = skills.stream().map((skill)->(
-                RecruitSkill.builder()
-                        .recruit(recruit)
-                        .skill(consumer.getMetaData(MetaDataType.SKILL.name(), skill)))
-                        .build()
-        ).collect(Collectors.toList());
-        recruit.setRecruitSkill(recruitSkills);
     }
 
     private void setRecruitQuestions (Recruit recruit) {
