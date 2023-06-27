@@ -3,6 +3,7 @@ package com.ssafy.ssafsound.domain.post.controller;
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailListResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostListResDto;
+import com.ssafy.ssafsound.domain.post.dto.PostPostReportReqDto;
 import com.ssafy.ssafsound.domain.post.dto.PostPostWriteReqDto;
 import com.ssafy.ssafsound.domain.post.service.PostService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
@@ -54,6 +55,15 @@ public class PostController {
                 .build();
     }
 
+    @PostMapping("/{postId}/report")
+    public EnvelopeResponse<Long> reportPost(AuthenticatedMember authenticatedMember, @PathVariable Long postId,
+                                             @Valid @RequestBody PostPostReportReqDto postPostReportReqDto) {
+
+        return EnvelopeResponse.<Long>builder()
+                .data(postService.reportPost(postId, authenticatedMember.getMemberId(), postPostReportReqDto.getContent()))
+                .build();
+    }
+      
     @PostMapping
     public EnvelopeResponse<Long> writePost(@Valid @ModelAttribute PostPostWriteReqDto postPostWriteReqDto,
                                             @RequestParam Long boardId, AuthenticatedMember authenticatedMember) {
