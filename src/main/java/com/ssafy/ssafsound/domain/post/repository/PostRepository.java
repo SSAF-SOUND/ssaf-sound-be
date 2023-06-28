@@ -14,7 +14,10 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllByBoardId(Long boardId, Pageable pageable);
 
-    boolean existsByIdAndMemberId(Long id, Long memberId);
+//    boolean existsByIdAndMemberId(Long id, Long memberId);
+
+    @Query("SELECT p FROM post p JOIN FETCH p.member WHERE p.id = :id")
+    Optional<Post> findByIdWithMember(@Param("id") Long id);
 
     @Query("SELECT p FROM post p JOIN FETCH p.member LEFT JOIN FETCH p.images WHERE p.id = :id")
     Optional<Post> findByIdWithMemberAndPostImageFetch(@Param("id") Long id);

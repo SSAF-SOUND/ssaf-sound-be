@@ -223,12 +223,15 @@ public class PostService {
     }
 
     public Long deletePost(Long postId, Long memberId) {
-        if (!postRepository.existsByIdAndMemberId(postId, memberId)) {
-            throw new PostException(PostErrorInfo.NOT_FOUND);
+        Post post = postRepository.findByIdWithMember(postId)
+                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND));
+
+        if (post.getMember().getId().equals(memberId)) {
+            throw new PostException((PostErrorInfo.UNAUTHORIZED_DELETE_POST));
         }
 
-        postRepository.deleteById(postId);
-        return postId;
+        postRepository.delete(post);
+        return post.getId();
     }
 
     @Transactional
@@ -251,8 +254,8 @@ public class PostService {
 
         // 3. 기존 이미지 삭제
         if (post.getImages().size() >= 1)
-        deletePostImages(post.getImages());
+            deletePostImages(post.getImages());
 
-        return postId;
+        return post.getId();
     }
 }
