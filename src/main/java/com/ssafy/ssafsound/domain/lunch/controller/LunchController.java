@@ -43,4 +43,13 @@ public class LunchController {
                 .data(lunchService.saveLunchPoll(user.getMemberId(), lunchId))
                 .build();
     }
+
+    @PostMapping("/poll/revert/{lunchId}")
+    public EnvelopeResponse<PostLunchPollResDto> revertLunchPoll(AuthenticatedMember user, @PathVariable @NumberFormat Long lunchId){
+
+        return EnvelopeResponse.<PostLunchPollResDto>builder()
+                .data(lunchService.deleteLunchPoll(user.getMemberId(), lunchId))
+                .build();
+    }
+
 }

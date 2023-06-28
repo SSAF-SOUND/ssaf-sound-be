@@ -81,8 +81,25 @@ public class LunchService {
         // 4-2. 오늘 첫 투표인 경우
         else lunchPollRepository.saveByMember_IdAndLunch_Id(memberId, lunchId, LocalDate.now());
 
-        return PostLunchPollResDto.builder()
-                .pollCount((long) lunch.getLunchPolls().size())
-                .build();
+        return PostLunchPollResDto.of((long) lunch.getLunchPolls().size());
     }
+
+    @Transactional
+    public PostLunchPollResDto deleteLunchPoll(Long memberId, Long lunchId) {
+
+        // Lunch 엔티티 조회 후 validate
+        Lunch lunch = lunchRepository.findById(lunchId)
+                .orElseThrow(() -> new LunchException((LunchErrorInfo.INVALID_LUNCH_ID)));
+
+        // 멤버 id와 Lunch 엔티티 기반으로 LunchPoll 엔티티 조회 후 validate
+        LunchPoll lunchPoll = lunchPollRepository.findByMember_IdAndLunch(memberId, lunch)
+                .orElseThrow(() -> new LunchException(LunchErrorInfo.NO_LUNCH_POLL));
+
+        // 투표 삭제
+        lunchPollRepository.delete(lunchPoll);
+
+        // 변화한 투표 수 리턴
+        return PostLunchPollResDto.of((long) lunch.getLunchPolls().size());
+    }
+
 }
