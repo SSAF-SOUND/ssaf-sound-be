@@ -4,6 +4,7 @@ import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.service.token.JwtTokenProvider;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.domain.MemberRole;
+import com.ssafy.ssafsound.domain.member.domain.MemberToken;
 import com.ssafy.ssafsound.domain.member.domain.OAuthType;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
@@ -15,6 +16,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -41,6 +44,8 @@ class MemberServiceTest {
     private JwtTokenProvider jwtTokenProvider;
     @InjectMocks
     private MemberService memberService;
+    @Captor
+    ArgumentCaptor<MemberToken> memberTokenArgumentCaptor;
     PostMemberReqDto postMemberReqDto;
     Member member;
     MemberRole memberRole;
@@ -125,5 +130,28 @@ class MemberServiceTest {
         given(memberRepository.findByOauthIdentifier(postMemberReqDto.getOauthIdentifier())).willReturn(Optional.of(member));
 
         assertThrows(MemberException.class, () -> memberService.createMemberByOauthIdentifier(testPostMemberReqDto));
+    }
+
+    @Test
+    @DisplayName("Member가 토큰을 발급한 적이 없다면 토큰을 발급하고 저장한다.")
+    void Given_Tokens_When_InitializeMember_Then_Success() {
+        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(member);
+        String accessToken = jwtTokenProvider.createAccessToken(authenticatedMember);
+        String refreshToken = jwtTokenProvider.createRefreshToken(authenticatedMember);
+        given(memberTokenRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.empty());
+        given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
+
+        memberService.saveTokenByMember(authenticatedMember, accessToken, refreshToken);
+
+        verify(memberTokenRepository).save(memberTokenArgumentCaptor.capture());
+        MemberToken memberTokenRes = memberTokenArgumentCaptor.getValue();
+
+        assertAll(
+                () -> assertThat(memberTokenRes.getAccessToken()).isEqualTo(accessToken),
+                () -> assertThat(memberTokenRes.getRefreshToken()).isEqualTo(refreshToken)
+        );
+
+        verify(memberTokenRepository).findById(authenticatedMember.getMemberId());
+        verify(memberRepository).findById(authenticatedMember.getMemberId());
     }
 }
