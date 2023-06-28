@@ -111,7 +111,9 @@ public class RecruitApplicationService {
         List<RecruitApplication> recruitApplications = recruitApplicationRepository
                 .findByRecruitIdAndMatchStatusFetchMember(recruitId, MatchStatus.DONE);
 
-        return GetRecruitParticipantsResDto.from(recruitApplications);
+        GetRecruitParticipantsResDto getRecruitParticipantsResDto = GetRecruitParticipantsResDto.from(recruitApplications);
+        getRecruitParticipantsResDto.addRegisterInfo(recruitRepository.findByIdFetchJoinRegister(recruitId));
+        return getRecruitParticipantsResDto;
     }
 
     @Transactional(readOnly = true)
