@@ -33,15 +33,14 @@ public class MemberService {
         Member member;
         if (optionalMember.isPresent()) {
             member = optionalMember.get();
-            if (isInvalidOauthLogin(member, postMemberReqDto))
-                throw new MemberException(MemberErrorInfo.MEMBER_OAUTH_NOT_FOUND);
+            if (isInvalidOauthLogin(member, postMemberReqDto)) throw new MemberException(MemberErrorInfo.MEMBER_OAUTH_NOT_FOUND);
+            return AuthenticatedMember.from(member);
         } else {
             MemberRole memberRole = findMemberRoleByRoleName("user");
             member = postMemberReqDto.createMember();
             member.setMemberRole(memberRole);
-            memberRepository.save(member);
+            return AuthenticatedMember.from(memberRepository.save(member));
         }
-        return AuthenticatedMember.of(member);
     }
 
     @Transactional
@@ -60,7 +59,7 @@ public class MemberService {
                     .refreshToken(refreshToken)
                     .member(member)
                     .build();
-            
+
             memberTokenRepository.save(memberToken);
         }
     }

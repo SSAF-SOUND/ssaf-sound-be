@@ -15,7 +15,7 @@ public class AuthenticatedMember {
 
     private String memberRole;
 
-    public static AuthenticatedMember of(Member member) {
+    public static AuthenticatedMember from(Member member) {
         return AuthenticatedMember.builder()
                 .memberId(member.getId())
                 .memberRole(member.getRole().getRoleType())
