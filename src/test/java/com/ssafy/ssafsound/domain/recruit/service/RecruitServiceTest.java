@@ -80,6 +80,7 @@ class RecruitServiceTest {
             .id(2L)
             .view(0L)
             .member(member)
+            .registerRecruitType(new MetaData(RecruitType.BACK_END))
             .deletedRecruit(false)
             .startDateTime(LocalDate.now().atStartOfDay())
             .endDateTime(LocalDate.now().plusDays(3).atTime(LocalTime.MAX))
@@ -192,14 +193,35 @@ class RecruitServiceTest {
         assertTrue(recruitService.toggleRecruitScrap(recruitId, memberId));
     }
 
-    @DisplayName("리크루트 상세 조회")
+    @DisplayName("등록자의 리크루트 타입이 인원제한에 포함되지 않은 리크루트 상세 조회")
+    @Test
+    void Given_NotIncludeRegisterRecruitTypeRecruitId_When_GetRecruitDetail_Then_Success() {
+        GetRecruitDetailResDto dto = recruitService.getRecruitDetail(2L);
+        String registerRecruitType = savedRecruit.getRegisterRecruitType().getName();
+
+        assertAll(
+                ()->assertEquals(1L, dto.getView()),
+                ()->assertEquals(false, dto.isFinishedRecruit()),
+                ()-> dto.getLimits().forEach(limit->{
+                    if(limit.getRecruitType().equals(registerRecruitType)) {
+                        assertEquals(1, limit.getLimit());
+                    } else {
+                        assertEquals(2, limit.getLimit());
+                    }
+                })
+        );
+    }
+
+    @DisplayName("등록자의 리크루트 타입이 인원제한에 포함되지 않은 리크루트 상세 조회")
     @Test
     void Given_RecruitId_When_GetRecruitDetail_Then_Success() {
+        savedRecruit.setRegisterRecruitType(new MetaData(RecruitType.DESIGN));
         GetRecruitDetailResDto dto = recruitService.getRecruitDetail(2L);
 
         assertAll(
                 ()->assertEquals(1L, dto.getView()),
-                ()->assertEquals(false, dto.isFinishedRecruit())
+                ()->assertEquals(false, dto.isFinishedRecruit()),
+                ()-> dto.getLimits().forEach(limit-> assertEquals(3, limit.getLimit()))
         );
     }
 
