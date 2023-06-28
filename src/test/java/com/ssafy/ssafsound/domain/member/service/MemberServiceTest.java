@@ -6,6 +6,7 @@ import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.domain.MemberRole;
 import com.ssafy.ssafsound.domain.member.domain.OAuthType;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
+import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRoleRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
@@ -21,6 +22,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -89,5 +91,26 @@ class MemberServiceTest {
         verify(memberRepository).findByOauthIdentifier(eq(postMemberReqDto.getOauthIdentifier()));
         verify(memberRoleRepository).findByRoleType(eq("user"));
         verify(memberRepository).save(any());
+    }
+
+    @Test
+    @DisplayName("존재하는 Oauth Identifier와 일치한다면 해당 멤버를 가져옵니다.")
+    void Given_ExistOauthIdentifier_When_FindMember_Then_Success() {
+        AuthenticatedMember authenticatedMemberReq = AuthenticatedMember.builder()
+                .memberId(member.getId())
+                .memberRole(member.getRole().getRoleType())
+                .build();
+
+        //when
+        given(memberRepository.findByOauthIdentifier(postMemberReqDto.getOauthIdentifier())).willReturn(Optional.of(member));
+        AuthenticatedMember authenticatedMemberRes = memberService.createMemberByOauthIdentifier(postMemberReqDto);
+
+        //then
+        assertAll(
+                () -> assertThat(authenticatedMemberRes.getMemberId()).isEqualTo(authenticatedMemberReq.getMemberId()),
+                () -> assertThat(authenticatedMemberRes.getMemberRole()).isEqualTo(authenticatedMemberReq.getMemberRole())
+        );
+
+        verify(memberRepository).findByOauthIdentifier(eq(postMemberReqDto.getOauthIdentifier()));
     }
 }
