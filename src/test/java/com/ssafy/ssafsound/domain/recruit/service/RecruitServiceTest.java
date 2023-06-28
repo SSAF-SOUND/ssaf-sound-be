@@ -144,11 +144,8 @@ class RecruitServiceTest {
         assertAll(
                 ()-> assertEquals(member, recruit.getMember()),
                 ()-> {
-                    RecruitApplication registerApplication = recruit.getApplications().get(0);
-                    assertNotNull(registerApplication);
-                    assertEquals( 1, recruit.getApplications().size());
-                    assertEquals(RecruitType.DESIGN.getName(), registerApplication.getType().getName());
-                    assertEquals(1, registerApplication.getMember().getId());
+                    assertEquals( 0, recruit.getApplications().size());
+                    assertEquals(RecruitType.DESIGN.getName(), recruit.getRegisterRecruitType().getName());
                 },
                 ()-> {
                     List<RecruitLimitation> recruitLimitations = recruit.getLimitations();
@@ -157,11 +154,7 @@ class RecruitServiceTest {
 
                     for(RecruitLimitation recruitLimitation: recruitLimitations) {
                         assertEquals(2, recruitLimitation.getLimitation());
-                        if(recruitLimitation.getType().getName().equals(RecruitType.DESIGN.getName())) {
-                            assertEquals(1, recruitLimitation.getCurrentNumber());
-                        } else {
-                            assertEquals(0, recruitLimitation.getCurrentNumber());
-                        }
+                        assertEquals(0, recruitLimitation.getCurrentNumber());
                     }
                 },
                 ()-> {

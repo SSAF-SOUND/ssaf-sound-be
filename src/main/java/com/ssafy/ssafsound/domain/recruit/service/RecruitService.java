@@ -12,12 +12,9 @@ import com.ssafy.ssafsound.domain.recruit.dto.PostRecruitReqDto;
 import com.ssafy.ssafsound.domain.recruit.dto.RecruitLimitElement;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
-import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicationRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitLimitationRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitScrapRepository;
-import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
-import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,7 +30,6 @@ public class RecruitService {
 
     private final RecruitRepository recruitRepository;
     private final RecruitLimitationRepository recruitLimitationRepository;
-    private final RecruitApplicationRepository recruitApplicationRepository;
     private final RecruitScrapRepository recruitScrapRepository;
     private final MemberRepository memberRepository;
     private final MetaDataConsumer metaDataConsumer;
@@ -45,13 +38,14 @@ public class RecruitService {
     public Recruit saveRecruit(AuthenticatedMember userInfo, PostRecruitReqDto postRecruitReqDto) {
         Recruit recruit = postRecruitReqDto.to();
         Member register = memberRepository.findById(userInfo.getMemberId()).orElseThrow(RuntimeException::new);
+        // 등록자는 자신이 속한 역할군을 1가지 선택할 수 있어야한다.
         recruit.setRegister(register);
+        recruit.setRegisterRecruitType(metaDataConsumer.getMetaData(MetaDataType.RECRUIT_TYPE.name(), postRecruitReqDto.getRegisterRecruitType()));
+
         setRecruitSkillFromPredefinedMetaData(metaDataConsumer, recruit, postRecruitReqDto.getSkills());
         recruitRepository.save(recruit);
 
-        String registerRecruitType = postRecruitReqDto.getRegisterRecruitType();
-        recruitApplicationRepository.save(createRegisterRecruitApplication(recruit, register, registerRecruitType));
-        recruitLimitationRepository.saveAll(createRecruitLimitations(recruit, postRecruitReqDto.getLimitations(), registerRecruitType));
+        recruitLimitationRepository.saveAll(createRecruitLimitations(recruit, postRecruitReqDto.getLimitations()));
         return recruit;
     }
 
@@ -59,7 +53,6 @@ public class RecruitService {
     public boolean toggleRecruitScrap(Long recruitId, Long memberId) {
         RecruitScrap recruitScrap = recruitScrapRepository.findByRecruitIdAndMemberId(recruitId, memberId)
                 .orElse(null);
-
         return isPreExistRecruitScrap(recruitId, memberId, recruitScrap);
     }
 
@@ -92,7 +85,7 @@ public class RecruitService {
 
     private void updateRecruitLimitations(PatchRecruitReqDto recruitReqDto, Recruit recruit) {
         List<RecruitLimitation> prevLimitations = recruit.getLimitations();
-        List<RecruitLimitation> updateLimitations = createRecruitLimitations(recruit, recruitReqDto.getLimitations(), null);
+        List<RecruitLimitation> updateLimitations = createRecruitLimitations(recruit, recruitReqDto.getLimitations());
 
         for(RecruitLimitation prevLimitation: prevLimitations) {
             RecruitLimitation updateInfo = updateLimitations.stream().filter(updateLimit ->
@@ -137,25 +130,13 @@ public class RecruitService {
         recruitScrapRepository.save(recruitScrap);
     }
 
-    private RecruitApplication createRegisterRecruitApplication(Recruit recruit, Member register, String registerRecruitType) {
-        RecruitApplication application = RecruitApplication.builder()
-                .recruit(recruit)
-                .member(register)
-                .type(metaDataConsumer.getMetaData(MetaDataType.RECRUIT_TYPE.name(), registerRecruitType))
-                .matchStatus(MatchStatus.DONE)
-                .build();
-
-        recruit.addApplications(application);
-        return application;
-    }
-
-    private List<RecruitLimitation> createRecruitLimitations(Recruit recruit, List<RecruitLimitElement> limits, String registerRecruitType) {
+    private List<RecruitLimitation> createRecruitLimitations(Recruit recruit, List<RecruitLimitElement> limits) {
         List<RecruitLimitation> limitations =  limits.stream().map((limit)->
                 RecruitLimitation.builder()
                         .recruit(recruit)
                         .type(metaDataConsumer.getMetaData(MetaDataType.RECRUIT_TYPE.name(), limit.getRecruitType()))
                         .limitation(limit.getLimit())
-                        .currentNumber(limit.getRecruitType().equals(registerRecruitType) ? 1 : 0)
+                        .currentNumber(0)
                         .build())
                 .collect(Collectors.toList());
 
