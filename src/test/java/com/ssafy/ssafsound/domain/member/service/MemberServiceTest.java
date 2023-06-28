@@ -113,4 +113,17 @@ class MemberServiceTest {
 
         verify(memberRepository).findByOauthIdentifier(eq(postMemberReqDto.getOauthIdentifier()));
     }
+
+    @Test
+    @DisplayName("존재하는 Oauth Identifier를 가져왔지만 요청된 정보와 일치하지 않다면 예외를 던진다.")
+    void Given_OauthIdentifier_When_CompareIncorrectRequest_Then_ThrowException() {
+        PostMemberReqDto testPostMemberReqDto = PostMemberReqDto.builder()
+                .oauthName("kakao")
+                .oauthIdentifier(postMemberReqDto.getOauthIdentifier())
+                .build();
+
+        given(memberRepository.findByOauthIdentifier(postMemberReqDto.getOauthIdentifier())).willReturn(Optional.of(member));
+
+        assertThrows(MemberException.class, () -> memberService.createMemberByOauthIdentifier(testPostMemberReqDto));
+    }
 }
