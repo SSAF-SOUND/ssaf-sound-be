@@ -7,6 +7,6 @@ import java.util.List;
 
 @Getter
 @Builder
-public class GetPostResDto {
-    private List<GetPost> posts;
+public class GetPostListResDto {
+    private List<GetPostResDto> posts;
 }

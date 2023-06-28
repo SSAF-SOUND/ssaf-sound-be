@@ -20,7 +20,7 @@ public class HotPost extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "post_id")
     private Post post;
 }

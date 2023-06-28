@@ -211,4 +211,13 @@ public class PostService {
                 .build());
     }
 
+    public Long deletePost(Long postId, Long memberId) {
+        if (!postRepository.existsByIdAndMemberId(postId, memberId)) {
+            throw new PostException(PostErrorInfo.NOT_FOUND);
+        }
+
+        postRepository.deleteById(postId);
+        return postId;
+    }
+
 }
