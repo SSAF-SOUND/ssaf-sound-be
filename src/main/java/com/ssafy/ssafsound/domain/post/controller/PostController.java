@@ -81,18 +81,9 @@ public class PostController {
     @PutMapping("/{postId}")
     public EnvelopeResponse<Long> updatePost(@Valid @ModelAttribute PostPutUpdateReqDto postPutUpdateReqDto,
                                              @PathVariable Long postId, AuthenticatedMember authenticatedMember) {
-        AuthenticatedMember tempMember = AuthenticatedMember.builder()
-                .memberId(1L)
-                .memberRole("user")
-                .build();
-
-        log.info(postPutUpdateReqDto.getTitle());
-        log.info(postPutUpdateReqDto.getContent());
-        log.info(String.valueOf(postPutUpdateReqDto.isAnonymous()));
-        log.info(postPutUpdateReqDto.getImages().get(0).getOriginalFilename());
 
         return EnvelopeResponse.<Long>builder()
-                .data(postService.updatePost(postId, tempMember.getMemberId(), postPutUpdateReqDto))
+                .data(postService.updatePost(postId, authenticatedMember.getMemberId(), postPutUpdateReqDto))
                 .build();
     }
 }
