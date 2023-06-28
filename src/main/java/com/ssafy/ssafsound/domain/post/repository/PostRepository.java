@@ -13,9 +13,7 @@ import java.util.Optional;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllByBoardId(Long boardId, Pageable pageable);
-
-//    boolean existsByIdAndMemberId(Long id, Long memberId);
-
+    
     @Query("SELECT p FROM post p JOIN FETCH p.member WHERE p.id = :id")
     Optional<Post> findByIdWithMember(@Param("id") Long id);
 
