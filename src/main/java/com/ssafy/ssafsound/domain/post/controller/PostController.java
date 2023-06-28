@@ -1,10 +1,7 @@
 package com.ssafy.ssafsound.domain.post.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
-import com.ssafy.ssafsound.domain.post.dto.GetPostDetailListResDto;
-import com.ssafy.ssafsound.domain.post.dto.GetPostListResDto;
-import com.ssafy.ssafsound.domain.post.dto.PostPostReportReqDto;
-import com.ssafy.ssafsound.domain.post.dto.PostPostWriteReqDto;
+import com.ssafy.ssafsound.domain.post.dto.*;
 import com.ssafy.ssafsound.domain.post.service.PostService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
@@ -78,6 +75,24 @@ public class PostController {
 
         return EnvelopeResponse.<Long>builder()
                 .data(postService.deletePost(postId, authenticatedMember.getMemberId()))
+                .build();
+    }
+
+    @PutMapping("/{postId}")
+    public EnvelopeResponse<Long> updatePost(@Valid @ModelAttribute PostPutUpdateReqDto postPutUpdateReqDto,
+                                             @PathVariable Long postId, AuthenticatedMember authenticatedMember) {
+        AuthenticatedMember tempMember = AuthenticatedMember.builder()
+                .memberId(1L)
+                .memberRole("user")
+                .build();
+
+        log.info(postPutUpdateReqDto.getTitle());
+        log.info(postPutUpdateReqDto.getContent());
+        log.info(String.valueOf(postPutUpdateReqDto.isAnonymous()));
+        log.info(postPutUpdateReqDto.getImages().get(0).getOriginalFilename());
+
+        return EnvelopeResponse.<Long>builder()
+                .data(postService.updatePost(postId, tempMember.getMemberId(), postPutUpdateReqDto))
                 .build();
     }
 }
