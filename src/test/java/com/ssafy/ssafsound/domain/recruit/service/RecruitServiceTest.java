@@ -139,7 +139,7 @@ class RecruitServiceTest {
                 .memberId(1L)
                 .build();
 
-        Recruit recruit = recruitService.saveRecruit(existUser, postRecruitReqDto);
+        Recruit recruit = recruitService.saveRecruit(existUser.getMemberId(), postRecruitReqDto);
 
         assertAll(
                 ()-> assertEquals(member, recruit.getMember()),
@@ -175,7 +175,7 @@ class RecruitServiceTest {
                 .memberId(2L)
                 .build();
 
-        assertThrows(RuntimeException.class, ()-> recruitService.saveRecruit(notExistMember, postRecruitReqDto));
+        assertThrows(RuntimeException.class, ()-> recruitService.saveRecruit(notExistMember.getMemberId(), postRecruitReqDto));
     }
 
     @DisplayName("사용자 리크루팅 스크랩 등록")

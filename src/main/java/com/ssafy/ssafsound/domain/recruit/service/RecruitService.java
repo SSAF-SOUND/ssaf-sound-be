@@ -35,9 +35,9 @@ public class RecruitService {
     private final MetaDataConsumer metaDataConsumer;
 
     @Transactional
-    public Recruit saveRecruit(AuthenticatedMember userInfo, PostRecruitReqDto postRecruitReqDto) {
+    public Recruit saveRecruit(Long memberId, PostRecruitReqDto postRecruitReqDto) {
         Recruit recruit = postRecruitReqDto.to();
-        Member register = memberRepository.findById(userInfo.getMemberId()).orElseThrow(RuntimeException::new);
+        Member register = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
         // 등록자는 자신이 속한 역할군을 1가지 선택할 수 있어야한다.
         recruit.setRegister(register);
         recruit.setRegisterRecruitType(metaDataConsumer.getMetaData(MetaDataType.RECRUIT_TYPE.name(), postRecruitReqDto.getRegisterRecruitType()));
