@@ -70,7 +70,11 @@ public class RecruitService {
                 .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
         if(!recruit.getMember().getId().equals(memberId)) throw new RecruitException(RecruitErrorInfo.INVALID_CHANGE_MEMBER_OPERATION);
 
+        // 리크루트 기술 스택 업데이트
         setRecruitSkillFromPredefinedMetaData(metaDataConsumer, recruit, recruitReqDto.getSkills());
+
+        // 등록자 모집군 및 모집 인원 제한 수정 -> 등록자의 모집군은 항상 변경가능하며, 그 외의 인원 제한의 경우 등록시 설정한 인원 제한 아래로 수정할 수 없다.
+        recruit.setRegisterRecruitType(metaDataConsumer.getMetaData(MetaDataType.RECRUIT_TYPE.name(), recruitReqDto.getRegisterRecruitType()));
         updateRecruitLimitations(recruitReqDto, recruit);
         recruit.update(recruitReqDto);
     }

@@ -98,10 +98,6 @@ public class Recruit extends BaseTimeEntity {
         this.limitations = limitations;
     }
 
-    public void addApplications(RecruitApplication application) {
-        this.applications.add(application);
-    }
-
     public boolean isFinishedRecruit() {
         boolean isExpirationDate = LocalDateTime.now().isAfter(this.getEndDateTime());
 

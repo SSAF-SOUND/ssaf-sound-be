@@ -17,7 +17,6 @@ import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicati
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitLimitationRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitScrapRepository;
-import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -242,7 +241,7 @@ class RecruitServiceTest {
 
         List<String> skills = Arrays.stream(Skill.values()).map(Skill::getName).collect(Collectors.toList());
 
-        PatchRecruitReqDto patchRecruitReqDto = new PatchRecruitReqDto("PROJECT",
+        PatchRecruitReqDto patchRecruitReqDto = new PatchRecruitReqDto("PROJECT", RecruitType.BACK_END.getName(),
                 LocalDate.now(), "제목 수정", "컨텐츠 수정", skills, limits);
 
         recruitService.updateRecruit(2L, 1L, patchRecruitReqDto);
@@ -250,7 +249,8 @@ class RecruitServiceTest {
         assertAll(
                 ()-> assertEquals("제목 수정", savedRecruit.getTitle()),
                 ()-> assertEquals("컨텐츠 수정", savedRecruit.getContent()),
-                ()-> assertEquals(2, savedRecruit.getLimitations().size())
+                ()-> assertEquals(2, savedRecruit.getLimitations().size()),
+                ()-> assertEquals(RecruitType.BACK_END.getName(), savedRecruit.getRegisterRecruitType().getName())
         );
     }
 
@@ -263,7 +263,7 @@ class RecruitServiceTest {
 
         List<String> skills = Arrays.stream(Skill.values()).map(Skill::getName).collect(Collectors.toList());
 
-        PatchRecruitReqDto patchRecruitReqDto = new PatchRecruitReqDto("PROJECT",
+        PatchRecruitReqDto patchRecruitReqDto = new PatchRecruitReqDto("PROJECT", RecruitType.BACK_END.getName(),
                 LocalDate.now(), "제목 수정", "컨텐츠 수정", skills, limits);
 
         assertThrows(RecruitException.class, ()->recruitService.updateRecruit(2L, 1L, patchRecruitReqDto));
@@ -278,7 +278,7 @@ class RecruitServiceTest {
 
         List<String> skills = Arrays.stream(Skill.values()).map(Skill::getName).collect(Collectors.toList());
 
-        PatchRecruitReqDto patchRecruitReqDto = new PatchRecruitReqDto("PROJECT",
+        PatchRecruitReqDto patchRecruitReqDto = new PatchRecruitReqDto("PROJECT", RecruitType.BACK_END.getName(),
                 LocalDate.now(), "제목 수정", "컨텐츠 수정", skills, limits);
 
         assertThrows(RecruitException.class, ()->recruitService.updateRecruit(2L, 1L, patchRecruitReqDto));
