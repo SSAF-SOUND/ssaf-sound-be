@@ -16,6 +16,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     boolean existsByIdAndMemberId(Long id, Long memberId);
 
-    @Query("SELECT p FROM post p JOIN FETCH p.member JOIN FETCH p.images WHERE p.id = :id")
+    @Query("SELECT p FROM post p JOIN FETCH p.member LEFT JOIN FETCH p.images WHERE p.id = :id")
     Optional<Post> findByIdWithMemberAndPostImageFetch(@Param("id") Long id);
 }
