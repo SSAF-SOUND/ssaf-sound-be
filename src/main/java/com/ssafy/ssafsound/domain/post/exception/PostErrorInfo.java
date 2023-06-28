@@ -4,8 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum PostErrorInfo {
-    NOT_FOUND("802", "게시물을 찾을 수 없습니다."),
-    DUPLICATE_REPORT("803", "해당 게시글은 이미 신고 되었습니다.");
+    NOT_FOUND("802", "게시글을 찾을 수 없습니다."),
+    DUPLICATE_REPORT("803", "이미 신고된 게시글입니다.");
 
 
     private final String code;

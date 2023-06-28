@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllByBoardId(Long boardId, Pageable pageable);
+    boolean existsByIdAndMemberId(Long id, Long memberId);
 }
