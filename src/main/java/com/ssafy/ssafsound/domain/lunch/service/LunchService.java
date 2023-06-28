@@ -30,7 +30,7 @@ public class LunchService {
     private final MetaDataConsumer metaDataConsumer;
 
     @Transactional(readOnly = true)
-    public GetLunchListResDto findLunches(GetLunchListReqDto getLunchListReqDto) {
+    public GetLunchListResDto findLunches(Long memberId, GetLunchListReqDto getLunchListReqDto) {
 
         Integer dayDifference = getLunchListReqDto.getDate().compareTo(LocalDate.now());
         if (dayDifference < 0 || dayDifference > 1) throw new LunchException(LunchErrorInfo.INVALID_DATE);
@@ -40,9 +40,28 @@ public class LunchService {
         List<Lunch> lunches = lunchRepository.findAllByCampusAndDate(campus, getLunchListReqDto.getDate())
                 .orElseThrow(()->new LunchException(LunchErrorInfo.NO_LUNCH_DATE));
 
+        // 투표수 내림차순 정렬
+        lunches.sort((a, b) -> {
+            if (a.getLunchPolls().size() == b.getLunchPolls().size()) {
+                return (int) (a.getId() - b.getId());
+            }
+            return b.getLunchPolls().size() - a.getLunchPolls().size();
+        });
+
+        // 미인증 유저 응답
+        if (memberId == null) {
+            return GetLunchListResDto.of(lunches.stream()
+                    .map(lunch -> GetLunchListElementResDto.of(lunch, (long)lunch.getLunchPolls().size()))
+                    .collect(Collectors.toList()), -1L);
+        }
+
+        // 투표한 점심 메뉴 찾기
+        Lunch polledLunch = lunchPollRepository.findByMember_IdAndPolledAt(memberId, LocalDate.now()).getLunch();
+
+        // 인증 유저 응답
         return GetLunchListResDto.of(lunches.stream()
                 .map(lunch -> GetLunchListElementResDto.of(lunch, (long)lunch.getLunchPolls().size()))
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList()), (long) lunches.indexOf(polledLunch));
     }
 
     @Transactional(readOnly = true)
