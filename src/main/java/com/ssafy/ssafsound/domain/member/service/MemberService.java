@@ -60,8 +60,9 @@ public class MemberService {
                     .refreshToken(refreshToken)
                     .member(member)
                     .build();
+            
+            memberTokenRepository.save(memberToken);
         }
-        memberTokenRepository.save(memberToken);
     }
 
     @Transactional
