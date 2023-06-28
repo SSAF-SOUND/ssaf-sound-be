@@ -194,11 +194,11 @@ public class PostService {
         postImageRepository.saveAll(postImages);
     }
 
-    private void deletePostImages(Post post, List<PostImage> images) {
+    private void deletePostImages(List<PostImage> images) {
         images.stream()
                 .map(PostImage::getImagePath)
                 .forEach(awsS3StorageSerive::deleteObject);
-        postImageRepository.deleteAll(post.getImages());
+        postImageRepository.deleteAllInBatch(images);
     }
 
     private PostImage generatePostImage(Post post, UploadFileInfo uploadFileInfo) {
@@ -246,10 +246,12 @@ public class PostService {
         post.setAnonymous(postPutUpdateReqDto.isAnonymous());
 
         // 2. 새 이미지 업로드
-        uploadPostImages(post, memberId, postPutUpdateReqDto.getImages());
+        if (!postPutUpdateReqDto.getImages().get(0).isEmpty())
+            uploadPostImages(post, memberId, postPutUpdateReqDto.getImages());
 
         // 3. 기존 이미지 삭제
-        deletePostImages(post, post.getImages());
+        if (post.getImages().size() >= 1)
+        deletePostImages(post.getImages());
 
         return postId;
     }
