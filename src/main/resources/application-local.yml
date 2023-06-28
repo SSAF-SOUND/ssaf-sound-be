@@ -46,4 +46,4 @@ spring:
       - application-oauth.yml
       - application-cloud.yml
       - application-security.yml
-      - application-scraper.yml
+#      - application-scraper.yml

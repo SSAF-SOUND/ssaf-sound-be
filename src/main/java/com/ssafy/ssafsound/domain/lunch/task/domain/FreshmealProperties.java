@@ -5,14 +5,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
+import org.springframework.stereotype.Component;
 
 @ToString
 @Getter
 @RequiredArgsConstructor
-@ConfigurationProperties(prefix = "scrap.freshmeal")
-@ConstructorBinding
+@Component
+//@ConfigurationProperties(prefix = "scrap.freshmeal")
+//@ConstructorBinding
 public class FreshmealProperties {
-    private final String url;
-    private final String storeIdx;
-    private final String weekType;
+    private final String url = "a";
+    private final String storeIdx = "a";
+    private final String weekType = "a";
 }

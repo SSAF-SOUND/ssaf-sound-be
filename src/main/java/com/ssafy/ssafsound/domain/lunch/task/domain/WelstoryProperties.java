@@ -5,14 +5,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 @Getter
 @ToString
 @RequiredArgsConstructor
-@ConfigurationProperties(prefix = "scrap.welstory")
-@ConstructorBinding
+@Component
+//@ConfigurationProperties(prefix = "scrap.welstory")
+//@ConstructorBinding
 public class WelstoryProperties {
 
     private final Credentials credentials;
@@ -21,12 +23,13 @@ public class WelstoryProperties {
 
     @Getter
     @ToString
-    @RequiredArgsConstructor
-    @ConstructorBinding
+//    @RequiredArgsConstructor
+//    @ConstructorBinding
+    @Component
     public static class Credentials{
-        private final String url;
-        private final String username;
-        private final String password;
-        private final String rememberMe;
+        private final String url = "a";
+        private final String username = "a";
+        private final String password = "a";
+        private final String rememberMe = "a";
     }
 }

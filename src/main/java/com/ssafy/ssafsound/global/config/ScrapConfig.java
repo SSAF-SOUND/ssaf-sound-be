@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableConfigurationProperties({WelstoryProperties.class, FreshmealProperties.class})
+//@EnableConfigurationProperties({WelstoryProperties.class, FreshmealProperties.class})
 @RequiredArgsConstructor
 public class ScrapConfig {
 }
