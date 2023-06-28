@@ -212,11 +212,8 @@ public class PostService {
     }
 
     public Long deletePost(Long postId, Long memberId) {
-        Post post = postRepository.findByIdWithMember(postId)
-                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND));
-
-        if (!post.getMember().getId().equals(memberId)) {
-            throw new PostException(PostErrorInfo.UNAUTHORIZED_DELETE_POST);
+        if (!postRepository.existsByIdAndMemberId(postId, memberId)) {
+            throw new PostException(PostErrorInfo.NOT_FOUND);
         }
 
         postRepository.deleteById(postId);
