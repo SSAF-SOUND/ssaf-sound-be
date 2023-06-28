@@ -2,6 +2,8 @@ package com.ssafy.ssafsound.domain.recruit.domain;
 
 import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.meta.converter.RecruitTypeConverter;
+import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.recruit.dto.PatchRecruitReqDto;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
@@ -50,6 +52,9 @@ public class Recruit extends BaseTimeEntity {
     @Column
     private Boolean deletedRecruit;
 
+    @Convert(converter = RecruitTypeConverter.class)
+    private MetaData registerRecruitType;
+
     @OneToMany(mappedBy = "recruit", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @Builder.Default
     private List<RecruitSkill> skills = new ArrayList<>();
@@ -75,6 +80,10 @@ public class Recruit extends BaseTimeEntity {
             throw new RecruitException(RecruitErrorInfo.INVALID_CHANGE_MEMBER_OPERATION);
         }
         this.member = member;
+    }
+
+    public void setRegisterRecruitType(MetaData registerRecruitType) {
+        this.registerRecruitType = registerRecruitType;
     }
 
     public void setRecruitQuestions(List<RecruitQuestion> questions) {
