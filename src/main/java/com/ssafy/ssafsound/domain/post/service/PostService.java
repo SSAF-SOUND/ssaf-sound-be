@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -169,7 +170,7 @@ public class PostService {
             Post post = savePost(boardId, memberId, postPostWriteReqDto);
 
             // 2. 이미지 s3에 업로드 및 URL 등록
-            List<String> imageUrls = uploadPostImages(post, memberId, images);
+            uploadPostImages(post, memberId, images);
             return post.getId();
         }
 
@@ -181,28 +182,31 @@ public class PostService {
         return !images.get(0).isEmpty();
     }
 
-    private List<String> uploadPostImages(Post post, Long memberId, List<MultipartFile> images) {
+    private void uploadPostImages(Post post, Long memberId, List<MultipartFile> images) {
         MetaData metaData = new MetaData(UploadDirectory.POST);
-        return images.stream()
+        List<PostImage> postImages = new ArrayList<>();
+
+        images.stream()
                 .map(image -> awsS3StorageSerive.putObject(image, metaData, memberId))
-                .map(uploadFileInfo -> savePostImage(post, uploadFileInfo))
-                .map(PostImage::getImageUrl)
-                .collect(Collectors.toList());
+                .map(uploadFileInfo -> generatePostImage(post, uploadFileInfo))
+                .forEach(postImages::add);
+
+        postImageRepository.saveAll(postImages);
     }
 
     private void deletePostImages(Post post, List<PostImage> images) {
         images.stream()
-                .map(image -> image.getImagePath())
-                .forEach(imagePath -> awsS3StorageSerive.deleteObject(imagePath));
+                .map(PostImage::getImagePath)
+                .forEach(awsS3StorageSerive::deleteObject);
         postImageRepository.deleteAll(post.getImages());
     }
 
-    private PostImage savePostImage(Post post, UploadFileInfo uploadFileInfo) {
-        return postImageRepository.save(PostImage.builder()
+    private PostImage generatePostImage(Post post, UploadFileInfo uploadFileInfo) {
+        return PostImage.builder()
                 .post(post)
                 .imagePath(uploadFileInfo.getFilePath())
                 .imageUrl(uploadFileInfo.getFileUrl())
-                .build());
+                .build();
     }
 
     private Post savePost(Long boardId, Long memberId, PostPostWriteReqDto postPostWriteReqDto) {
