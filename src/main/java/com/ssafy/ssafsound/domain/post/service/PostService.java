@@ -50,8 +50,9 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public GetPostListResDto findPosts(Long boardId, Pageable pageable) {
-        boardRepository.findById(boardId)
-                .orElseThrow(() -> new BoardException(BoardErrorInfo.NO_BOARD_ID));
+        if (!boardRepository.existsById(boardId)){
+            throw new BoardException(BoardErrorInfo.NO_BOARD);
+        }
 
         return GetPostListResDto.builder()
                 .posts(postRepository.findAllByBoardId(boardId, pageable)
@@ -201,7 +202,7 @@ public class PostService {
     private Post savePost(Long boardId, Long memberId, PostPostWriteReqDto postPostWriteReqDto) {
         return postRepository.save(Post.builder()
                 .board(boardRepository.findById(boardId).orElseThrow(
-                        () -> new BoardException(BoardErrorInfo.NO_BOARD_ID)
+                        () -> new BoardException(BoardErrorInfo.NO_BOARD)
                 ))
                 .member(memberRepository.getReferenceById(memberId))
                 .title(postPostWriteReqDto.getTitle())
