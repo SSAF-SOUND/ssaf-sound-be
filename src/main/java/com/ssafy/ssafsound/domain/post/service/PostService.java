@@ -190,6 +190,13 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
+    private void deletePostImages(Post post, List<PostImage> images) {
+        images.stream()
+                .map(image -> image.getImagePath())
+                .forEach(imagePath -> awsS3StorageSerive.deleteObject(imagePath));
+        postImageRepository.deleteAll(post.getImages());
+    }
+
     private PostImage savePostImage(Post post, UploadFileInfo uploadFileInfo) {
         return postImageRepository.save(PostImage.builder()
                 .post(post)
@@ -220,4 +227,26 @@ public class PostService {
         return postId;
     }
 
+    @Transactional
+    public Long updatePost(Long postId, Long memberId, PostPutUpdateReqDto postPutUpdateReqDto) {
+        Post post = postRepository.findByIdWithMemberAndPostImageFetch(postId)
+                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND));
+
+        if (!post.getMember().getId().equals(memberId)) {
+            throw new PostException(PostErrorInfo.UNAUTHORIZED_UPDATE_POST);
+        }
+
+        // 1. 수정
+        post.setTitle(postPutUpdateReqDto.getTitle());
+        post.setContent(postPutUpdateReqDto.getContent());
+        post.setAnonymous(postPutUpdateReqDto.isAnonymous());
+
+        // 2. 새 이미지 업로드
+        uploadPostImages(post, memberId, postPutUpdateReqDto.getImages());
+
+        // 3. 기존 이미지 삭제
+        deletePostImages(post, post.getImages());
+
+        return postId;
+    }
 }
