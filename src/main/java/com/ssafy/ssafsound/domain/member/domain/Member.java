@@ -79,5 +79,6 @@ public class Member extends BaseTimeEntity {
     public void setGeneralMemberInformation(PostMemberInfoReqDto postMemberInfoReqDto) {
         this.nickname = postMemberInfoReqDto.getNickname();
         this.ssafyMember = postMemberInfoReqDto.getSsafyMember();
+        this.major = postMemberInfoReqDto.getIsMajor();
     }
 }

@@ -25,6 +25,7 @@ public class PostMemberInfoReqDto {
     @Semester
     private Integer semester;
 
+    @NotNull
     private Boolean isMajor;
 
     private String campus;

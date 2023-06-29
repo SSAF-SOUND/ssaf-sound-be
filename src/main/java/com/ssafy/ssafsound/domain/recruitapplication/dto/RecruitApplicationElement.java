@@ -28,6 +28,9 @@ public class RecruitApplicationElement {
     private String nickName;
 
     @JsonProperty
+    private Boolean isMajor;
+
+    @JsonProperty
     private SSAFYInfo ssafyInfo;
 
     @JsonProperty
@@ -51,9 +54,9 @@ public class RecruitApplicationElement {
         this.type = type;
         this.memberId = memberId;
         this.nickName = nickName;
+        this.isMajor = major;
         this.ssafyInfo = SSAFYInfo.builder()
                 .semester(semester)
-                .isMajor(major)
                 .campus(campus == null ? null : campus.getName())
                 .certificationState(certificationState == null ? null : certificationState.name())
                 .majorType(majorType)
