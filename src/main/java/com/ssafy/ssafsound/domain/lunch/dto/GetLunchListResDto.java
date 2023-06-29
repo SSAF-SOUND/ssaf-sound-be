@@ -14,11 +14,15 @@ public class GetLunchListResDto {
     private Long totalPollCount = 0L;
 
     @Builder.Default
+    private Long polledAt = -1L;
+
+    @Builder.Default
     private List<GetLunchListElementResDto> menus = new ArrayList<>();
 
-    public static GetLunchListResDto of(List<GetLunchListElementResDto> menuList){
+    public static GetLunchListResDto of(List<GetLunchListElementResDto> menuList, Long polledAt){
         return GetLunchListResDto.builder()
                 .menus(menuList)
+                .polledAt(polledAt)
                 .totalPollCount(menuList.stream().mapToLong(GetLunchListElementResDto::getPollCount).sum())
                 .build();
     }
