@@ -13,16 +13,8 @@ import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-//    @Query("SELECT p FROM post p " +
-//            "JOIN FETCH p.board " +
-//            "JOIN FETCH p.member " +
-//            "LEFT JOIN FETCH p.likes " +
-//            "WHERE p.board.id = :boardId ")
-//    List<Post> findByBoardIdWithDetailsFetch(@Param("boardId") Long boardId);
     @EntityGraph(attributePaths = {"board", "member", "hotPost"})
     List<Post> findWithDetailsByBoardId(@Param("boardId") Long boardId, Pageable pageable);
-
-//    List<Post> findAllByBoardId(Long boardId, Pageable pageable);
 
     boolean existsByIdAndMemberId(Long id, Long memberId);
 }
