@@ -24,6 +24,7 @@ public class GetPost {
 
     public static GetPost from(Post post) {
         String thumbnail = findThumbnailUrl(post);
+        Boolean anonymous = post.getAnonymous();
 
         return GetPost.builder()
                 .boardTitle(post.getBoard().getTitle())
@@ -32,9 +33,9 @@ public class GetPost {
                 .likeCount(post.getLikes().size())
                 .commentCount(post.getComments().size())
                 .createAt(post.getCreatedAt())
-                .memberId(post.getMember().getId())
-                .nickname(post.getMember().getNickname())
-                .anonymous(post.getAnonymous())
+                .memberId(anonymous ? -1 : post.getMember().getId())
+                .nickname(anonymous ? "익명" : post.getMember().getNickname())
+                .anonymous(anonymous)
                 .thumbnail(thumbnail)
                 .build();
     }
