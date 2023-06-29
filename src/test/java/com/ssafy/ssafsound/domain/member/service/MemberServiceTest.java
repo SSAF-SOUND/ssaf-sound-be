@@ -154,4 +154,21 @@ class MemberServiceTest {
         verify(memberTokenRepository).findById(authenticatedMember.getMemberId());
         verify(memberRepository).findById(authenticatedMember.getMemberId());
     }
+
+    @Test
+    @DisplayName("Member가 토큰을 발급한 적이 있다면 새로운 토큰들로 저장한다.")
+    void Given_Tokens_When_JoinedMember_Then_SuccessExchangeTokens() {
+        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(member);
+        String accessToken = jwtTokenProvider.createAccessToken(authenticatedMember);
+        String refreshToken = jwtTokenProvider.createRefreshToken(authenticatedMember);
+        MemberToken memberToken = MemberToken.builder()
+                .member(member)
+                .build();
+
+        given(memberTokenRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(memberToken));
+
+        memberService.saveTokenByMember(authenticatedMember, accessToken, refreshToken);
+
+        verify(memberTokenRepository).findById(authenticatedMember.getMemberId());
+    }
 }
