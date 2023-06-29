@@ -9,6 +9,7 @@ import com.ssafy.ssafsound.domain.member.domain.OAuthType;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberInfoReqDto;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import com.ssafy.ssafsound.domain.member.dto.PostNicknameReqDto;
+import com.ssafy.ssafsound.domain.member.dto.PostNicknameResDto;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRoleRepository;
@@ -244,5 +245,33 @@ class MemberServiceTest {
         member.setSSAFYMemberInformation(postMemberInfoReqDto, metaDataConsumer);
 
         assertTrue(memberService.isSSAFYMemberInformation(member));
+    }
+
+    @Test
+    @DisplayName("이미 존재하는 닉네임이라면 닉네임 중복이라는 예외가 발생한다.")
+    void Given_Nickname_When_ExistNickname_Then_ThrowMemberException() {
+        PostNicknameReqDto postNicknameReqDto = new PostNicknameReqDto("taeyong");
+        given(memberRepository.existsByNickname(postNicknameReqDto.getNickname())).willReturn(true);
+
+        assertThrows(MemberException.class, () -> memberService.checkNicknamePossible(postNicknameReqDto));
+
+        verify(memberRepository).existsByNickname(eq("taeyong"));
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 닉네임이라면 닉네임 사용을 할 수 있는 dto를 반환한다.")
+    void Given_Nickname_When_NotExistNickname_Then_ReturnTrue() {
+        PostNicknameReqDto postNicknameReqDto = new PostNicknameReqDto("taeyong");
+        PostNicknameResDto postNicknameResDto = PostNicknameResDto.builder()
+                .possible(true)
+                .build();
+
+        given(memberRepository.existsByNickname(postNicknameReqDto.getNickname())).willReturn(false);
+
+        PostNicknameResDto result = memberService.checkNicknamePossible(postNicknameReqDto);
+
+        assertThat(result.isPossible()).isEqualTo(postNicknameResDto.isPossible());
+
+        verify(memberRepository).existsByNickname(eq("taeyong"));
     }
 }
