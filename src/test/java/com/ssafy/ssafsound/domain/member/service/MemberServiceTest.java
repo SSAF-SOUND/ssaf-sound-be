@@ -6,14 +6,14 @@ import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.domain.MemberRole;
 import com.ssafy.ssafsound.domain.member.domain.MemberToken;
 import com.ssafy.ssafsound.domain.member.domain.OAuthType;
-import com.ssafy.ssafsound.domain.member.dto.PostMemberInfoReqDto;
-import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
-import com.ssafy.ssafsound.domain.member.dto.PostNicknameReqDto;
-import com.ssafy.ssafsound.domain.member.dto.PostNicknameResDto;
+import com.ssafy.ssafsound.domain.member.dto.*;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRoleRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
+import com.ssafy.ssafsound.domain.meta.domain.Campus;
+import com.ssafy.ssafsound.domain.meta.domain.MetaData;
+import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -273,5 +273,79 @@ class MemberServiceTest {
         assertThat(result.isPossible()).isEqualTo(postNicknameResDto.isPossible());
 
         verify(memberRepository).existsByNickname(eq("taeyong"));
+    }
+
+    @Test
+    @DisplayName("회원가입 이후 정보 입력을 하지 않았다면 닉네임과 싸피멤버여부에 대해 null을 가진 dto를 반환한다.")
+    void Given_Member_When_NotInputInformation_Then_ReturnDtoWithNullNicknameAndSSafyMember() {
+        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(member);
+        GetMemberResDto getMemberResDto = GetMemberResDto.fromGeneralUser(member, member.getRole());
+        given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
+
+        GetMemberResDto result = memberService.getMemberInformation(authenticatedMember);
+
+        assertAll(
+                () -> assertThat(result.getMemberId()).isEqualTo(getMemberResDto.getMemberId()),
+                () -> assertThat(result.getMemberRole()).isEqualTo(getMemberResDto.getMemberRole()),
+                () -> assertThat(result.getSsafyMember()).isEqualTo(getMemberResDto.getSsafyMember()),
+                () -> assertThat(result.getNickname()).isEqualTo(getMemberResDto.getNickname())
+        );
+
+        verify(memberRepository).findById(authenticatedMember.getMemberId());
+    }
+
+    @Test
+    @DisplayName("회원가입 이후 싸피유저가 아닌 일반 유저에 대해 정보 입력을 했다면 일반 유저 dto를 반환한다.")
+    void Given_Member_When_InputGeneralInformation_Then_ReturnDtoWIthNicknameAndGeneralMember() {
+        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(member);
+        PostMemberInfoReqDto postMemberInfoReqDto = PostMemberInfoReqDto.builder()
+                .ssafyMember(false)
+                .nickname("taeyong")
+                .build();
+        member.setGeneralMemberInformation(postMemberInfoReqDto);
+        GetMemberResDto getMemberResDto = GetMemberResDto.fromGeneralUser(member, member.getRole());
+        given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
+
+        GetMemberResDto result = memberService.getMemberInformation(authenticatedMember);
+
+        assertAll(
+                () -> assertThat(result.getMemberId()).isEqualTo(getMemberResDto.getMemberId()),
+                () -> assertThat(result.getMemberRole()).isEqualTo(getMemberResDto.getMemberRole()),
+                () -> assertThat(result.getSsafyMember()).isEqualTo(getMemberResDto.getSsafyMember()),
+                () -> assertThat(result.getNickname()).isEqualTo(getMemberResDto.getNickname())
+        );
+        verify(memberRepository).findById(authenticatedMember.getMemberId());
+    }
+
+    @Test
+    @DisplayName("회원가입 이후 싸피유저에 대한 정보 입력을 했다면 싸피 유저 dto를 반환한다.")
+    void Given_Member_When_InputSSAFYInformation_Then_ReturnDtoWithNicknameAndSSAFYMember() {
+        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(member);
+        PostMemberInfoReqDto postMemberInfoReqDto = PostMemberInfoReqDto.builder()
+                .ssafyMember(true)
+                .nickname("taeyong")
+                .campus("서울")
+                .isMajor(true)
+                .semester(9)
+                .build();
+        given(metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), postMemberInfoReqDto.getCampus())).willReturn(new MetaData(Campus.SEOUL));
+        member.setSSAFYMemberInformation(postMemberInfoReqDto, metaDataConsumer);
+        GetMemberResDto getMemberResDto = GetMemberResDto.fromSSAFYUser(member, member.getRole());
+        given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
+
+        GetMemberResDto result = memberService.getMemberInformation(authenticatedMember);
+
+        assertAll(
+                () -> assertThat(result.getMemberId()).isEqualTo(getMemberResDto.getMemberId()),
+                () -> assertThat(result.getMemberRole()).isEqualTo(getMemberResDto.getMemberRole()),
+                () -> assertThat(result.getSsafyMember()).isEqualTo(getMemberResDto.getSsafyMember()),
+                () -> assertThat(result.getNickname()).isEqualTo(getMemberResDto.getNickname()),
+                () -> assertThat(result.getSsafyInfo().getCampus()).isEqualTo(getMemberResDto.getSsafyInfo().getCampus()),
+                () -> assertThat(result.getSsafyInfo().getSemester()).isEqualTo(getMemberResDto.getSsafyInfo().getSemester()),
+                () -> assertThat(result.getSsafyInfo().isMajor()).isEqualTo(getMemberResDto.getSsafyInfo().isMajor())
+        );
+
+        verify(metaDataConsumer).getMetaData(MetaDataType.CAMPUS.name(), "서울");
+        verify(memberRepository).findById(authenticatedMember.getMemberId());
     }
 }
