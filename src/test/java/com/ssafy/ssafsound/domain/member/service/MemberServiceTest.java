@@ -6,7 +6,9 @@ import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.domain.MemberRole;
 import com.ssafy.ssafsound.domain.member.domain.MemberToken;
 import com.ssafy.ssafsound.domain.member.domain.OAuthType;
+import com.ssafy.ssafsound.domain.member.dto.PostMemberInfoReqDto;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
+import com.ssafy.ssafsound.domain.member.dto.PostNicknameReqDto;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRoleRepository;
@@ -24,8 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -186,5 +187,62 @@ class MemberServiceTest {
 
         verify(memberTokenRepository).findById(authenticatedMember.getMemberId());
         verify(memberRepository).findById(authenticatedMember.getMemberId());
+    }
+
+    @Test
+    @DisplayName("멤버가 싸피멤버라는 질문에 대해 null을 가지고 있고 닉네임도 null이라면 정보를 입력한지 검사하는 메서드에 대해 True를 반환한다.")
+    void Given_Member_When_NotInputInformation_Then_ReturnTrue() {
+        assertTrue(memberService.isNotInputMemberInformation(member));
+    }
+
+    @Test
+    @DisplayName("멤버가 닉네임이나 싸피 멤버라는 질문에 대해 값을 가지고 있다면 정보를 입력한지 검사하는 메서드에 대해 False를 반환한다.")
+    void Given_Member_when_InputInformation_Then_ReturnFalse() {
+        PostMemberInfoReqDto postMemberInfoReqDto = PostMemberInfoReqDto.builder()
+                .ssafyMember(false)
+                .nickname("taeyong")
+                .build();
+        member.setGeneralMemberInformation(postMemberInfoReqDto);
+
+        assertFalse(memberService.isNotInputMemberInformation(member));
+    }
+
+    @Test
+    @DisplayName("일반 멤버이고 닉네임을 가지고 있다면 일반유저인지 확인하는 메서드에서 Trye를 반환한다.")
+    void Given_Member_When_InputGeneralMember_Then_ReturnTrue() {
+        PostMemberInfoReqDto postMemberInfoReqDto = PostMemberInfoReqDto.builder()
+                .ssafyMember(false)
+                .nickname("taeyong")
+                .build();
+
+        member.setGeneralMemberInformation(postMemberInfoReqDto);
+
+        assertTrue(memberService.isGeneralMemberInformation(member));
+    }
+
+    @Test
+    @DisplayName("멤버가 싸피 멤버이고 닉네임을 가지고 있다면 일반유저인지 확인하는 메서드에서 False를 반환한다.")
+    void Given_Member_When_InputSSAFYMember_Then_ReturnFalse() {
+        PostMemberInfoReqDto postMemberInfoReqDto = PostMemberInfoReqDto.builder()
+                .ssafyMember(true)
+                .nickname("taeyong")
+                .build();
+
+        member.setSSAFYMemberInformation(postMemberInfoReqDto, metaDataConsumer);
+
+        assertFalse(memberService.isGeneralMemberInformation(member));
+    }
+
+    @Test
+    @DisplayName("멤버가 싸피 멤버이고 닉네임을 가지고 있다면 싸피유저인지 확인하는 메서드에서 True를 반환한다.")
+    void Given_Member_When_InputSSAFYMember_Then_ReturnTrue() {
+        PostMemberInfoReqDto postMemberInfoReqDto = PostMemberInfoReqDto.builder()
+                .ssafyMember(true)
+                .nickname("taeyong")
+                .build();
+
+        member.setSSAFYMemberInformation(postMemberInfoReqDto, metaDataConsumer);
+
+        assertTrue(memberService.isSSAFYMemberInformation(member));
     }
 }
