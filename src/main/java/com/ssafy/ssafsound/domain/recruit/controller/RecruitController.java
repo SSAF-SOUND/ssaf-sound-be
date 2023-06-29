@@ -20,7 +20,7 @@ public class RecruitController {
 
     @PostMapping
     public EnvelopeResponse<Void> saveRecruit(AuthenticatedMember memberInfo, @Valid @RequestBody PostRecruitReqDto recruitReqDto) {
-        recruitService.saveRecruit(memberInfo, recruitReqDto);
+        recruitService.saveRecruit(memberInfo.getMemberId(), recruitReqDto);
         return EnvelopeResponse.<Void>builder().build();
     }
 

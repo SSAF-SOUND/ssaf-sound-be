@@ -17,7 +17,6 @@ import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicati
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitLimitationRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitScrapRepository;
-import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -81,6 +80,7 @@ class RecruitServiceTest {
             .id(2L)
             .view(0L)
             .member(member)
+            .registerRecruitType(new MetaData(RecruitType.BACK_END))
             .deletedRecruit(false)
             .startDateTime(LocalDate.now().atStartOfDay())
             .endDateTime(LocalDate.now().plusDays(3).atTime(LocalTime.MAX))
@@ -139,16 +139,13 @@ class RecruitServiceTest {
                 .memberId(1L)
                 .build();
 
-        Recruit recruit = recruitService.saveRecruit(existUser, postRecruitReqDto);
+        Recruit recruit = recruitService.saveRecruit(existUser.getMemberId(), postRecruitReqDto);
 
         assertAll(
                 ()-> assertEquals(member, recruit.getMember()),
                 ()-> {
-                    RecruitApplication registerApplication = recruit.getApplications().get(0);
-                    assertNotNull(registerApplication);
-                    assertEquals( 1, recruit.getApplications().size());
-                    assertEquals(RecruitType.DESIGN.getName(), registerApplication.getType().getName());
-                    assertEquals(1, registerApplication.getMember().getId());
+                    assertEquals( 0, recruit.getApplications().size());
+                    assertEquals(RecruitType.DESIGN.getName(), recruit.getRegisterRecruitType().getName());
                 },
                 ()-> {
                     List<RecruitLimitation> recruitLimitations = recruit.getLimitations();
@@ -157,11 +154,7 @@ class RecruitServiceTest {
 
                     for(RecruitLimitation recruitLimitation: recruitLimitations) {
                         assertEquals(2, recruitLimitation.getLimitation());
-                        if(recruitLimitation.getType().getName().equals(RecruitType.DESIGN.getName())) {
-                            assertEquals(1, recruitLimitation.getCurrentNumber());
-                        } else {
-                            assertEquals(0, recruitLimitation.getCurrentNumber());
-                        }
+                        assertEquals(0, recruitLimitation.getCurrentNumber());
                     }
                 },
                 ()-> {
@@ -182,7 +175,7 @@ class RecruitServiceTest {
                 .memberId(2L)
                 .build();
 
-        assertThrows(RuntimeException.class, ()-> recruitService.saveRecruit(notExistMember, postRecruitReqDto));
+        assertThrows(RuntimeException.class, ()-> recruitService.saveRecruit(notExistMember.getMemberId(), postRecruitReqDto));
     }
 
     @DisplayName("사용자 리크루팅 스크랩 등록")
@@ -200,14 +193,35 @@ class RecruitServiceTest {
         assertTrue(recruitService.toggleRecruitScrap(recruitId, memberId));
     }
 
-    @DisplayName("리크루트 상세 조회")
+    @DisplayName("등록자의 리크루트 타입이 인원제한에 포함되지 않은 리크루트 상세 조회")
+    @Test
+    void Given_NotIncludeRegisterRecruitTypeRecruitId_When_GetRecruitDetail_Then_Success() {
+        GetRecruitDetailResDto dto = recruitService.getRecruitDetail(2L);
+        String registerRecruitType = savedRecruit.getRegisterRecruitType().getName();
+
+        assertAll(
+                ()->assertEquals(1L, dto.getView()),
+                ()->assertEquals(false, dto.isFinishedRecruit()),
+                ()-> dto.getLimits().forEach(limit->{
+                    if(limit.getRecruitType().equals(registerRecruitType)) {
+                        assertEquals(1, limit.getLimit());
+                    } else {
+                        assertEquals(2, limit.getLimit());
+                    }
+                })
+        );
+    }
+
+    @DisplayName("등록자의 리크루트 타입이 인원제한에 포함되지 않은 리크루트 상세 조회")
     @Test
     void Given_RecruitId_When_GetRecruitDetail_Then_Success() {
+        savedRecruit.setRegisterRecruitType(new MetaData(RecruitType.DESIGN));
         GetRecruitDetailResDto dto = recruitService.getRecruitDetail(2L);
 
         assertAll(
                 ()->assertEquals(1L, dto.getView()),
-                ()->assertEquals(false, dto.isFinishedRecruit())
+                ()->assertEquals(false, dto.isFinishedRecruit()),
+                ()-> dto.getLimits().forEach(limit-> assertEquals(3, limit.getLimit()))
         );
     }
 
@@ -249,7 +263,7 @@ class RecruitServiceTest {
 
         List<String> skills = Arrays.stream(Skill.values()).map(Skill::getName).collect(Collectors.toList());
 
-        PatchRecruitReqDto patchRecruitReqDto = new PatchRecruitReqDto("PROJECT",
+        PatchRecruitReqDto patchRecruitReqDto = new PatchRecruitReqDto("PROJECT", RecruitType.BACK_END.getName(),
                 LocalDate.now(), "제목 수정", "컨텐츠 수정", skills, limits);
 
         recruitService.updateRecruit(2L, 1L, patchRecruitReqDto);
@@ -257,7 +271,8 @@ class RecruitServiceTest {
         assertAll(
                 ()-> assertEquals("제목 수정", savedRecruit.getTitle()),
                 ()-> assertEquals("컨텐츠 수정", savedRecruit.getContent()),
-                ()-> assertEquals(2, savedRecruit.getLimitations().size())
+                ()-> assertEquals(2, savedRecruit.getLimitations().size()),
+                ()-> assertEquals(RecruitType.BACK_END.getName(), savedRecruit.getRegisterRecruitType().getName())
         );
     }
 
@@ -270,7 +285,7 @@ class RecruitServiceTest {
 
         List<String> skills = Arrays.stream(Skill.values()).map(Skill::getName).collect(Collectors.toList());
 
-        PatchRecruitReqDto patchRecruitReqDto = new PatchRecruitReqDto("PROJECT",
+        PatchRecruitReqDto patchRecruitReqDto = new PatchRecruitReqDto("PROJECT", RecruitType.BACK_END.getName(),
                 LocalDate.now(), "제목 수정", "컨텐츠 수정", skills, limits);
 
         assertThrows(RecruitException.class, ()->recruitService.updateRecruit(2L, 1L, patchRecruitReqDto));
@@ -285,7 +300,7 @@ class RecruitServiceTest {
 
         List<String> skills = Arrays.stream(Skill.values()).map(Skill::getName).collect(Collectors.toList());
 
-        PatchRecruitReqDto patchRecruitReqDto = new PatchRecruitReqDto("PROJECT",
+        PatchRecruitReqDto patchRecruitReqDto = new PatchRecruitReqDto("PROJECT", RecruitType.BACK_END.getName(),
                 LocalDate.now(), "제목 수정", "컨텐츠 수정", skills, limits);
 
         assertThrows(RecruitException.class, ()->recruitService.updateRecruit(2L, 1L, patchRecruitReqDto));
