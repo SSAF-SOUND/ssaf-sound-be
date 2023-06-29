@@ -21,6 +21,7 @@ import com.ssafy.ssafsound.infra.storage.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,7 +66,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public GetPostDetailListResDto findPost(Long postId, AuthenticatedMember authenticatedMember) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND));
+                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
         return GetPostDetailListResDto.builder()
                 .post(Optional.of(post)
@@ -113,7 +114,7 @@ public class PostService {
     private void saveHotPost(Long postId) {
         HotPost hotPost = HotPost.builder()
                 .post(postRepository.findById(postId).
-                        orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND)))
+                        orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST)))
                 .build();
         hotPostRepository.save(hotPost);
     }
@@ -224,7 +225,7 @@ public class PostService {
 
     public Long deletePost(Long postId, Long memberId) {
         Post post = postRepository.findByIdWithMember(postId)
-                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND));
+                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
         if (!post.getMember().getId().equals(memberId)) {
             throw new PostException((PostErrorInfo.UNAUTHORIZED_DELETE_POST));
@@ -237,7 +238,7 @@ public class PostService {
     @Transactional
     public Long updatePost(Long postId, Long memberId, PostPutUpdateReqDto postPutUpdateReqDto) {
         Post post = postRepository.findByIdWithMemberAndPostImageFetch(postId)
-                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND));
+                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
         if (!post.getMember().getId().equals(memberId)) {
             throw new PostException(PostErrorInfo.UNAUTHORIZED_UPDATE_POST);
@@ -255,5 +256,23 @@ public class PostService {
             deletePostImages(post.getImages());
 
         return post.getId();
+    }
+
+
+    @Transactional(readOnly = true)
+    public GetHotPostResDto findHotPosts(Pageable pageable) {
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        List<HotPost> hotPosts = hotPostRepository.findWithDetailsFetch(pageRequest);
+
+        if (hotPosts.size() == 0) {
+            throw new PostException(PostErrorInfo.NOT_FOUND_POSTS);
+        }
+
+        return GetHotPostResDto.builder()
+                .posts(hotPosts
+                        .stream()
+                        .map(GetHotPost::from)
+                        .collect(Collectors.toList()))
+                .build();
     }
 }
