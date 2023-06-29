@@ -21,6 +21,7 @@ import com.ssafy.ssafsound.infra.storage.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,12 +51,14 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public GetPostResDto findPosts(Long boardId, Pageable pageable) {
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+
         if (!boardRepository.existsById(boardId)) {
             throw new BoardException(BoardErrorInfo.NO_BOARD);
         }
 
         return GetPostResDto.builder()
-                .posts(postRepository.findWithDetailsByBoardId(boardId)
+                .posts(postRepository.findWithDetailsByBoardId(boardId, pageRequest)
                         .stream()
                         .map(GetPost::from)
                         .collect(Collectors.toList()))

@@ -25,10 +25,9 @@ public class PostController {
 
     @GetMapping
     public EnvelopeResponse<GetPostResDto> findPosts(@RequestParam Long boardId, Pageable pageable) {
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
         return EnvelopeResponse.<GetPostResDto>builder()
-                .data(postService.findPosts(boardId, pageRequest))
+                .data(postService.findPosts(boardId, pageable))
                 .build();
     }
 

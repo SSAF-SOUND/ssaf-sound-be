@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.domain.post.repository;
 
 import com.ssafy.ssafsound.domain.post.domain.Post;
+import org.hibernate.annotations.BatchSize;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,8 +19,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 //            "LEFT JOIN FETCH p.likes " +
 //            "WHERE p.board.id = :boardId ")
 //    List<Post> findByBoardIdWithDetailsFetch(@Param("boardId") Long boardId);
-    @EntityGraph(attributePaths = {"board", "member", "likes", "hotPost"})
-    List<Post> findWithDetailsByBoardId(@Param("boardId") Long boardId);
+    @EntityGraph(attributePaths = {"board", "member", "hotPost"})
+    List<Post> findWithDetailsByBoardId(@Param("boardId") Long boardId, Pageable pageable);
 
 //    List<Post> findAllByBoardId(Long boardId, Pageable pageable);
 
