@@ -89,7 +89,7 @@ public class PostController {
 
     @GetMapping("/hot")
     public EnvelopeResponse<GetHotPostResDto> findHotPosts(Pageable pageable) {
-        log.info(String.valueOf(pageable.getPageSize()));
+        
         return EnvelopeResponse.<GetHotPostResDto>builder()
                 .data(postService.findHotPosts(pageable))
                 .build();
