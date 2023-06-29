@@ -51,6 +51,10 @@ class MemberServiceTest {
     PostMemberReqDto postMemberReqDto;
     Member member;
     MemberRole memberRole;
+    PostMemberInfoReqDto generalMemberInfoReqDto;
+    PostMemberInfoReqDto SSAFYMemberInfoReqDto;
+    PostNicknameReqDto postNicknameReqDto;
+    AuthenticatedMember authenticatedMember;
 
     @BeforeEach
     void setUp() {
@@ -70,6 +74,23 @@ class MemberServiceTest {
                 .id(1L)
                 .role(memberRole)
                 .build();
+
+        generalMemberInfoReqDto = PostMemberInfoReqDto.builder()
+                .ssafyMember(false)
+                .nickname("taeyong")
+                .isMajor(true)
+                .build();
+
+        SSAFYMemberInfoReqDto = PostMemberInfoReqDto.builder()
+                .ssafyMember(true)
+                .nickname("taeyong")
+                .campus("서울")
+                .isMajor(true)
+                .semester(9)
+                .build();
+
+        postNicknameReqDto = new PostNicknameReqDto("taeyong");
+        authenticatedMember = AuthenticatedMember.from(member);
     }
 
     @Test
@@ -137,7 +158,6 @@ class MemberServiceTest {
     @Test
     @DisplayName("Member가 토큰을 발급한 적이 없다면 토큰을 발급하고 저장한다.")
     void Given_Tokens_When_InitializeMember_Then_Success() {
-        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(member);
         String accessToken = jwtTokenProvider.createAccessToken(authenticatedMember);
         String refreshToken = jwtTokenProvider.createRefreshToken(authenticatedMember);
         given(memberTokenRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.empty());
@@ -160,7 +180,6 @@ class MemberServiceTest {
     @Test
     @DisplayName("Member가 토큰을 발급한 적이 있다면 새로운 토큰들로 저장한다.")
     void Given_Tokens_When_JoinedMember_Then_SuccessExchangeTokens() {
-        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(member);
         String accessToken = jwtTokenProvider.createAccessToken(authenticatedMember);
         String refreshToken = jwtTokenProvider.createRefreshToken(authenticatedMember);
         MemberToken memberToken = MemberToken.builder()
@@ -177,7 +196,6 @@ class MemberServiceTest {
     @Test
     @DisplayName("가입이 안된 Member라면 토큰 발급을 시도하면 예외가 발생한다.")
     void Given_Member_When_NotJoinedMember_Then_ThrowMemberException() {
-        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(member);
         String accessToken = jwtTokenProvider.createAccessToken(authenticatedMember);
         String refreshToken = jwtTokenProvider.createRefreshToken(authenticatedMember);
 
@@ -191,32 +209,23 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("멤버가 싸피멤버라는 질문에 대해 null을 가지고 있고 닉네임도 null이라면 정보를 입력한지 검사하는 메서드에 대해 True를 반환한다.")
+    @DisplayName("멤버가 싸피멤버라는 질문에 대해 null을 가지고 있고 닉네임도 null이라면 정보를 입력하지 않은지 검사하는 메서드에 대해 True를 반환한다.")
     void Given_Member_When_NotInputInformation_Then_ReturnTrue() {
         assertTrue(memberService.isNotInputMemberInformation(member));
     }
 
     @Test
-    @DisplayName("멤버가 닉네임이나 싸피 멤버라는 질문에 대해 값을 가지고 있다면 정보를 입력한지 검사하는 메서드에 대해 False를 반환한다.")
+    @DisplayName("멤버가 닉네임이나 싸피 멤버라는 질문에 대해 값을 가지고 있다면 정보를 입력하지 않은지 검사하는 메서드에 대해 False를 반환한다.")
     void Given_Member_when_InputInformation_Then_ReturnFalse() {
-        PostMemberInfoReqDto postMemberInfoReqDto = PostMemberInfoReqDto.builder()
-                .ssafyMember(false)
-                .nickname("taeyong")
-                .build();
-        member.setGeneralMemberInformation(postMemberInfoReqDto);
+        member.setGeneralMemberInformation(generalMemberInfoReqDto);
 
         assertFalse(memberService.isNotInputMemberInformation(member));
     }
 
     @Test
-    @DisplayName("일반 멤버이고 닉네임을 가지고 있다면 일반유저인지 확인하는 메서드에서 Trye를 반환한다.")
+    @DisplayName("일반 멤버이고 닉네임을 가지고 있다면 일반유저인지 확인하는 메서드에서 True를 반환한다.")
     void Given_Member_When_InputGeneralMember_Then_ReturnTrue() {
-        PostMemberInfoReqDto postMemberInfoReqDto = PostMemberInfoReqDto.builder()
-                .ssafyMember(false)
-                .nickname("taeyong")
-                .build();
-
-        member.setGeneralMemberInformation(postMemberInfoReqDto);
+        member.setGeneralMemberInformation(generalMemberInfoReqDto);
 
         assertTrue(memberService.isGeneralMemberInformation(member));
     }
@@ -224,12 +233,7 @@ class MemberServiceTest {
     @Test
     @DisplayName("멤버가 싸피 멤버이고 닉네임을 가지고 있다면 일반유저인지 확인하는 메서드에서 False를 반환한다.")
     void Given_Member_When_InputSSAFYMember_Then_ReturnFalse() {
-        PostMemberInfoReqDto postMemberInfoReqDto = PostMemberInfoReqDto.builder()
-                .ssafyMember(true)
-                .nickname("taeyong")
-                .build();
-
-        member.setSSAFYMemberInformation(postMemberInfoReqDto, metaDataConsumer);
+        member.setSSAFYMemberInformation(SSAFYMemberInfoReqDto, metaDataConsumer);
 
         assertFalse(memberService.isGeneralMemberInformation(member));
     }
@@ -237,12 +241,7 @@ class MemberServiceTest {
     @Test
     @DisplayName("멤버가 싸피 멤버이고 닉네임을 가지고 있다면 싸피유저인지 확인하는 메서드에서 True를 반환한다.")
     void Given_Member_When_InputSSAFYMember_Then_ReturnTrue() {
-        PostMemberInfoReqDto postMemberInfoReqDto = PostMemberInfoReqDto.builder()
-                .ssafyMember(true)
-                .nickname("taeyong")
-                .build();
-
-        member.setSSAFYMemberInformation(postMemberInfoReqDto, metaDataConsumer);
+        member.setSSAFYMemberInformation(SSAFYMemberInfoReqDto, metaDataConsumer);
 
         assertTrue(memberService.isSSAFYMemberInformation(member));
     }
@@ -250,7 +249,6 @@ class MemberServiceTest {
     @Test
     @DisplayName("이미 존재하는 닉네임이라면 닉네임 중복이라는 예외가 발생한다.")
     void Given_Nickname_When_ExistNickname_Then_ThrowMemberException() {
-        PostNicknameReqDto postNicknameReqDto = new PostNicknameReqDto("taeyong");
         given(memberRepository.existsByNickname(postNicknameReqDto.getNickname())).willReturn(true);
 
         assertThrows(MemberException.class, () -> memberService.checkNicknamePossible(postNicknameReqDto));
@@ -261,7 +259,6 @@ class MemberServiceTest {
     @Test
     @DisplayName("존재하지 않는 닉네임이라면 닉네임 사용을 할 수 있는 dto를 반환한다.")
     void Given_Nickname_When_NotExistNickname_Then_ReturnTrue() {
-        PostNicknameReqDto postNicknameReqDto = new PostNicknameReqDto("taeyong");
         PostNicknameResDto postNicknameResDto = PostNicknameResDto.builder()
                 .possible(true)
                 .build();
@@ -278,7 +275,6 @@ class MemberServiceTest {
     @Test
     @DisplayName("회원가입 이후 정보 입력을 하지 않았다면 닉네임과 싸피멤버여부에 대해 null을 가진 dto를 반환한다.")
     void Given_Member_When_NotInputInformation_Then_ReturnDtoWithNullNicknameAndSSafyMember() {
-        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(member);
         GetMemberResDto getMemberResDto = GetMemberResDto.fromGeneralUser(member, member.getRole());
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
 
@@ -297,12 +293,7 @@ class MemberServiceTest {
     @Test
     @DisplayName("회원가입 이후 싸피유저가 아닌 일반 유저에 대해 정보 입력을 했다면 일반 유저 dto를 반환한다.")
     void Given_Member_When_InputGeneralInformation_Then_ReturnDtoWIthNicknameAndGeneralMember() {
-        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(member);
-        PostMemberInfoReqDto postMemberInfoReqDto = PostMemberInfoReqDto.builder()
-                .ssafyMember(false)
-                .nickname("taeyong")
-                .build();
-        member.setGeneralMemberInformation(postMemberInfoReqDto);
+        member.setGeneralMemberInformation(generalMemberInfoReqDto);
         GetMemberResDto getMemberResDto = GetMemberResDto.fromGeneralUser(member, member.getRole());
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
 
@@ -312,7 +303,8 @@ class MemberServiceTest {
                 () -> assertThat(result.getMemberId()).isEqualTo(getMemberResDto.getMemberId()),
                 () -> assertThat(result.getMemberRole()).isEqualTo(getMemberResDto.getMemberRole()),
                 () -> assertThat(result.getSsafyMember()).isEqualTo(getMemberResDto.getSsafyMember()),
-                () -> assertThat(result.getNickname()).isEqualTo(getMemberResDto.getNickname())
+                () -> assertThat(result.getNickname()).isEqualTo(getMemberResDto.getNickname()),
+                () -> assertThat(result.getIsMajor()).isEqualTo(getMemberResDto.getIsMajor())
         );
         verify(memberRepository).findById(authenticatedMember.getMemberId());
     }
@@ -320,16 +312,8 @@ class MemberServiceTest {
     @Test
     @DisplayName("회원가입 이후 싸피유저에 대한 정보 입력을 했다면 싸피 유저 dto를 반환한다.")
     void Given_Member_When_InputSSAFYInformation_Then_ReturnDtoWithNicknameAndSSAFYMember() {
-        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(member);
-        PostMemberInfoReqDto postMemberInfoReqDto = PostMemberInfoReqDto.builder()
-                .ssafyMember(true)
-                .nickname("taeyong")
-                .campus("서울")
-                .isMajor(true)
-                .semester(9)
-                .build();
-        given(metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), postMemberInfoReqDto.getCampus())).willReturn(new MetaData(Campus.SEOUL));
-        member.setSSAFYMemberInformation(postMemberInfoReqDto, metaDataConsumer);
+        given(metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), SSAFYMemberInfoReqDto.getCampus())).willReturn(new MetaData(Campus.SEOUL));
+        member.setSSAFYMemberInformation(SSAFYMemberInfoReqDto, metaDataConsumer);
         GetMemberResDto getMemberResDto = GetMemberResDto.fromSSAFYUser(member, member.getRole());
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
 
@@ -340,9 +324,9 @@ class MemberServiceTest {
                 () -> assertThat(result.getMemberRole()).isEqualTo(getMemberResDto.getMemberRole()),
                 () -> assertThat(result.getSsafyMember()).isEqualTo(getMemberResDto.getSsafyMember()),
                 () -> assertThat(result.getNickname()).isEqualTo(getMemberResDto.getNickname()),
+                () -> assertThat(result.getIsMajor()).isEqualTo(getMemberResDto.getIsMajor()),
                 () -> assertThat(result.getSsafyInfo().getCampus()).isEqualTo(getMemberResDto.getSsafyInfo().getCampus()),
-                () -> assertThat(result.getSsafyInfo().getSemester()).isEqualTo(getMemberResDto.getSsafyInfo().getSemester()),
-                () -> assertThat(result.getSsafyInfo().isMajor()).isEqualTo(getMemberResDto.getSsafyInfo().isMajor())
+                () -> assertThat(result.getSsafyInfo().getSemester()).isEqualTo(getMemberResDto.getSsafyInfo().getSemester())
         );
 
         verify(metaDataConsumer).getMetaData(MetaDataType.CAMPUS.name(), "서울");
