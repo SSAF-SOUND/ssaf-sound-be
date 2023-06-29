@@ -274,7 +274,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원가입 이후 정보 입력을 하지 않았다면 닉네임과 싸피멤버여부에 대해 null을 가진 dto를 반환한다.")
-    void Given_Member_When_NotInputInformation_Then_ReturnDtoWithNullNicknameAndSSafyMember() {
+    void Given_Member_When_GetMemberInfo_Then_Success() {
         GetMemberResDto getMemberResDto = GetMemberResDto.fromGeneralUser(member, member.getRole());
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
 
@@ -292,7 +292,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원가입 이후 싸피유저가 아닌 일반 유저에 대해 정보 입력을 했다면 일반 유저 dto를 반환한다.")
-    void Given_Member_When_InputGeneralInformation_Then_ReturnDtoWIthNicknameAndGeneralMember() {
+    void Given_Member_When_GetGeneralMemberInfo_Then_Success() {
         member.setGeneralMemberInformation(generalMemberInfoReqDto);
         GetMemberResDto getMemberResDto = GetMemberResDto.fromGeneralUser(member, member.getRole());
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
@@ -311,7 +311,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원가입 이후 싸피유저에 대한 정보 입력을 했다면 싸피 유저 dto를 반환한다.")
-    void Given_Member_When_InputSSAFYInformation_Then_ReturnDtoWithNicknameAndSSAFYMember() {
+    void Given_Member_When_GetSSAFYMemberInfo_Then_Success() {
         given(metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), SSAFYMemberInfoReqDto.getCampus())).willReturn(new MetaData(Campus.SEOUL));
         member.setSSAFYMemberInformation(SSAFYMemberInfoReqDto, metaDataConsumer);
         GetMemberResDto getMemberResDto = GetMemberResDto.fromSSAFYUser(member, member.getRole());
