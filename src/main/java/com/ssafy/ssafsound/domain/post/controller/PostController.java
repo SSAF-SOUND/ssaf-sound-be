@@ -2,7 +2,7 @@ package com.ssafy.ssafsound.domain.post.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailListResDto;
-import com.ssafy.ssafsound.domain.post.dto.GetPostListResDto;
+import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
 import com.ssafy.ssafsound.domain.post.dto.PostPostReportReqDto;
 import com.ssafy.ssafsound.domain.post.dto.PostPostWriteReqDto;
 import com.ssafy.ssafsound.domain.post.service.PostService;
@@ -24,10 +24,10 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping
-    public EnvelopeResponse<GetPostListResDto> findPosts(@RequestParam Long boardId, Pageable pageable) {
+    public EnvelopeResponse<GetPostResDto> findPosts(@RequestParam Long boardId, Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
-        return EnvelopeResponse.<GetPostListResDto>builder()
+        return EnvelopeResponse.<GetPostResDto>builder()
                 .data(postService.findPosts(boardId, pageRequest))
                 .build();
     }

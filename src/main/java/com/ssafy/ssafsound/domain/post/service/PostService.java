@@ -8,8 +8,8 @@ import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.post.domain.*;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailListResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
-import com.ssafy.ssafsound.domain.post.dto.GetPostListResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
+import com.ssafy.ssafsound.domain.post.dto.GetPost;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
 import com.ssafy.ssafsound.domain.post.exception.PostException;
 import com.ssafy.ssafsound.domain.post.repository.*;
@@ -49,15 +49,15 @@ public class PostService {
     private final PostImageRepository postImageRepository;
 
     @Transactional(readOnly = true)
-    public GetPostListResDto findPosts(Long boardId, Pageable pageable) {
-        if (!boardRepository.existsById(boardId)){
+    public GetPostResDto findPosts(Long boardId, Pageable pageable) {
+        if (!boardRepository.existsById(boardId)) {
             throw new BoardException(BoardErrorInfo.NO_BOARD);
         }
 
-        return GetPostListResDto.builder()
-                .posts(postRepository.findAllByBoardId(boardId, pageable)
+        return GetPostResDto.builder()
+                .posts(postRepository.findWithDetailsByBoardId(boardId)
                         .stream()
-                        .map(GetPostResDto::from)
+                        .map(GetPost::from)
                         .collect(Collectors.toList()))
                 .build();
     }
