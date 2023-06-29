@@ -69,15 +69,9 @@ public class Post extends BaseTimeEntity {
     @OneToMany(mappedBy = "post")
     private List<PostScrap> scraps = new ArrayList<>();
 
-    public void setTitle(String title) {
+    public void updatePost(String title, String content, Boolean anonymous){
         this.title = title;
-    }
-
-    public void setContent(String content) {
         this.content = content;
-    }
-
-    public void setAnonymous(Boolean anonymous) {
         this.anonymous = anonymous;
     }
 }

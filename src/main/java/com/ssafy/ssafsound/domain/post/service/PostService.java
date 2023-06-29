@@ -244,9 +244,7 @@ public class PostService {
         }
 
         // 1. 수정
-        post.setTitle(postPutUpdateReqDto.getTitle());
-        post.setContent(postPutUpdateReqDto.getContent());
-        post.setAnonymous(postPutUpdateReqDto.isAnonymous());
+        post.updatePost(postPutUpdateReqDto.getTitle(), postPutUpdateReqDto.getContent(), postPutUpdateReqDto.isAnonymous());
 
         // 2. 새 이미지 업로드
         if (!postPutUpdateReqDto.getImages().get(0).isEmpty())
