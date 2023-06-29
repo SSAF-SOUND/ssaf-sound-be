@@ -39,9 +39,14 @@ public class GetRecruitDetailResDto {
         List<RecruitSkillElement> skills = recruit.getSkills().stream()
                 .map(RecruitSkillElement::from)
                 .collect(Collectors.toList());
+
         List<RecruitLimitElement> limits = recruit.getLimitations().stream()
                 .map(RecruitLimitElement::from)
                 .collect(Collectors.toList());
+
+        String registerRecruitType = recruit.getRegisterRecruitType().getName();
+        // 등록자의 모집 타입도 조회 api에서는 인원에 포함되어야한다.
+        addRegisterRecruitType(limits, registerRecruitType);
 
         return GetRecruitDetailResDto.builder()
                 .recruitId(recruit.getId())
@@ -59,5 +64,17 @@ public class GetRecruitDetailResDto {
                 .limits(limits)
                 .view(recruit.getView())
                 .build();
+    }
+
+    private static void addRegisterRecruitType(List<RecruitLimitElement> limits, String registerRecruitType) {
+        for(RecruitLimitElement limit: limits) {
+            if(limit.getRecruitType().equals(registerRecruitType)) {
+                limit.addRegisterLimit();
+                return;
+            }
+        }
+
+        // 리크루트 등록 시 모집 인원 제한에 등록자가 포함되지 않는 경우 인원 제한 타입을 추가한다.
+        limits.add(new RecruitLimitElement(registerRecruitType, 1));
     }
 }
