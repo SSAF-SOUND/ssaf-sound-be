@@ -171,4 +171,20 @@ class MemberServiceTest {
 
         verify(memberTokenRepository).findById(authenticatedMember.getMemberId());
     }
+
+    @Test
+    @DisplayName("가입이 안된 Member라면 토큰 발급을 시도하면 예외가 발생한다.")
+    void Given_Member_When_NotJoinedMember_Then_ThrowMemberException() {
+        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(member);
+        String accessToken = jwtTokenProvider.createAccessToken(authenticatedMember);
+        String refreshToken = jwtTokenProvider.createRefreshToken(authenticatedMember);
+
+        given(memberTokenRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.empty());
+        given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.empty());
+
+        assertThrows(MemberException.class, () -> memberService.saveTokenByMember(authenticatedMember, accessToken, refreshToken));
+
+        verify(memberTokenRepository).findById(authenticatedMember.getMemberId());
+        verify(memberRepository).findById(authenticatedMember.getMemberId());
+    }
 }
