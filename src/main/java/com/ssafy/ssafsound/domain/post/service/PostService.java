@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -169,7 +170,7 @@ public class PostService {
             Post post = savePost(boardId, memberId, postPostWriteReqDto);
 
             // 2. 이미지 s3에 업로드 및 URL 등록
-            List<String> imageUrls = uploadPostImages(post, memberId, images);
+            uploadPostImages(post, memberId, images);
             return post.getId();
         }
 
@@ -181,21 +182,31 @@ public class PostService {
         return !images.get(0).isEmpty();
     }
 
-    private List<String> uploadPostImages(Post post, Long memberId, List<MultipartFile> images) {
+    private void uploadPostImages(Post post, Long memberId, List<MultipartFile> images) {
         MetaData metaData = new MetaData(UploadDirectory.POST);
-        return images.stream()
+        List<PostImage> postImages = new ArrayList<>();
+
+        images.stream()
                 .map(image -> awsS3StorageSerive.putObject(image, metaData, memberId))
-                .map(uploadFileInfo -> savePostImage(post, uploadFileInfo))
-                .map(PostImage::getImageUrl)
-                .collect(Collectors.toList());
+                .map(uploadFileInfo -> generatePostImage(post, uploadFileInfo))
+                .forEach(postImages::add);
+
+        postImageRepository.saveAll(postImages);
     }
 
-    private PostImage savePostImage(Post post, UploadFileInfo uploadFileInfo) {
-        return postImageRepository.save(PostImage.builder()
+    private void deletePostImages(List<PostImage> images) {
+        images.stream()
+                .map(PostImage::getImagePath)
+                .forEach(awsS3StorageSerive::deleteObject);
+        postImageRepository.deleteAllInBatch(images);
+    }
+
+    private PostImage generatePostImage(Post post, UploadFileInfo uploadFileInfo) {
+        return PostImage.builder()
                 .post(post)
                 .imagePath(uploadFileInfo.getFilePath())
                 .imageUrl(uploadFileInfo.getFileUrl())
-                .build());
+                .build();
     }
 
     private Post savePost(Long boardId, Long memberId, PostPostWriteReqDto postPostWriteReqDto) {
@@ -212,12 +223,37 @@ public class PostService {
     }
 
     public Long deletePost(Long postId, Long memberId) {
-        if (!postRepository.existsByIdAndMemberId(postId, memberId)) {
-            throw new PostException(PostErrorInfo.NOT_FOUND);
+        Post post = postRepository.findByIdWithMember(postId)
+                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND));
+
+        if (!post.getMember().getId().equals(memberId)) {
+            throw new PostException((PostErrorInfo.UNAUTHORIZED_DELETE_POST));
         }
 
-        postRepository.deleteById(postId);
-        return postId;
+        postRepository.delete(post);
+        return post.getId();
     }
 
+    @Transactional
+    public Long updatePost(Long postId, Long memberId, PostPutUpdateReqDto postPutUpdateReqDto) {
+        Post post = postRepository.findByIdWithMemberAndPostImageFetch(postId)
+                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND));
+
+        if (!post.getMember().getId().equals(memberId)) {
+            throw new PostException(PostErrorInfo.UNAUTHORIZED_UPDATE_POST);
+        }
+
+        // 1. 수정
+        post.updatePost(postPutUpdateReqDto.getTitle(), postPutUpdateReqDto.getContent(), postPutUpdateReqDto.isAnonymous());
+
+        // 2. 새 이미지 업로드
+        if (!postPutUpdateReqDto.getImages().get(0).isEmpty())
+            uploadPostImages(post, memberId, postPutUpdateReqDto.getImages());
+
+        // 3. 기존 이미지 삭제
+        if (post.getImages().size() >= 1)
+            deletePostImages(post.getImages());
+
+        return post.getId();
+    }
 }
