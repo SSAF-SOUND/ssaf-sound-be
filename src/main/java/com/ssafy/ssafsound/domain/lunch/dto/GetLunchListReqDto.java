@@ -1,7 +1,5 @@
 package com.ssafy.ssafsound.domain.lunch.dto;
 
-import com.ssafy.ssafsound.domain.meta.domain.MetaData;
-import com.ssafy.ssafsound.domain.meta.service.EnumMetaDataConsumer;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
