@@ -23,7 +23,7 @@ public class BoardService {
     public GetBoardResDto findBoards() {
         List<GetBoard> boards = boardRepository.findAll()
                 .stream()
-                .map(board -> GetBoard.from(board))
+                .map(GetBoard::from)
                 .collect(Collectors.toList());
 
         if (boards.size() == 0) {
