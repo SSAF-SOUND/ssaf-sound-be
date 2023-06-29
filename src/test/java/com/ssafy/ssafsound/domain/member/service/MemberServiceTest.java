@@ -332,4 +332,68 @@ class MemberServiceTest {
         verify(metaDataConsumer).getMetaData(MetaDataType.CAMPUS.name(), "서울");
         verify(memberRepository).findById(authenticatedMember.getMemberId());
     }
+
+    @Test
+    @DisplayName("소셜 로그인 이후, 회원정보 입력에서 닉네임이 중복됐다면 예외가 발생한다.")
+    void Given_ExistNickname_When_Register_MemberInfo_Then_ThrowMemberException() {
+        given(memberRepository.existsByNickname(generalMemberInfoReqDto.getNickname())).willReturn(true);
+
+        assertThrows(MemberException.class, () -> memberService.registerMemberInformation(authenticatedMember, generalMemberInfoReqDto));
+
+        verify(memberRepository).existsByNickname(generalMemberInfoReqDto.getNickname());
+    }
+
+    @Test
+    @DisplayName("소셜 로그인 이후, 회원정보 입력에서 회원을 찾을 수 없다면 예외가 발생한다.")
+    void Given_NotExistMember_When_Register_MemberInfo_Then_ThrowMemberException() {
+        given(memberRepository.existsByNickname(generalMemberInfoReqDto.getNickname())).willReturn(false);
+        given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.empty());
+
+        assertThrows(MemberException.class, () -> memberService.registerMemberInformation(authenticatedMember, generalMemberInfoReqDto));
+
+        verify(memberRepository).existsByNickname(generalMemberInfoReqDto.getNickname());
+        verify(memberRepository).findById(authenticatedMember.getMemberId());
+    }
+
+    @Test
+    @DisplayName("소셜 로그인 이후, 일반 회원 정보에 대해 입력했다면 일반 회원정보 dto를 return 받는다.")
+    void Given_PostGeneralMemberInfo_When_Register_MemberInfo_Then_ReturnGeneralMemberResDto() {
+        member.setGeneralMemberInformation(generalMemberInfoReqDto);
+        GetMemberResDto getMemberResDto = GetMemberResDto.fromGeneralUser(member, memberRole);
+        given(memberRepository.existsByNickname(generalMemberInfoReqDto.getNickname())).willReturn(false);
+        given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
+
+        GetMemberResDto result = memberService.registerMemberInformation(authenticatedMember, generalMemberInfoReqDto);
+
+        assertThat(result).extracting(GetMemberResDto::getMemberId).isEqualTo(getMemberResDto.getMemberId());
+        assertThat(result).extracting(GetMemberResDto::getSsafyMember).isEqualTo(getMemberResDto.getSsafyMember());
+        assertThat(result).extracting(GetMemberResDto::getNickname).isEqualTo(getMemberResDto.getNickname());
+        assertThat(result).extracting(GetMemberResDto::getIsMajor).isEqualTo(getMemberResDto.getIsMajor());
+
+        verify(memberRepository).existsByNickname(generalMemberInfoReqDto.getNickname());
+        verify(memberRepository).findById(authenticatedMember.getMemberId());
+    }
+
+    @Test
+    @DisplayName("소셜 로그인 이후, 싸피 회원 정보에 대해 입력했다면 싸피 회원정보 dto를 return 받는다.")
+    void Given_PostSSAFYMemberInfo_When_Register_MemberInfo_Then_ReturnSSAFYMemberResDto() {
+        given(metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), SSAFYMemberInfoReqDto.getCampus())).willReturn(new MetaData(Campus.SEOUL));
+        member.setSSAFYMemberInformation(SSAFYMemberInfoReqDto, metaDataConsumer);
+        GetMemberResDto getMemberResDto = GetMemberResDto.fromSSAFYUser(member, memberRole);
+        given(memberRepository.existsByNickname(SSAFYMemberInfoReqDto.getNickname())).willReturn(false);
+        given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
+
+        GetMemberResDto result = memberService.registerMemberInformation(authenticatedMember, SSAFYMemberInfoReqDto);
+
+        assertThat(result).extracting(GetMemberResDto::getMemberId).isEqualTo(getMemberResDto.getMemberId());
+        assertThat(result).extracting(GetMemberResDto::getSsafyMember).isEqualTo(getMemberResDto.getSsafyMember());
+        assertThat(result).extracting(GetMemberResDto::getNickname).isEqualTo(getMemberResDto.getNickname());
+        assertThat(result).extracting(GetMemberResDto::getIsMajor).isEqualTo(getMemberResDto.getIsMajor());
+        assertThat(result).extracting(GetMemberResDto::getSsafyInfo).extracting(SSAFYInfo::getCampus).isEqualTo(getMemberResDto.getSsafyInfo().getCampus());
+        assertThat(result).extracting(GetMemberResDto::getSsafyInfo).extracting(SSAFYInfo::getSemester).isEqualTo(getMemberResDto.getSsafyInfo().getSemester());
+
+        verify(metaDataConsumer, times(2)).getMetaData(MetaDataType.CAMPUS.name(), "서울");
+        verify(memberRepository).existsByNickname(generalMemberInfoReqDto.getNickname());
+        verify(memberRepository).findById(authenticatedMember.getMemberId());
+    }
 }
