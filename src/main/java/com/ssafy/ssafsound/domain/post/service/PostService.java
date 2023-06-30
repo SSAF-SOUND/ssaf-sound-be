@@ -9,7 +9,6 @@ import com.ssafy.ssafsound.domain.post.domain.*;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailListResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
-import com.ssafy.ssafsound.domain.post.dto.GetPost;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
 import com.ssafy.ssafsound.domain.post.exception.PostException;
 import com.ssafy.ssafsound.domain.post.repository.*;

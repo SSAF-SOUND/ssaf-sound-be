@@ -10,11 +10,11 @@ import java.util.stream.Collectors;
 @Getter
 @Builder
 public class GetPostResDto {
-    private List<GetPost> posts;
+    private List<GetPostElement> posts;
 
     public static GetPostResDto from(List<Post> posts) {
         return GetPostResDto.builder()
-                .posts(posts.stream().map(GetPost::from).collect(Collectors.toList()))
+                .posts(posts.stream().map(GetPostElement::from).collect(Collectors.toList()))
                 .build();
 
     }

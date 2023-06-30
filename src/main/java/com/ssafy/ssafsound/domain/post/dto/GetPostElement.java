@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class GetPost {
+public class GetPostElement {
     private String boardTitle;
     private String title;
     private String content;
@@ -22,11 +22,11 @@ public class GetPost {
     private Boolean anonymous;
     private String thumbnail;
 
-    public static GetPost from(Post post) {
+    public static GetPostElement from(Post post) {
         String thumbnail = findThumbnailUrl(post);
         Boolean anonymous = post.getAnonymous();
 
-        return GetPost.builder()
+        return GetPostElement.builder()
                 .boardTitle(post.getBoard().getTitle())
                 .title(post.getTitle())
                 .content(post.getContent())
