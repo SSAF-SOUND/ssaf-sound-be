@@ -267,12 +267,6 @@ public class PostService {
         if (hotPosts.size() == 0) {
             throw new PostException(PostErrorInfo.NOT_FOUND_POSTS);
         }
-
-        return GetHotPostResDto.builder()
-                .posts(hotPosts
-                        .stream()
-                        .map(GetHotPost::from)
-                        .collect(Collectors.toList()))
-                .build();
+        return GetHotPostResDto.from(hotPosts);
     }
 }
