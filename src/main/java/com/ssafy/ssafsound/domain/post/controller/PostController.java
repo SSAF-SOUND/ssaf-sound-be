@@ -5,6 +5,7 @@ import com.ssafy.ssafsound.domain.post.dto.GetPostDetailListResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
 import com.ssafy.ssafsound.domain.post.dto.PostPostReportReqDto;
 import com.ssafy.ssafsound.domain.post.dto.PostPostWriteReqDto;
+import com.ssafy.ssafsound.domain.post.dto.*;
 import com.ssafy.ssafsound.domain.post.service.PostService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
@@ -76,6 +77,15 @@ public class PostController {
 
         return EnvelopeResponse.<Long>builder()
                 .data(postService.deletePost(postId, authenticatedMember.getMemberId()))
+                .build();
+    }
+
+    @PutMapping("/{postId}")
+    public EnvelopeResponse<Long> updatePost(@Valid @ModelAttribute PostPutUpdateReqDto postPutUpdateReqDto,
+                                             @PathVariable Long postId, AuthenticatedMember authenticatedMember) {
+
+        return EnvelopeResponse.<Long>builder()
+                .data(postService.updatePost(postId, authenticatedMember.getMemberId(), postPutUpdateReqDto))
                 .build();
     }
 }

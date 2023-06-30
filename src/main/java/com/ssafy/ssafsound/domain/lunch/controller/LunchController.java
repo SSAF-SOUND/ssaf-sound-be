@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.domain.lunch.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
+import com.ssafy.ssafsound.domain.auth.validator.Authentication;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListReqDto;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchResDto;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListResDto;
@@ -29,18 +30,27 @@ public class LunchController {
     }
 
     @GetMapping
-    public EnvelopeResponse<GetLunchListResDto> getLunchesByCampusAndDate(@Valid GetLunchListReqDto getLunchListReqDto){
+    public EnvelopeResponse<GetLunchListResDto> getLunchesByCampusAndDate(@Authentication AuthenticatedMember member, @Valid GetLunchListReqDto getLunchListReqDto){
 
         return EnvelopeResponse.<GetLunchListResDto>builder()
-                .data(lunchService.findLunches(getLunchListReqDto))
+                .data(lunchService.findLunches(member.getMemberId(), getLunchListReqDto))
                 .build();
     }
 
     @PostMapping("/poll/{lunchId}")
-    public EnvelopeResponse<PostLunchPollResDto> postLunchPoll(AuthenticatedMember user, @PathVariable @NumberFormat Long lunchId){
+    public EnvelopeResponse<PostLunchPollResDto> postLunchPoll(@Authentication AuthenticatedMember user, @PathVariable @NumberFormat Long lunchId){
 
         return EnvelopeResponse.<PostLunchPollResDto>builder()
                 .data(lunchService.saveLunchPoll(user.getMemberId(), lunchId))
                 .build();
     }
+
+    @PostMapping("/poll/revert/{lunchId}")
+    public EnvelopeResponse<PostLunchPollResDto> revertLunchPoll(@Authentication AuthenticatedMember user, @PathVariable @NumberFormat Long lunchId){
+
+        return EnvelopeResponse.<PostLunchPollResDto>builder()
+                .data(lunchService.deleteLunchPoll(user.getMemberId(), lunchId))
+                .build();
+    }
+
 }
