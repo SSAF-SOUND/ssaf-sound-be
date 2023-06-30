@@ -120,7 +120,7 @@ public class PostService {
     }
 
     @Transactional
-    public void deleteBelowThresholdHotPosts(Long threshold) {
+    public void deleteHotPostsUnderThreshold(Long threshold) {
         hotPostRepository.deleteHotPostsUnderThreshold(threshold);
     }
 
