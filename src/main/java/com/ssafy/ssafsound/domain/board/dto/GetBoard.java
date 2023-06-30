@@ -12,7 +12,6 @@ public class GetBoard {
     private Boolean usedBoard;
 
     public static GetBoard from(Board board) {
-        System.out.println(board.getTitle());
         return GetBoard.builder()
                 .boardId(board.getId())
                 .title(board.getTitle())
