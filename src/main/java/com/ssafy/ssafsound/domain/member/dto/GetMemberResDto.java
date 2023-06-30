@@ -40,6 +40,7 @@ public class GetMemberResDto {
                 .ssafyInfo(SSAFYInfo.builder()
                         .semester(member.getSemester())
                         .campus(member.getCampus().getName())
+                        .certificationState(member.getCertificationState().name())
                         .build())
                 .build();
     }

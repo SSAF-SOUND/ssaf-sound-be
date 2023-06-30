@@ -38,8 +38,9 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private AccountState accountState;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private AuthenticationStatus certificationState;
+    private AuthenticationStatus certificationState = AuthenticationStatus.UNCERTIFIED;
 
     @Convert(converter = CampusConverter.class)
     private MetaData campus;
