@@ -57,12 +57,7 @@ public class PostService {
             throw new BoardException(BoardErrorInfo.NO_BOARD);
         }
 
-        return GetPostResDto.builder()
-                .posts(postRepository.findWithDetailsByBoardId(boardId, pageRequest)
-                        .stream()
-                        .map(GetPost::from)
-                        .collect(Collectors.toList()))
-                .build();
+        return GetPostResDto.from(postRepository.findWithDetailsByBoardId(boardId, pageRequest));
     }
 
     @Transactional(readOnly = true)
