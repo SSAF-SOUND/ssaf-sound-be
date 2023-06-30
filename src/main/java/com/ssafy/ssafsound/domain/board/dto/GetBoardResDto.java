@@ -8,6 +8,6 @@ import java.util.List;
 @Getter
 @Builder
 public class GetBoardResDto {
-    private List<GetBoard> boards;
+    private List<GetBoardElement> boards;
 
 }

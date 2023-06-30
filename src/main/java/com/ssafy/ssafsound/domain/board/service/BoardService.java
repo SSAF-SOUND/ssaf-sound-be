@@ -1,7 +1,7 @@
 package com.ssafy.ssafsound.domain.board.service;
 
 import com.ssafy.ssafsound.domain.board.dto.GetBoardResDto;
-import com.ssafy.ssafsound.domain.board.dto.GetBoard;
+import com.ssafy.ssafsound.domain.board.dto.GetBoardElement;
 import com.ssafy.ssafsound.domain.board.exception.BoardErrorInfo;
 import com.ssafy.ssafsound.domain.board.exception.BoardException;
 import com.ssafy.ssafsound.domain.board.repository.BoardRepository;
@@ -21,9 +21,9 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     public GetBoardResDto findBoards() {
-        List<GetBoard> boards = boardRepository.findAll()
+        List<GetBoardElement> boards = boardRepository.findAll()
                 .stream()
-                .map(GetBoard::from)
+                .map(GetBoardElement::from)
                 .collect(Collectors.toList());
 
         if (boards.size() == 0) {
