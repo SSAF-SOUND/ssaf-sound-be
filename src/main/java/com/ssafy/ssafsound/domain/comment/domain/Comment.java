@@ -12,7 +12,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity(name="comment")
+@Entity(name = "comment")
 @Getter
 @Builder
 @NoArgsConstructor
@@ -28,10 +28,16 @@ public class Comment extends BaseTimeEntity {
     private String content;
 
     @Column
+    private Boolean parent;
+
+    @Column
     private Boolean deletedComment;
 
-    @OneToMany(mappedBy = "commentGroup")
-    private List<Comment> replies = new ArrayList<>();
+//    @OneToMany(mappedBy = "commentGroup")
+//    private List<Comment> replies = new ArrayList<>();
+
+    @OneToOne(mappedBy = "comment")
+    private CommentNumber commentNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_group", referencedColumnName = "comment_id", updatable = false)
