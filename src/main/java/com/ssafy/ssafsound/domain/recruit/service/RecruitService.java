@@ -1,27 +1,30 @@
 package com.ssafy.ssafsound.domain.recruit.service;
 
-import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.domain.recruit.domain.*;
-import com.ssafy.ssafsound.domain.recruit.dto.GetRecruitDetailResDto;
-import com.ssafy.ssafsound.domain.recruit.dto.PatchRecruitReqDto;
-import com.ssafy.ssafsound.domain.recruit.dto.PostRecruitReqDto;
-import com.ssafy.ssafsound.domain.recruit.dto.RecruitLimitElement;
+import com.ssafy.ssafsound.domain.recruit.dto.*;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitLimitationRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitScrapRepository;
+import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
+import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
+import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicationRepository;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +34,7 @@ public class RecruitService {
     private final RecruitRepository recruitRepository;
     private final RecruitLimitationRepository recruitLimitationRepository;
     private final RecruitScrapRepository recruitScrapRepository;
+    private final RecruitApplicationRepository recruitApplicationRepository;
     private final MemberRepository memberRepository;
     private final MetaDataConsumer metaDataConsumer;
 
@@ -85,6 +89,42 @@ public class RecruitService {
                 .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
         if(!recruit.getMember().getId().equals(memberId)) throw new RecruitException(RecruitErrorInfo.INVALID_CHANGE_MEMBER_OPERATION);
         recruit.delete();
+    }
+
+    @Transactional(readOnly = true)
+    public GetRecruitsResDto getRecruits(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable) {
+        // 페이지네이션 조건에 따라 프로젝트/스터디 글 목록을 조회한다.
+        Page<Recruit> recruitPages = getRecruitsByInputKeyword(pageable, getRecruitsReqDto.getKeyword());
+        GetRecruitsResDto recruitsResDto = GetRecruitsResDto.fromPage(recruitPages);
+        addRecruitParticipants(recruitsResDto);
+        return recruitsResDto;
+    }
+
+    private void addRecruitParticipants(GetRecruitsResDto recruitsResDto) {
+        // Recruit Id, Recruit Type 두 depth로 이루어진 Map으로 리크루트별 참여자 목록을 가공한다.
+        Map<Long, Map<String, RecruitParticipant>> participantsMap = recruitsResDto.getRecruitParticipantMapByRecruitIdAndRecruitType();
+
+        // 검색 결과에 존재하는 RecruitId를 이용, 참여 확정된 참여자 정보를 조회한다.
+        List<Long> recruitIds = recruitsResDto.getRecruitsId();
+        List<RecruitApplication> recruitApplications = recruitApplicationRepository
+                .findDoneRecruitApplicationByRecruitIdInFetchRecruitAndMember(recruitIds);
+
+        // 참여자 정보를 참여자 목록에 추가한 후 결과를 사용자에게 리턴한다.
+        for(RecruitApplication recruitApplication: recruitApplications) {
+            Long recruitId = recruitApplication.getRecruit().getId();
+            String recruitType = recruitApplication.getType().getName();
+
+            RecruitParticipant participant = participantsMap.get(recruitId).get(recruitType);
+            Member member = recruitApplication.getMember();
+            participant.addParticipant(member.getNickname(), member.getMajor());
+        }
+    }
+
+    private Page<Recruit> getRecruitsByInputKeyword(Pageable pageable, String keyword) {
+        if(StringUtils.hasText(keyword)) {
+            return recruitRepository.findByDeletedRecruitIsFalseAndTitleContainsOrContentContains(keyword, keyword, pageable);
+        }
+        return recruitRepository.findByDeletedRecruitIsFalse(pageable);
     }
 
     private void updateRecruitLimitations(PatchRecruitReqDto recruitReqDto, Recruit recruit) {
