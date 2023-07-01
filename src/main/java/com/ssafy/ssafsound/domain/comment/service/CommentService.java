@@ -8,6 +8,8 @@ import com.ssafy.ssafsound.domain.comment.exception.CommentException;
 import com.ssafy.ssafsound.domain.comment.repository.CommentNumberRepository;
 import com.ssafy.ssafsound.domain.comment.repository.CommentRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
+import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
+import com.ssafy.ssafsound.domain.post.exception.PostException;
 import com.ssafy.ssafsound.domain.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,10 @@ public class CommentService {
 
     @Transactional
     public Long writeComment(Long postId, Long memberId, PostCommentWriteReqDto postCommentWriteReqDto) {
+        if (!postRepository.existsById(postId)) {
+            throw new PostException(PostErrorInfo.NOT_FOUND);
+        }
+
         // 1. 익명 번호 부여
         CommentNumber commentNumber = null;
         if (!commentNumberRepository.existsByPostIdAndMemberId(postId, memberId)) {
@@ -36,7 +42,6 @@ public class CommentService {
                     .build();
             commentNumberRepository.save(commentNumber);
         }
-
 
         // 2. 댓글 저장
         if (commentNumber == null) {
