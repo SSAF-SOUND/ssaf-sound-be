@@ -8,7 +8,6 @@ import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.post.domain.*;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailListResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
-import com.ssafy.ssafsound.domain.post.dto.GetPostListResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
 import com.ssafy.ssafsound.domain.post.exception.PostException;
@@ -21,6 +20,7 @@ import com.ssafy.ssafsound.infra.storage.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,16 +50,14 @@ public class PostService {
     private final PostImageRepository postImageRepository;
 
     @Transactional(readOnly = true)
-    public GetPostListResDto findPosts(Long boardId, Pageable pageable) {
-        boardRepository.findById(boardId)
-                .orElseThrow(() -> new BoardException(BoardErrorInfo.NO_BOARD_ID));
+    public GetPostResDto findPosts(Long boardId, Pageable pageable) {
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
-        return GetPostListResDto.builder()
-                .posts(postRepository.findAllByBoardId(boardId, pageable)
-                        .stream()
-                        .map(GetPostResDto::from)
-                        .collect(Collectors.toList()))
-                .build();
+        if (!boardRepository.existsById(boardId)) {
+            throw new BoardException(BoardErrorInfo.NO_BOARD);
+        }
+
+        return GetPostResDto.from(postRepository.findWithDetailsByBoardId(boardId, pageRequest));
     }
 
     @Transactional(readOnly = true)
@@ -212,7 +210,7 @@ public class PostService {
     private Post savePost(Long boardId, Long memberId, PostPostWriteReqDto postPostWriteReqDto) {
         return postRepository.save(Post.builder()
                 .board(boardRepository.findById(boardId).orElseThrow(
-                        () -> new BoardException(BoardErrorInfo.NO_BOARD_ID)
+                        () -> new BoardException(BoardErrorInfo.NO_BOARD)
                 ))
                 .member(memberRepository.getReferenceById(memberId))
                 .title(postPostWriteReqDto.getTitle())

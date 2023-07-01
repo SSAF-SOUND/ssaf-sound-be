@@ -22,10 +22,10 @@ public class GetPostDetailResDto {
     private LocalDateTime createdAt;
     private Long memberId;
     private String nickname;
-    private boolean anonymous;
-    private boolean modified;
-    private boolean scraped;
-    private boolean liked;
+    private Boolean anonymous;
+    private Boolean modified;
+    private Boolean scraped;
+    private Boolean liked;
     private List<ImageUrl> images;
 
     public static GetPostDetailResDto from(Post post, AuthenticatedMember authenticatedMember) {

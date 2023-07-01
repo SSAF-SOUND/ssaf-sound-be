@@ -1,6 +1,6 @@
 package com.ssafy.ssafsound.domain.board.controller;
 
-import com.ssafy.ssafsound.domain.board.dto.GetBoardListResDto;
+import com.ssafy.ssafsound.domain.board.dto.GetBoardResDto;
 import com.ssafy.ssafsound.domain.board.service.BoardService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +15,8 @@ public class BoardController {
     private final BoardService boardService;
 
     @GetMapping
-    public EnvelopeResponse<GetBoardListResDto> findBoards() {
-        return EnvelopeResponse.<GetBoardListResDto>builder()
+    public EnvelopeResponse<GetBoardResDto> findBoards() {
+        return EnvelopeResponse.<GetBoardResDto>builder()
                 .data(boardService.findBoards())
                 .build();
     }
