@@ -1,6 +1,8 @@
 package com.ssafy.ssafsound.domain.meta.controller;
 
+import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.dto.GetCampusesResDto;
+import com.ssafy.ssafsound.domain.meta.dto.GetRecruitTypeResDto;
 import com.ssafy.ssafsound.domain.meta.dto.GetSkillsResDto;
 import com.ssafy.ssafsound.domain.meta.service.EnumMetaDataConsumer;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
@@ -22,16 +24,26 @@ public class MetaDataController {
         return EnvelopeResponse.<GetCampusesResDto>builder()
                 .code(HttpStatus.OK.toString())
                 .message("success")
-                .data(new GetCampusesResDto(consumer.getMetaDataList("skill")))
+                .data(new GetCampusesResDto(consumer.getMetaDataList(MetaDataType.SKILL.name())))
                 .build();
     }
 
     @GetMapping("/skills")
-    public EnvelopeResponse<GetSkillsResDto> getCSkills() {
+    public EnvelopeResponse<GetSkillsResDto> getSkills() {
         return EnvelopeResponse.<GetSkillsResDto>builder()
                 .code(HttpStatus.OK.toString())
                 .message("success")
-                .data(new GetSkillsResDto(consumer.getMetaDataList("campus")))
+                .data(new GetSkillsResDto(consumer.getMetaDataList(MetaDataType.CAMPUS.name())))
                 .build();
     }
+
+    @GetMapping("/recruit-types")
+    public EnvelopeResponse<GetRecruitTypeResDto> getRecruitTypes() {
+        return EnvelopeResponse.<GetRecruitTypeResDto>builder()
+                .code(HttpStatus.OK.toString())
+                .message("success")
+                .data(new GetRecruitTypeResDto(consumer.getMetaDataList(MetaDataType.RECRUIT_TYPE.name())))
+                .build();
+    }
+
 }
