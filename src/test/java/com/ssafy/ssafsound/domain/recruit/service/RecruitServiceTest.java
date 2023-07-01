@@ -240,7 +240,7 @@ class RecruitServiceTest {
 
     @DisplayName("리크루트 삭제")
     @Test
-    void Given_RecruitIdAndRegisterId_WhenDeleteRecruitThen_Success() {
+    void Given_RecruitIdAndRegisterId_When_DeleteRecruit_Then_Success() {
         assertAll(
                 ()->assertDoesNotThrow(()-> recruitService.deleteRecruit(2L, 1L)),
                 ()->assertEquals(true, savedRecruit.getDeletedRecruit())
@@ -249,13 +249,13 @@ class RecruitServiceTest {
 
     @DisplayName("등록자가 아닌 사용자의 리크루트 삭제 요청 실패")
     @Test
-    void Given_NotValidRegisterId_WhenDeleteRecruitThen_Success() {
+    void Given_NotValidRegisterId_When_DeleteRecruit_Then_Success() {
         assertThrows(RecruitException.class, ()->recruitService.deleteRecruit(2L, 2L));
     }
 
     @DisplayName("리크루트 수정")
     @Test
-    void Given_RecruitIdAndRegisterIdAndPatchRecruitDtoWhenDeleteRecruitThen_Success() {
+    void Given_RecruitIdAndRegisterIdAndPatchRecruitDto_When_DeleteRecruit_Then_Success() {
         List<RecruitLimitElement> limits = List.of(
                 new RecruitLimitElement(RecruitType.BACK_END.getName(), 3),
                 new RecruitLimitElement(RecruitType.DESIGN.getName(), 3)
@@ -278,7 +278,7 @@ class RecruitServiceTest {
 
     @DisplayName("기존 존재하는 인원 제한 이하로 설정된 리크루트 수정 실패")
     @Test
-    void Given_BelowRecruitLimitAndPatchRecruitDtoWhenDeleteRecruitThen_Fail() {
+    void Given_BelowRecruitLimitAndPatchRecruitDto_When_DeleteRecruit_Then_Fail() {
         List<RecruitLimitElement> limits = List.of(
                 new RecruitLimitElement(RecruitType.DESIGN.getName(), 1)
         );
@@ -293,7 +293,7 @@ class RecruitServiceTest {
 
     @DisplayName("기존에 존재하는 모집군을 삭제하는 리크루트 수정 실패")
     @Test
-    void Given_NotIncludePrevExistLimitAndPatchRecruitDtoWhenDeleteRecruitThen_Fail() {
+    void Given_NotIncludePrevExistLimitAndPatchRecruitDto_When_DeleteRecruit_Then_Fail() {
         List<RecruitLimitElement> limits = List.of(
                 new RecruitLimitElement(RecruitType.BACK_END.getName(), 3)
         );
