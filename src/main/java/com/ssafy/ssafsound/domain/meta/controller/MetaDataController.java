@@ -1,7 +1,7 @@
 package com.ssafy.ssafsound.domain.meta.controller;
 
-import com.ssafy.ssafsound.domain.meta.dto.GetCampusesRepDto;
-import com.ssafy.ssafsound.domain.meta.dto.GetSkillsRepDto;
+import com.ssafy.ssafsound.domain.meta.dto.GetCampusesResDto;
+import com.ssafy.ssafsound.domain.meta.dto.GetSkillsResDto;
 import com.ssafy.ssafsound.domain.meta.service.EnumMetaDataConsumer;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,20 +18,20 @@ public class MetaDataController {
     private final EnumMetaDataConsumer consumer;
 
     @GetMapping("/campuses")
-    public EnvelopeResponse<GetCampusesRepDto> getCampuses() {
-        return EnvelopeResponse.<GetCampusesRepDto>builder()
+    public EnvelopeResponse<GetCampusesResDto> getCampuses() {
+        return EnvelopeResponse.<GetCampusesResDto>builder()
                 .code(HttpStatus.OK.toString())
                 .message("success")
-                .data(new GetCampusesRepDto(consumer.getMetaDataList("skill")))
+                .data(new GetCampusesResDto(consumer.getMetaDataList("skill")))
                 .build();
     }
 
     @GetMapping("/skills")
-    public EnvelopeResponse<GetSkillsRepDto> getCSkills() {
-        return EnvelopeResponse.<GetSkillsRepDto>builder()
+    public EnvelopeResponse<GetSkillsResDto> getCSkills() {
+        return EnvelopeResponse.<GetSkillsResDto>builder()
                 .code(HttpStatus.OK.toString())
                 .message("success")
-                .data(new GetSkillsRepDto(consumer.getMetaDataList("campus")))
+                .data(new GetSkillsResDto(consumer.getMetaDataList("campus")))
                 .build();
     }
 }
