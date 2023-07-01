@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.comment.domain;
 
+import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import lombok.AllArgsConstructor;
@@ -14,7 +15,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentNumber {
+public class CommentNumber extends BaseTimeEntity {
     @Id
     @Column(name = "comment_number_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,11 +30,7 @@ public class CommentNumber {
     private Member member;
 
     @Column
-    private Long comment_number;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id")
-    private Comment comment;
+    private Long number;
 
 
 }

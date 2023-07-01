@@ -31,12 +31,17 @@ public class Comment extends BaseTimeEntity {
     private Boolean parent;
 
     @Column
-    private Boolean deletedComment;
+    @Builder.Default
+    private Boolean deletedComment = Boolean.FALSE;
+
+    @Column
+    private Boolean anonymous;
 
 //    @OneToMany(mappedBy = "commentGroup")
 //    private List<Comment> replies = new ArrayList<>();
 
-    @OneToOne(mappedBy = "comment")
+    @ManyToOne
+    @JoinColumn(name = "comment_number_id")
     private CommentNumber commentNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -50,4 +55,5 @@ public class Comment extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
 }
