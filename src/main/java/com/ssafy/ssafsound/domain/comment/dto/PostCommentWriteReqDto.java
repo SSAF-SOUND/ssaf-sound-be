@@ -10,4 +10,5 @@ import javax.validation.constraints.Size;
 public class PostCommentWriteReqDto {
     @Size(min = 2)
     private String content;
+    private Boolean anonymous;
 }
