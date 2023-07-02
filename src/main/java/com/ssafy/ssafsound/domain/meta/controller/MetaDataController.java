@@ -24,7 +24,7 @@ public class MetaDataController {
         return EnvelopeResponse.<GetCampusesResDto>builder()
                 .code(HttpStatus.OK.toString())
                 .message("success")
-                .data(new GetCampusesResDto(consumer.getMetaDataList(MetaDataType.SKILL.name())))
+                .data(new GetCampusesResDto(consumer.getMetaDataList(MetaDataType.CAMPUS.name())))
                 .build();
     }
 
@@ -33,7 +33,7 @@ public class MetaDataController {
         return EnvelopeResponse.<GetSkillsResDto>builder()
                 .code(HttpStatus.OK.toString())
                 .message("success")
-                .data(new GetSkillsResDto(consumer.getMetaDataList(MetaDataType.CAMPUS.name())))
+                .data(new GetSkillsResDto(consumer.getMetaDataList(MetaDataType.SKILL.name())))
                 .build();
     }
 
