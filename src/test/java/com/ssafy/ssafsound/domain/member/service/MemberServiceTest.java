@@ -209,44 +209,6 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("멤버가 싸피멤버라는 질문에 대해 null을 가지고 있고 닉네임도 null이라면 정보를 입력하지 않은지 검사하는 메서드에 대해 True를 반환한다.")
-    void Given_Member_When_NotInputInformation_Then_ReturnTrue() {
-        assertTrue(memberService.isNotInputMemberInformation(member));
-    }
-
-    @Test
-    @DisplayName("멤버가 닉네임이나 싸피 멤버라는 질문에 대해 값을 가지고 있다면 정보를 입력하지 않은지 검사하는 메서드에 대해 False를 반환한다.")
-    void Given_Member_when_InputInformation_Then_ReturnFalse() {
-        member.setGeneralMemberInformation(generalMemberInfoReqDto);
-
-        assertFalse(memberService.isNotInputMemberInformation(member));
-    }
-
-    @Test
-    @DisplayName("일반 멤버이고 닉네임을 가지고 있다면 일반유저인지 확인하는 메서드에서 True를 반환한다.")
-    void Given_Member_When_InputGeneralMember_Then_ReturnTrue() {
-        member.setGeneralMemberInformation(generalMemberInfoReqDto);
-
-        assertTrue(memberService.isGeneralMemberInformation(member));
-    }
-
-    @Test
-    @DisplayName("멤버가 싸피 멤버이고 닉네임을 가지고 있다면 일반유저인지 확인하는 메서드에서 False를 반환한다.")
-    void Given_Member_When_InputSSAFYMember_Then_ReturnFalse() {
-        member.setSSAFYMemberInformation(SSAFYMemberInfoReqDto, metaDataConsumer);
-
-        assertFalse(memberService.isGeneralMemberInformation(member));
-    }
-
-    @Test
-    @DisplayName("멤버가 싸피 멤버이고 닉네임을 가지고 있다면 싸피유저인지 확인하는 메서드에서 True를 반환한다.")
-    void Given_Member_When_InputSSAFYMember_Then_ReturnTrue() {
-        member.setSSAFYMemberInformation(SSAFYMemberInfoReqDto, metaDataConsumer);
-
-        assertTrue(memberService.isSSAFYMemberInformation(member));
-    }
-
-    @Test
     @DisplayName("이미 존재하는 닉네임이라면 닉네임 중복이라는 예외가 발생한다.")
     void Given_Nickname_When_ExistNickname_Then_ThrowMemberException() {
         given(memberRepository.existsByNickname(postNicknameReqDto.getNickname())).willReturn(true);

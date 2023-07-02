@@ -113,15 +113,15 @@ public class MemberService {
         }
     }
 
-    public boolean isNotInputMemberInformation(Member member) {
+    private boolean isNotInputMemberInformation(Member member) {
         return member.getSsafyMember() == null && member.getNickname() == null && member.getMajor() == null;
     }
 
-    public boolean isGeneralMemberInformation(Member member) {
+    private boolean isGeneralMemberInformation(Member member) {
         return !member.getSsafyMember() && member.getNickname() != null && member.getMajor() != null;
     }
 
-    public boolean isSSAFYMemberInformation(Member member) {
+    private boolean isSSAFYMemberInformation(Member member) {
         return member.getSsafyMember() && member.getNickname() != null && member.getMajor() != null;
     }
 }
