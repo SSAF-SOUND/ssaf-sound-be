@@ -7,7 +7,6 @@ import com.ssafy.ssafsound.domain.meta.dto.GetSkillsResDto;
 import com.ssafy.ssafsound.domain.meta.service.EnumMetaDataConsumer;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,8 +21,6 @@ public class MetaDataController {
     @GetMapping("/campuses")
     public EnvelopeResponse<GetCampusesResDto> getCampuses() {
         return EnvelopeResponse.<GetCampusesResDto>builder()
-                .code(HttpStatus.OK.toString())
-                .message("success")
                 .data(new GetCampusesResDto(consumer.getMetaDataList(MetaDataType.CAMPUS.name())))
                 .build();
     }
@@ -31,8 +28,6 @@ public class MetaDataController {
     @GetMapping("/skills")
     public EnvelopeResponse<GetSkillsResDto> getSkills() {
         return EnvelopeResponse.<GetSkillsResDto>builder()
-                .code(HttpStatus.OK.toString())
-                .message("success")
                 .data(new GetSkillsResDto(consumer.getMetaDataList(MetaDataType.SKILL.name())))
                 .build();
     }
@@ -40,8 +35,6 @@ public class MetaDataController {
     @GetMapping("/recruit-types")
     public EnvelopeResponse<GetRecruitTypeResDto> getRecruitTypes() {
         return EnvelopeResponse.<GetRecruitTypeResDto>builder()
-                .code(HttpStatus.OK.toString())
-                .message("success")
                 .data(new GetRecruitTypeResDto(consumer.getMetaDataList(MetaDataType.RECRUIT_TYPE.name())))
                 .build();
     }
