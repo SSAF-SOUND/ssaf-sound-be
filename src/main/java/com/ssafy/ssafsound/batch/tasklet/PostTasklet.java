@@ -25,7 +25,7 @@ public class PostTasklet implements Tasklet, StepExecutionListener {
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
-        postService.deleteBelowThresholdHotPosts(HOT_POST_LIKES_THRESHOLD);
+        postService.deleteHotPostsUnderThreshold(HOT_POST_LIKES_THRESHOLD);
         return RepeatStatus.FINISHED;
     }
 

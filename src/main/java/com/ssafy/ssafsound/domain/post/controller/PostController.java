@@ -88,4 +88,12 @@ public class PostController {
                 .data(postService.updatePost(postId, authenticatedMember.getMemberId(), postPutUpdateReqDto))
                 .build();
     }
+
+    @GetMapping("/hot")
+    public EnvelopeResponse<GetHotPostResDto> findHotPosts(Pageable pageable) {
+        
+        return EnvelopeResponse.<GetHotPostResDto>builder()
+                .data(postService.findHotPosts(pageable))
+                .build();
+    }
 }

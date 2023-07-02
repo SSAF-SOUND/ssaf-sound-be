@@ -63,7 +63,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public GetPostDetailListResDto findPost(Long postId, AuthenticatedMember authenticatedMember) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND));
+                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
         return GetPostDetailListResDto.builder()
                 .post(Optional.of(post)
@@ -111,14 +111,14 @@ public class PostService {
     private void saveHotPost(Long postId) {
         HotPost hotPost = HotPost.builder()
                 .post(postRepository.findById(postId).
-                        orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND)))
+                        orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST)))
                 .build();
         hotPostRepository.save(hotPost);
     }
 
     @Transactional
-    public void deleteBelowThresholdHotPosts(Long threshold) {
-        hotPostRepository.deleteBelowThresholdHotPosts(threshold);
+    public void deleteHotPostsUnderThreshold(Long threshold) {
+        hotPostRepository.deleteHotPostsUnderThreshold(threshold);
     }
 
     public void postScrap(Long postId, Long memberId) {
@@ -222,7 +222,7 @@ public class PostService {
 
     public Long deletePost(Long postId, Long memberId) {
         Post post = postRepository.findByIdWithMember(postId)
-                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND));
+                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
         if (!post.getMember().getId().equals(memberId)) {
             throw new PostException((PostErrorInfo.UNAUTHORIZED_DELETE_POST));
@@ -235,7 +235,7 @@ public class PostService {
     @Transactional
     public Long updatePost(Long postId, Long memberId, PostPutUpdateReqDto postPutUpdateReqDto) {
         Post post = postRepository.findByIdWithMemberAndPostImageFetch(postId)
-                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND));
+                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
         if (!post.getMember().getId().equals(memberId)) {
             throw new PostException(PostErrorInfo.UNAUTHORIZED_UPDATE_POST);
@@ -253,5 +253,17 @@ public class PostService {
             deletePostImages(post.getImages());
 
         return post.getId();
+    }
+
+
+    @Transactional(readOnly = true)
+    public GetHotPostResDto findHotPosts(Pageable pageable) {
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        List<HotPost> hotPosts = hotPostRepository.findWithDetailsFetch(pageRequest);
+
+        if (hotPosts.size() == 0) {
+            throw new PostException(PostErrorInfo.NOT_FOUND_POSTS);
+        }
+        return GetHotPostResDto.from(hotPosts);
     }
 }
