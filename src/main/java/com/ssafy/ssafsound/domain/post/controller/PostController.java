@@ -99,13 +99,9 @@ public class PostController {
 
     @GetMapping("/my")
     public EnvelopeResponse findMyPosts(Pageable pageable, AuthenticatedMember authenticatedMember){
-        AuthenticatedMember member = AuthenticatedMember.builder()
-                .memberId(1L)
-                .memberRole("user")
-                .build();
 
         return EnvelopeResponse.builder()
-                .data(postService.findMyPosts(pageable, member.getMemberId()))
+                .data(postService.findMyPosts(pageable, authenticatedMember.getMemberId()))
                 .build();
     }
 }
