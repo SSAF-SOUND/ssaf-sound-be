@@ -50,9 +50,6 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToOne(mappedBy = "post", cascade = CascadeType.REMOVE)
-    private HotPost hotPost;
-
     @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<PostImage> images = new ArrayList<>();

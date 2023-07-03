@@ -228,13 +228,16 @@ public class PostService {
 
     @Transactional
     public Long deletePost(Long postId, Long memberId) {
+        // 1. 핫 게시글이 있으면 삭제
+        hotPostRepository.findByPostId(postId).ifPresent(hotPostRepository::delete);
+
+        // 2. 게시글 삭제
         Post post = postRepository.findByIdWithMember(postId)
                 .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
         if (!post.getMember().getId().equals(memberId)) {
             throw new PostException((PostErrorInfo.UNAUTHORIZED_DELETE_POST));
         }
-
         postRepository.delete(post);
         return post.getId();
     }
