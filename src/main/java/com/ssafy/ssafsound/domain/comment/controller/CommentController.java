@@ -21,14 +21,9 @@ public class CommentController {
     public EnvelopeResponse<Long> writeComment(@RequestParam Long postId,
                                                @Valid @RequestBody PostCommentWriteReqDto postCommentWriteReqDto,
                                                AuthenticatedMember authenticatedMember) {
-        AuthenticatedMember member = AuthenticatedMember.builder()
-                .memberId(1L)
-                .memberRole("user")
-                .build();
-
 
         return EnvelopeResponse.<Long>builder()
-                .data(commentService.writeComment(postId, member.getMemberId(), postCommentWriteReqDto))
+                .data(commentService.writeComment(postId, authenticatedMember.getMemberId(), postCommentWriteReqDto))
                 .build();
     }
 }
