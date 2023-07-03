@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class GetHotPostElement {
+public class GetPostHotElement {
     private String boardTitle;
     private String title;
     private String content;
@@ -23,12 +23,12 @@ public class GetHotPostElement {
     private Boolean anonymous;
     private String thumbnail;
 
-    public static GetHotPostElement from(HotPost hotPost) {
+    public static GetPostHotElement from(HotPost hotPost) {
         Post post = hotPost.getPost();
         String thumbnail = findThumbnailUrl(post);
         Boolean anonymous = post.getAnonymous();
 
-        return GetHotPostElement.builder()
+        return GetPostHotElement.builder()
                 .boardTitle(post.getBoard().getTitle())
                 .title(post.getTitle())
                 .content(post.getContent())
