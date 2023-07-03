@@ -11,6 +11,8 @@ import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRoleRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
+import com.ssafy.ssafsound.domain.meta.domain.MetaData;
+import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -79,6 +81,19 @@ public class MemberService {
         }
     }
 
+    @Transactional
+    public PostCertificationInfoResDto certificateSSAFYInformation(AuthenticatedMember authenticatedMember, PostCertificationInfoReqDto postCertificationInfoReqDto) {
+        if (isValidCertification(postCertificationInfoReqDto)) {
+            Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+            postCertificationInfoReqDto.certify(member);
+
+            return PostCertificationInfoResDto.builder()
+                    .possible(true)
+                    .build();
+        }
+        throw new MemberException(MemberErrorInfo.MEMBER_CERTIFICATED_FAIL);
+    }
+
     @Transactional(readOnly = true)
     public MemberRole findMemberRoleByRoleName(String roleType) {
         return memberRoleRepository.findByRoleType(roleType).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_ROLE_TYPE_NOT_FOUND));
@@ -112,7 +127,12 @@ public class MemberService {
             return PostNicknameResDto.of(true);
         }
     }
-
+    
+    private boolean isValidCertification(PostCertificationInfoReqDto) {
+        MetaData information = metaDataConsumer.getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer().toLowerCase());
+        return information.getId() == postCertificationInfoReqDto.getSemester();
+    }
+    
     private boolean isNotInputMemberInformation(Member member) {
         return member.getSsafyMember() == null && member.getNickname() == null && member.getMajor() == null;
     }

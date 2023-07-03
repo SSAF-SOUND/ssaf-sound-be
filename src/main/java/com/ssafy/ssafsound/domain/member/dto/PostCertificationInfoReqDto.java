@@ -1,5 +1,7 @@
 package com.ssafy.ssafsound.domain.member.dto;
 
+import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
+import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.validator.Semester;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,4 +17,8 @@ public class PostCertificationInfoReqDto {
 
     @NotBlank
     private String answer;
+
+    public void certify(Member member) {
+        member.setCertificationStatus(AuthenticationStatus.CERTIFIED);
+    }
 }
