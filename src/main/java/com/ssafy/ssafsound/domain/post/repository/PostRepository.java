@@ -23,4 +23,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM post p JOIN FETCH p.member LEFT JOIN FETCH p.images WHERE p.id = :id")
     Optional<Post> findByIdWithMemberAndPostImageFetch(@Param("id") Long id);
+
+    @EntityGraph(attributePaths = {"board", "member"})
+    List<Post> findWithDetailsByMemberId(@Param("memberId") Long memberId, Pageable pageable);
+
 }
