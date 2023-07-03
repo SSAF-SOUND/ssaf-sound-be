@@ -3,8 +3,6 @@ package com.ssafy.ssafsound.domain.comment.service;
 import com.ssafy.ssafsound.domain.comment.domain.Comment;
 import com.ssafy.ssafsound.domain.comment.domain.CommentNumber;
 import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReqDto;
-import com.ssafy.ssafsound.domain.comment.exception.CommentErrorInfo;
-import com.ssafy.ssafsound.domain.comment.exception.CommentException;
 import com.ssafy.ssafsound.domain.comment.repository.CommentNumberRepository;
 import com.ssafy.ssafsound.domain.comment.repository.CommentRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
