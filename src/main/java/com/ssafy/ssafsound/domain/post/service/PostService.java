@@ -160,7 +160,7 @@ public class PostService {
         }
 
         if (postRepository.existsByIdAndMemberId(postId, memberId)) {
-            throw new PostException(PostErrorInfo.NOT_REPORT_MY_POST);
+            throw new PostException(PostErrorInfo.UNABLE_REPORT_MY_POST);
         }
 
         PostReport postReport = PostReport.builder()
