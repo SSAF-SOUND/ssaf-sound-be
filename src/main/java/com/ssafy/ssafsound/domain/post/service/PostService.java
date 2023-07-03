@@ -121,6 +121,7 @@ public class PostService {
         hotPostRepository.deleteHotPostsUnderThreshold(threshold);
     }
 
+    @Transactional
     public void postScrap(Long postId, Long memberId) {
         PostScrap postScrap = postScrapRepository.findByPostIdAndMemberId(postId, memberId)
                 .orElse(null);
@@ -147,6 +148,7 @@ public class PostService {
         postScrapRepository.delete(postScrap);
     }
 
+    @Transactional
     public Long reportPost(Long postId, Long memberId, String content) {
         if (postReportRepository.existsByPostIdAndMemberId(postId, memberId)) {
             throw new PostException(PostErrorInfo.DUPLICATE_REPORT);
@@ -220,6 +222,7 @@ public class PostService {
                 .build());
     }
 
+    @Transactional
     public Long deletePost(Long postId, Long memberId) {
         Post post = postRepository.findByIdWithMember(postId)
                 .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
@@ -257,13 +260,19 @@ public class PostService {
 
 
     @Transactional(readOnly = true)
-    public GetHotPostResDto findHotPosts(Pageable pageable) {
+    public GetPostHotResDto findHotPosts(Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         List<HotPost> hotPosts = hotPostRepository.findWithDetailsFetch(pageRequest);
 
         if (hotPosts.size() == 0) {
             throw new PostException(PostErrorInfo.NOT_FOUND_POSTS);
         }
-        return GetHotPostResDto.from(hotPosts);
+        return GetPostHotResDto.from(hotPosts);
+    }
+
+    @Transactional(readOnly = true)
+    public GetPostMyResDto findMyPosts(Pageable pageable, Long memberId) {
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        return GetPostMyResDto.from(postRepository.findWithDetailsByMemberId(memberId, pageRequest));
     }
 }
