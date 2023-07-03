@@ -57,7 +57,12 @@ public class PostService {
             throw new BoardException(BoardErrorInfo.NO_BOARD);
         }
 
-        return GetPostResDto.from(postRepository.findWithDetailsByBoardId(boardId, pageRequest));
+        List<Post> posts = postRepository.findWithDetailsByBoardId(boardId, pageRequest);
+        if (posts.size() == 0) {
+            throw new PostException(PostErrorInfo.NOT_FOUND_POSTS);
+        }
+
+        return GetPostResDto.from(posts);
     }
 
     @Transactional(readOnly = true)
@@ -286,6 +291,6 @@ public class PostService {
             throw new PostException(PostErrorInfo.NOT_FOUND_POSTS);
         }
 
-        return GetPostMyResDto.from(postRepository.findWithDetailsByMemberId(memberId, pageRequest));
+        return GetPostMyResDto.from(posts);
     }
 }
