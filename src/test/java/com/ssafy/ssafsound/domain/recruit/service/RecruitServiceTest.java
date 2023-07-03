@@ -8,11 +8,10 @@ import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.meta.domain.*;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.domain.recruit.domain.*;
-import com.ssafy.ssafsound.domain.recruit.dto.GetRecruitDetailResDto;
-import com.ssafy.ssafsound.domain.recruit.dto.PatchRecruitReqDto;
-import com.ssafy.ssafsound.domain.recruit.dto.PostRecruitReqDto;
-import com.ssafy.ssafsound.domain.recruit.dto.RecruitLimitElement;
+import com.ssafy.ssafsound.domain.recruit.dto.*;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
+import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
+import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicationRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitLimitationRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
@@ -26,6 +25,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -72,6 +74,17 @@ class RecruitServiceTest {
             .campus(new MetaData(Campus.SEOUL))
             .build();
 
+    private Member participant = Member.builder()
+            .id(2L)
+            .nickname("kds")
+            .semester(9)
+            .ssafyMember(true)
+            .certificationState(AuthenticationStatus.CERTIFIED)
+            .major(true)
+            .majorType(MajorType.builder().build())
+            .campus(new MetaData(Campus.SEOUL))
+            .build();
+
     private Recruit recruit = Recruit.builder()
             .id(1L)
             .build();
@@ -80,6 +93,8 @@ class RecruitServiceTest {
             .id(2L)
             .view(0L)
             .member(member)
+            .title("제목")
+            .content("컨텐츠")
             .registerRecruitType(new MetaData(RecruitType.BACK_END))
             .deletedRecruit(false)
             .startDateTime(LocalDate.now().atStartOfDay())
@@ -102,11 +117,22 @@ class RecruitServiceTest {
 
     private RecruitScrap recruitScrap = RecruitScrap.builder().member(member).recruit(recruit).build();
 
+    private RecruitApplication recruitApplication = RecruitApplication.builder()
+            .id(1L)
+            .isLike(false)
+            .matchStatus(MatchStatus.DONE)
+            .recruit(savedRecruit)
+            .type(new MetaData(RecruitType.DESIGN))
+            .member(participant)
+            .build();
+
     private final PostRecruitReqDto postRecruitReqDto = new PostRecruitReqDto(
             Category.STUDY.name(), LocalDate.now(),  "스터디/프로젝트 모집 제목", "컨텐츠",
             RecruitType.DESIGN.getName(), Arrays.stream(Skill.values()).map(Skill::getName).collect(Collectors.toList()),
             Collections.singletonList("프로젝트/스터디 등록자가 참여자에게 묻고 싶은 자유 질문"),
             Arrays.stream(RecruitType.values()).map(recruitType-> new RecruitLimitElement(recruitType.getName(), 2)).collect(Collectors.toList()));
+
+    private final Pageable pageInfo = PageRequest.of(0, 10);
 
     @BeforeEach
     void setStub() {
@@ -121,6 +147,14 @@ class RecruitServiceTest {
         Mockito.lenient().when(recruitRepository.findByIdUsingFetchJoinRegisterAndRecruitLimitation(2L))
                 .thenReturn(java.util.Optional.ofNullable(savedRecruit));
         Mockito.lenient().when(recruitRepository.findById(2L)).thenReturn(java.util.Optional.ofNullable(savedRecruit));
+
+        Mockito.lenient().when(recruitRepository.findByDeletedRecruitIsFalse(pageInfo)).thenReturn(new PageImpl<>(List.of(savedRecruit)));
+        Mockito.lenient().when(recruitRepository.findByDeletedRecruitIsFalseAndTitleContainsOrContentContains("컨텐츠", "컨텐츠", pageInfo))
+                .thenReturn(new PageImpl<>(List.of(savedRecruit)));
+        Mockito.lenient().when(recruitRepository.findByDeletedRecruitIsFalseAndTitleContainsOrContentContains("없는거", "없는거", pageInfo))
+                .thenReturn(new PageImpl<>(List.of()));
+        Mockito.lenient().when(recruitApplicationRepository.findDoneRecruitApplicationByRecruitIdInFetchRecruitAndMember(List.of(2L)))
+                .thenReturn(List.of(recruitApplication));
 
         // MetaData Consumer Mocking
         Arrays.stream(RecruitType.values()).forEach(recruitType -> Mockito.lenient()
@@ -240,7 +274,7 @@ class RecruitServiceTest {
 
     @DisplayName("리크루트 삭제")
     @Test
-    void Given_RecruitIdAndRegisterId_WhenDeleteRecruitThen_Success() {
+    void Given_RecruitIdAndRegisterId_When_DeleteRecruit_Then_Success() {
         assertAll(
                 ()->assertDoesNotThrow(()-> recruitService.deleteRecruit(2L, 1L)),
                 ()->assertEquals(true, savedRecruit.getDeletedRecruit())
@@ -249,13 +283,13 @@ class RecruitServiceTest {
 
     @DisplayName("등록자가 아닌 사용자의 리크루트 삭제 요청 실패")
     @Test
-    void Given_NotValidRegisterId_WhenDeleteRecruitThen_Success() {
+    void Given_NotValidRegisterId_When_DeleteRecruit_Then_Success() {
         assertThrows(RecruitException.class, ()->recruitService.deleteRecruit(2L, 2L));
     }
 
     @DisplayName("리크루트 수정")
     @Test
-    void Given_RecruitIdAndRegisterIdAndPatchRecruitDtoWhenDeleteRecruitThen_Success() {
+    void Given_RecruitIdAndRegisterIdAndPatchRecruitDto_When_DeleteRecruit_Then_Success() {
         List<RecruitLimitElement> limits = List.of(
                 new RecruitLimitElement(RecruitType.BACK_END.getName(), 3),
                 new RecruitLimitElement(RecruitType.DESIGN.getName(), 3)
@@ -278,7 +312,7 @@ class RecruitServiceTest {
 
     @DisplayName("기존 존재하는 인원 제한 이하로 설정된 리크루트 수정 실패")
     @Test
-    void Given_BelowRecruitLimitAndPatchRecruitDtoWhenDeleteRecruitThen_Fail() {
+    void Given_BelowRecruitLimitAndPatchRecruitDto_When_DeleteRecruit_Then_Fail() {
         List<RecruitLimitElement> limits = List.of(
                 new RecruitLimitElement(RecruitType.DESIGN.getName(), 1)
         );
@@ -293,7 +327,7 @@ class RecruitServiceTest {
 
     @DisplayName("기존에 존재하는 모집군을 삭제하는 리크루트 수정 실패")
     @Test
-    void Given_NotIncludePrevExistLimitAndPatchRecruitDtoWhenDeleteRecruitThen_Fail() {
+    void Given_NotIncludePrevExistLimitAndPatchRecruitDto_When_DeleteRecruit_Then_Fail() {
         List<RecruitLimitElement> limits = List.of(
                 new RecruitLimitElement(RecruitType.BACK_END.getName(), 3)
         );
@@ -304,5 +338,60 @@ class RecruitServiceTest {
                 LocalDate.now(), "제목 수정", "컨텐츠 수정", skills, limits);
 
         assertThrows(RecruitException.class, ()->recruitService.updateRecruit(2L, 1L, patchRecruitReqDto));
+    }
+
+    @DisplayName("키워드를 입력하지 않은 리크루트 목록 검색")
+    @Test
+    void Given_NotIncludeKeyword_When_GetPagingRecruits_Then_Success() {
+        GetRecruitsReqDto requestDto = GetRecruitsReqDto.builder()
+                .category(Category.PROJECT.name())
+                .keyword("")
+                .build();
+
+        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(requestDto, pageInfo);
+
+        assertEquals(1, getRecruitsResDto.getRecruits().size());
+    }
+
+    @DisplayName("키워드를 입력한 리크루트 목록 검색 (검색 결과 O)")
+    @Test
+    void Given_IncludeKeyword_When_GetPagingRecruits_Then_Success() {
+        GetRecruitsReqDto requestDto = GetRecruitsReqDto.builder()
+                .category(Category.PROJECT.name())
+                .keyword("컨텐츠")
+                .build();
+
+        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(requestDto, pageInfo);
+        assertEquals(1, getRecruitsResDto.getRecruits().size());
+    }
+
+    @DisplayName("인원제한이 설정된 모집군과 등록자의 모집군이 일치하는 리크루트 목록 검색")
+    @Test
+    void Given_IncludeKeywordAndIncludeRegisterRecruitType_When_GetPagingRecruits_Then_Success() {
+        savedRecruit.setRegisterRecruitType(new MetaData(RecruitType.DESIGN));
+
+        GetRecruitsReqDto requestDto = GetRecruitsReqDto.builder()
+                .category(Category.PROJECT.name())
+                .keyword("컨텐츠")
+                .build();
+
+        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(requestDto, pageInfo);
+        assertEquals(1, getRecruitsResDto.getRecruits().size());
+        assertEquals(1, getRecruitsResDto.getRecruits().get(0).getParticipants().size());
+        assertEquals(3, getRecruitsResDto.getRecruits().get(0).getParticipants().get(0).getLimit());
+        assertEquals(2, getRecruitsResDto.getRecruits().get(0).getParticipants().get(0).getMembers().size());
+    }
+
+
+    @DisplayName("키워드를 입력한 리크루트 목록 검색 (검색 결과 X)")
+    @Test
+    void Given_IncludeKeyword_When_GetPagingRecruits_Then_EmptySet() {
+        GetRecruitsReqDto requestDto = GetRecruitsReqDto.builder()
+                .category(Category.PROJECT.name())
+                .keyword("없는거")
+                .build();
+
+        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(requestDto, pageInfo);
+        assertEquals(0, getRecruitsResDto.getRecruits().size());
     }
 }
