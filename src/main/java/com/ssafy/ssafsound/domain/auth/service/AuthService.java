@@ -79,7 +79,7 @@ public class AuthService {
     public CreateMemberAccessTokenResDto reissueAccessToken(Long memberId) {
         MemberToken memberToken = memberTokenRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_TOKEN_NOT_FOUND));
         Member member = memberToken.getMember();
-        String accessToken = jwtTokenProvider.createAccessToken(AuthenticatedMember.of(member));
+        String accessToken = jwtTokenProvider.createAccessToken(AuthenticatedMember.from(member));
         memberToken.changeAccessTokenByRefreshToken(accessToken);
         memberTokenRepository.save(memberToken);
         return CreateMemberAccessTokenResDto.of(accessToken);

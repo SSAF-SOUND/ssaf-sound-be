@@ -17,6 +17,7 @@ public class GetMemberResDto {
     private String memberRole;
     private String nickname;
     private Boolean ssafyMember;
+    private Boolean isMajor;
     private SSAFYInfo ssafyInfo;
 
     public static GetMemberResDto fromGeneralUser(Member member, MemberRole memberRole) {
@@ -25,6 +26,7 @@ public class GetMemberResDto {
                 .memberRole(memberRole.getRoleType())
                 .nickname(member.getNickname())
                 .ssafyMember(member.getSsafyMember())
+                .isMajor(member.getMajor())
                 .build();
     }
 
@@ -34,10 +36,11 @@ public class GetMemberResDto {
                 .memberRole(memberRole.getRoleType())
                 .nickname(member.getNickname())
                 .ssafyMember(member.getSsafyMember())
+                .isMajor(member.getMajor())
                 .ssafyInfo(SSAFYInfo.builder()
                         .semester(member.getSemester())
-                        .isMajor(member.getMajor())
                         .campus(member.getCampus().getName())
+                        .certificationState(member.getCertificationState().name())
                         .build())
                 .build();
     }

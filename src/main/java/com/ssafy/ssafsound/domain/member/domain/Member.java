@@ -38,8 +38,9 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private AccountState accountState;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private AuthenticationStatus certificationState;
+    private AuthenticationStatus certificationState = AuthenticationStatus.UNCERTIFIED;
 
     @Convert(converter = CampusConverter.class)
     private MetaData campus;
@@ -79,5 +80,6 @@ public class Member extends BaseTimeEntity {
     public void setGeneralMemberInformation(PostMemberInfoReqDto postMemberInfoReqDto) {
         this.nickname = postMemberInfoReqDto.getNickname();
         this.ssafyMember = postMemberInfoReqDto.getSsafyMember();
+        this.major = postMemberInfoReqDto.getIsMajor();
     }
 }
