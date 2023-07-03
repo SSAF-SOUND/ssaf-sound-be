@@ -154,6 +154,10 @@ public class PostService {
             throw new PostException(PostErrorInfo.DUPLICATE_REPORT);
         }
 
+        if (postRepository.existsByIdAndMemberId(postId, memberId)) {
+            throw new PostException(PostErrorInfo.NOT_REPORT_MY_POST);
+        }
+
         PostReport postReport = PostReport.builder()
                 .post(postRepository.getReferenceById(postId))
                 .member(memberRepository.getReferenceById(memberId))
@@ -275,10 +279,10 @@ public class PostService {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         List<Post> posts = postRepository.findWithDetailsByMemberId(memberId, pageRequest);
 
-        if (posts.size() == 0){
+        if (posts.size() == 0) {
             throw new PostException(PostErrorInfo.NOT_FOUND_POSTS);
         }
-        
+
         return GetPostMyResDto.from(postRepository.findWithDetailsByMemberId(memberId, pageRequest));
     }
 }
