@@ -273,6 +273,12 @@ public class PostService {
     @Transactional(readOnly = true)
     public GetPostMyResDto findMyPosts(Pageable pageable, Long memberId) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        List<Post> posts = postRepository.findWithDetailsByMemberId(memberId, pageRequest);
+
+        if (posts.size() == 0){
+            throw new PostException(PostErrorInfo.NOT_FOUND_POSTS);
+        }
+        
         return GetPostMyResDto.from(postRepository.findWithDetailsByMemberId(memberId, pageRequest));
     }
 }
