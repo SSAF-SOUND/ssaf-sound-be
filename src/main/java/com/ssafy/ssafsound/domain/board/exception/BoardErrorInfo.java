@@ -4,7 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum BoardErrorInfo {
-    NO_BOARD_ID("801", "존재하지 않는 게시판 입니다.");
+    EMPTY_BOARD("801","게시판 데이터가 없습니다."),
+    NO_BOARD("802", "존재하지 않는 게시판 입니다.");
 
     private final String code;
     private final String message;

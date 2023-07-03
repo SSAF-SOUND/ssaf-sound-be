@@ -10,7 +10,7 @@ spring:
     url: "jdbc:h2:mem:db;MODE=MYSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
     driver-class-name: "org.h2.Driver"
     username: sa
-
+    
   batch:
     job:
       enabled: false
@@ -42,6 +42,7 @@ spring:
         format_sql: true
         jdbc:
           time_zone: Asia/Seoul
+
     show-sql: true
 
   h2:
@@ -54,3 +55,4 @@ spring:
       - application-cloud.yml
       - application-security.yml
       - application-scraper.yml
+      - application-biz.yml
