@@ -28,9 +28,6 @@ public class Comment extends BaseTimeEntity {
     private String content;
 
     @Column
-    private Boolean parent;
-
-    @Column
     @Builder.Default
     private Boolean deletedComment = Boolean.FALSE;
 
@@ -45,7 +42,7 @@ public class Comment extends BaseTimeEntity {
     private CommentNumber commentNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_group", referencedColumnName = "comment_id", updatable = false)
+    @JoinColumn(name = "comment_group", referencedColumnName = "comment_id")
     private Comment commentGroup;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -56,4 +53,8 @@ public class Comment extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+
+    public void setCommentGroup(Comment commentGroup) {
+        this.commentGroup = commentGroup;
+    }
 }

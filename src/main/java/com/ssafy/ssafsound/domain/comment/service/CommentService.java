@@ -50,13 +50,15 @@ public class CommentService {
                 .post(postRepository.getReferenceById(postId))
                 .member(memberRepository.getReferenceById(memberId))
                 .content(postCommentWriteReqDto.getContent())
-                .parent(true)
                 .anonymous(postCommentWriteReqDto.getAnonymous())
                 .commentNumber(commentNumber)
                 .commentGroup(null)
                 .build();
 
-        return commentRepository.save(comment).getId();
+        comment = commentRepository.save(comment);
+        comment.setCommentGroup(comment);
+
+        return comment.getId();
     }
 
 }
