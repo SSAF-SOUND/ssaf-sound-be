@@ -9,8 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface CommentNumberRepository extends JpaRepository<CommentNumber, Long> {
-    Boolean existsByPostIdAndMemberId(Long postId, Long memberId);
-
     long countAllByPostId(Long postId);
 
     Optional<CommentNumber> findByPostIdAndMemberId(Long postId, Long memberId);
