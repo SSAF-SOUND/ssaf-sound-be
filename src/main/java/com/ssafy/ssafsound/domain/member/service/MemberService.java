@@ -128,7 +128,7 @@ public class MemberService {
         }
     }
     
-    private boolean isValidCertification(PostCertificationInfoReqDto) {
+    private boolean isValidCertification(PostCertificationInfoReqDto postCertificationInfoReqDto) {
         MetaData information = metaDataConsumer.getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer().toLowerCase());
         return information.getId() == postCertificationInfoReqDto.getSemester();
     }

@@ -9,7 +9,7 @@ public enum Certification implements  MetaDataProvider {
     SIX_SEMESTER(6, "hot식스"),
     SEVEN_SEMESTER(7, "럭키"),
     EIGHT_SEMESTER(8, "칠전팔"),
-    NINE_SEMESTER(8, "great"),
+    NINE_SEMESTER(9, "great"),
     TEN_SEMESTER(10, "텐션");
 
 
