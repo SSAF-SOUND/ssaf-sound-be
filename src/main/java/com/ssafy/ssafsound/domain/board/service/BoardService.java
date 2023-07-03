@@ -26,10 +26,6 @@ public class BoardService {
                 .map(GetBoardElement::from)
                 .collect(Collectors.toList());
 
-        if (boards.size() == 0) {
-            throw new BoardException(BoardErrorInfo.EMPTY_BOARD);
-        }
-
         return GetBoardResDto.builder()
                 .boards(boards)
                 .build();
