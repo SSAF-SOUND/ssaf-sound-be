@@ -69,7 +69,7 @@ public class Member extends BaseTimeEntity {
         this.role = memberRole;
     }
 
-    public void setCertificationStatus(AuthenticationStatus certified) {
+    public void setCertificationState(AuthenticationStatus certified) {
         this.certificationState = certified;
     }
 

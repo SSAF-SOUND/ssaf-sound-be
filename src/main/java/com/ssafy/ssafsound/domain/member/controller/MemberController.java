@@ -40,10 +40,10 @@ public class MemberController {
     }
 
     @PostMapping("/ssafy-certification")
-    public EnvelopeResponse<PostCertificationInfoResDto> certificateSSAFYInformation(@Authentication AuthenticatedMember authenticatedMember,
+    public EnvelopeResponse<PostCertificationInfoResDto> certifySSAFYInformation(@Authentication AuthenticatedMember authenticatedMember,
                                                        @Valid @RequestBody PostCertificationInfoReqDto postCertificationInfoReqDto) {
         return EnvelopeResponse.<PostCertificationInfoResDto>builder()
-                .data(memberService.certificateSSAFYInformation(authenticatedMember, postCertificationInfoReqDto))
+                .data(memberService.certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto))
                 .build();
     }
 }

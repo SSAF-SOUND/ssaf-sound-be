@@ -369,7 +369,7 @@ class MemberServiceTest {
         given(metaDataConsumer.getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer())).willReturn(new MetaData(Certification.valueOf(name)));
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
 
-        PostCertificationInfoResDto postCertificationInfoResDto = memberService.certificateSSAFYInformation(authenticatedMember, postCertificationInfoReqDto);
+        PostCertificationInfoResDto postCertificationInfoResDto = memberService.certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto);
 
         assertThat(member.getCertificationState()).isEqualTo(AuthenticationStatus.CERTIFIED);
         assertTrue(postCertificationInfoResDto.isPossible());
@@ -390,7 +390,7 @@ class MemberServiceTest {
 
         given(metaDataConsumer.getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer())).willReturn(new MetaData(Certification.valueOf(name)));
 
-        assertThrows(MemberException.class, () -> memberService.certificateSSAFYInformation(authenticatedMember, postCertificationInfoReqDto));
+        assertThrows(MemberException.class, () -> memberService.certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto));
 
         verify(metaDataConsumer).getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer());
     }
@@ -407,7 +407,7 @@ class MemberServiceTest {
         given(metaDataConsumer.getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer())).willReturn(new MetaData(Certification.ONE_SEMESTER));
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.empty());
 
-        assertThrows(MemberException.class, () -> memberService.certificateSSAFYInformation(authenticatedMember, postCertificationInfoReqDto));
+        assertThrows(MemberException.class, () -> memberService.certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto));
 
         verify(metaDataConsumer).getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer());
         verify(memberRepository).findById(authenticatedMember.getMemberId());
