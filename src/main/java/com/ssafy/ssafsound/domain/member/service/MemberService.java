@@ -1,10 +1,7 @@
 package com.ssafy.ssafsound.domain.member.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
-import com.ssafy.ssafsound.domain.member.domain.Member;
-import com.ssafy.ssafsound.domain.member.domain.MemberRole;
-import com.ssafy.ssafsound.domain.member.domain.MemberToken;
-import com.ssafy.ssafsound.domain.member.domain.OAuthType;
+import com.ssafy.ssafsound.domain.member.domain.*;
 import com.ssafy.ssafsound.domain.member.dto.*;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
@@ -82,10 +79,10 @@ public class MemberService {
     }
 
     @Transactional
-    public PostCertificationInfoResDto certificateSSAFYInformation(AuthenticatedMember authenticatedMember, PostCertificationInfoReqDto postCertificationInfoReqDto) {
+    public PostCertificationInfoResDto certifySSAFYInformation(AuthenticatedMember authenticatedMember, PostCertificationInfoReqDto postCertificationInfoReqDto) {
         if (isValidCertification(postCertificationInfoReqDto)) {
             Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
-            postCertificationInfoReqDto.certify(member);
+            member.setCertificationState(AuthenticationStatus.CERTIFIED);
 
             return PostCertificationInfoResDto.builder()
                     .possible(true)
