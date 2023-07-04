@@ -4,6 +4,7 @@ import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
 import com.ssafy.ssafsound.domain.member.domain.MajorType;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
+import com.ssafy.ssafsound.domain.meta.domain.Campus;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.domain.RecruitType;
@@ -61,16 +62,18 @@ class RecruitApplicationServiceTest {
             .ssafyMember(true)
             .certificationState(AuthenticationStatus.CERTIFIED)
             .major(true)
+            .campus(new MetaData(Campus.BUSAN))
             .majorType(new MajorType(1, "자바전공"))
             .build();
 
     Member participant = Member.builder()
             .id(2L)
             .nickname("kds")
-            .ssafyMember(true)
+            .ssafyMember(false)
             .certificationState(AuthenticationStatus.CERTIFIED)
             .major(false)
             .majorType(null)
+            .campus(null)
             .build();
 
     Recruit recruit = Recruit.builder()
