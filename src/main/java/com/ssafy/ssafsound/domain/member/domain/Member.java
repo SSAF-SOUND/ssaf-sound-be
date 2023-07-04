@@ -69,6 +69,10 @@ public class Member extends BaseTimeEntity {
         this.role = memberRole;
     }
 
+    public void setCertificationState(AuthenticationStatus certified) {
+        this.certificationState = certified;
+    }
+
     public void setSSAFYMemberInformation(PostMemberInfoReqDto postMemberInfoReqDto, MetaDataConsumer consumer) {
         this.nickname = postMemberInfoReqDto.getNickname();
         this.ssafyMember = postMemberInfoReqDto.getSsafyMember();

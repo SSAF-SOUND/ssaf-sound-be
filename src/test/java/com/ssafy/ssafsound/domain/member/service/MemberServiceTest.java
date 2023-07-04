@@ -2,23 +2,20 @@ package com.ssafy.ssafsound.domain.member.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.service.token.JwtTokenProvider;
-import com.ssafy.ssafsound.domain.member.domain.Member;
-import com.ssafy.ssafsound.domain.member.domain.MemberRole;
-import com.ssafy.ssafsound.domain.member.domain.MemberToken;
-import com.ssafy.ssafsound.domain.member.domain.OAuthType;
+import com.ssafy.ssafsound.domain.member.domain.*;
 import com.ssafy.ssafsound.domain.member.dto.*;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRoleRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
-import com.ssafy.ssafsound.domain.meta.domain.Campus;
-import com.ssafy.ssafsound.domain.meta.domain.MetaData;
-import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
+import com.ssafy.ssafsound.domain.meta.domain.*;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
@@ -356,6 +353,63 @@ class MemberServiceTest {
 
         verify(metaDataConsumer, times(2)).getMetaData(MetaDataType.CAMPUS.name(), "서울");
         verify(memberRepository).existsByNickname(generalMemberInfoReqDto.getNickname());
+        verify(memberRepository).findById(authenticatedMember.getMemberId());
+    }
+
+    @ParameterizedTest
+    @CsvSource({"1, ONE_SEMESTER, 선물", "2, TWO_SEMESTER, 하나", "3,THREE_SEMESTER, 출발", "4, FOUR_SEMESTER, 충전", "5, FIVE_SEMESTER, 극복",
+                "6, SIX_SEMESTER, hot식스", "7, SEVEN_SEMESTER, 럭키", "8, EIGHT_SEMESTER, 칠전팔", "9, NINE_SEMESTER, great", "10, TEN_SEMESTER, 텐션"})
+    @DisplayName("싸피생 인증 요청 시, 정답에 대한 요청을 했으면 성공한다.")
+    void Given_PostCertificationInfo_When_Submit_SSAFY_Certification_Answer_Then_Success(int semester, String name, String answer) {
+        PostCertificationInfoReqDto postCertificationInfoReqDto = PostCertificationInfoReqDto.builder()
+                .semester(semester)
+                .answer(answer)
+                .build();
+
+        given(metaDataConsumer.getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer())).willReturn(new MetaData(Certification.valueOf(name)));
+        given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
+
+        PostCertificationInfoResDto postCertificationInfoResDto = memberService.certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto);
+
+        assertThat(member.getCertificationState()).isEqualTo(AuthenticationStatus.CERTIFIED);
+        assertTrue(postCertificationInfoResDto.isPossible());
+
+        verify(metaDataConsumer).getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer());
+        verify(memberRepository).findById(authenticatedMember.getMemberId());
+    }
+
+    @ParameterizedTest
+    @CsvSource({"2, ONE_SEMESTER, 선물", "1, TWO_SEMESTER, 하나", "4,THREE_SEMESTER, 출발", "5, FOUR_SEMESTER, 충전", "6, FIVE_SEMESTER, 극복",
+            "3, SIX_SEMESTER, hot식스", "4, SEVEN_SEMESTER, 럭키", "5, EIGHT_SEMESTER, 칠전팔", "3, NINE_SEMESTER, great", "5, TEN_SEMESTER, 텐션"})
+    @DisplayName("싸피생 인증 요청 시, 정답에 대한 요청이 존재하지만 기수 정보가 다를 때 예외가 발생한다.")
+    void Given_PostCertificationInfo_When_Submit_SSAFY_Certification_Answer_Then_ThrowMemberException(int semester, String name, String answer) {
+        PostCertificationInfoReqDto postCertificationInfoReqDto = PostCertificationInfoReqDto.builder()
+                .semester(semester)
+                .answer(answer)
+                .build();
+
+        given(metaDataConsumer.getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer())).willReturn(new MetaData(Certification.valueOf(name)));
+
+        assertThrows(MemberException.class, () -> memberService.certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto));
+
+        verify(metaDataConsumer).getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer());
+    }
+
+
+    @Test
+    @DisplayName("싸피생 인증 요청 시, 회원 정보를 찾을 수 없다면 예외가 발생한다.")
+    void Given_Given_PostCertificationInfo_When_Submit_SSAFY_Certification_Answer_Then_ThrowMemberException() {
+        PostCertificationInfoReqDto postCertificationInfoReqDto = PostCertificationInfoReqDto.builder()
+                .semester(1)
+                .answer("선물")
+                .build();
+
+        given(metaDataConsumer.getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer())).willReturn(new MetaData(Certification.ONE_SEMESTER));
+        given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.empty());
+
+        assertThrows(MemberException.class, () -> memberService.certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto));
+
+        verify(metaDataConsumer).getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer());
         verify(memberRepository).findById(authenticatedMember.getMemberId());
     }
 }
