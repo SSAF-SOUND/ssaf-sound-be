@@ -22,13 +22,9 @@ public class CommentController {
     public EnvelopeResponse<Long> writeComment(@RequestParam Long postId,
                                                @Valid @RequestBody PostCommentWriteReqDto postCommentWriteReqDto,
                                                AuthenticatedMember authenticatedMember) {
-        AuthenticatedMember member = AuthenticatedMember.builder()
-                .memberId(1L)
-                .memberRole("user")
-                .build();
 
         return EnvelopeResponse.<Long>builder()
-                .data(commentService.writeComment(postId, member.getMemberId(), postCommentWriteReqDto))
+                .data(commentService.writeComment(postId, authenticatedMember.getMemberId(), postCommentWriteReqDto))
                 .build();
     }
 
@@ -36,13 +32,9 @@ public class CommentController {
     public EnvelopeResponse<Long> writeCommentReply(@RequestParam Long commentId, @RequestParam Long postId,
                                                     @Valid @RequestBody PostCommentWriteReplyReqDto postCommentWriteReplyReqDto,
                                                     AuthenticatedMember authenticatedMember) {
-        AuthenticatedMember member = AuthenticatedMember.builder()
-                .memberId(2L)
-                .memberRole("user")
-                .build();
 
         return EnvelopeResponse.<Long>builder()
-                .data(commentService.writeCommentReply(postId, commentId, member.getMemberId(), postCommentWriteReplyReqDto))
+                .data(commentService.writeCommentReply(postId, commentId, authenticatedMember.getMemberId(), postCommentWriteReplyReqDto))
                 .build();
     }
 }
