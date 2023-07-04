@@ -64,6 +64,10 @@ public class CommentService {
 
     @Transactional
     public Long writeCommentReply(Long postId, Long commentId, Long memberId, PostCommentWriteReplyReqDto postCommentWriteReplyReqDto) {
+        if (!postRepository.existsById(postId)) {
+            throw new PostException(PostErrorInfo.NOT_FOUND_POST);
+        }
+
         if (!commentRepository.existsById(commentId)) {
             throw new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT);
         }
