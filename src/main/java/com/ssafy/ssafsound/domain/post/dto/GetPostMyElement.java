@@ -1,6 +1,4 @@
 package com.ssafy.ssafsound.domain.post.dto;
-
-import com.ssafy.ssafsound.domain.post.domain.HotPost;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.domain.PostImage;
 import lombok.Builder;
@@ -11,7 +9,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class GetHotPostElement {
+public class GetPostMyElement {
     private String boardTitle;
     private String title;
     private String content;
@@ -23,12 +21,11 @@ public class GetHotPostElement {
     private Boolean anonymous;
     private String thumbnail;
 
-    public static GetHotPostElement from(HotPost hotPost) {
-        Post post = hotPost.getPost();
+    public static GetPostMyElement from(Post post) {
         String thumbnail = findThumbnailUrl(post);
         Boolean anonymous = post.getAnonymous();
 
-        return GetHotPostElement.builder()
+        return GetPostMyElement.builder()
                 .boardTitle(post.getBoard().getTitle())
                 .title(post.getTitle())
                 .content(post.getContent())

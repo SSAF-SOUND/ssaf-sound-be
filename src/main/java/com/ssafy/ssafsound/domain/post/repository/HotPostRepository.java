@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface HotPostRepository extends JpaRepository<HotPost, Long> {
@@ -28,4 +29,6 @@ public interface HotPostRepository extends JpaRepository<HotPost, Long> {
             "JOIN FETCH p.board " +
             "JOIN FETCH p.member ")
     List<HotPost> findWithDetailsFetch(Pageable pageable);
+
+    Optional<HotPost> findByPostId(Long postId);
 }

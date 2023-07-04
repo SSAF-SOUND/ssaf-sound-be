@@ -9,14 +9,14 @@ import java.util.stream.Collectors;
 
 @Getter
 @Builder
-public class GetHotPostResDto {
-    private List<GetHotPostElement> posts;
+public class GetPostHotResDto {
+    private List<GetPostHotElement> posts;
 
-    public static GetHotPostResDto from(List<HotPost> hotPosts) {
-        return GetHotPostResDto.builder()
+    public static GetPostHotResDto from(List<HotPost> hotPosts) {
+        return GetPostHotResDto.builder()
                 .posts(hotPosts
                         .stream()
-                        .map(GetHotPostElement::from)
+                        .map(GetPostHotElement::from)
                         .collect(Collectors.toList()))
                 .build();
     }

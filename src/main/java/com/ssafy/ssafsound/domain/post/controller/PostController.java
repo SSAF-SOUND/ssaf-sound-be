@@ -90,10 +90,18 @@ public class PostController {
     }
 
     @GetMapping("/hot")
-    public EnvelopeResponse<GetHotPostResDto> findHotPosts(Pageable pageable) {
+    public EnvelopeResponse<GetPostHotResDto> findHotPosts(Pageable pageable) {
         
-        return EnvelopeResponse.<GetHotPostResDto>builder()
+        return EnvelopeResponse.<GetPostHotResDto>builder()
                 .data(postService.findHotPosts(pageable))
+                .build();
+    }
+
+    @GetMapping("/my")
+    public EnvelopeResponse findMyPosts(Pageable pageable, AuthenticatedMember authenticatedMember){
+
+        return EnvelopeResponse.builder()
+                .data(postService.findMyPosts(pageable, authenticatedMember.getMemberId()))
                 .build();
     }
 }

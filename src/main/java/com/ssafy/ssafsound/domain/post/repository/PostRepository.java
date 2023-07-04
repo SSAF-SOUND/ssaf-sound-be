@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-    @EntityGraph(attributePaths = {"board", "member", "hotPost"})
+    @EntityGraph(attributePaths = {"board", "member"})
     List<Post> findWithDetailsByBoardId(@Param("boardId") Long boardId, Pageable pageable);
 
     boolean existsByIdAndMemberId(Long id, Long memberId);
@@ -23,4 +23,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM post p JOIN FETCH p.member LEFT JOIN FETCH p.images WHERE p.id = :id")
     Optional<Post> findByIdWithMemberAndPostImageFetch(@Param("id") Long id);
+
+    @EntityGraph(attributePaths = {"board", "member"})
+    List<Post> findWithDetailsByMemberId(@Param("memberId") Long memberId, Pageable pageable);
+
 }
