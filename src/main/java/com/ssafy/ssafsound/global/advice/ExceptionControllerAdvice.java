@@ -3,6 +3,7 @@ package com.ssafy.ssafsound.global.advice;
 
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
 import com.ssafy.ssafsound.domain.board.exception.BoardException;
+import com.ssafy.ssafsound.domain.comment.exception.CommentException;
 import com.ssafy.ssafsound.domain.lunch.exception.LunchException;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
@@ -156,6 +157,17 @@ public class ExceptionControllerAdvice {
         return EnvelopeResponse.builder()
                 .code(GlobalErrorInfo.BAD_REQUEST.getCode())
                 .message(e.getBindingResult().getAllErrors().get(0).getDefaultMessage())
+                .build();
+    }
+
+    @ExceptionHandler(CommentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public EnvelopeResponse CommentExceptionHandler(CommentException e) {
+        log.error(e.getMessage());
+
+        return EnvelopeResponse.builder()
+                .code(e.getInfo().getCode())
+                .message(e.getInfo().getMessage())
                 .build();
     }
 }
