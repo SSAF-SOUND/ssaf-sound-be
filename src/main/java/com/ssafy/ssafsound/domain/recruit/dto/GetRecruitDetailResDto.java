@@ -1,6 +1,5 @@
 package com.ssafy.ssafsound.domain.recruit.dto;
 
-import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
