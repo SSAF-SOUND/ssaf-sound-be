@@ -2,6 +2,8 @@ package com.ssafy.ssafsound.domain.chat.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.validator.Authentication;
+import com.ssafy.ssafsound.domain.chat.dto.GetChatExistReqDto;
+import com.ssafy.ssafsound.domain.chat.dto.GetChatExistResDto;
 import com.ssafy.ssafsound.domain.chat.dto.GetChatRoomsReqDto;
 import com.ssafy.ssafsound.domain.chat.dto.GetChatRoomsResDto;
 import com.ssafy.ssafsound.domain.chat.service.ChatService;
@@ -10,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/chats")
@@ -24,6 +28,15 @@ public class ChatController {
 
         return EnvelopeResponse.<GetChatRoomsResDto>builder()
                 .data(chatService.getChatRooms(member.getMemberId(), getChatRoomsReqDto))
+                .build();
+    }
+
+    @GetMapping("/check")
+    public EnvelopeResponse<GetChatExistResDto> getChatExistence(@Authentication AuthenticatedMember member,
+                                                                 @Valid GetChatExistReqDto getChatExistReqDto) {
+
+        return EnvelopeResponse.<GetChatExistResDto>builder()
+                .data(chatService.getChatExistence(member.getMemberId(), getChatExistReqDto))
                 .build();
     }
 
