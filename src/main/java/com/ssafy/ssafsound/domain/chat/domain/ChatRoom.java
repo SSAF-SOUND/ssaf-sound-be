@@ -1,6 +1,8 @@
 package com.ssafy.ssafsound.domain.chat.domain;
 
 import com.ssafy.ssafsound.domain.BaseTimeEntity;
+import com.ssafy.ssafsound.domain.meta.converter.EntityTypeConverter;
+import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,8 +22,8 @@ public class ChatRoom extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private String sourceType;
+    @Convert(converter = EntityTypeConverter.class)
+    private MetaData sourceType;
 
     @Column
     private Long sourceId;
