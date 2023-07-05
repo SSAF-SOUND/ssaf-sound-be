@@ -8,7 +8,6 @@ import lombok.Getter;
 public class SSAFYInfo {
 
     private Integer semester;
-    private boolean isMajor;
     private String campus;
     private String certificationState;
     private String majorType;

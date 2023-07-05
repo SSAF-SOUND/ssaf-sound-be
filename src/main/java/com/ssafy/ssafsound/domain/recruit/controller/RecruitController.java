@@ -1,11 +1,11 @@
 package com.ssafy.ssafsound.domain.recruit.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
-import com.ssafy.ssafsound.domain.recruit.dto.GetRecruitDetailResDto;
-import com.ssafy.ssafsound.domain.recruit.dto.PostRecruitReqDto;
+import com.ssafy.ssafsound.domain.recruit.dto.*;
 import com.ssafy.ssafsound.domain.recruit.service.RecruitService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,7 +19,7 @@ public class RecruitController {
 
     @PostMapping
     public EnvelopeResponse<Void> saveRecruit(AuthenticatedMember memberInfo, @Valid @RequestBody PostRecruitReqDto recruitReqDto) {
-        recruitService.saveRecruit(memberInfo, recruitReqDto);
+        recruitService.saveRecruit(memberInfo.getMemberId(), recruitReqDto);
         return EnvelopeResponse.<Void>builder().build();
     }
 
@@ -33,6 +33,25 @@ public class RecruitController {
     public EnvelopeResponse<GetRecruitDetailResDto> getRecruitDetail(@PathVariable Long recruitId) {
         return EnvelopeResponse.<GetRecruitDetailResDto>builder()
                 .data(recruitService.getRecruitDetail(recruitId))
+                .build();
+    }
+
+    @PatchMapping("/{recruitId}")
+    public EnvelopeResponse<Void> updateRecruit(@PathVariable Long recruitId, AuthenticatedMember memberInfo, @RequestBody PatchRecruitReqDto patchRecruitReqDto) {
+        recruitService.updateRecruit(recruitId, memberInfo.getMemberId(), patchRecruitReqDto);
+        return EnvelopeResponse.<Void>builder().build();
+    }
+
+    @DeleteMapping("/{recruitId}")
+    public EnvelopeResponse<Void> deleteRecruit(@PathVariable Long recruitId, AuthenticatedMember memberInfo) {
+        recruitService.deleteRecruit(recruitId, memberInfo.getMemberId());
+        return EnvelopeResponse.<Void>builder().build();
+    }
+
+    @GetMapping
+    public EnvelopeResponse<GetRecruitsResDto> getRecruits(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable) {
+        return EnvelopeResponse.<GetRecruitsResDto>builder()
+                .data(recruitService.getRecruits(getRecruitsReqDto, pageable))
                 .build();
     }
 }

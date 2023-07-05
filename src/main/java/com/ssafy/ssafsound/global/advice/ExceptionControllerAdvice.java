@@ -3,6 +3,7 @@ package com.ssafy.ssafsound.global.advice;
 
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
 import com.ssafy.ssafsound.domain.board.exception.BoardException;
+import com.ssafy.ssafsound.domain.comment.exception.CommentException;
 import com.ssafy.ssafsound.domain.lunch.exception.LunchException;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
@@ -14,6 +15,7 @@ import com.ssafy.ssafsound.infra.exception.InfraException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -24,9 +26,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ExceptionControllerAdvice {
 
     @ExceptionHandler(MemberException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse MemberExceptionHandler(MemberException e) {
-        log.error(e.getMessage());
+        log.error(e.getInfo().getMessage());
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
                 .message(e.getInfo().getMessage())
@@ -34,18 +36,18 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(AuthException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse AuthExceptionHandler(AuthException e) {
-        log.error(e.getMessage());
+        log.error(e.getInfo().getMessage());
 
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
                 .message(e.getInfo().getMessage())
                 .build();
     }
-  
+
     @ExceptionHandler(LunchException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse LunchExceptionHandler(LunchException e) {
         log.error(e.getMessage());
 
@@ -105,7 +107,7 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(InfraException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse InfraExceptionHandler(InfraException e){
         log.error(e.getMessage());
 
@@ -116,7 +118,7 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(RecruitException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse RecruitExceptionHandler(RecruitException e) {
         e.printStackTrace();
         return EnvelopeResponse.builder()
@@ -126,7 +128,7 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(BoardException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse BoardExceptionHandler(BoardException e){
         log.error(e.getMessage());
 
@@ -137,10 +139,32 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(PostException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse PostExceptionHandler(PostException e){
         log.error(e.getMessage());
-      
+
+        return EnvelopeResponse.builder()
+                .code(e.getInfo().getCode())
+                .message(e.getInfo().getMessage())
+                .build();
+    }
+
+    @ExceptionHandler(BindException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public EnvelopeResponse BindExceptionHandler(BindException e) {
+        log.error(e.getMessage());
+
+        return EnvelopeResponse.builder()
+                .code(GlobalErrorInfo.BAD_REQUEST.getCode())
+                .message(e.getBindingResult().getAllErrors().get(0).getDefaultMessage())
+                .build();
+    }
+
+    @ExceptionHandler(CommentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public EnvelopeResponse CommentExceptionHandler(CommentException e) {
+        log.error(e.getMessage());
+
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
                 .message(e.getInfo().getMessage())

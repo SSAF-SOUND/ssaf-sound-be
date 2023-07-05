@@ -4,7 +4,7 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
-import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
+import com.ssafy.ssafsound.domain.meta.dto.UploadFileInfo;
 import com.ssafy.ssafsound.infra.exception.InfraErrorInfo;
 import com.ssafy.ssafsound.infra.exception.InfraException;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.Normalizer;
@@ -23,7 +22,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AwsS3StorageService implements StorageService{
+public class AwsS3StorageService implements StorageService {
 
     private final AmazonS3 amazonS3;
 
@@ -36,9 +35,9 @@ public class AwsS3StorageService implements StorageService{
         StringBuffer fileName = new StringBuffer();
 
         return fileName.append(uploadDir)
-                .append(File.separator)
+                .append("/")
                 .append(memberId)
-                .append(File.separator)
+                .append("/")
                 .append(UUID.randomUUID()) // 파일명 고유화
                 .append("_")
                 .append(Normalizer.normalize(StringUtils.cleanPath(originalFileName), Normalizer.Form.NFC))
@@ -46,9 +45,9 @@ public class AwsS3StorageService implements StorageService{
     }
 
     @Override
-    public String putObject(MultipartFile multipartFile, MetaData uploadDir, Long memberId) {
+    public UploadFileInfo putObject(MultipartFile multipartFile, MetaData uploadDir, Long memberId) {
 
-        if (multipartFile == null || multipartFile.isEmpty()){
+        if (multipartFile == null || multipartFile.isEmpty()) {
             throw new InfraException(InfraErrorInfo.STORAGE_STORE_INVALID_OBJECT);
         }
 
@@ -78,14 +77,17 @@ public class AwsS3StorageService implements StorageService{
 
         log.info("S3 저장 성공 : {} 객체 저장", fileName);
 
-        return amazonS3.getUrl(bucket, fileName).toString();
+        return UploadFileInfo.builder()
+                .filePath(fileName)
+                .fileUrl(amazonS3.getUrl(bucket, fileName).toString())
+                .build();
     }
 
     @Override
-    public void deleteObject(String storageFilename)  {
-        try{
+    public void deleteObject(String storageFilename) {
+        try {
             amazonS3.deleteObject(bucket, storageFilename);
-        } catch (AmazonServiceException e){
+        } catch (AmazonServiceException e) {
             log.error(e.getMessage());
             throw new InfraException(InfraErrorInfo.STORAGE_SERVICE_ERROR);
         }

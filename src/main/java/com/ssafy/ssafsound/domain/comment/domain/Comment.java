@@ -12,7 +12,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity(name="comment")
+@Entity(name = "comment")
 @Getter
 @Builder
 @NoArgsConstructor
@@ -28,13 +28,21 @@ public class Comment extends BaseTimeEntity {
     private String content;
 
     @Column
-    private Boolean deletedComment;
+    @Builder.Default
+    private Boolean deletedComment = Boolean.FALSE;
 
-    @OneToMany(mappedBy = "commentGroup")
-    private List<Comment> replies = new ArrayList<>();
+    @Column
+    private Boolean anonymous;
+
+//    @OneToMany(mappedBy = "commentGroup")
+//    private List<Comment> replies = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "comment_number_id")
+    private CommentNumber commentNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_group", referencedColumnName = "comment_id", updatable = false)
+    @JoinColumn(name = "comment_group", referencedColumnName = "comment_id")
     private Comment commentGroup;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,4 +52,9 @@ public class Comment extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+
+    public void setCommentGroup(Comment commentGroup) {
+        this.commentGroup = commentGroup;
+    }
 }

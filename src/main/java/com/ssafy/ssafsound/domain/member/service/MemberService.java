@@ -1,17 +1,16 @@
 package com.ssafy.ssafsound.domain.member.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
-import com.ssafy.ssafsound.domain.member.domain.Member;
-import com.ssafy.ssafsound.domain.member.domain.MemberRole;
-import com.ssafy.ssafsound.domain.member.domain.MemberToken;
-import com.ssafy.ssafsound.domain.member.domain.OAuthType;
-import com.ssafy.ssafsound.domain.member.dto.GetMemberResDto;
-import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
+import com.ssafy.ssafsound.domain.member.domain.*;
+import com.ssafy.ssafsound.domain.member.dto.*;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRoleRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
+import com.ssafy.ssafsound.domain.meta.domain.MetaData;
+import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
+import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +24,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberRoleRepository memberRoleRepository;
     private final MemberTokenRepository memberTokenRepository;
+    private final MetaDataConsumer metaDataConsumer;
 
     @Transactional
     public AuthenticatedMember createMemberByOauthIdentifier(PostMemberReqDto postMemberReqDto) {
@@ -32,15 +32,14 @@ public class MemberService {
         Member member;
         if (optionalMember.isPresent()) {
             member = optionalMember.get();
-            if (isInvalidOauthLogin(member, postMemberReqDto))
-                throw new MemberException(MemberErrorInfo.MEMBER_OAUTH_NOT_FOUND);
+            if (isInvalidOauthLogin(member, postMemberReqDto)) throw new MemberException(MemberErrorInfo.MEMBER_OAUTH_NOT_FOUND);
+            return AuthenticatedMember.from(member);
         } else {
             MemberRole memberRole = findMemberRoleByRoleName("user");
             member = postMemberReqDto.createMember();
             member.setMemberRole(memberRole);
-            memberRepository.save(member);
+            return AuthenticatedMember.from(memberRepository.save(member));
         }
-        return AuthenticatedMember.of(member);
     }
 
     @Transactional
@@ -59,8 +58,37 @@ public class MemberService {
                     .refreshToken(refreshToken)
                     .member(member)
                     .build();
+
+            memberTokenRepository.save(memberToken);
         }
-        memberTokenRepository.save(memberToken);
+    }
+
+    @Transactional
+    public GetMemberResDto registerMemberInformation(AuthenticatedMember authenticatedMember, PostMemberInfoReqDto postMemberInfoReqDto) {
+        boolean existNickname = memberRepository.existsByNickname(postMemberInfoReqDto.getNickname());
+        if(existNickname) throw new MemberException(MemberErrorInfo.MEMBER_NICKNAME_DUPLICATION);
+        Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+        MemberRole memberRole = member.getRole();
+        if (postMemberInfoReqDto.getSsafyMember()) {
+            member.setSSAFYMemberInformation(postMemberInfoReqDto, metaDataConsumer);
+            return GetMemberResDto.fromSSAFYUser(member, memberRole);
+        } else {
+            member.setGeneralMemberInformation(postMemberInfoReqDto);
+            return GetMemberResDto.fromGeneralUser(member, memberRole);
+        }
+    }
+
+    @Transactional
+    public PostCertificationInfoResDto certifySSAFYInformation(AuthenticatedMember authenticatedMember, PostCertificationInfoReqDto postCertificationInfoReqDto) {
+        if (isValidCertification(postCertificationInfoReqDto)) {
+            Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+            member.setCertificationState(AuthenticationStatus.CERTIFIED);
+
+            return PostCertificationInfoResDto.builder()
+                    .possible(true)
+                    .build();
+        }
+        throw new MemberException(MemberErrorInfo.MEMBER_CERTIFICATED_FAIL);
     }
 
     @Transactional(readOnly = true)
@@ -87,15 +115,30 @@ public class MemberService {
         throw new MemberException(MemberErrorInfo.MEMBER_INFORMATION_ERROR);
     }
 
-    public boolean isNotInputMemberInformation(Member member) {
-        return member.getSsafyMember() == null && member.getNickname() == null;
+    @Transactional(readOnly = true)
+    public PostNicknameResDto checkNicknamePossible(PostNicknameReqDto postNicknameReqDto) {
+        boolean isExistNickname = memberRepository.existsByNickname(postNicknameReqDto.getNickname());
+        if (isExistNickname) {
+            throw new MemberException(MemberErrorInfo.MEMBER_NICKNAME_DUPLICATION);
+        } else {
+            return PostNicknameResDto.of(true);
+        }
+    }
+    
+    private boolean isValidCertification(PostCertificationInfoReqDto postCertificationInfoReqDto) {
+        MetaData information = metaDataConsumer.getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer().toLowerCase());
+        return information.getId() == postCertificationInfoReqDto.getSemester();
+    }
+    
+    private boolean isNotInputMemberInformation(Member member) {
+        return member.getSsafyMember() == null && member.getNickname() == null && member.getMajor() == null;
     }
 
-    public boolean isGeneralMemberInformation(Member member) {
-        return !member.getSsafyMember() && member.getNickname() != null;
+    private boolean isGeneralMemberInformation(Member member) {
+        return !member.getSsafyMember() && member.getNickname() != null && member.getMajor() != null;
     }
 
-    public boolean isSSAFYMemberInformation(Member member) {
-        return member.getSsafyMember() && member.getNickname() != null;
+    private boolean isSSAFYMemberInformation(Member member) {
+        return member.getSsafyMember() && member.getNickname() != null && member.getMajor() != null;
     }
 }

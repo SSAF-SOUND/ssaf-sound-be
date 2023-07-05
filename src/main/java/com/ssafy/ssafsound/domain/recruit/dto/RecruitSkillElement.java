@@ -7,12 +7,12 @@ import lombok.Getter;
 @Getter
 @Builder
 public class RecruitSkillElement {
-    private Long skillId;
+    private Integer skillId;
     private String name;
 
     public static RecruitSkillElement from(RecruitSkill recruitSkill) {
         return RecruitSkillElement.builder()
-                .skillId(recruitSkill.getId())
+                .skillId(recruitSkill.getSkill().getId())
                 .name(recruitSkill.getSkill().getName())
                 .build();
     }

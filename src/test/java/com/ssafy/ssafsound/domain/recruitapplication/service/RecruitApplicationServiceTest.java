@@ -16,6 +16,7 @@ import com.ssafy.ssafsound.domain.recruit.repository.RecruitQuestionReplyReposit
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
+import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitParticipantsResDto;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.PostRecruitApplicationReqDto;
 import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicationRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -75,6 +76,7 @@ class RecruitApplicationServiceTest {
     Recruit recruit = Recruit.builder()
             .id(1L)
             .member(register)
+            .registerRecruitType(new MetaData(RecruitType.DESIGN))
             .title("스터디/리크루트 모집 제목")
             .content("컨텐츠")
             .build();
@@ -87,6 +89,7 @@ class RecruitApplicationServiceTest {
 
     RecruitApplication recruitApplication = RecruitApplication.builder()
             .id(1L)
+            .isLike(false)
             .matchStatus(MatchStatus.WAITING_REGISTER_APPROVE)
             .recruit(recruit)
             .type(new MetaData(RecruitType.DESIGN))
@@ -103,17 +106,12 @@ class RecruitApplicationServiceTest {
     List<RecruitApplication> recruitApplications = List.of(
             RecruitApplication.builder()
                     .matchStatus(MatchStatus.DONE)
-                    .member(register)
-                    .type(new MetaData(RecruitType.DESIGN))
-                    .recruit(recruit)
-                    .build(),
-            RecruitApplication.builder()
-                    .matchStatus(MatchStatus.DONE)
                     .member(participant)
                     .type(new MetaData(RecruitType.DESIGN))
                     .recruit(recruit)
                     .build()
     );
+
     @BeforeEach
     void setUpStubAndFixture() {
         // SetUp Fixture
@@ -123,6 +121,8 @@ class RecruitApplicationServiceTest {
         // Repository Mocking
         Mockito.lenient().when(recruitRepository.findByIdUsingFetchJoinRecruitLimitation(1L))
                 .thenReturn(java.util.Optional.ofNullable(recruit));
+        Mockito.lenient().when(recruitRepository.findByIdFetchJoinRegister(1L))
+                .thenReturn(recruit);
         Mockito.lenient().when(recruitApplicationRepository.findByIdAndMemberId(1L, 2L))
                 .thenReturn(java.util.Optional.ofNullable(recruitApplication));
         Mockito.lenient().when(recruitApplicationRepository.findByIdFetchRecruitWriter(1L))
@@ -292,8 +292,27 @@ class RecruitApplicationServiceTest {
     @Test
     void Given_RecruitId_When_GetRecruitParticipants_Then_Success() {
         recruitApplicationService.getRecruitParticipants(1L);
-        assertDoesNotThrow(()->{
-            recruitApplicationService.getRecruitParticipants(1L);
-        });
+        GetRecruitParticipantsResDto dto = recruitApplicationService.getRecruitParticipants(1L);
+
+        assertAll(
+                ()->assertEquals(2, dto.getMembers().size())
+        );
+    }
+
+    @DisplayName("등록자 리크루트 참여 좋아요 토글")
+    @Test
+    void Given_RecruitApplicationIdAndRegisterId_When_GetRecruitApplicationLikeThen_Success() {
+        assertAll(
+                ()-> assertDoesNotThrow(()-> recruitApplicationService.toggleRecruitApplicationLike(1L, 1L)),
+                ()->assertEquals(true, recruitApplication.getIsLike())
+        );
+    }
+
+    @DisplayName("비정상 사용자 등록자 리크루트 참여 좋아요 토글 요청")
+    @Test
+    void Given_RecruitApplicationIdAndNotValidMemberId_When_GetRecruitApplicationLikeThen_Fail() {
+        assertThrows(RecruitException.class,
+                ()-> recruitApplicationService.toggleRecruitApplicationLike(1L, 2L)
+        );
     }
 }

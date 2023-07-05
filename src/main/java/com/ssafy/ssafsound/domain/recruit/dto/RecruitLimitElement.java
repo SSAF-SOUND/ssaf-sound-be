@@ -12,6 +12,10 @@ public class RecruitLimitElement {
     private String recruitType;
     private int limit;
 
+    public void addRegisterLimit() {
+        limit++;
+    }
+
     public static RecruitLimitElement from(RecruitLimitation recruitLimitation) {
         return new RecruitLimitElement(recruitLimitation.getType().getName(), recruitLimitation.getLimitation());
     }

@@ -11,13 +11,18 @@ import javax.servlet.http.HttpServletRequest;
 @NoArgsConstructor
 public class AuthorizationExtractor {
 
-    public static String extractToken(String tokeType, HttpServletRequest request) {
+    public static String extractToken(String tokenType, HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
+
+        // cookie 없는 경우(미인증)
+        if (cookies == null) return null;
+
         for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(tokeType)) {
+            if (cookie.getName().equals(tokenType)) {
                 return cookie.getValue();
             }
         }
-        throw new AuthException(AuthErrorInfo.AUTH_TOKEN_INVALID);
+
+        return null;
     }
 }

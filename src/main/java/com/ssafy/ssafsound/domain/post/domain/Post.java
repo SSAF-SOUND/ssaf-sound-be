@@ -4,20 +4,21 @@ import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.board.domain.Board;
 import com.ssafy.ssafsound.domain.comment.domain.Comment;
 import com.ssafy.ssafsound.domain.member.domain.Member;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity(name="post")
+@Entity(name = "post")
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLDelete(sql = "UPDATE post SET deleted_post = true WHERE post_id = ?")
+@Where(clause = "deleted_post = false")
 public class Post extends BaseTimeEntity {
 
     @Id
@@ -34,8 +35,9 @@ public class Post extends BaseTimeEntity {
     @Column
     private Long view;
 
+    @Builder.Default
     @Column
-    private Boolean deletedPost;
+    private Boolean deletedPost = Boolean.FALSE;
 
     @Column
     private Boolean anonymous;
@@ -48,16 +50,25 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<PostImage> images = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<PostLike> likes = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<PostScrap> scraps = new ArrayList<>();
 
+    public void updatePost(String title, String content, Boolean anonymous){
+        this.title = title;
+        this.content = content;
+        this.anonymous = anonymous;
+    }
 }

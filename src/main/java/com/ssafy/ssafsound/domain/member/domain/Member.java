@@ -1,8 +1,11 @@
 package com.ssafy.ssafsound.domain.member.domain;
 
 import com.ssafy.ssafsound.domain.BaseTimeEntity;
+import com.ssafy.ssafsound.domain.member.dto.PostMemberInfoReqDto;
 import com.ssafy.ssafsound.domain.meta.converter.CampusConverter;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
+import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
+import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,6 +14,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity(name="member")
+@Table(indexes = @Index(name = "nickname_index", columnList = "nickname", unique = true))
 @Getter
 @Builder
 @NoArgsConstructor
@@ -34,8 +38,9 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private AccountState accountState;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private AuthenticationStatus certificationState;
+    private AuthenticationStatus certificationState = AuthenticationStatus.UNCERTIFIED;
 
     @Convert(converter = CampusConverter.class)
     private MetaData campus;
@@ -62,5 +67,23 @@ public class Member extends BaseTimeEntity {
 
     public void setMemberRole(MemberRole memberRole) {
         this.role = memberRole;
+    }
+
+    public void setCertificationState(AuthenticationStatus certified) {
+        this.certificationState = certified;
+    }
+
+    public void setSSAFYMemberInformation(PostMemberInfoReqDto postMemberInfoReqDto, MetaDataConsumer consumer) {
+        this.nickname = postMemberInfoReqDto.getNickname();
+        this.ssafyMember = postMemberInfoReqDto.getSsafyMember();
+        this.semester = postMemberInfoReqDto.getSemester();
+        this.major = postMemberInfoReqDto.getIsMajor();
+        this.campus = consumer.getMetaData(MetaDataType.CAMPUS.name(), postMemberInfoReqDto.getCampus());
+    }
+
+    public void setGeneralMemberInformation(PostMemberInfoReqDto postMemberInfoReqDto) {
+        this.nickname = postMemberInfoReqDto.getNickname();
+        this.ssafyMember = postMemberInfoReqDto.getSsafyMember();
+        this.major = postMemberInfoReqDto.getIsMajor();
     }
 }

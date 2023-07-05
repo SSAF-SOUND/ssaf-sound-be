@@ -1,48 +1,21 @@
 package com.ssafy.ssafsound.domain.post.dto;
 
 import com.ssafy.ssafsound.domain.post.domain.Post;
-import com.ssafy.ssafsound.domain.post.domain.PostImage;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Builder
 public class GetPostResDto {
-    private String boardTitle;
-    private String title;
-    private String content;
-    private int likeCount;
-    private int commentCount;
-    private LocalDateTime createAt;
-    private Long memberId;
-    private String nickname;
-    private boolean anonymous;
-    private String thumbnail;
+    private List<GetPostElement> posts;
 
-    public static GetPostResDto from(Post post) {
-        String thumbnail = findThumbnailPath(post);
-
+    public static GetPostResDto from(List<Post> posts) {
         return GetPostResDto.builder()
-                .boardTitle(post.getBoard().getTitle())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .likeCount(post.getLikes().size())
-                .commentCount(post.getComments().size())
-                .createAt(post.getCreatedAt())
-                .memberId(post.getMember().getId())
-                .nickname(post.getMember().getNickname())
-                .anonymous(post.getAnonymous())
-                .thumbnail(thumbnail)
+                .posts(posts.stream().map(GetPostElement::from).collect(Collectors.toList()))
                 .build();
-    }
 
-    private static String findThumbnailPath(Post post) {
-        List<PostImage> images = post.getImages();
-        if (images.size() >= 1)
-            return images.get(0).getImagePath();
-        return null;
     }
 }

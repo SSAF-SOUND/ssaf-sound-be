@@ -14,8 +14,10 @@ import com.ssafy.ssafsound.domain.recruit.repository.RecruitQuestionReplyReposit
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
+import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitApplicationsResDto;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitParticipantsResDto;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.PostRecruitApplicationReqDto;
+import com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement;
 import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicationRepository;
 import com.ssafy.ssafsound.domain.recruitapplication.validator.RecruitApplicationValidator;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
@@ -109,7 +111,28 @@ public class RecruitApplicationService {
         List<RecruitApplication> recruitApplications = recruitApplicationRepository
                 .findByRecruitIdAndMatchStatusFetchMember(recruitId, MatchStatus.DONE);
 
-        return GetRecruitParticipantsResDto.from(recruitApplications);
+        GetRecruitParticipantsResDto getRecruitParticipantsResDto = GetRecruitParticipantsResDto.from(recruitApplications);
+        getRecruitParticipantsResDto.addRegisterInfo(recruitRepository.findByIdFetchJoinRegister(recruitId));
+        return getRecruitParticipantsResDto;
+    }
+
+    @Transactional(readOnly = true)
+    public GetRecruitApplicationsResDto getRecruitApplications(Long recruitId, Long memberId) {
+        return new GetRecruitApplicationsResDto(recruitApplicationRepository.findByRecruitIdAndRegisterMemberIdWithQuestionReply(recruitId, memberId));
+    }
+
+    @Transactional
+    public void toggleRecruitApplicationLike(Long recruitApplicationId, Long memberId) {
+        RecruitApplication recruitApplication = recruitApplicationRepository.findByIdFetchRecruitWriter(recruitApplicationId)
+                .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+
+        if(!recruitApplication.getRecruit().getMember().getId().equals(memberId)) throw new RecruitException(RecruitErrorInfo.INVALID_CHANGE_MEMBER_OPERATION);
+        recruitApplication.toggleLike();
+    }
+
+    @Transactional(readOnly = true)
+    public RecruitApplicationElement getRecruitApplicationByIdAndRegisterId(Long recruitApplicationId, Long registerId) {
+        return recruitApplicationRepository.findByRecruitApplicationIdAndRegisterId(recruitApplicationId, registerId);
     }
 
     private void changeRecruitApplicationState(RecruitApplication recruitApplication, Long memberId,
