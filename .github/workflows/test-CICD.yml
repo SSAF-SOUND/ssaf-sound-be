@@ -23,6 +23,8 @@ env:
   APPLICATION_SECURITY_FILENAME: application-security.yml
   APPLICATION_SCRAPER: ${{secrets.APPLICATION_SCRAPER}}
   APPLICATION_SCRAPER_FILENAME: application-scraper.yml
+  APPLICATION_BIZ: ${{secrets.APPLICATION_BIZ}}
+  APPLICATION_BIZ_FILENAME: application-biz.yml
 
 permissions:
   id-token: write
@@ -61,7 +63,8 @@ jobs:
         run: echo $APPLICATION_OAUTH | base64 --decode > $APPLICATION_DIR/$APPLICATION_OAUTH_FILENAME &&
           echo $APPLICATION_CLOUD | base64 --decode > $APPLICATION_DIR/$APPLICATION_CLOUD_FILENAME &&
           echo $APPLICATION_SECURITY | base64 --decode > $APPLICATION_DIR/$APPLICATION_SECURITY_FILENAME &&
-          echo $APPLICATION_SCRAPER | base64 --decode > $APPLICATION_DIR/$APPLICATION_SCRAPER_FILENAME
+          echo $APPLICATION_SCRAPER | base64 --decode > $APPLICATION_DIR/$APPLICATION_SCRAPER_FILENAME &&
+          echo $APPLICATION_BIZ | base64 --decode > $APPLICATION_DIR/$APPLICATION_BIZ_FILENAME
 
       # (4) gradlew 권한 설정
       - name: Grant execute permission for gradlew
