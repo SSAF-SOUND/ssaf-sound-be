@@ -55,12 +55,7 @@ public class RecruitApplicationElement {
         this.memberId = memberId;
         this.nickName = nickName;
         this.isMajor = major;
-        this.ssafyInfo = SSAFYInfo.builder()
-                .semester(semester)
-                .campus(campus == null ? null : campus.getName())
-                .certificationState(certificationState == null ? null : certificationState.name())
-                .majorType(majorType)
-                .build();
+        this.ssafyInfo = SSAFYInfo.of(semester, campus.getName(), certificationState.name(), majorType);
         this.reply = reply;
         this.question = question;
         this.isLike = isLike;
