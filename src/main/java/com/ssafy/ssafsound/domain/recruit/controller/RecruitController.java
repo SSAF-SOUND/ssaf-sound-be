@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.domain.recruit.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
+import com.ssafy.ssafsound.domain.auth.validator.Authentication;
 import com.ssafy.ssafsound.domain.recruit.dto.*;
 import com.ssafy.ssafsound.domain.recruit.service.RecruitService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
@@ -18,13 +19,13 @@ public class RecruitController {
     private final RecruitService recruitService;
 
     @PostMapping
-    public EnvelopeResponse<Void> saveRecruit(AuthenticatedMember memberInfo, @Valid @RequestBody PostRecruitReqDto recruitReqDto) {
+    public EnvelopeResponse<Void> saveRecruit(@Authentication AuthenticatedMember memberInfo, @Valid @RequestBody PostRecruitReqDto recruitReqDto) {
         recruitService.saveRecruit(memberInfo.getMemberId(), recruitReqDto);
         return EnvelopeResponse.<Void>builder().build();
     }
 
     @PostMapping("/{recruitId}/scrap")
-    public EnvelopeResponse<Void> toggleRecruitScrap(@PathVariable Long recruitId, AuthenticatedMember memberInfo) {
+    public EnvelopeResponse<Void> toggleRecruitScrap(@PathVariable Long recruitId, @Authentication AuthenticatedMember memberInfo) {
         recruitService.toggleRecruitScrap(recruitId, memberInfo.getMemberId());
         return EnvelopeResponse.<Void>builder().build();
     }
@@ -37,13 +38,13 @@ public class RecruitController {
     }
 
     @PatchMapping("/{recruitId}")
-    public EnvelopeResponse<Void> updateRecruit(@PathVariable Long recruitId, AuthenticatedMember memberInfo, @RequestBody PatchRecruitReqDto patchRecruitReqDto) {
+    public EnvelopeResponse<Void> updateRecruit(@PathVariable Long recruitId, @Authentication AuthenticatedMember memberInfo, @RequestBody PatchRecruitReqDto patchRecruitReqDto) {
         recruitService.updateRecruit(recruitId, memberInfo.getMemberId(), patchRecruitReqDto);
         return EnvelopeResponse.<Void>builder().build();
     }
 
     @DeleteMapping("/{recruitId}")
-    public EnvelopeResponse<Void> deleteRecruit(@PathVariable Long recruitId, AuthenticatedMember memberInfo) {
+    public EnvelopeResponse<Void> deleteRecruit(@PathVariable Long recruitId, @Authentication AuthenticatedMember memberInfo) {
         recruitService.deleteRecruit(recruitId, memberInfo.getMemberId());
         return EnvelopeResponse.<Void>builder().build();
     }
