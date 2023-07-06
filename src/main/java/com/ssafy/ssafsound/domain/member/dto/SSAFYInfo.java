@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.domain.member.dto;
 
 import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import lombok.Getter;
 
 @Getter
@@ -11,6 +12,10 @@ public class SSAFYInfo {
     private final String certificationState;
     private final String majorType;
 
+    private SSAFYInfo(int semester, String campus, String certificationState) {
+        this(semester, campus, certificationState, null);
+    }
+
     private SSAFYInfo(int semester, String campus, String certificationState, String majorType) {
         this.semester = semester;
         this.campus = campus;
@@ -19,9 +24,10 @@ public class SSAFYInfo {
     }
 
     public static SSAFYInfo from(Member member) {
-        return new SSAFYInfo(member.getSemester(), member.getCampus().getName(), member.getCertificationState().name(), member.getMajorType().getName());
+        return new SSAFYInfo(member.getSemester(), member.getCampus().getName(), member.getCertificationState().name(), member.getMajorType() == null ? null : member.getMajorType().getName());
     }
-    public static SSAFYInfo of(int semester, String campus, String certificationState, String majorType) {
-        return new SSAFYInfo(semester, campus, certificationState, majorType);
+    public static SSAFYInfo of(int semester, String campus, String certificationState, MetaData majorType) {
+        if (majorType == null) return new SSAFYInfo(semester, campus, certificationState);
+        return new SSAFYInfo(semester, campus, certificationState, majorType.getName());
     }
 }
