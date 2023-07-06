@@ -302,12 +302,16 @@ public class PostService {
         }
 
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        List<Post> posts = postRepository.findByBoardIdAndKeywordWithDetailsFetch(boardId, keyword, pageRequest);
+        List<Post> posts = postRepository.findByBoardIdAndKeywordWithDetailsFetch(boardId, removeSpace(keyword), pageRequest);
 
         if (posts.size() == 0) {
             throw new PostException(PostErrorInfo.NOT_FOUND_POSTS_SEARCH_RESULT);
         }
 
         return GetPostSearchResDto.from(posts);
+    }
+
+    private String removeSpace(String keyword) {
+        return keyword.replaceAll(" ", "");
     }
 }
