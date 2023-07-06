@@ -1,7 +1,6 @@
 package com.ssafy.ssafsound.domain.recruitapplication.service;
 
 import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
-import com.ssafy.ssafsound.domain.member.domain.MajorType;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.meta.domain.Campus;
@@ -63,7 +62,7 @@ class RecruitApplicationServiceTest {
             .certificationState(AuthenticationStatus.CERTIFIED)
             .major(true)
             .campus(new MetaData(Campus.BUSAN))
-            .majorType(new MajorType(1, "자바전공"))
+            .majorType(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TYPE.name(), "Java"))
             .build();
 
     Member participant = Member.builder()

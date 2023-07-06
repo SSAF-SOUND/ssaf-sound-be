@@ -3,6 +3,7 @@ package com.ssafy.ssafsound.domain.member.domain;
 import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberInfoReqDto;
 import com.ssafy.ssafsound.domain.meta.converter.CampusConverter;
+import com.ssafy.ssafsound.domain.meta.converter.MajorTypeConverter;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
@@ -52,9 +53,8 @@ public class Member extends BaseTimeEntity {
     @JoinColumn(name = "member_role_id")
     private MemberRole role;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "major_type_id")
-    private MajorType majorType;
+    @Convert(converter = MajorTypeConverter.class)
+    private MetaData majorType;
 
     @Column
     private Boolean ssafyMember;

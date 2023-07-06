@@ -2,7 +2,6 @@ package com.ssafy.ssafsound.domain.recruitcomment.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
-import com.ssafy.ssafsound.domain.member.domain.MajorType;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;

@@ -2,7 +2,6 @@ package com.ssafy.ssafsound.domain.recruit.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
-import com.ssafy.ssafsound.domain.member.domain.MajorType;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.meta.domain.*;
@@ -70,7 +69,7 @@ class RecruitServiceTest {
             .ssafyMember(true)
             .certificationState(AuthenticationStatus.CERTIFIED)
             .major(true)
-            .majorType(MajorType.builder().build())
+            .majorType(null)
             .campus(new MetaData(Campus.SEOUL))
             .build();
 
@@ -81,7 +80,7 @@ class RecruitServiceTest {
             .ssafyMember(true)
             .certificationState(AuthenticationStatus.CERTIFIED)
             .major(true)
-            .majorType(MajorType.builder().build())
+            .majorType(null)
             .campus(new MetaData(Campus.SEOUL))
             .build();
 
