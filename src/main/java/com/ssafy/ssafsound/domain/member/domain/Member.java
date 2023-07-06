@@ -81,6 +81,10 @@ public class Member extends BaseTimeEntity {
         this.campus = consumer.getMetaData(MetaDataType.CAMPUS.name(), postMemberInfoReqDto.getCampus());
     }
 
+    public void setMajorType(MetaData majorType) {
+        this.majorType = majorType;
+    }
+
     public void setGeneralMemberInformation(PostMemberInfoReqDto postMemberInfoReqDto) {
         this.nickname = postMemberInfoReqDto.getNickname();
         this.ssafyMember = postMemberInfoReqDto.getSsafyMember();

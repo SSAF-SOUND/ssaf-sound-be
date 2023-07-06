@@ -69,7 +69,7 @@ class RecruitServiceTest {
             .ssafyMember(true)
             .certificationState(AuthenticationStatus.CERTIFIED)
             .major(true)
-            .majorType(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TYPE.name(), "Java"))
+            .majorType(new MetaData(MajorType.JAVA))
             .campus(new MetaData(Campus.SEOUL))
             .build();
 
@@ -80,7 +80,7 @@ class RecruitServiceTest {
             .ssafyMember(true)
             .certificationState(AuthenticationStatus.CERTIFIED)
             .major(true)
-            .majorType(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TYPE.name(), "Java"))
+            .majorType(new MetaData(MajorType.JAVA))
             .campus(new MetaData(Campus.SEOUL))
             .build();
 
