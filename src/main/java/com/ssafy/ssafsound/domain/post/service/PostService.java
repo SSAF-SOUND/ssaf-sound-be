@@ -51,13 +51,13 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public GetPostResDto findPosts(Long boardId, Pageable pageable) {
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-
         if (!boardRepository.existsById(boardId)) {
             throw new BoardException(BoardErrorInfo.NO_BOARD);
         }
 
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         List<Post> posts = postRepository.findWithDetailsByBoardId(boardId, pageRequest);
+
         if (posts.size() == 0) {
             throw new PostException(PostErrorInfo.NOT_FOUND_POSTS);
         }
@@ -293,5 +293,21 @@ public class PostService {
         }
 
         return GetPostMyResDto.from(posts);
+    }
+
+    @Transactional(readOnly = true)
+    public GetPostSearchResDto searchPosts(Long boardId, String keyword, Pageable pageable) {
+        if (!boardRepository.existsById(boardId)) {
+            throw new BoardException(BoardErrorInfo.NO_BOARD);
+        }
+
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        List<Post> posts = postRepository.findByBoardIdAndKeywordWithDetailsFetch(boardId, keyword, pageRequest);
+
+        if (posts.size() == 0) {
+            throw new PostException(PostErrorInfo.NOT_FOUND_POSTS_SEARCH_RESULT);
+        }
+
+        return GetPostSearchResDto.from(posts);
     }
 }
