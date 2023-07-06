@@ -91,17 +91,25 @@ public class PostController {
 
     @GetMapping("/hot")
     public EnvelopeResponse<GetPostHotResDto> findHotPosts(Pageable pageable) {
-        
+
         return EnvelopeResponse.<GetPostHotResDto>builder()
                 .data(postService.findHotPosts(pageable))
                 .build();
     }
 
     @GetMapping("/my")
-    public EnvelopeResponse findMyPosts(Pageable pageable, AuthenticatedMember authenticatedMember){
+    public EnvelopeResponse findMyPosts(Pageable pageable, AuthenticatedMember authenticatedMember) {
 
         return EnvelopeResponse.builder()
                 .data(postService.findMyPosts(pageable, authenticatedMember.getMemberId()))
+                .build();
+    }
+
+    @GetMapping("/search")
+    public EnvelopeResponse<GetPostSearchResDto> searchPosts(@RequestParam Long boardId, @RequestParam String keyword, Pageable pageable) {
+
+        return EnvelopeResponse.<GetPostSearchResDto>builder()
+                .data(postService.searchPosts(boardId, keyword, pageable))
                 .build();
     }
 }
