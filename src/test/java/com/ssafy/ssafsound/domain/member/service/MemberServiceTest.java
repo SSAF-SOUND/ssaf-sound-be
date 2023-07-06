@@ -358,7 +358,7 @@ class MemberServiceTest {
 
     @ParameterizedTest
     @CsvSource({"Java, 1, ONE_SEMESTER, 선물", "Java, 2, TWO_SEMESTER, 하나", "Java, 3, THREE_SEMESTER, 출발", "Java, 4, FOUR_SEMESTER, 충전", "Java, 5, FIVE_SEMESTER, 극복",
-                "Java, 6, SIX_SEMESTER, hot식스", "Java, 7, SEVEN_SEMESTER, 럭키", "Java, 8, EIGHT_SEMESTER, 칠전팔", "Java, 9, NINE_SEMESTER, great", "Java, 10, TEN_SEMESTER, 텐션"})
+            "Java, 6, SIX_SEMESTER, hot식스", "Java, 7, SEVEN_SEMESTER, 럭키", "Java, 8, EIGHT_SEMESTER, 칠전팔", "Java, 9, NINE_SEMESTER, great", "Java, 10, TEN_SEMESTER, 텐션"})
     @DisplayName("싸피생 인증 요청 시, 정답에 대한 요청을 했으면 성공한다.")
     void Given_PostCertificationInfo_When_Submit_SSAFY_Certification_Answer_Then_Success(String majorTrack, int semester, String name, String answer) {
         PostCertificationInfoReqDto postCertificationInfoReqDto = PostCertificationInfoReqDto.builder()
