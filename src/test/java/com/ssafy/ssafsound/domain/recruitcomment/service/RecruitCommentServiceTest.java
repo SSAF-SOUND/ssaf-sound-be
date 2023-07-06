@@ -4,6 +4,8 @@ import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
+import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
+import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
@@ -49,6 +51,9 @@ class RecruitCommentServiceTest {
     @Mock
     MemberRepository memberRepository;
 
+    @Mock
+    MetaDataConsumer metaDataConsumer;
+
     @InjectMocks
     RecruitCommentService recruitCommentService;
 
@@ -58,7 +63,7 @@ class RecruitCommentServiceTest {
             .ssafyMember(true)
             .certificationState(AuthenticationStatus.CERTIFIED)
             .major(true)
-            .majorType(new MajorType(1, "Test"))
+            .majorType(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TYPE.name(), "Java"))
             .build();
 
     Member member2 = Member.builder()
@@ -67,7 +72,7 @@ class RecruitCommentServiceTest {
             .ssafyMember(true)
             .certificationState(AuthenticationStatus.CERTIFIED)
             .major(true)
-            .majorType(new MajorType(1, "Test"))
+            .majorType(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TYPE.name(), "Java"))
             .build();
 
     Recruit recruit = Recruit.builder()
