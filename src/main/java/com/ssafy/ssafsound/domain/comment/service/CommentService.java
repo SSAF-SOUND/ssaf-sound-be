@@ -3,6 +3,9 @@ package com.ssafy.ssafsound.domain.comment.service;
 import com.ssafy.ssafsound.domain.comment.domain.Comment;
 import com.ssafy.ssafsound.domain.comment.domain.CommentNumber;
 import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReqDto;
+import com.ssafy.ssafsound.domain.comment.dto.PutCommentUpdateReqDto;
+import com.ssafy.ssafsound.domain.comment.exception.CommentErrorInfo;
+import com.ssafy.ssafsound.domain.comment.exception.CommentException;
 import com.ssafy.ssafsound.domain.comment.repository.CommentNumberRepository;
 import com.ssafy.ssafsound.domain.comment.repository.CommentRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
@@ -56,6 +59,19 @@ public class CommentService {
         comment = commentRepository.save(comment);
         comment.setCommentGroup(comment);
 
+        return comment.getId();
+    }
+
+    @Transactional
+    public Long updateComment(Long commentId, Long memberId, PutCommentUpdateReqDto putCommentUpdateReqDto) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT));
+
+        if (!comment.getMember().getId().equals(memberId)) {
+            throw new CommentException(CommentErrorInfo.UNAUTHORIZED_UPDATE_COMMENT);
+        }
+
+        comment.updateComment(putCommentUpdateReqDto.getContent(), putCommentUpdateReqDto.getAnonymous());
         return comment.getId();
     }
 
