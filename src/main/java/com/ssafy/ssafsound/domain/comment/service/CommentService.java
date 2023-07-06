@@ -1,18 +1,25 @@
 package com.ssafy.ssafsound.domain.comment.service;
 
+import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.comment.domain.Comment;
 import com.ssafy.ssafsound.domain.comment.domain.CommentNumber;
+import com.ssafy.ssafsound.domain.comment.dto.GetCommentResDto;
 import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReqDto;
 import com.ssafy.ssafsound.domain.comment.repository.CommentNumberRepository;
 import com.ssafy.ssafsound.domain.comment.repository.CommentRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
 import com.ssafy.ssafsound.domain.post.exception.PostException;
+import com.ssafy.ssafsound.domain.post.repository.PostLikeRepository;
 import com.ssafy.ssafsound.domain.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -21,6 +28,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final CommentNumberRepository commentNumberRepository;
     private final PostRepository postRepository;
+    private final PostLikeRepository postLikeRepository;
     private final MemberRepository memberRepository;
 
 
@@ -57,6 +65,22 @@ public class CommentService {
         comment.setCommentGroup(comment);
 
         return comment.getId();
+    }
+
+
+    @Transactional(readOnly = true)
+    public GetCommentResDto findComments(Long postId, AuthenticatedMember member, Pageable pageable) {
+        if (!postRepository.existsById(postId)) {
+            throw new PostException(PostErrorInfo.NOT_FOUND_POST);
+        }
+
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+
+        Boolean liked = null;
+        Boolean mine = null;
+
+        List<Comment> comments = commentRepository.findAllPostIdWithDetailsFetchOrderByCommentGroupId(postId, pageRequest);
+        return GetCommentResDto.from(comments, liked, mine);
     }
 
 }
