@@ -10,6 +10,9 @@ import javax.validation.constraints.NotBlank;
 @Getter
 public class PostCertificationInfoReqDto {
 
+    @NotBlank
+    private String majorTrack;
+
     @Semester
     private Integer semester;
 

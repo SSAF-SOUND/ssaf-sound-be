@@ -8,6 +8,7 @@ import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRoleRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
+import com.ssafy.ssafsound.domain.meta.domain.MajorType;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
@@ -83,7 +84,7 @@ public class MemberService {
         if (isValidCertification(postCertificationInfoReqDto)) {
             Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
             member.setCertificationState(AuthenticationStatus.CERTIFIED);
-
+            member.setMajorType(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TYPE.name(), postCertificationInfoReqDto.getMajorTrack()));
             return PostCertificationInfoResDto.builder()
                     .possible(true)
                     .build();
