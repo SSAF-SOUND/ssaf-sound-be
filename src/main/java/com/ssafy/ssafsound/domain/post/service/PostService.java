@@ -291,7 +291,7 @@ public class PostService {
         }
 
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        List<Post> posts = postRepository.findByBoardIdAndKeywordWithDetailsFetch(boardId, removeSpace(keyword), pageRequest);
+        List<Post> posts = postRepository.findWithDetailsFetchByBoardIdAndKeyword(boardId, removeSpace(keyword), pageRequest);
 
         return GetPostSearchResDto.from(posts);
     }

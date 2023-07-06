@@ -33,5 +33,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "WHERE (REPLACE(p.title, ' ', '') LIKE CONCAT('%', :keyword, '%') " +
             "OR REPLACE(p.content, ' ', '') LIKE CONCAT('%', :keyword, '%')) " +
             "AND b.id = :boardId ")
-    List<Post> findByBoardIdAndKeywordWithDetailsFetch(@Param("boardId") Long boardId, @Param("keyword") String keyword, Pageable pageable);
+    List<Post> findWithDetailsFetchByBoardIdAndKeyword(@Param("boardId") Long boardId, @Param("keyword") String keyword, Pageable pageable);
 }
