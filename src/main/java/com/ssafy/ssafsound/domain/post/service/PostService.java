@@ -58,10 +58,6 @@ public class PostService {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         List<Post> posts = postRepository.findWithDetailsByBoardId(boardId, pageRequest);
 
-        if (posts.size() == 0) {
-            throw new PostException(PostErrorInfo.NOT_FOUND_POSTS);
-        }
-
         return GetPostResDto.from(posts);
     }
 
@@ -277,9 +273,6 @@ public class PostService {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         List<HotPost> hotPosts = hotPostRepository.findWithDetailsFetch(pageRequest);
 
-        if (hotPosts.size() == 0) {
-            throw new PostException(PostErrorInfo.NOT_FOUND_POSTS);
-        }
         return GetPostHotResDto.from(hotPosts);
     }
 
@@ -287,10 +280,6 @@ public class PostService {
     public GetPostMyResDto findMyPosts(Pageable pageable, Long memberId) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         List<Post> posts = postRepository.findWithDetailsByMemberId(memberId, pageRequest);
-
-        if (posts.size() == 0) {
-            throw new PostException(PostErrorInfo.NOT_FOUND_POSTS);
-        }
 
         return GetPostMyResDto.from(posts);
     }
@@ -303,10 +292,6 @@ public class PostService {
 
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         List<Post> posts = postRepository.findByBoardIdAndKeywordWithDetailsFetch(boardId, removeSpace(keyword), pageRequest);
-
-        if (posts.size() == 0) {
-            throw new PostException(PostErrorInfo.NOT_FOUND_POSTS_SEARCH_RESULT);
-        }
 
         return GetPostSearchResDto.from(posts);
     }
