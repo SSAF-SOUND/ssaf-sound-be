@@ -291,12 +291,8 @@ public class PostService {
         }
 
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        List<Post> posts = postRepository.findWithDetailsFetchByBoardIdAndKeyword(boardId, removeSpace(keyword), pageRequest);
+        List<Post> posts = postRepository.findWithDetailsFetchByBoardIdAndKeyword(boardId, keyword.replaceAll(" ", ""), pageRequest);
 
         return GetPostSearchResDto.from(posts);
-    }
-
-    private String removeSpace(String keyword) {
-        return keyword.replaceAll(" ", "");
     }
 }
