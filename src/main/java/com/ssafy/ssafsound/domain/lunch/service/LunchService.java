@@ -10,7 +10,6 @@ import com.ssafy.ssafsound.domain.lunch.repository.LunchRepository;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +25,6 @@ public class LunchService {
 
     private final LunchPollRepository lunchPollRepository;
 
-    @Qualifier("EnumMetaDataConsumer")
     private final MetaDataConsumer metaDataConsumer;
 
     @Transactional(readOnly = true)
