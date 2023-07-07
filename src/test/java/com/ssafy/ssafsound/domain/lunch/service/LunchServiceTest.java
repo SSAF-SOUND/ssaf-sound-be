@@ -1,6 +1,9 @@
 package com.ssafy.ssafsound.domain.lunch.service;
 
+import com.ssafy.ssafsound.domain.lunch.domain.Lunch;
+import com.ssafy.ssafsound.domain.lunch.domain.LunchPoll;
 import com.ssafy.ssafsound.domain.lunch.repository.LunchRepository;
+import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,7 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class LunchServiceTest {
@@ -17,12 +21,28 @@ class LunchServiceTest {
     @Mock
     private LunchRepository lunchRepository;
 
+    @Mock
+    private MetaDataConsumer metaDataConsumer;
+
     @InjectMocks
     private LunchService lunchService;
 
+    private List<Lunch> lunches;
+    private List<LunchPoll> lunchPolls;
+
+
+
     @BeforeEach
     void setUp() {
+        lunches = new ArrayList<>();
+        lunchPolls = new ArrayList<>();
 
+        for(int i = 0; i < 10; i++){
+            lunches.add(Lunch.builder()
+                    .id((long)i)
+                    .campus(metaDataConsumer.getMetaData("",""))
+                    .build());
+        }
     }
 
     @Test
