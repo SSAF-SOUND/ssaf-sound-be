@@ -21,7 +21,7 @@ public class RecruitCommentElement {
     private String nickName;
     private Boolean ssafyMember;
     private Boolean major;
-    private String majorType;
+    private String majorTrack;
 
     public static RecruitCommentElement from(RecruitComment comment) {
         Member register = comment.getMember();
@@ -36,7 +36,7 @@ public class RecruitCommentElement {
                 .nickName(register.getNickname())
                 .ssafyMember(register.getSsafyMember())
                 .major(register.getMajor())
-                .majorType(register.getMajorType().getName())
+                .majorTrack(register.getMajorTrack().getName())
                 .build();
     }
 

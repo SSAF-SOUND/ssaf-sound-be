@@ -367,17 +367,17 @@ class MemberServiceTest {
                 .answer(answer)
                 .build();
 
-        given(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TYPE.name(), majorTrack)).willReturn(new MetaData(MajorType.JAVA));
+        given(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TRACK.name(), majorTrack)).willReturn(new MetaData(MajorTrack.JAVA));
         given(metaDataConsumer.getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer())).willReturn(new MetaData(Certification.valueOf(name)));
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
 
         PostCertificationInfoResDto postCertificationInfoResDto = memberService.certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto);
 
         assertThat(member.getCertificationState()).isEqualTo(AuthenticationStatus.CERTIFIED);
-        assertThat(member.getMajorType().getName()).isEqualTo(majorTrack);
+        assertThat(member.getMajorTrack().getName()).isEqualTo(majorTrack);
         assertTrue(postCertificationInfoResDto.isPossible());
 
-        verify(metaDataConsumer).getMetaData(MetaDataType.MAJOR_TYPE.name(), majorTrack);
+        verify(metaDataConsumer).getMetaData(MetaDataType.MAJOR_TRACK.name(), majorTrack);
         verify(metaDataConsumer).getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer());
         verify(memberRepository).findById(authenticatedMember.getMemberId());
     }

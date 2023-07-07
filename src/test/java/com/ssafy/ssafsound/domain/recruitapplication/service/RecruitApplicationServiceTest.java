@@ -60,7 +60,7 @@ class RecruitApplicationServiceTest {
             .major(true)
             .semester(9)
             .campus(new MetaData(Campus.BUSAN))
-            .majorType(new MetaData(MajorType.JAVA))
+            .majorTrack(new MetaData(MajorTrack.JAVA))
             .build();
 
     Member participant = Member.builder()
@@ -69,7 +69,7 @@ class RecruitApplicationServiceTest {
             .ssafyMember(false)
             .certificationState(AuthenticationStatus.CERTIFIED)
             .major(false)
-            .majorType(null)
+            .majorTrack(null)
             .campus(null)
             .build();
 

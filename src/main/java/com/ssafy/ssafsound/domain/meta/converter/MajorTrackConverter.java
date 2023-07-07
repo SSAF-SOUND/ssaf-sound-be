@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.Converter;
 
 @Converter
-public class MajorTypeConverter extends BaseConverter {
+public class MajorTrackConverter extends BaseConverter {
 
     @Autowired
-    public MajorTypeConverter(MetaDataConsumer metaDataConsumer) {
-        super(metaDataConsumer, MetaDataType.MAJOR_TYPE.name());
+    public MajorTrackConverter(MetaDataConsumer metaDataConsumer) {
+        super(metaDataConsumer, MetaDataType.MAJOR_TRACK.name());
     }
 }

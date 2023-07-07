@@ -69,7 +69,7 @@ class RecruitServiceTest {
             .ssafyMember(true)
             .certificationState(AuthenticationStatus.CERTIFIED)
             .major(true)
-            .majorType(new MetaData(MajorType.JAVA))
+            .majorTrack(new MetaData(MajorTrack.JAVA))
             .campus(new MetaData(Campus.SEOUL))
             .build();
 
@@ -80,7 +80,7 @@ class RecruitServiceTest {
             .ssafyMember(true)
             .certificationState(AuthenticationStatus.CERTIFIED)
             .major(true)
-            .majorType(new MetaData(MajorType.JAVA))
+            .majorTrack(new MetaData(MajorTrack.JAVA))
             .campus(new MetaData(Campus.SEOUL))
             .build();
 
@@ -164,9 +164,9 @@ class RecruitServiceTest {
                 .when(metaDataConsumer.getMetaData(MetaDataType.SKILL.name(), skill.getName()))
                 .thenReturn(new MetaData(skill)));
 
-        Arrays.stream(MajorType.values()).forEach(majorType -> Mockito.lenient()
-                .when(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TYPE.name(), majorType.getName()))
-                .thenReturn(new MetaData(majorType)));
+        Arrays.stream(MajorTrack.values()).forEach(majorTrack -> Mockito.lenient()
+                .when(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TRACK.name(), majorTrack.getName()))
+                .thenReturn(new MetaData(majorTrack)));
     }
 
     @DisplayName("토큰과 정상 리크루트글 등록 요청이 넘어온 경우 리크루트 글 등록 성공")

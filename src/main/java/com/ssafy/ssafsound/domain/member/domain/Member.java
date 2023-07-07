@@ -3,7 +3,7 @@ package com.ssafy.ssafsound.domain.member.domain;
 import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberInfoReqDto;
 import com.ssafy.ssafsound.domain.meta.converter.CampusConverter;
-import com.ssafy.ssafsound.domain.meta.converter.MajorTypeConverter;
+import com.ssafy.ssafsound.domain.meta.converter.MajorTrackConverter;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
@@ -53,8 +53,8 @@ public class Member extends BaseTimeEntity {
     @JoinColumn(name = "member_role_id")
     private MemberRole role;
 
-    @Convert(converter = MajorTypeConverter.class)
-    private MetaData majorType;
+    @Convert(converter = MajorTrackConverter.class)
+    private MetaData majorTrack;
 
     @Column
     private Boolean ssafyMember;
@@ -81,8 +81,8 @@ public class Member extends BaseTimeEntity {
         this.campus = consumer.getMetaData(MetaDataType.CAMPUS.name(), postMemberInfoReqDto.getCampus());
     }
 
-    public void setMajorType(MetaData majorType) {
-        this.majorType = majorType;
+    public void setMajorTrack(MetaData majorTrack) {
+        this.majorTrack = majorTrack;
     }
 
     public void setGeneralMemberInformation(PostMemberInfoReqDto postMemberInfoReqDto) {

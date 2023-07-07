@@ -19,7 +19,7 @@ public class EnumMetaDataConsumer implements MetaDataConsumer {
         this.putMetaData(MetaDataType.RECRUIT_TYPE.name(), RecruitType.class);
         this.putMetaData(MetaDataType.UPLOAD_DIRECTORY.name(), UploadDirectory.class);
         this.putMetaData(MetaDataType.CERTIFICATION.name(), Certification.class);
-        this.putMetaData(MetaDataType.MAJOR_TYPE.name(), MajorType.class);
+        this.putMetaData(MetaDataType.MAJOR_TRACK.name(), MajorTrack.class);
     }
 
     @Override

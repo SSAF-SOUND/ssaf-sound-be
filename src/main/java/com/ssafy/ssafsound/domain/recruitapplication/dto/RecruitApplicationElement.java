@@ -3,7 +3,6 @@ package com.ssafy.ssafsound.domain.recruitapplication.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
 import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
-import com.ssafy.ssafsound.domain.meta.domain.MajorType;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import lombok.Getter;
@@ -46,7 +45,7 @@ public class RecruitApplicationElement {
     public RecruitApplicationElement(Long recruitApplicationId, MetaData recruitType, MatchStatus matchStatus, MetaData type,
                                      Long memberId, String nickName,
                                      Integer semester, Boolean major, MetaData campus,
-                                     AuthenticationStatus certificationState, MetaData majorType,
+                                     AuthenticationStatus certificationState, MetaData majorTrack,
                                      String reply, String question, Boolean isLike) {
 
         this.recruitApplicationId = recruitApplicationId;
@@ -56,7 +55,7 @@ public class RecruitApplicationElement {
         this.memberId = memberId;
         this.nickName = nickName;
         this.isMajor = major;
-        this.ssafyInfo = SSAFYInfo.of(semester, campus.getName(), certificationState.name(), majorType);
+        this.ssafyInfo = SSAFYInfo.of(semester, campus.getName(), certificationState.name(), majorTrack);
         this.reply = reply;
         this.question = question;
         this.isLike = isLike;

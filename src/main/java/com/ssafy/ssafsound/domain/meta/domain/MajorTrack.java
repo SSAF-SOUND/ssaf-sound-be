@@ -1,6 +1,6 @@
 package com.ssafy.ssafsound.domain.meta.domain;
 
-public enum MajorType implements MetaDataProvider {
+public enum MajorTrack implements MetaDataProvider {
     EMBEDDED(1, "Embedded"),
     MOBILE(2, "Mobile"),
     PYTHON(3, "Python"),
@@ -9,7 +9,7 @@ public enum MajorType implements MetaDataProvider {
     private int id;
     private String name;
 
-    MajorType(int id, String name) {
+    MajorTrack(int id, String name) {
         this.id = id;
         this.name = name;
     }
