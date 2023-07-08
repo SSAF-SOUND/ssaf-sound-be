@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity(name="member")
 @Table(indexes = @Index(name = "nickname_index", columnList = "nickname", unique = true))
@@ -59,11 +60,23 @@ public class Member extends BaseTimeEntity {
     @Column
     private Boolean ssafyMember;
 
+    @Builder.Default
+    @Column
+    private Integer certificationInquiryCount = 0;
+
+    @Column
+    private LocalDateTime certificationTryTime;
+
     @Column
     private Boolean major;
 
     @Column
     private Boolean publicPortfolio;
+
+    @PreUpdate
+    public void preUpdate() {
+        this.certificationTryTime = LocalDateTime.now();
+    }
 
     public void setMemberRole(MemberRole memberRole) {
         this.role = memberRole;
@@ -83,6 +96,14 @@ public class Member extends BaseTimeEntity {
 
     public void setMajorTrack(MetaData majorTrack) {
         this.majorTrack = majorTrack;
+    }
+
+    public void increaseCertificationInquiryCount() {
+        this.certificationInquiryCount += 1;
+    }
+
+    public void initializeCertificationInquiryCount() {
+        this.certificationInquiryCount = 0;
     }
 
     public void setGeneralMemberInformation(PostMemberInfoReqDto postMemberInfoReqDto) {
