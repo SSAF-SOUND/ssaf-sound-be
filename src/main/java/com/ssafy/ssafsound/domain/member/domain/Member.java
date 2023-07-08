@@ -74,7 +74,7 @@ public class Member extends BaseTimeEntity {
     private Boolean publicPortfolio;
 
     @PreUpdate
-    public void preUpdate() {
+    public void preUpdateCertificationTryTime() {
         this.certificationTryTime = LocalDateTime.now();
     }
 
