@@ -49,12 +49,7 @@ public class GetRecruitDetailResDto {
 
         SSAFYInfo ssafyInfo = null;
         if(register.getSsafyMember()) {
-            ssafyInfo = SSAFYInfo.builder()
-                    .semester(register.getSemester())
-                    .campus(register.getCampus().getName())
-                    .certificationState(register.getCertificationState().name())
-                    .majorType(register.getMajorType().getName())
-                    .build();
+            ssafyInfo = SSAFYInfo.from(register);
         }
 
         return GetRecruitDetailResDto.builder()

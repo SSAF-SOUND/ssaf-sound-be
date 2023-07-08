@@ -3,6 +3,7 @@ package com.ssafy.ssafsound.domain.member.domain;
 import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberInfoReqDto;
 import com.ssafy.ssafsound.domain.meta.converter.CampusConverter;
+import com.ssafy.ssafsound.domain.meta.converter.MajorTrackConverter;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
@@ -12,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity(name="member")
 @Table(indexes = @Index(name = "nickname_index", columnList = "nickname", unique = true))
@@ -52,18 +54,29 @@ public class Member extends BaseTimeEntity {
     @JoinColumn(name = "member_role_id")
     private MemberRole role;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "major_type_id")
-    private MajorType majorType;
+    @Convert(converter = MajorTrackConverter.class)
+    private MetaData majorTrack;
 
     @Column
     private Boolean ssafyMember;
+
+    @Builder.Default
+    @Column
+    private Integer certificationInquiryCount = 0;
+
+    @Column
+    private LocalDateTime certificationTryTime;
 
     @Column
     private Boolean major;
 
     @Column
     private Boolean publicPortfolio;
+
+    @PreUpdate
+    public void preUpdateCertificationTryTime() {
+        this.certificationTryTime = LocalDateTime.now();
+    }
 
     public void setMemberRole(MemberRole memberRole) {
         this.role = memberRole;
@@ -79,6 +92,18 @@ public class Member extends BaseTimeEntity {
         this.semester = postMemberInfoReqDto.getSemester();
         this.major = postMemberInfoReqDto.getIsMajor();
         this.campus = consumer.getMetaData(MetaDataType.CAMPUS.name(), postMemberInfoReqDto.getCampus());
+    }
+
+    public void setMajorTrack(MetaData majorTrack) {
+        this.majorTrack = majorTrack;
+    }
+
+    public void increaseCertificationInquiryCount() {
+        this.certificationInquiryCount += 1;
+    }
+
+    public void initializeCertificationInquiryCount() {
+        this.certificationInquiryCount = 0;
     }
 
     public void setGeneralMemberInformation(PostMemberInfoReqDto postMemberInfoReqDto) {

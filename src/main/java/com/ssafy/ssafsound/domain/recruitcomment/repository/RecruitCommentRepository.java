@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface RecruitCommentRepository extends JpaRepository<RecruitComment, Long> {
 
-    @Query("select r from recruit_comment r left join fetch r.member as m left join fetch m.majorType where r.recruit.id = :recruitId")
+    @Query("select r from recruit_comment r left join fetch r.member as m where r.recruit.id = :recruitId")
     List<RecruitComment> findByRecruitIdFetchJoinMemberAndReplies(Long recruitId);
 }

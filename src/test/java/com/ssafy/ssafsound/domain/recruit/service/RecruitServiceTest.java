@@ -2,7 +2,6 @@ package com.ssafy.ssafsound.domain.recruit.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
-import com.ssafy.ssafsound.domain.member.domain.MajorType;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.meta.domain.*;
@@ -70,7 +69,7 @@ class RecruitServiceTest {
             .ssafyMember(true)
             .certificationState(AuthenticationStatus.CERTIFIED)
             .major(true)
-            .majorType(MajorType.builder().build())
+            .majorTrack(new MetaData(MajorTrack.JAVA))
             .campus(new MetaData(Campus.SEOUL))
             .build();
 
@@ -81,7 +80,7 @@ class RecruitServiceTest {
             .ssafyMember(true)
             .certificationState(AuthenticationStatus.CERTIFIED)
             .major(true)
-            .majorType(MajorType.builder().build())
+            .majorTrack(new MetaData(MajorTrack.JAVA))
             .campus(new MetaData(Campus.SEOUL))
             .build();
 
@@ -164,6 +163,10 @@ class RecruitServiceTest {
         Arrays.stream(Skill.values()).forEach(skill -> Mockito.lenient()
                 .when(metaDataConsumer.getMetaData(MetaDataType.SKILL.name(), skill.getName()))
                 .thenReturn(new MetaData(skill)));
+
+        Arrays.stream(MajorTrack.values()).forEach(majorTrack -> Mockito.lenient()
+                .when(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TRACK.name(), majorTrack.getName()))
+                .thenReturn(new MetaData(majorTrack)));
     }
 
     @DisplayName("토큰과 정상 리크루트글 등록 요청이 넘어온 경우 리크루트 글 등록 성공")

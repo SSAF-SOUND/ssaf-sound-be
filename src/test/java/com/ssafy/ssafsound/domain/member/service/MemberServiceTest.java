@@ -357,33 +357,38 @@ class MemberServiceTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"1, ONE_SEMESTER, 선물", "2, TWO_SEMESTER, 하나", "3,THREE_SEMESTER, 출발", "4, FOUR_SEMESTER, 충전", "5, FIVE_SEMESTER, 극복",
-                "6, SIX_SEMESTER, hot식스", "7, SEVEN_SEMESTER, 럭키", "8, EIGHT_SEMESTER, 칠전팔", "9, NINE_SEMESTER, great", "10, TEN_SEMESTER, 텐션"})
+    @CsvSource({"Java, 1, ONE_SEMESTER, 선물", "Java, 2, TWO_SEMESTER, 하나", "Java, 3, THREE_SEMESTER, 출발", "Java, 4, FOUR_SEMESTER, 충전", "Java, 5, FIVE_SEMESTER, 극복",
+            "Java, 6, SIX_SEMESTER, hot식스", "Java, 7, SEVEN_SEMESTER, 럭키", "Java, 8, EIGHT_SEMESTER, 칠전팔", "Java, 9, NINE_SEMESTER, great", "Java, 10, TEN_SEMESTER, 텐션"})
     @DisplayName("싸피생 인증 요청 시, 정답에 대한 요청을 했으면 성공한다.")
-    void Given_PostCertificationInfo_When_Submit_SSAFY_Certification_Answer_Then_Success(int semester, String name, String answer) {
+    void Given_PostCertificationInfo_When_Submit_SSAFY_Certification_Answer_Then_Success(String majorTrack, int semester, String name, String answer) {
         PostCertificationInfoReqDto postCertificationInfoReqDto = PostCertificationInfoReqDto.builder()
+                .majorTrack(majorTrack)
                 .semester(semester)
                 .answer(answer)
                 .build();
 
+        given(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TRACK.name(), majorTrack)).willReturn(new MetaData(MajorTrack.JAVA));
         given(metaDataConsumer.getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer())).willReturn(new MetaData(Certification.valueOf(name)));
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
 
         PostCertificationInfoResDto postCertificationInfoResDto = memberService.certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto);
 
         assertThat(member.getCertificationState()).isEqualTo(AuthenticationStatus.CERTIFIED);
+        assertThat(member.getMajorTrack().getName()).isEqualTo(majorTrack);
         assertTrue(postCertificationInfoResDto.isPossible());
 
+        verify(metaDataConsumer).getMetaData(MetaDataType.MAJOR_TRACK.name(), majorTrack);
         verify(metaDataConsumer).getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer());
         verify(memberRepository).findById(authenticatedMember.getMemberId());
     }
 
     @ParameterizedTest
-    @CsvSource({"2, ONE_SEMESTER, 선물", "1, TWO_SEMESTER, 하나", "4,THREE_SEMESTER, 출발", "5, FOUR_SEMESTER, 충전", "6, FIVE_SEMESTER, 극복",
-            "3, SIX_SEMESTER, hot식스", "4, SEVEN_SEMESTER, 럭키", "5, EIGHT_SEMESTER, 칠전팔", "3, NINE_SEMESTER, great", "5, TEN_SEMESTER, 텐션"})
+    @CsvSource({"Java, 2, ONE_SEMESTER, 선물", "Java, 3, TWO_SEMESTER, 하나", "Java, 1, THREE_SEMESTER, 출발", "Java, 5, FOUR_SEMESTER, 충전", "Java, 6, FIVE_SEMESTER, 극복",
+            "Java, 2, SIX_SEMESTER, hot식스", "Java, 4, SEVEN_SEMESTER, 럭키", "Java, 7, EIGHT_SEMESTER, 칠전팔", "Java, 8, NINE_SEMESTER, great", "Java, 9, TEN_SEMESTER, 텐션"})
     @DisplayName("싸피생 인증 요청 시, 정답에 대한 요청이 존재하지만 기수 정보가 다를 때 예외가 발생한다.")
-    void Given_PostCertificationInfo_When_Submit_SSAFY_Certification_Answer_Then_ThrowMemberException(int semester, String name, String answer) {
+    void Given_PostCertificationInfo_When_Submit_SSAFY_Certification_Answer_Then_ThrowMemberException(String majorTrack, int semester, String name, String answer) {
         PostCertificationInfoReqDto postCertificationInfoReqDto = PostCertificationInfoReqDto.builder()
+                .majorTrack(majorTrack)
                 .semester(semester)
                 .answer(answer)
                 .build();

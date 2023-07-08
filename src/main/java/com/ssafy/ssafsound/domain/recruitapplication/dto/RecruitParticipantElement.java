@@ -20,12 +20,7 @@ public class RecruitParticipantElement {
         Member member = recruitApplication.getMember();
         SSAFYInfo ssafyInfo = null;
         if(member.getSsafyMember()) {
-            ssafyInfo = SSAFYInfo.builder()
-                    .semester(member.getSemester())
-                    .campus(member.getCampus().getName())
-                    .certificationState(member.getCertificationState().name())
-                    .majorType(member.getMajorType().getName())
-                    .build();
+            ssafyInfo = SSAFYInfo.from(member);
         }
 
         return RecruitParticipantElement.builder()
@@ -41,12 +36,7 @@ public class RecruitParticipantElement {
         Member register = recruit.getMember();
         SSAFYInfo ssafyInfo = null;
         if(register.getSsafyMember()) {
-            ssafyInfo = SSAFYInfo.builder()
-                    .semester(register.getSemester())
-                    .campus(register.getCampus().getName())
-                    .certificationState(register.getCertificationState().name())
-                    .majorType(register.getMajorType().getName())
-                    .build();
+            ssafyInfo = SSAFYInfo.from(register);
         }
 
         return RecruitParticipantElement.builder()

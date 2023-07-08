@@ -8,11 +8,14 @@ import lombok.Getter;
 @Getter
 public class PostCertificationInfoResDto {
     
-    boolean possible;
+    private boolean possible;
 
-    public static PostNicknameResDto of(boolean possible) {
-        return PostNicknameResDto.builder()
+    private Integer certificationInquiryCount;
+
+    public static PostCertificationInfoResDto of(boolean possible, Integer certificationInquiryCount) {
+        return PostCertificationInfoResDto.builder()
                 .possible(possible)
+                .certificationInquiryCount(certificationInquiryCount)
                 .build();
     }
 }
