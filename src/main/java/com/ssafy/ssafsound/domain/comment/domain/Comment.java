@@ -57,4 +57,9 @@ public class Comment extends BaseTimeEntity {
     public void setCommentGroup(Comment commentGroup) {
         this.commentGroup = commentGroup;
     }
+
+    public void updateComment(String content, Boolean anonymous) {
+        this.content = content;
+        this.anonymous = anonymous;
+    }
 }
