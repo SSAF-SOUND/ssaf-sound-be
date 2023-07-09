@@ -16,6 +16,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             "JOIN FETCH c.member " +
             "JOIN FETCH c.commentGroup g " +
             "WHERE c.post.id = :postId " +
-            "GROUP BY g.id ")
+            "ORDER BY g.id ")
     List<Comment> findAllPostIdWithDetailsFetchOrderByCommentGroupId(@Param("postId") Long postId, Pageable pageable);
 }
