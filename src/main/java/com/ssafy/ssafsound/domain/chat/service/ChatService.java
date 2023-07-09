@@ -1,13 +1,11 @@
 package com.ssafy.ssafsound.domain.chat.service;
 
-import com.ssafy.ssafsound.domain.chat.dto.GetChatExistReqDto;
-import com.ssafy.ssafsound.domain.chat.dto.GetChatExistResDto;
-import com.ssafy.ssafsound.domain.chat.dto.GetChatRoomsReqDto;
-import com.ssafy.ssafsound.domain.chat.dto.GetChatRoomsResDto;
+import com.ssafy.ssafsound.domain.chat.dto.*;
 import com.ssafy.ssafsound.domain.chat.repository.ChatRepository;
 import com.ssafy.ssafsound.domain.chat.repository.ChatRoomRepository;
 import com.ssafy.ssafsound.domain.chat.repository.TalkerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +23,10 @@ public class ChatService {
     }
 
     public GetChatExistResDto getChatExistence(Long memberId, GetChatExistReqDto getChatExistReqDto) {
+        return null;
+    }
+
+    public PatchChatResDto readChatRoom(Long memberId, PatchChatReqDto patchChatReqDto, Pageable pageable) {
         return null;
     }
 }

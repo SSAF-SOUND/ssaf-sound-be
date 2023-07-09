@@ -2,14 +2,13 @@ package com.ssafy.ssafsound.domain.chat.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.validator.Authentication;
-import com.ssafy.ssafsound.domain.chat.dto.GetChatExistReqDto;
-import com.ssafy.ssafsound.domain.chat.dto.GetChatExistResDto;
-import com.ssafy.ssafsound.domain.chat.dto.GetChatRoomsReqDto;
-import com.ssafy.ssafsound.domain.chat.dto.GetChatRoomsResDto;
+import com.ssafy.ssafsound.domain.chat.dto.*;
 import com.ssafy.ssafsound.domain.chat.service.ChatService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,6 +36,15 @@ public class ChatController {
 
         return EnvelopeResponse.<GetChatExistResDto>builder()
                 .data(chatService.getChatExistence(member.getMemberId(), getChatExistReqDto))
+                .build();
+    }
+
+    @PatchMapping("/{chatRoomId}")
+    public EnvelopeResponse<PatchChatResDto> patchChat(@Authentication AuthenticatedMember member,
+                                                       PatchChatReqDto patchChatReqDto, Pageable pageable) {
+
+        return EnvelopeResponse.<PatchChatResDto>builder()
+                .data(chatService.readChatRoom(member.getMemberId(), patchChatReqDto, pageable))
                 .build();
     }
 
