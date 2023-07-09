@@ -30,7 +30,7 @@ public class EnumMetaDataConsumer implements MetaDataConsumer {
 
     @Override
     public MetaData getMetaData(String type, String name) {
-        MetaData metaData = this.getMetaMap(type.toLowerCase()).get(name);
+        MetaData metaData = this.getMetaMap(type.toLowerCase()).get(name.toLowerCase());
 
         if(metaData == null) {
             throw new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND);
@@ -55,7 +55,7 @@ public class EnumMetaDataConsumer implements MetaDataConsumer {
     private Map<String, MetaData> fromEnum(Class<? extends MetaDataProvider> enumClass) {
         Map<String, MetaData> metaDataMap = new HashMap<>();
         Arrays.stream(enumClass.getEnumConstants())
-                .map(MetaData::new).forEach(metaData -> metaDataMap.put(metaData.getName(), metaData));
+                .map(MetaData::new).forEach(metaData -> metaDataMap.put(metaData.getName().toLowerCase(), metaData));
         return Collections.unmodifiableMap(metaDataMap);
     }
 }
