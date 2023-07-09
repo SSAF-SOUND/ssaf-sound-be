@@ -1,17 +1,24 @@
 package com.ssafy.ssafsound.domain.meta.domain;
 
 public enum Skill implements MetaDataProvider {
-    SPRING(1, "Spring Boot"),
+    SPRING(1, "Spring"),
     REACT(2, "React"),
     IOS(3, "IOS"),
     VUE(4, "Vue"),
-    JAVA(5, "Vue"),
-    JAVA_SCRIPT(6, "Vue"),
-    TYPE_SCRIPT(7, "Vue"),
-    NODE_JS(8, "Node"),
-    NEXT_JS(9, "Node"),
-    NUXT_JS(10, "Node"),
-    ETC(11, "기타");
+    JAVA(5, "Java"),
+    JAVA_SCRIPT(6, "JavaScript"),
+    TYPE_SCRIPT(7, "TypeScript"),
+    NODE_JS(8, "Nodejs"),
+    NEXT_JS(9, "Nextjs"),
+    NUXT_JS(10, "Nuxtjs"),
+    XD(11, "XD"),
+    SWIFT(12, "Swift"),
+    FIGMA(13, "Figma"),
+    SVELTE(14, "Svelte"),
+    ANDROID(15, "Android"),
+    FLUTTER(16, "Flutter"),
+    DJANGO(17, "Django"),
+    ETC(18, "기타");
 
     private int id;
     private String name;
