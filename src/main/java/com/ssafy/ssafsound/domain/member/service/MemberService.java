@@ -12,9 +12,12 @@ import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -25,6 +28,10 @@ public class MemberService {
     private final MemberRoleRepository memberRoleRepository;
     private final MemberTokenRepository memberTokenRepository;
     private final MetaDataConsumer metaDataConsumer;
+    @Value("${spring.constant.certification.CERTIFICATION_INQUIRY_TIME}")
+    private Integer MAX_CERTIFICATION_INQUIRY_COUNT;
+    @Value("${spring.constant.certification.MAX_MINUTES}")
+    private Integer MAX_MINUTES;
 
     @Transactional
     public AuthenticatedMember createMemberByOauthIdentifier(PostMemberReqDto postMemberReqDto) {
@@ -80,15 +87,20 @@ public class MemberService {
 
     @Transactional
     public PostCertificationInfoResDto certifySSAFYInformation(AuthenticatedMember authenticatedMember, PostCertificationInfoReqDto postCertificationInfoReqDto) {
-        if (isValidCertification(postCertificationInfoReqDto)) {
-            Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
-            member.setCertificationState(AuthenticationStatus.CERTIFIED);
+        Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-            return PostCertificationInfoResDto.builder()
-                    .possible(true)
-                    .build();
+        long minutes = getMinutesByDifferenceCertificationTryTime(member.getCertificationTryTime());
+        if(minutes > MAX_MINUTES) member.initializeCertificationInquiryCount();
+        if(member.getCertificationInquiryCount() >= MAX_CERTIFICATION_INQUIRY_COUNT) throw new MemberException(MemberErrorInfo.MEMBER_CERTIFICATED_FAIL);
+
+        if (isValidCertification(postCertificationInfoReqDto)) {
+            member.setCertificationState(AuthenticationStatus.CERTIFIED);
+            member.setMajorTrack(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TRACK.name(), postCertificationInfoReqDto.getMajorTrack()));
+            return PostCertificationInfoResDto.of(true, member.getCertificationInquiryCount());
+        } else {
+            member.increaseCertificationInquiryCount();
+            return PostCertificationInfoResDto.of(false, member.getCertificationInquiryCount());
         }
-        throw new MemberException(MemberErrorInfo.MEMBER_CERTIFICATED_FAIL);
     }
 
     @Transactional(readOnly = true)
@@ -123,6 +135,13 @@ public class MemberService {
         } else {
             return PostNicknameResDto.of(true);
         }
+    }
+
+    private long getMinutesByDifferenceCertificationTryTime(LocalDateTime certificationTryTime) {
+        if(certificationTryTime == null) return 0;
+        LocalDateTime currentTime = LocalDateTime.now();
+        Duration duration = Duration.between(certificationTryTime, currentTime);
+        return duration.toMinutes();
     }
     
     private boolean isValidCertification(PostCertificationInfoReqDto postCertificationInfoReqDto) {

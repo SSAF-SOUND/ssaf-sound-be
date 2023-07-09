@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.domain.comment.service;
 
 import com.ssafy.ssafsound.domain.comment.domain.Comment;
 import com.ssafy.ssafsound.domain.comment.domain.CommentNumber;
+import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReplyReqDto;
 import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReqDto;
 import com.ssafy.ssafsound.domain.comment.dto.PutCommentUpdateReqDto;
 import com.ssafy.ssafsound.domain.comment.exception.CommentErrorInfo;
@@ -72,6 +73,43 @@ public class CommentService {
         }
 
         comment.updateComment(putCommentUpdateReqDto.getContent(), putCommentUpdateReqDto.getAnonymous());
+        return comment.getId();
+    }
+  
+    @Transactional
+    public Long writeCommentReply(Long postId, Long commentId, Long memberId, PostCommentWriteReplyReqDto postCommentWriteReplyReqDto) {
+        if (!postRepository.existsById(postId)) {
+            throw new PostException(PostErrorInfo.NOT_FOUND_POST);
+        }
+
+        if (!commentRepository.existsById(commentId)) {
+            throw new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT);
+        }
+
+        // 1. 익명 번호 부여
+        CommentNumber commentNumber = commentNumberRepository.
+                findByPostIdAndMemberId(postId, memberId).orElse(null);
+
+        if (commentNumber == null) {
+            commentNumber = CommentNumber.builder()
+                    .post(postRepository.getReferenceById(postId))
+                    .member(memberRepository.getReferenceById(memberId))
+                    .number(commentNumberRepository.countAllByPostId(postId) + 1)
+                    .build();
+            commentNumberRepository.save(commentNumber);
+        }
+
+        // 2. 대댓글 저장
+        Comment comment = Comment.builder()
+                .post(postRepository.getReferenceById(postId))
+                .member(memberRepository.getReferenceById(memberId))
+                .content(postCommentWriteReplyReqDto.getContent())
+                .anonymous(postCommentWriteReplyReqDto.getAnonymous())
+                .commentNumber(commentNumber)
+                .commentGroup(commentRepository.getReferenceById(commentId))
+                .build();
+
+        comment = commentRepository.save(comment);
         return comment.getId();
     }
 

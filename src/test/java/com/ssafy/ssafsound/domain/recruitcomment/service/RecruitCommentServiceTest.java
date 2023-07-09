@@ -2,9 +2,11 @@ package com.ssafy.ssafsound.domain.recruitcomment.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
-import com.ssafy.ssafsound.domain.member.domain.MajorType;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
+import com.ssafy.ssafsound.domain.meta.domain.MajorTrack;
+import com.ssafy.ssafsound.domain.meta.domain.MetaData;
+import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
@@ -50,6 +52,9 @@ class RecruitCommentServiceTest {
     @Mock
     MemberRepository memberRepository;
 
+    @Mock
+    MetaDataConsumer metaDataConsumer;
+
     @InjectMocks
     RecruitCommentService recruitCommentService;
 
@@ -59,7 +64,7 @@ class RecruitCommentServiceTest {
             .ssafyMember(true)
             .certificationState(AuthenticationStatus.CERTIFIED)
             .major(true)
-            .majorType(new MajorType(1, "Test"))
+            .majorTrack(new MetaData(MajorTrack.JAVA))
             .build();
 
     Member member2 = Member.builder()
@@ -68,7 +73,7 @@ class RecruitCommentServiceTest {
             .ssafyMember(true)
             .certificationState(AuthenticationStatus.CERTIFIED)
             .major(true)
-            .majorType(new MajorType(1, "Test"))
+            .majorTrack(new MetaData(MajorTrack.JAVA))
             .build();
 
     Recruit recruit = Recruit.builder()

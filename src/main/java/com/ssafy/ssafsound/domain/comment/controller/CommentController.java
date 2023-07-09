@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.domain.comment.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
+import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReplyReqDto;
 import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReqDto;
 import com.ssafy.ssafsound.domain.comment.dto.PutCommentUpdateReqDto;
 import com.ssafy.ssafsound.domain.comment.service.CommentService;
@@ -35,6 +36,16 @@ public class CommentController {
 
         return EnvelopeResponse.<Long>builder()
                 .data(commentService.updateComment(commentId, authenticatedMember.getMemberId(), putCommentUpdateReqDto))
+                .build();
+    }
+  
+    @PostMapping("/reply")
+    public EnvelopeResponse<Long> writeCommentReply(@RequestParam Long commentId, @RequestParam Long postId,
+                                                    @Valid @RequestBody PostCommentWriteReplyReqDto postCommentWriteReplyReqDto,
+                                                    AuthenticatedMember authenticatedMember) {
+
+        return EnvelopeResponse.<Long>builder()
+                .data(commentService.writeCommentReply(postId, commentId, authenticatedMember.getMemberId(), postCommentWriteReplyReqDto))
                 .build();
     }
 }
