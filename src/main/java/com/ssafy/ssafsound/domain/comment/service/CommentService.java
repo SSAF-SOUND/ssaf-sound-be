@@ -10,7 +10,6 @@ import com.ssafy.ssafsound.domain.comment.repository.CommentRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
 import com.ssafy.ssafsound.domain.post.exception.PostException;
-import com.ssafy.ssafsound.domain.post.repository.PostLikeRepository;
 import com.ssafy.ssafsound.domain.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +27,6 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final CommentNumberRepository commentNumberRepository;
     private final PostRepository postRepository;
-    private final PostLikeRepository postLikeRepository;
     private final MemberRepository memberRepository;
 
 
@@ -75,12 +73,7 @@ public class CommentService {
         }
 
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-
-        Boolean liked = null;
-        Boolean mine = null;
-
         List<Comment> comments = commentRepository.findAllPostIdWithDetailsFetchOrderByCommentGroupId(postId, pageRequest);
-        return GetCommentResDto.from(comments, liked, mine);
+        return GetCommentResDto.from(comments, member);
     }
-
 }

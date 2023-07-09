@@ -1,6 +1,8 @@
 package com.ssafy.ssafsound.domain.comment.dto;
 
+import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.comment.domain.Comment;
+import com.ssafy.ssafsound.domain.comment.domain.CommentLike;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -19,7 +21,7 @@ public class GetCommentElement {
     private Boolean liked;
     private Boolean mine;
 
-    public static GetCommentElement from(Comment comment, Boolean liked, Boolean mine) {
+    public static GetCommentElement from(Comment comment, AuthenticatedMember member) {
         Boolean anonymous = comment.getAnonymous();
 
         return GetCommentElement.builder()
@@ -30,8 +32,26 @@ public class GetCommentElement {
                 .nickname(anonymous ? "익명 " + comment.getCommentNumber().getNumber() : comment.getMember().getNickname())
                 .anonymous(anonymous)
                 .modified(comment.getModifiedAt() != null)
-                .liked(liked)
-                .mine(mine)
+                .liked(isLiked(comment, member))
+                .mine(isMine(comment, member))
                 .build();
+    }
+
+    private static Boolean isLiked(Comment comment, AuthenticatedMember member) {
+        if (member == null)
+            return false;
+
+        for (CommentLike like : comment.getLikes()) {
+            if (like.getMember().getId().equals(member.getMemberId()))
+                return true;
+        }
+        return false;
+    }
+
+    private static Boolean isMine(Comment comment, AuthenticatedMember member) {
+        if (member == null)
+            return false;
+
+        return comment.getMember().getId().equals(member.getMemberId());
     }
 }
