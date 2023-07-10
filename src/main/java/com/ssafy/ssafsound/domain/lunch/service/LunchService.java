@@ -54,12 +54,13 @@ public class LunchService {
         }
 
         // 투표한 점심 메뉴 찾기
-        Lunch polledLunch = lunchPollRepository.findByMember_IdAndPolledAt(memberId, LocalDate.now()).getLunch();
+        LunchPoll lunchPoll = lunchPollRepository.findByMember_IdAndPolledAt(memberId, LocalDate.now());
+        Long polledAt = lunchPoll != null ? (long) lunches.indexOf(lunchPoll.getLunch()) : -1L;
 
         // 인증 유저 응답
         return GetLunchListResDto.of(lunches.stream()
                 .map(lunch -> GetLunchListElementResDto.of(lunch, (long)lunch.getLunchPolls().size()))
-                .collect(Collectors.toList()), (long) lunches.indexOf(polledLunch));
+                .collect(Collectors.toList()), polledAt);
     }
 
     @Transactional(readOnly = true)

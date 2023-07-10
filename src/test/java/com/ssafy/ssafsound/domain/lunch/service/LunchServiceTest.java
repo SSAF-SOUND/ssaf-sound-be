@@ -12,7 +12,6 @@ import com.ssafy.ssafsound.domain.meta.domain.Campus;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -149,6 +148,39 @@ class LunchServiceTest {
     @Test
     @DisplayName("캠퍼스와 익일 날짜로 점심 메뉴 목록을 조회한다.")
     void Given_TomorrowDateAndCampus_When_FindLunches_Then_Succeed() {
+
+        // given
+        GetLunchListReqDto parameter = GetLunchListReqDto.builder()
+                .campus("서울")
+                .date(tomorrow)
+                .build();
+
+        given(metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), parameter.getCampus())).willReturn(campus1);
+
+        for (int i = 0; i < 5; i++) {
+            given(lunchPollRepository.findByMember_IdAndPolledAt())
+                    .willReturn()
+        }
+        given(lunchRepository.findAllByCampusAndDate(campus1, tomorrow))
+                .willReturn(Optional.of(lunches.stream()
+                        .filter(
+                                (lunch -> lunch.getCampus().getName().equals(campus1.getName()) && lunch.getCreatedAt() == tomorrow)
+                        ).collect(Collectors.toList()))
+                );
+
+        // when
+        GetLunchListResDto result = lunchService.findLunches(1L, parameter);
+
+        // then
+        assertAll(
+                () -> assertThat(result.getMenus().get(0))
+                        .usingRecursiveComparison()
+                        .isEqualTo(GetLunchListElementResDto.of(lunches.get(1),0L)),
+                () -> assertThat(result.getMenus().get(1))
+                        .usingRecursiveComparison()
+                        .isEqualTo(GetLunchListElementResDto.of(lunches.get(3),0L)),
+                ()-> assertThat(result.getPolledAt()).isEqualTo(-1)
+        );
 
     }
 
