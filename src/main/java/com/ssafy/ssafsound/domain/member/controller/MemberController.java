@@ -50,6 +50,7 @@ public class MemberController {
     @PutMapping("/profile")
     public EnvelopeResponse registerMemberProfile(@Authentication AuthenticatedMember authenticatedMember,
                                                  @Valid @RequestBody PutMemberProfileReqDto putMemberProfileReqDto) {
+        memberService.registerMemberProfile(authenticatedMember, putMemberProfileReqDto);
         return EnvelopeResponse.builder()
                 .build();
     }

@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.domain.member.domain;
 
 import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberInfoReqDto;
+import com.ssafy.ssafsound.domain.member.dto.PutMemberProfileReqDto;
 import com.ssafy.ssafsound.domain.meta.converter.CampusConverter;
 import com.ssafy.ssafsound.domain.meta.converter.MajorTrackConverter;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
@@ -14,6 +15,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity(name="member")
 @Table(indexes = @Index(name = "nickname_index", columnList = "nickname", unique = true))
@@ -73,6 +76,10 @@ public class Member extends BaseTimeEntity {
     @Column
     private Boolean publicPortfolio;
 
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @Builder.Default
+    private Set<MemberLink> memberLinks = new HashSet<>();
+
     @PreUpdate
     public void preUpdateCertificationTryTime() {
         this.certificationTryTime = LocalDateTime.now();
@@ -92,6 +99,17 @@ public class Member extends BaseTimeEntity {
         this.semester = postMemberInfoReqDto.getSemester();
         this.major = postMemberInfoReqDto.getIsMajor();
         this.campus = consumer.getMetaData(MetaDataType.CAMPUS.name(), postMemberInfoReqDto.getCampus());
+    }
+
+    public void setMemberLinks(PutMemberProfileReqDto putMemberProfileReqDto) {
+        putMemberProfileReqDto.getMemberLinks().forEach(memberLinks -> {
+            MemberLink memberLink = MemberLink.builder()
+                    .member(this)
+                    .linkName(memberLinks.getLinkName())
+                    .path(memberLinks.getPath())
+                    .build();
+            this.memberLinks.add(memberLink);
+        });
     }
 
     public void setMajorTrack(MetaData majorTrack) {

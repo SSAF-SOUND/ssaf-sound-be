@@ -25,9 +25,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberRoleRepository memberRoleRepository;
     private final MemberTokenRepository memberTokenRepository;
-    private final MemberLinkRepository memberLinkRepository;
     private final MemberProfileRepository memberProfileRepository;
-    private final MemberSkillRepository memberSkillRepository;
     private final MetaDataConsumer metaDataConsumer;
     @Value("${spring.constant.certification.CERTIFICATION_INQUIRY_TIME}")
     private Integer MAX_CERTIFICATION_INQUIRY_COUNT;
@@ -106,8 +104,9 @@ public class MemberService {
 
     @Transactional
     public void registerMemberProfile(AuthenticatedMember authenticatedMember, PutMemberProfileReqDto putMemberProfileReqDto) {
-        Member member = memberRepository.getReferenceById(authenticatedMember.getMemberId());
+        Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
+        member.setMemberLinks(putMemberProfileReqDto);
     }
 
     @Transactional(readOnly = true)
