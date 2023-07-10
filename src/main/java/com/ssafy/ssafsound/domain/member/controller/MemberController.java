@@ -41,9 +41,16 @@ public class MemberController {
 
     @PostMapping("/ssafy-certification")
     public EnvelopeResponse<PostCertificationInfoResDto> certifySSAFYInformation(@Authentication AuthenticatedMember authenticatedMember,
-                                                       @Valid @RequestBody PostCertificationInfoReqDto postCertificationInfoReqDto) {
+                                                                                @Valid @RequestBody PostCertificationInfoReqDto postCertificationInfoReqDto) {
         return EnvelopeResponse.<PostCertificationInfoResDto>builder()
                 .data(memberService.certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto))
+                .build();
+    }
+
+    @PutMapping("/profile")
+    public EnvelopeResponse registerMemberProfile(@Authentication AuthenticatedMember authenticatedMember,
+                                                 @Valid @RequestBody PutMemberProfileReqDto putMemberProfileReqDto) {
+        return EnvelopeResponse.builder()
                 .build();
     }
 }
