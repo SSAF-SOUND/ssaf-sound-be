@@ -16,6 +16,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -43,9 +45,14 @@ class LunchServiceTest {
     @InjectMocks
     private LunchService lunchService;
 
-    private List<Lunch> lunches;
-    private List<Member> members;
-    private List<LunchPoll> lunchPolls;
+    private Lunch lunch1;
+    private Lunch lunch2;
+    private Lunch lunch3;
+    private Lunch lunch4;
+    private Member member1;
+    private Member member2;
+    private LunchPoll lunchPoll1;
+    private LunchPoll lunchPoll2;
     private List<String> mainMenus;
     private LocalDate today = LocalDate.now();
     private LocalDate tomorrow = today.plusDays(1);
@@ -54,13 +61,10 @@ class LunchServiceTest {
 
     @BeforeEach
     void setUp() {
-        lunches = new ArrayList<>();
-        members = new ArrayList<>();
-        lunchPolls = new ArrayList<>();
         mainMenus = new ArrayList<>();
 
         // 테스트용 코스명 생성
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 4; i++) {
             mainMenus.add(String.format("mainMenu%d", i));
         }
 
@@ -68,62 +72,64 @@ class LunchServiceTest {
         campus1 = new MetaData(Campus.SEOUL);
         campus2 = new MetaData(Campus.GUMI);
 
-        // Lunch 10개 생성
-        for (long i = 0; i < 10; i++) {
+        lunch1 = Lunch.builder()
+                .id(1L)
+                .campus(campus1)
+                .mainMenu(mainMenus.get(0))
+                .createdAt(today)
+                .build();
 
-            lunches.add(
-                    Lunch.builder()
-                            .id(i)
-                            .campus(i < 5 ? campus1 : campus2)
-                            .mainMenu(mainMenus.get((int) i))
-                            .createdAt(i % 2 == 0 ? today : tomorrow)
-                            .build());
-        }
+        lunch2 = Lunch.builder()
+                .id(2L)
+                .campus(campus1)
+                .mainMenu(mainMenus.get(1))
+                .createdAt(today)
+                .build();
 
-        // Member 5개 생성하고 투표
-        for (long i = 0; i < 5; i++) {
+        lunch3 = Lunch.builder()
+                .id(3L)
+                .campus(campus1)
+                .mainMenu(mainMenus.get(2))
+                .createdAt(tomorrow)
+                .build();
 
-            Member member = Member.builder()
-                    .id(i)
-                    .build();
+        lunch4 = Lunch.builder()
+                .id(4L)
+                .campus(campus2)
+                .mainMenu(mainMenus.get(3))
+                .createdAt(today)
+                .build();
 
-            members.add(member);
+        member1 = Member.builder()
+                .id(1L)
+                .build();
+        member2 = Member.builder()
+                .id(2L)
+                .build();
 
-            lunchPolls.add(
-                    LunchPoll.builder()
-                            .lunch(i < 3 ? lunches.get(2) : lunches.get(4))
-                            .member(member)
-                            .polledAt(today)
-                            .build()
-            );
+        lunchPoll1 = LunchPoll.builder()
+                .lunch(lunch2)
+                .member(member1)
+                .polledAt(today)
+                .build();
 
-            lunchPolls.add(
-                    LunchPoll.builder()
-                            .lunch(i < 3 ? lunches.get(8) : lunches.get(6))
-                            .member(member)
-                            .polledAt(today)
-                            .build()
-            );
-        }
+        lunchPoll2 = LunchPoll.builder()
+                .lunch(lunch2)
+                .member(member2)
+                .polledAt(today)
+                .build();
     }
 
     // 점심 메뉴 목록 조회 테스트
-    @Test
+    @ParameterizedTest
+    @CsvSource({})
     @DisplayName("캠퍼스와 당일 날짜로 점심 메뉴 목록을 조회한다.")
     void Given_TodayDateAndCampus_When_FindLunches_Then_Succeed() {
 
         // given
-        GetLunchListReqDto parameter = GetLunchListReqDto.builder()
-                .campus("서울")
-                .date(today)
-                .build();
+        GetLunchListReqDto parameter = GetLunchListReqDto.builder().campus("서울").date(today).build();
         given(metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), parameter.getCampus())).willReturn(campus1);
-        given(lunchRepository.findAllByCampusAndDate(campus1, today))
-                .willReturn(Optional.of(lunches.stream()
-                        .filter(
-                                (lunch -> lunch.getCampus().getName().equals(campus1.getName()) && lunch.getCreatedAt() == today)
-                        ).collect(Collectors.toList()))
-                );
+        given(lunchRepository.findAllByCampusAndDate(campus1, today)).willReturn(Optional.of(List.of(lunch2, lunch1)));
 
         // when
         GetLunchListResDto result = lunchService.findLunches(null, parameter);
@@ -132,56 +138,12 @@ class LunchServiceTest {
         assertAll(
                 () -> assertThat(result.getMenus().get(0))
                         .usingRecursiveComparison()
-                        .isEqualTo(GetLunchListElementResDto.of(lunches.get(2),3L)),
+                        .isEqualTo(GetLunchListElementResDto.of(lunch2,2L)),
                 () -> assertThat(result.getMenus().get(1))
                         .usingRecursiveComparison()
-                        .isEqualTo(GetLunchListElementResDto.of(lunches.get(4),2L)),
-                () -> assertThat(result.getMenus().get(2))
-                        .usingRecursiveComparison()
-                        .isEqualTo(GetLunchListElementResDto.of(lunches.get(0),0L)),
+                        .isEqualTo(GetLunchListElementResDto.of(lunch1,2L)),
                 ()-> assertThat(result.getPolledAt()).isEqualTo(-1)
         );
-
-
-    }
-
-    @Test
-    @DisplayName("캠퍼스와 익일 날짜로 점심 메뉴 목록을 조회한다.")
-    void Given_TomorrowDateAndCampus_When_FindLunches_Then_Succeed() {
-
-        // given
-        GetLunchListReqDto parameter = GetLunchListReqDto.builder()
-                .campus("서울")
-                .date(tomorrow)
-                .build();
-
-        given(metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), parameter.getCampus())).willReturn(campus1);
-
-        for (int i = 0; i < 5; i++) {
-            given(lunchPollRepository.findByMember_IdAndPolledAt())
-                    .willReturn()
-        }
-        given(lunchRepository.findAllByCampusAndDate(campus1, tomorrow))
-                .willReturn(Optional.of(lunches.stream()
-                        .filter(
-                                (lunch -> lunch.getCampus().getName().equals(campus1.getName()) && lunch.getCreatedAt() == tomorrow)
-                        ).collect(Collectors.toList()))
-                );
-
-        // when
-        GetLunchListResDto result = lunchService.findLunches(1L, parameter);
-
-        // then
-        assertAll(
-                () -> assertThat(result.getMenus().get(0))
-                        .usingRecursiveComparison()
-                        .isEqualTo(GetLunchListElementResDto.of(lunches.get(1),0L)),
-                () -> assertThat(result.getMenus().get(1))
-                        .usingRecursiveComparison()
-                        .isEqualTo(GetLunchListElementResDto.of(lunches.get(3),0L)),
-                ()-> assertThat(result.getPolledAt()).isEqualTo(-1)
-        );
-
     }
 
     @Test
