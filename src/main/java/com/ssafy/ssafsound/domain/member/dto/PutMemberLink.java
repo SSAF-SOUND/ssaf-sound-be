@@ -11,11 +11,11 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class PostMemberLink {
+public class PutMemberLink {
 
     @NotBlank
-    private String name;
+    private String linkName;
 
     @NotBlank
-    private String url;
+    private String path;
 }

@@ -21,5 +21,5 @@ public class PutMemberProfileReqDto {
     @CheckSkills
     private List<String> skills;
 
-    private List<PostMemberLink> postMemberLinks;
+    private List<PutMemberLink> memberLinks;
 }
