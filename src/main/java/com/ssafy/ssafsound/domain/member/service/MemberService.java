@@ -5,9 +5,7 @@ import com.ssafy.ssafsound.domain.member.domain.*;
 import com.ssafy.ssafsound.domain.member.dto.*;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
-import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
-import com.ssafy.ssafsound.domain.member.repository.MemberRoleRepository;
-import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
+import com.ssafy.ssafsound.domain.member.repository.*;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
@@ -27,6 +25,9 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberRoleRepository memberRoleRepository;
     private final MemberTokenRepository memberTokenRepository;
+    private final MemberLinkRepository memberLinkRepository;
+    private final MemberProfileRepository memberProfileRepository;
+    private final MemberSkillRepository memberSkillRepository;
     private final MetaDataConsumer metaDataConsumer;
     @Value("${spring.constant.certification.CERTIFICATION_INQUIRY_TIME}")
     private Integer MAX_CERTIFICATION_INQUIRY_COUNT;
@@ -101,6 +102,12 @@ public class MemberService {
             member.increaseCertificationInquiryCount();
             return PostCertificationInfoResDto.of(false, member.getCertificationInquiryCount());
         }
+    }
+
+    @Transactional
+    public void registerMemberProfile(AuthenticatedMember authenticatedMember, PutMemberProfileReqDto putMemberProfileReqDto) {
+        Member member = memberRepository.getReferenceById(authenticatedMember.getMemberId());
+
     }
 
     @Transactional(readOnly = true)
