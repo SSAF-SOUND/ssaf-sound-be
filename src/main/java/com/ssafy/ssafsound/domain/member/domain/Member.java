@@ -80,6 +80,10 @@ public class Member extends BaseTimeEntity {
     @Builder.Default
     private Set<MemberLink> memberLinks = new HashSet<>();
 
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @Builder.Default
+    private Set<MemberSkill> memberSkills = new HashSet<>();
+
     @PreUpdate
     public void preUpdateCertificationTryTime() {
         this.certificationTryTime = LocalDateTime.now();
@@ -109,6 +113,16 @@ public class Member extends BaseTimeEntity {
                     .path(memberLinks.getPath())
                     .build();
             this.memberLinks.add(memberLink);
+        });
+    }
+
+    public void setMemberSkills(PutMemberProfileReqDto putMemberProfileReqDto, MetaDataConsumer consumer) {
+        putMemberProfileReqDto.getSkills().forEach(memberSkills -> {
+            MemberSkill memberSkill = MemberSkill.builder()
+                    .member(this)
+                    .skill(consumer.getMetaData(MetaDataType.SKILL.name(), memberSkills))
+                    .build();
+            this.memberSkills.add(memberSkill);
         });
     }
 

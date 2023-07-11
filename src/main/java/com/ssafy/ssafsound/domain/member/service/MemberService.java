@@ -107,6 +107,7 @@ public class MemberService {
         Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
         member.setMemberLinks(putMemberProfileReqDto);
+        member.setMemberSkills(putMemberProfileReqDto, metaDataConsumer);
     }
 
     @Transactional(readOnly = true)
