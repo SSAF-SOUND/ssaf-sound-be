@@ -75,7 +75,7 @@ public class CommentService {
         comment.updateComment(putCommentUpdateReqDto.getContent(), putCommentUpdateReqDto.getAnonymous());
         return comment.getId();
     }
-  
+
     @Transactional
     public Long writeCommentReply(Long postId, Long commentId, Long memberId, PostCommentWriteReplyReqDto postCommentWriteReplyReqDto) {
         if (!postRepository.existsById(postId)) {
@@ -110,6 +110,19 @@ public class CommentService {
                 .build();
 
         comment = commentRepository.save(comment);
+        return comment.getId();
+    }
+
+    @Transactional
+    public Long deleteComment(Long commentId, Long memberId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT));
+
+        if (!comment.getMember().getId().equals(memberId)) {
+            throw new CommentException(CommentErrorInfo.UNAUTHORIZED_DELETE_COMMENT);
+        }
+
+        commentRepository.delete(comment);
         return comment.getId();
     }
 
