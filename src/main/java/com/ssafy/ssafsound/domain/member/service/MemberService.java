@@ -105,9 +105,14 @@ public class MemberService {
     @Transactional
     public void registerMemberProfile(AuthenticatedMember authenticatedMember, PutMemberProfileReqDto putMemberProfileReqDto) {
         Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+        MemberProfile memberProfile = MemberProfile.builder()
+                .member(member)
+                .introduce(putMemberProfileReqDto.getIntroduceMyself())
+                .build();
 
         member.setMemberLinks(putMemberProfileReqDto);
         member.setMemberSkills(putMemberProfileReqDto, metaDataConsumer);
+        memberProfileRepository.save(memberProfile);
     }
 
     @Transactional(readOnly = true)
