@@ -23,13 +23,9 @@ public class CommentController {
     public EnvelopeResponse<Long> writeComment(@RequestParam Long postId,
                                                @Valid @RequestBody PostCommentWriteReqDto postCommentWriteReqDto,
                                                AuthenticatedMember authenticatedMember) {
-        AuthenticatedMember member = AuthenticatedMember.builder()
-                .memberId(1L)
-                .memberRole("user")
-                .build();
 
         return EnvelopeResponse.<Long>builder()
-                .data(commentService.writeComment(postId, member.getMemberId(), postCommentWriteReqDto))
+                .data(commentService.writeComment(postId, authenticatedMember.getMemberId(), postCommentWriteReqDto))
                 .build();
     }
 
@@ -42,7 +38,7 @@ public class CommentController {
                 .data(commentService.updateComment(commentId, authenticatedMember.getMemberId(), putCommentUpdateReqDto))
                 .build();
     }
-  
+
     @PostMapping("/reply")
     public EnvelopeResponse<Long> writeCommentReply(@RequestParam Long commentId, @RequestParam Long postId,
                                                     @Valid @RequestBody PostCommentWriteReplyReqDto postCommentWriteReplyReqDto,
@@ -54,14 +50,10 @@ public class CommentController {
     }
 
     @DeleteMapping("/{commentId}")
-    public EnvelopeResponse<Long> deleteComment(@PathVariable Long commentId, AuthenticatedMember authenticatedMember){
-        AuthenticatedMember member = AuthenticatedMember.builder()
-                .memberId(1L)
-                .memberRole("user")
-                .build();
+    public EnvelopeResponse<Long> deleteComment(@PathVariable Long commentId, AuthenticatedMember authenticatedMember) {
 
         return EnvelopeResponse.<Long>builder()
-                .data(commentService.deleteComment(commentId, member.getMemberId()))
+                .data(commentService.deleteComment(commentId, authenticatedMember.getMemberId()))
                 .build();
     }
 }
