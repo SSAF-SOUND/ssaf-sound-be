@@ -105,11 +105,8 @@ public class MemberService {
     @Transactional
     public void registerMemberProfile(AuthenticatedMember authenticatedMember, PutMemberProfileReqDto putMemberProfileReqDto) {
         Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
-        MemberProfile memberProfile = MemberProfile.builder()
-                .member(member)
-                .introduce(putMemberProfileReqDto.getIntroduceMyself())
-                .build();
 
+        MemberProfile memberProfile = setMemberProfileByPutMemberProfileReqDto(member, putMemberProfileReqDto);
         member.setMemberLinks(putMemberProfileReqDto);
         member.setMemberSkills(putMemberProfileReqDto, metaDataConsumer);
         memberProfileRepository.save(memberProfile);
@@ -154,6 +151,20 @@ public class MemberService {
         LocalDateTime currentTime = LocalDateTime.now();
         Duration duration = Duration.between(certificationTryTime, currentTime);
         return duration.toMinutes();
+    }
+
+    @Transactional(readOnly = true)
+    public MemberProfile setMemberProfileByPutMemberProfileReqDto(Member member, PutMemberProfileReqDto putMemberProfileReqDto) {
+        Optional<MemberProfile> memberProfileOptional = memberProfileRepository.findMemberProfileByMember(member);
+        MemberProfile memberProfile;
+
+        if (memberProfileOptional.isPresent()) {
+            memberProfile = memberProfileOptional.get();
+            memberProfile.changeIntroduceMyself(putMemberProfileReqDto);
+        } else {
+            memberProfile = putMemberProfileReqDto.toMemberProfile(member);
+        }
+        return memberProfile;
     }
     
     private boolean isValidCertification(PostCertificationInfoReqDto postCertificationInfoReqDto) {

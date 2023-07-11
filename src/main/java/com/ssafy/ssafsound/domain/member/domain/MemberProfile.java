@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.member.domain;
 
+import com.ssafy.ssafsound.domain.member.dto.PutMemberProfileReqDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,4 +26,8 @@ public class MemberProfile {
     @MapsId
     @JoinColumn(name="member_id")
     private Member member;
+
+    public void changeIntroduceMyself(PutMemberProfileReqDto putMemberProfileReqDto) {
+        this.introduce = putMemberProfileReqDto.getIntroduceMyself();
+    }
 }

@@ -1,5 +1,7 @@
 package com.ssafy.ssafsound.domain.member.dto;
 
+import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.domain.MemberProfile;
 import com.ssafy.ssafsound.domain.meta.validator.CheckSkills;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,4 +24,11 @@ public class PutMemberProfileReqDto {
     private List<String> skills;
 
     private List<PutMemberLink> memberLinks;
+
+    public MemberProfile toMemberProfile(Member member) {
+        return MemberProfile.builder()
+                .member(member)
+                .introduce(this.getIntroduceMyself())
+                .build();
+    }
 }
