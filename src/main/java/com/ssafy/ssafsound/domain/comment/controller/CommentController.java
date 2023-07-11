@@ -23,9 +23,13 @@ public class CommentController {
     public EnvelopeResponse<Long> writeComment(@RequestParam Long postId,
                                                @Valid @RequestBody PostCommentWriteReqDto postCommentWriteReqDto,
                                                AuthenticatedMember authenticatedMember) {
+        AuthenticatedMember member = AuthenticatedMember.builder()
+                .memberId(1L)
+                .memberRole("user")
+                .build();
 
         return EnvelopeResponse.<Long>builder()
-                .data(commentService.writeComment(postId, authenticatedMember.getMemberId(), postCommentWriteReqDto))
+                .data(commentService.writeComment(postId, member.getMemberId(), postCommentWriteReqDto))
                 .build();
     }
 
@@ -46,6 +50,18 @@ public class CommentController {
 
         return EnvelopeResponse.<Long>builder()
                 .data(commentService.writeCommentReply(postId, commentId, authenticatedMember.getMemberId(), postCommentWriteReplyReqDto))
+                .build();
+    }
+
+    @DeleteMapping("/{commentId}")
+    public EnvelopeResponse<Long> deleteComment(@PathVariable Long commentId, AuthenticatedMember authenticatedMember){
+        AuthenticatedMember member = AuthenticatedMember.builder()
+                .memberId(1L)
+                .memberRole("user")
+                .build();
+
+        return EnvelopeResponse.<Long>builder()
+                .data(commentService.deleteComment(commentId, member.getMemberId()))
                 .build();
     }
 }
