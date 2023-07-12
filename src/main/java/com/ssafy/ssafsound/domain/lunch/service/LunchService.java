@@ -7,6 +7,10 @@ import com.ssafy.ssafsound.domain.lunch.exception.LunchErrorInfo;
 import com.ssafy.ssafsound.domain.lunch.exception.LunchException;
 import com.ssafy.ssafsound.domain.lunch.repository.LunchPollRepository;
 import com.ssafy.ssafsound.domain.lunch.repository.LunchRepository;
+import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
+import com.ssafy.ssafsound.domain.member.exception.MemberException;
+import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +29,8 @@ public class LunchService {
     private final LunchRepository lunchRepository;
 
     private final LunchPollRepository lunchPollRepository;
+
+    private final MemberRepository memberRepository;
 
     private final MetaDataConsumer metaDataConsumer;
 
@@ -59,7 +65,10 @@ public class LunchService {
         }
 
         // 투표한 점심 메뉴 찾기
-        LunchPoll lunchPoll = lunchPollRepository.findByMember_IdAndPolledAt(memberId, currentTime);
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        LunchPoll lunchPoll = lunchPollRepository.findByMemberAndPolledAt(member, currentTime);
         Long polledAt = lunchPoll != null ? (long) lunches.indexOf(lunchPoll.getLunch()) : -1L;
 
         // 인증 유저 응답
