@@ -26,6 +26,8 @@ public class MemberService {
     private final MemberRoleRepository memberRoleRepository;
     private final MemberTokenRepository memberTokenRepository;
     private final MemberProfileRepository memberProfileRepository;
+    private final MemberSkillRepository memberSkillRepository;
+    private final MemberLinkRepository memberLinkRepository;
     private final MetaDataConsumer metaDataConsumer;
     @Value("${spring.constant.certification.CERTIFICATION_INQUIRY_TIME}")
     private Integer MAX_CERTIFICATION_INQUIRY_COUNT;
@@ -106,10 +108,22 @@ public class MemberService {
     public void registerMemberProfile(AuthenticatedMember authenticatedMember, PutMemberProfileReqDto putMemberProfileReqDto) {
         Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-        MemberProfile memberProfile = setMemberProfileByPutMemberProfileReqDto(member, putMemberProfileReqDto);
+        MemberProfile memberProfile = getMemberProfileByPutMemberProfileReqDto(member, putMemberProfileReqDto);
+        if(memberProfile != null) memberProfileRepository.save(memberProfile);
+        deleteExistMemberLinksAllByMember(member);
+        deleteExistMemberSkillsAllByMember(member);
         member.setMemberLinks(putMemberProfileReqDto);
         member.setMemberSkills(putMemberProfileReqDto, metaDataConsumer);
-        memberProfileRepository.save(memberProfile);
+    }
+
+    @Transactional
+    public void deleteExistMemberLinksAllByMember(Member member) {
+        memberLinkRepository.deleteMemberLinksByMember(member);
+    }
+
+    @Transactional
+    public void deleteExistMemberSkillsAllByMember(Member member) {
+        memberSkillRepository.deleteMemberSkillsByMember(member);
     }
 
     @Transactional(readOnly = true)
@@ -154,10 +168,10 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public MemberProfile setMemberProfileByPutMemberProfileReqDto(Member member, PutMemberProfileReqDto putMemberProfileReqDto) {
+    public MemberProfile getMemberProfileByPutMemberProfileReqDto(Member member, PutMemberProfileReqDto putMemberProfileReqDto) {
         Optional<MemberProfile> memberProfileOptional = memberProfileRepository.findMemberProfileByMember(member);
         MemberProfile memberProfile;
-
+        if(putMemberProfileReqDto.getIntroduceMyself() == null) return null;
         if (memberProfileOptional.isPresent()) {
             memberProfile = memberProfileOptional.get();
             memberProfile.changeIntroduceMyself(putMemberProfileReqDto);
