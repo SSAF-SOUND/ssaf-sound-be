@@ -74,6 +74,6 @@ public class CommentService {
 
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         List<Comment> comments = commentRepository.findAllPostIdWithDetailsFetchOrderByCommentGroupId(postId, pageRequest);
-        return GetCommentResDto.from(comments, member);
+        return GetCommentResDto.of(comments, member);
     }
 }

@@ -21,7 +21,7 @@ public class GetCommentElement {
     private Boolean liked;
     private Boolean mine;
 
-    public static GetCommentElement from(Comment comment, AuthenticatedMember member) {
+    public static GetCommentElement of(Comment comment, AuthenticatedMember member) {
         Boolean anonymous = comment.getAnonymous();
 
         return GetCommentElement.builder()
