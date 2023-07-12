@@ -112,4 +112,12 @@ public class PostController {
                 .data(postService.searchPosts(getPostSearchReqDto.getBoardId(), getPostSearchReqDto.getKeyword(), pageable))
                 .build();
     }
+
+    @GetMapping("/hot/search")
+    public EnvelopeResponse<GetPostHotSearchResDto> searchHotPosts(@Valid GetPostHotSearchReqDto getPostHotSearchReqDto, Pageable pageable) {
+
+        return EnvelopeResponse.<GetPostHotSearchResDto>builder()
+                .data(postService.searchHotPosts(getPostHotSearchReqDto.getKeyword(), pageable))
+                .build();
+    }
 }
