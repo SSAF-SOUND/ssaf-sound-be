@@ -2,12 +2,14 @@ package com.ssafy.ssafsound.domain.comment.service;
 
 import com.ssafy.ssafsound.domain.comment.domain.Comment;
 import com.ssafy.ssafsound.domain.comment.domain.CommentNumber;
+import com.ssafy.ssafsound.domain.comment.domain.CommentReport;
 import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReplyReqDto;
 import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReqDto;
 import com.ssafy.ssafsound.domain.comment.dto.PutCommentUpdateReqDto;
 import com.ssafy.ssafsound.domain.comment.exception.CommentErrorInfo;
 import com.ssafy.ssafsound.domain.comment.exception.CommentException;
 import com.ssafy.ssafsound.domain.comment.repository.CommentNumberRepository;
+import com.ssafy.ssafsound.domain.comment.repository.CommentReportRepository;
 import com.ssafy.ssafsound.domain.comment.repository.CommentRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
@@ -24,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final CommentNumberRepository commentNumberRepository;
+    private final CommentReportRepository commentReportRepository;
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
 
@@ -75,7 +78,7 @@ public class CommentService {
         comment.updateComment(putCommentUpdateReqDto.getContent(), putCommentUpdateReqDto.getAnonymous());
         return comment.getId();
     }
-  
+
     @Transactional
     public Long writeCommentReply(Long postId, Long commentId, Long memberId, PostCommentWriteReplyReqDto postCommentWriteReplyReqDto) {
         if (!postRepository.existsById(postId)) {
@@ -111,6 +114,28 @@ public class CommentService {
 
         comment = commentRepository.save(comment);
         return comment.getId();
+    }
+
+    public Long reportComment(Long commentId, String content, Long memberId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT));
+
+        if (comment.getMember().getId().equals(memberId)) {
+            throw new CommentException(CommentErrorInfo.UNABLE_REPORT_MY_COMMENT);
+        }
+
+        if (commentReportRepository.existsByCommentIdAndMemberId(commentId, memberId)) {
+            throw new CommentException(CommentErrorInfo.DUPLICATE_REPORT);
+        }
+
+        CommentReport commentReport = CommentReport.builder()
+                .content(content)
+                .comment(commentRepository.getReferenceById(commentId))
+                .member(memberRepository.getReferenceById(memberId))
+                .build();
+
+        commentReportRepository.save(commentReport);
+        return commentReport.getId();
     }
 
 }
