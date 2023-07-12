@@ -24,8 +24,13 @@ public class CommentController {
                                                @Valid @RequestBody PostCommentWriteReqDto postCommentWriteReqDto,
                                                AuthenticatedMember authenticatedMember) {
 
+        AuthenticatedMember member = AuthenticatedMember.builder()
+                .memberId(1L)
+                .memberRole("user")
+                .build();
+
         return EnvelopeResponse.<Long>builder()
-                .data(commentService.writeComment(postId, authenticatedMember.getMemberId(), postCommentWriteReqDto))
+                .data(commentService.writeComment(postId, member.getMemberId(), postCommentWriteReqDto))
                 .build();
     }
 
@@ -38,7 +43,7 @@ public class CommentController {
                 .data(commentService.updateComment(commentId, authenticatedMember.getMemberId(), putCommentUpdateReqDto))
                 .build();
     }
-  
+
     @PostMapping("/reply")
     public EnvelopeResponse<Long> writeCommentReply(@RequestParam Long commentId, @RequestParam Long postId,
                                                     @Valid @RequestBody PostCommentWriteReplyReqDto postCommentWriteReplyReqDto,
@@ -46,6 +51,18 @@ public class CommentController {
 
         return EnvelopeResponse.<Long>builder()
                 .data(commentService.writeCommentReply(postId, commentId, authenticatedMember.getMemberId(), postCommentWriteReplyReqDto))
+                .build();
+    }
+
+    @PostMapping("/{commentId}/like")
+    public EnvelopeResponse<Long> likeComment(@PathVariable Long commentId, AuthenticatedMember authenticatedMember) {
+        AuthenticatedMember member = AuthenticatedMember.builder()
+                .memberId(1L)
+                .memberRole("user")
+                .build();
+
+        return EnvelopeResponse.<Long>builder()
+                .data(commentService.likeComment(commentId, member.getMemberId()))
                 .build();
     }
 }
