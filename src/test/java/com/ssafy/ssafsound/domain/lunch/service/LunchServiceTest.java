@@ -6,6 +6,7 @@ import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListElementResDto;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListReqDto;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListResDto;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchResDto;
+import com.ssafy.ssafsound.domain.lunch.exception.LunchErrorInfo;
 import com.ssafy.ssafsound.domain.lunch.exception.LunchException;
 import com.ssafy.ssafsound.domain.lunch.repository.LunchPollRepository;
 import com.ssafy.ssafsound.domain.lunch.repository.LunchRepository;
@@ -35,8 +36,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -162,6 +162,7 @@ class LunchServiceTest {
         // given
         given(clock.instant()).willReturn(Instant.parse(testLocalDateTime));
         given(clock.getZone()).willReturn(ZoneId.of("Asia/Seoul"));
+
         String inputCampus = "서울";
         LocalDate inputDate = today.minusDays(1);
         Long memberId = member1.getId();
@@ -173,7 +174,8 @@ class LunchServiceTest {
 
         // when
         // then
-        assertThrows(LunchException.class, () -> lunchService.findLunches(memberId, getLunchListReqDto));
+        LunchException exception = assertThrows(LunchException.class, () -> lunchService.findLunches(memberId, getLunchListReqDto));
+        assertEquals(LunchErrorInfo.INVALID_DATE, exception.getInfo());
 
         verify(clock).instant();
         verify(clock).getZone();
@@ -198,15 +200,19 @@ class LunchServiceTest {
     }
 
     @Test
-    @DisplayName("유효하지 않은 날짜의 점심 아이디의 점심 메뉴 상세 조회 요청 시 예외를 던진다.")
+    @DisplayName("유효하지 않은 점심 아이디의 점심 메뉴 상세 조회 요청 시 예외를 던진다.")
     void Given_InValidDateLunch_When_FindLunchDetail_Then_ThrowException(){
 
         // given
-        given(lunchRepository.findById(3L)).willReturn(Optional.empty());
         Long lunchId = 3L;
+
+        given(lunchRepository.findById(3L)).willReturn(Optional.empty());
 
         // when
         // then
-        assertThrows(LunchException.class, () -> lunchService.findLunchDetail(lunchId));
+        LunchException exception = assertThrows(LunchException.class, () -> lunchService.findLunchDetail(lunchId));
+        assertEquals(LunchErrorInfo.INVALID_LUNCH_ID, exception.getInfo());
+
+        verify(lunchRepository).findById(3L);
     }
 }
