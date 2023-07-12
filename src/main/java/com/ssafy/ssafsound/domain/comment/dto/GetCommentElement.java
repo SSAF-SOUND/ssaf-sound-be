@@ -29,12 +29,18 @@ public class GetCommentElement {
                 .parent(comment.getId().equals(comment.getCommentGroup().getId()))
                 .likeCount(comment.getLikes().size())
                 .createdAt(comment.getCreatedAt())
-                .nickname(anonymous ? "익명 " + comment.getCommentNumber().getNumber() : comment.getMember().getNickname())
+                .nickname(setNickName(comment, anonymous))
                 .anonymous(anonymous)
                 .modified(comment.getModifiedAt() != null)
                 .liked(isLiked(comment, member))
                 .mine(isMine(comment, member))
                 .build();
+    }
+
+    private static String setNickName(Comment comment, Boolean anonymous) {
+        if (anonymous)
+            return "익명 " + comment.getCommentNumber().getNumber();
+        return comment.getMember().getNickname();
     }
 
     private static Boolean isLiked(Comment comment, AuthenticatedMember member) {
