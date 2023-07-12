@@ -31,4 +31,12 @@ public interface HotPostRepository extends JpaRepository<HotPost, Long> {
     List<HotPost> findWithDetailsFetch(Pageable pageable);
 
     Optional<HotPost> findByPostId(Long postId);
+
+    @Query("SELECT h FROM hot_post h " +
+            "JOIN FETCH h.post p " +
+            "JOIN FETCH p.board b " +
+            "JOIN FETCH p.member " +
+            "WHERE (REPLACE(p.title, ' ', '') LIKE CONCAT('%', :keyword, '%') " +
+            "OR REPLACE(p.content, ' ', '') LIKE CONCAT('%', :keyword, '%')) ")
+    List<HotPost> findWithDetailsFetchByKeyword(@Param("keyword") String keyword, Pageable pageable);
 }
