@@ -107,23 +107,30 @@ public class MemberService {
     @Transactional
     public void registerMemberProfile(AuthenticatedMember authenticatedMember, PutMemberProfileReqDto putMemberProfileReqDto) {
         Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+        setMemberProfileByMember(member, putMemberProfileReqDto);
+        deleteExistMemberLinksAllByMemberAndSaveNewRequest(member, putMemberProfileReqDto);
+        deleteExistMemberSkillsAllByMemberAndSaveNewRequest(member, putMemberProfileReqDto);
+    }
 
-        MemberProfile memberProfile = getMemberProfileByPutMemberProfileReqDto(member, putMemberProfileReqDto);
-        if(memberProfile != null) memberProfileRepository.save(memberProfile);
-        deleteExistMemberLinksAllByMember(member);
-        deleteExistMemberSkillsAllByMember(member);
+    public void deleteExistMemberLinksAllByMemberAndSaveNewRequest(Member member, PutMemberProfileReqDto putMemberProfileReqDto) {
+        memberLinkRepository.deleteMemberLinksByMember(member);
         member.setMemberLinks(putMemberProfileReqDto);
+    }
+
+    public void deleteExistMemberSkillsAllByMemberAndSaveNewRequest(Member member, PutMemberProfileReqDto putMemberProfileReqDto) {
+        memberSkillRepository.deleteMemberSkillsByMember(member);
         member.setMemberSkills(putMemberProfileReqDto, metaDataConsumer);
     }
-
-    @Transactional
-    public void deleteExistMemberLinksAllByMember(Member member) {
-        memberLinkRepository.deleteMemberLinksByMember(member);
-    }
-
-    @Transactional
-    public void deleteExistMemberSkillsAllByMember(Member member) {
-        memberSkillRepository.deleteMemberSkillsByMember(member);
+    public void setMemberProfileByMember(Member member, PutMemberProfileReqDto putMemberProfileReqDto) {
+        Optional<MemberProfile> memberProfileOptional = memberProfileRepository.findMemberProfileByMember(member);
+        MemberProfile memberProfile;
+        if (memberProfileOptional.isPresent() && putMemberProfileReqDto.getIntroduceMyself() != null) {
+            memberProfile = memberProfileOptional.get();
+            memberProfile.changeIntroduceMyself(putMemberProfileReqDto);
+        } else if(putMemberProfileReqDto.getIntroduceMyself() != null){
+            memberProfile = putMemberProfileReqDto.toMemberProfile(member);
+            memberProfileRepository.save(memberProfile);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -165,20 +172,6 @@ public class MemberService {
         LocalDateTime currentTime = LocalDateTime.now();
         Duration duration = Duration.between(certificationTryTime, currentTime);
         return duration.toMinutes();
-    }
-
-    @Transactional(readOnly = true)
-    public MemberProfile getMemberProfileByPutMemberProfileReqDto(Member member, PutMemberProfileReqDto putMemberProfileReqDto) {
-        Optional<MemberProfile> memberProfileOptional = memberProfileRepository.findMemberProfileByMember(member);
-        MemberProfile memberProfile;
-        if(putMemberProfileReqDto.getIntroduceMyself() == null) return null;
-        if (memberProfileOptional.isPresent()) {
-            memberProfile = memberProfileOptional.get();
-            memberProfile.changeIntroduceMyself(putMemberProfileReqDto);
-        } else {
-            memberProfile = putMemberProfileReqDto.toMemberProfile(member);
-        }
-        return memberProfile;
     }
     
     private boolean isValidCertification(PostCertificationInfoReqDto postCertificationInfoReqDto) {
