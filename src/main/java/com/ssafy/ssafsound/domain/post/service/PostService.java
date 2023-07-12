@@ -295,4 +295,11 @@ public class PostService {
 
         return GetPostSearchResDto.from(posts);
     }
+
+    @Transactional(readOnly = true)
+    public GetPostHotSearchResDto searchHotPosts(String keyword, Pageable pageable){
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        List<HotPost> hotposts = hotPostRepository.findWithDetailsFetchByKeyword(keyword.replaceAll(" ", ""), pageRequest);
+        return GetPostHotSearchResDto.from(hotposts);
+    }
 }
