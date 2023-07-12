@@ -10,6 +10,7 @@ import com.ssafy.ssafsound.domain.lunch.exception.LunchException;
 import com.ssafy.ssafsound.domain.lunch.repository.LunchPollRepository;
 import com.ssafy.ssafsound.domain.lunch.repository.LunchRepository;
 import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.meta.domain.Campus;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
@@ -46,6 +47,10 @@ class LunchServiceTest {
     private LunchRepository lunchRepository;
     @Mock
     private LunchPollRepository lunchPollRepository;
+
+    @Mock
+    private MemberRepository memberRepository;
+
     @Mock
     private MetaDataConsumer metaDataConsumer;
     @Mock
@@ -96,6 +101,14 @@ class LunchServiceTest {
                 .member(member1)
                 .polledAt(today)
                 .build();
+
+        lenient().when(memberRepository.findById(1L)).thenReturn(Optional.of(member1));
+        lenient().when(memberRepository.findById(2L)).thenReturn(Optional.of(member2));
+
+        lenient().when(lunchPollRepository.findByMemberAndPolledAt(member1, today))
+                .thenReturn(lunchPoll);
+        lenient().when(lunchPollRepository.findByMemberAndPolledAt(member2, today))
+                .thenReturn(null);
     }
 
     // 점심 메뉴 목록 조회 테스트
@@ -114,11 +127,6 @@ class LunchServiceTest {
 
         given(lunchRepository.findAllByCampusAndDate(metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), inputCampus), inputDate))
                 .willReturn(Optional.of(Arrays.asList(lunch2, lunch1)));
-
-        if (memberId != null) {
-            lenient().when(lunchPollRepository.findByMember_IdAndPolledAt(memberId, inputDate))
-                    .thenReturn(memberId.equals(1L) ? lunchPoll : null);
-        }
 
         GetLunchListReqDto getLunchListReqDto = GetLunchListReqDto.builder()
                 .campus(inputCampus)
@@ -150,6 +158,7 @@ class LunchServiceTest {
     @Test
     @DisplayName("유효하지 않은 날짜로 점심 메뉴 목록 조회시 예외를 던진다.")
     void Given_InvalidDate_When_FindingAllLunches_Then_ThrowException() {
+
         // given
         given(clock.instant()).willReturn(Instant.parse(testLocalDateTime));
         given(clock.getZone()).willReturn(ZoneId.of("Asia/Seoul"));
