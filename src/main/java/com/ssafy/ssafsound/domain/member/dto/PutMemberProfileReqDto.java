@@ -7,8 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Builder
@@ -16,8 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 public class PutMemberProfileReqDto {
-
-    @NotBlank
     private String introduceMyself;
 
     @CheckSkills
