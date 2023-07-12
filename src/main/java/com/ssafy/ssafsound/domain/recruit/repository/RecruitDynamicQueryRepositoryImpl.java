@@ -59,7 +59,7 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
         }
 
         List<String> recruitTypes = dto.getRecruitTypes();
-        if(skills!=null && !recruitTypes.isEmpty()) {
+        if(recruitTypes!=null && !recruitTypes.isEmpty()) {
             List<MetaData> limitTypes = recruitTypes.stream().map(
                    type->metaDataConsumer.getMetaData(MetaDataType.RECRUIT_TYPE.name(), type)
             ).collect(Collectors.toList());
