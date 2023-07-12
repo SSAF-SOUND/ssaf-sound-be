@@ -41,8 +41,9 @@ public class GetCommentElement {
         if (member == null)
             return false;
 
+        Long memberId = member.getMemberId();
         for (CommentLike like : comment.getLikes()) {
-            if (like.getMember().getId().equals(member.getMemberId()))
+            if (like.getMember().getId().equals(memberId))
                 return true;
         }
         return false;
