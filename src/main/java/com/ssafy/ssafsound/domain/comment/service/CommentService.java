@@ -1,12 +1,14 @@
 package com.ssafy.ssafsound.domain.comment.service;
 
 import com.ssafy.ssafsound.domain.comment.domain.Comment;
+import com.ssafy.ssafsound.domain.comment.domain.CommentLike;
 import com.ssafy.ssafsound.domain.comment.domain.CommentNumber;
 import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReplyReqDto;
 import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReqDto;
 import com.ssafy.ssafsound.domain.comment.dto.PutCommentUpdateReqDto;
 import com.ssafy.ssafsound.domain.comment.exception.CommentErrorInfo;
 import com.ssafy.ssafsound.domain.comment.exception.CommentException;
+import com.ssafy.ssafsound.domain.comment.repository.CommentLikeRepository;
 import com.ssafy.ssafsound.domain.comment.repository.CommentNumberRepository;
 import com.ssafy.ssafsound.domain.comment.repository.CommentRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
@@ -24,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final CommentNumberRepository commentNumberRepository;
+    private final CommentLikeRepository commentLikeRepository;
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
 
@@ -75,7 +78,7 @@ public class CommentService {
         comment.updateComment(putCommentUpdateReqDto.getContent(), putCommentUpdateReqDto.getAnonymous());
         return comment.getId();
     }
-  
+
     @Transactional
     public Long writeCommentReply(Long postId, Long commentId, Long memberId, PostCommentWriteReplyReqDto postCommentWriteReplyReqDto) {
         if (!postRepository.existsById(postId)) {
@@ -113,4 +116,36 @@ public class CommentService {
         return comment.getId();
     }
 
+    @Transactional
+    public Long likeComment(Long commentId, Long memberId) {
+        if (!commentRepository.existsById(commentId)) {
+            throw new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT);
+        }
+
+        CommentLike commentLike = commentLikeRepository.findByCommentIdAndMemberId(commentId, memberId)
+                .orElse(null);
+
+        return toggleLike(commentId, memberId, commentLike);
+    }
+
+    private Long toggleLike(Long commentId, Long memberId, CommentLike commentLike) {
+        if (commentLike != null) {
+            return deleteCommentLike(commentLike);
+        }
+        return saveCommentLike(commentId, memberId);
+    }
+
+    private Long saveCommentLike(Long commentId, Long memberId) {
+        CommentLike commentLike = CommentLike.builder()
+                .member(memberRepository.getReferenceById(memberId))
+                .comment(commentRepository.getReferenceById(commentId))
+                .build();
+        commentLikeRepository.save(commentLike);
+        return commentLike.getId();
+    }
+
+    private Long deleteCommentLike(CommentLike commentLike) {
+        commentLikeRepository.delete(commentLike);
+        return commentLike.getId();
+    }
 }

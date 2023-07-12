@@ -38,7 +38,7 @@ public class CommentController {
                 .data(commentService.updateComment(commentId, authenticatedMember.getMemberId(), putCommentUpdateReqDto))
                 .build();
     }
-  
+
     @PostMapping("/reply")
     public EnvelopeResponse<Long> writeCommentReply(@RequestParam Long commentId, @RequestParam Long postId,
                                                     @Valid @RequestBody PostCommentWriteReplyReqDto postCommentWriteReplyReqDto,
@@ -46,6 +46,14 @@ public class CommentController {
 
         return EnvelopeResponse.<Long>builder()
                 .data(commentService.writeCommentReply(postId, commentId, authenticatedMember.getMemberId(), postCommentWriteReplyReqDto))
+                .build();
+    }
+
+    @PostMapping("/{commentId}/like")
+    public EnvelopeResponse<Long> likeComment(@PathVariable Long commentId, AuthenticatedMember authenticatedMember) {
+
+        return EnvelopeResponse.<Long>builder()
+                .data(commentService.likeComment(commentId, authenticatedMember.getMemberId()))
                 .build();
     }
 }
