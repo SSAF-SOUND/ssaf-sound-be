@@ -51,4 +51,10 @@ public class LunchPoll {
         this.lunch = lunch;
         lunch.getLunchPolls().add(this);
     }
+
+    public void deleteLunchPoll() {
+        if (this.lunch != null) {
+            this.lunch.getLunchPolls().remove(this);
+        }
+    }
 }
