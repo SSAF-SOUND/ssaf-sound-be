@@ -60,7 +60,7 @@ public class GetRecruitDetailResDto {
                 .nickName(register.getNickname())
                 .recruitStart(recruit.getStartDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .recruitEnd(recruit.getEndDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                .finishedRecruit(recruit.isFinishedRecruit())
+                .finishedRecruit(recruit.getFinishedRecruit())
                 .skills(skills)
                 .limits(limits)
                 .view(recruit.getView())
