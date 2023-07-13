@@ -124,28 +124,35 @@ public class CommentService {
 
         CommentLike commentLike = commentLikeRepository.findByCommentIdAndMemberId(commentId, memberId)
                 .orElse(null);
+        toggleLike(commentId, memberId, commentLike);
 
-        return toggleLike(commentId, memberId, commentLike);
+        return 1L;
     }
 
     private Long toggleLike(Long commentId, Long memberId, CommentLike commentLike) {
         if (commentLike != null) {
-            return deleteCommentLike(commentLike);
+            deleteCommentLike(commentLike);
         }
-        return saveCommentLike(commentId, memberId);
+
+        if (commentLike == null) {
+            saveCommentLike(commentId, memberId);
+        }
+        return getCommentLikeCount(commentId);
     }
 
-    private Long saveCommentLike(Long commentId, Long memberId) {
+    private void saveCommentLike(Long commentId, Long memberId) {
         CommentLike commentLike = CommentLike.builder()
                 .member(memberRepository.getReferenceById(memberId))
                 .comment(commentRepository.getReferenceById(commentId))
                 .build();
         commentLikeRepository.save(commentLike);
-        return commentLike.getId();
     }
 
-    private Long deleteCommentLike(CommentLike commentLike) {
+    private void deleteCommentLike(CommentLike commentLike) {
         commentLikeRepository.delete(commentLike);
-        return commentLike.getId();
+    }
+
+    private Long getCommentLikeCount(Long commentId) {
+        return commentLikeRepository.countById(commentId);
     }
 }
