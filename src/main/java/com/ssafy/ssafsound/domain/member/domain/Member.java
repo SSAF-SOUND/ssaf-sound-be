@@ -2,7 +2,7 @@ package com.ssafy.ssafsound.domain.member.domain;
 
 import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberInfoReqDto;
-import com.ssafy.ssafsound.domain.member.dto.PutMemberProfileReqDto;
+import com.ssafy.ssafsound.domain.member.dto.PutMemberLink;
 import com.ssafy.ssafsound.domain.meta.converter.CampusConverter;
 import com.ssafy.ssafsound.domain.meta.converter.MajorTrackConverter;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity(name="member")
@@ -105,24 +106,22 @@ public class Member extends BaseTimeEntity {
         this.campus = consumer.getMetaData(MetaDataType.CAMPUS.name(), postMemberInfoReqDto.getCampus());
     }
 
-    public void setMemberLinks(PutMemberProfileReqDto putMemberProfileReqDto) {
-        putMemberProfileReqDto.getMemberLinks().forEach(memberLinks -> {
-            MemberLink memberLink = MemberLink.builder()
+    public void setMemberLinks(List<PutMemberLink> memberLinks) {
+        memberLinks.forEach(memberLink -> {
+            this.memberLinks.add(MemberLink.builder()
                     .member(this)
-                    .linkName(memberLinks.getLinkName())
-                    .path(memberLinks.getPath())
-                    .build();
-            this.memberLinks.add(memberLink);
+                    .linkName(memberLink.getLinkName())
+                    .path(memberLink.getPath())
+                    .build());
         });
     }
 
-    public void setMemberSkills(PutMemberProfileReqDto putMemberProfileReqDto, MetaDataConsumer consumer) {
-        putMemberProfileReqDto.getSkills().forEach(memberSkills -> {
-            MemberSkill memberSkill = MemberSkill.builder()
+    public void setMemberSkills(List<String> memberSkills, MetaDataConsumer consumer) {
+        memberSkills.forEach(memberSkill -> {
+            this.memberSkills.add(MemberSkill.builder()
                     .member(this)
-                    .skill(consumer.getMetaData(MetaDataType.SKILL.name(), memberSkills))
-                    .build();
-            this.memberSkills.add(memberSkill);
+                    .skill(consumer.getMetaData(MetaDataType.SKILL.name(), memberSkill))
+                    .build());
         });
     }
 

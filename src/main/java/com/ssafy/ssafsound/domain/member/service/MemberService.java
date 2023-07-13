@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -107,29 +108,26 @@ public class MemberService {
     @Transactional
     public void registerMemberProfile(AuthenticatedMember authenticatedMember, PutMemberProfileReqDto putMemberProfileReqDto) {
         Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
-        setMemberProfileByMember(member, putMemberProfileReqDto);
-        deleteExistMemberLinksAllByMemberAndSaveNewRequest(member, putMemberProfileReqDto);
-        deleteExistMemberSkillsAllByMemberAndSaveNewRequest(member, putMemberProfileReqDto);
+        setMemberProfileIntroduceByMember(member, putMemberProfileReqDto);
+        deleteExistMemberLinksAllByMemberAndSaveNewRequest(member, putMemberProfileReqDto.getMemberLinks());
+        deleteExistMemberSkillsAllByMemberAndSaveNewRequest(member, putMemberProfileReqDto.getSkills());
     }
 
-    public void deleteExistMemberLinksAllByMemberAndSaveNewRequest(Member member, PutMemberProfileReqDto putMemberProfileReqDto) {
+    public void deleteExistMemberLinksAllByMemberAndSaveNewRequest(Member member, List<PutMemberLink> memberLinks) {
         memberLinkRepository.deleteMemberLinksByMember(member);
-        member.setMemberLinks(putMemberProfileReqDto);
+        member.setMemberLinks(memberLinks);
     }
 
-    public void deleteExistMemberSkillsAllByMemberAndSaveNewRequest(Member member, PutMemberProfileReqDto putMemberProfileReqDto) {
+    public void deleteExistMemberSkillsAllByMemberAndSaveNewRequest(Member member, List<String> memberSkills) {
         memberSkillRepository.deleteMemberSkillsByMember(member);
-        member.setMemberSkills(putMemberProfileReqDto, metaDataConsumer);
+        member.setMemberSkills(memberSkills, metaDataConsumer);
     }
-    public void setMemberProfileByMember(Member member, PutMemberProfileReqDto putMemberProfileReqDto) {
-        Optional<MemberProfile> memberProfileOptional = memberProfileRepository.findMemberProfileByMember(member);
-        MemberProfile memberProfile;
-        if (memberProfileOptional.isPresent() && putMemberProfileReqDto.getIntroduceMyself() != null) {
-            memberProfile = memberProfileOptional.get();
-            memberProfile.changeIntroduceMyself(putMemberProfileReqDto);
-        } else if(putMemberProfileReqDto.getIntroduceMyself() != null){
-            memberProfile = putMemberProfileReqDto.toMemberProfile(member);
-            memberProfileRepository.save(memberProfile);
+    public void setMemberProfileIntroduceByMember(Member member, PutMemberProfileReqDto putMemberProfileReqDto) {
+        if (putMemberProfileReqDto.getIntroduceMyself() != null) {
+            memberProfileRepository.findMemberProfileByMember(member).ifPresentOrElse(
+                    memberProfile -> memberProfile.changeIntroduceMyself(putMemberProfileReqDto.getIntroduceMyself()),
+                    () -> memberProfileRepository.save(putMemberProfileReqDto.toMemberProfile(member))
+            );
         }
     }
 
