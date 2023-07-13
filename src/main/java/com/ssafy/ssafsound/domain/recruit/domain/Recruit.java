@@ -116,4 +116,8 @@ public class Recruit extends BaseTimeEntity {
     public void delete() {
         this.deletedRecruit = true;
     }
+
+    public void expired() {
+        this.finishedRecruit = true;
+    }
 }
