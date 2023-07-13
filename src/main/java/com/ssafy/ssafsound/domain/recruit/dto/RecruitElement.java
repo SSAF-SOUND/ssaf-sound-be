@@ -50,7 +50,7 @@ public class RecruitElement {
         return RecruitElement.builder()
                 .recruitId(recruit.getId())
                 .title(recruit.getTitle())
-                .finishedRecruit(recruit.isFinishedRecruit())
+                .finishedRecruit(recruit.getFinishedRecruit())
                 .recruitEnd(recruit.getEndDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .content(content)
                 .participants(recruitParticipants)

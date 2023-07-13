@@ -100,6 +100,17 @@ public class RecruitService {
         return recruitsResDto;
     }
 
+    @Transactional
+    public void expiredRecruit(Long recruitId, Long memberId) {
+        Recruit recruit = recruitRepository.findByIdUsingFetchJoinRegister(recruitId)
+                .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+
+        if(!recruit.getMember().getId().equals(memberId)) {
+            throw new RecruitException(RecruitErrorInfo.INVALID_CHANGE_MEMBER_OPERATION);
+        }
+        recruit.expired();
+    }
+
     private void addRecruitParticipants(GetRecruitsResDto recruitsResDto) {
         // Recruit Id, Recruit Type 두 depth로 이루어진 Map으로 리크루트별 참여자 목록을 가공한다.
         Map<Long, Map<String, RecruitParticipant>> participantsMap = recruitsResDto.getRecruitParticipantMapByRecruitIdAndRecruitType();

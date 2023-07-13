@@ -50,7 +50,12 @@ public class Recruit extends BaseTimeEntity {
     private LocalDateTime endDateTime;
 
     @Column
-    private Boolean deletedRecruit;
+    @Builder.Default
+    private Boolean deletedRecruit = false;
+
+    @Column
+    @Builder.Default
+    private Boolean finishedRecruit = false;
 
     @Convert(converter = RecruitTypeConverter.class)
     private MetaData registerRecruitType;
@@ -98,15 +103,6 @@ public class Recruit extends BaseTimeEntity {
         this.limitations = limitations;
     }
 
-    public boolean isFinishedRecruit() {
-        boolean isExpirationDate = LocalDateTime.now().isAfter(this.getEndDateTime());
-
-        long notFullRecruitTypeCnt = this.getLimitations().stream().filter(recruitLimitation ->
-                recruitLimitation.getCurrentNumber() < recruitLimitation.getLimitation()
-        ).count();
-        return isExpirationDate || (notFullRecruitTypeCnt == 0);
-    }
-
     public void update(PatchRecruitReqDto patchRecruitReqDto) {
         this.endDateTime = patchRecruitReqDto.getRecruitEnd().atTime(LocalTime.MAX);
         this.title = patchRecruitReqDto.getTitle();
@@ -119,5 +115,9 @@ public class Recruit extends BaseTimeEntity {
 
     public void delete() {
         this.deletedRecruit = true;
+    }
+
+    public void expired() {
+        this.finishedRecruit = true;
     }
 }
