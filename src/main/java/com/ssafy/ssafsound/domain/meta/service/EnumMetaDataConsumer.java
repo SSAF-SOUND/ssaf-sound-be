@@ -18,6 +18,8 @@ public class EnumMetaDataConsumer implements MetaDataConsumer {
         this.putMetaData(MetaDataType.CAMPUS.name(), Campus.class);
         this.putMetaData(MetaDataType.RECRUIT_TYPE.name(), RecruitType.class);
         this.putMetaData(MetaDataType.UPLOAD_DIRECTORY.name(), UploadDirectory.class);
+        this.putMetaData(MetaDataType.CERTIFICATION.name(), Certification.class);
+        this.putMetaData(MetaDataType.MAJOR_TRACK.name(), MajorTrack.class);
     }
 
     @Override
@@ -28,7 +30,7 @@ public class EnumMetaDataConsumer implements MetaDataConsumer {
 
     @Override
     public MetaData getMetaData(String type, String name) {
-        MetaData metaData = this.getMetaMap(type.toLowerCase()).get(name);
+        MetaData metaData = this.getMetaMap(type.toLowerCase()).get(name.toLowerCase());
 
         if(metaData == null) {
             throw new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND);
@@ -53,7 +55,7 @@ public class EnumMetaDataConsumer implements MetaDataConsumer {
     private Map<String, MetaData> fromEnum(Class<? extends MetaDataProvider> enumClass) {
         Map<String, MetaData> metaDataMap = new HashMap<>();
         Arrays.stream(enumClass.getEnumConstants())
-                .map(MetaData::new).forEach(metaData -> metaDataMap.put(metaData.getName(), metaData));
+                .map(MetaData::new).forEach(metaData -> metaDataMap.put(metaData.getName().toLowerCase(), metaData));
         return Collections.unmodifiableMap(metaDataMap);
     }
 }

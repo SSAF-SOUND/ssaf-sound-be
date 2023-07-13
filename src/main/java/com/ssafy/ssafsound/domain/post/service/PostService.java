@@ -51,16 +51,12 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public GetPostResDto findPosts(Long boardId, Pageable pageable) {
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-
         if (!boardRepository.existsById(boardId)) {
             throw new BoardException(BoardErrorInfo.NO_BOARD);
         }
 
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         List<Post> posts = postRepository.findWithDetailsByBoardId(boardId, pageRequest);
-        if (posts.size() == 0) {
-            throw new PostException(PostErrorInfo.NOT_FOUND_POSTS);
-        }
 
         return GetPostResDto.from(posts);
     }
@@ -277,9 +273,6 @@ public class PostService {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         List<HotPost> hotPosts = hotPostRepository.findWithDetailsFetch(pageRequest);
 
-        if (hotPosts.size() == 0) {
-            throw new PostException(PostErrorInfo.NOT_FOUND_POSTS);
-        }
         return GetPostHotResDto.from(hotPosts);
     }
 
@@ -288,10 +281,18 @@ public class PostService {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         List<Post> posts = postRepository.findWithDetailsByMemberId(memberId, pageRequest);
 
-        if (posts.size() == 0) {
-            throw new PostException(PostErrorInfo.NOT_FOUND_POSTS);
+        return GetPostMyResDto.from(posts);
+    }
+
+    @Transactional(readOnly = true)
+    public GetPostSearchResDto searchPosts(Long boardId, String keyword, Pageable pageable) {
+        if (!boardRepository.existsById(boardId)) {
+            throw new BoardException(BoardErrorInfo.NO_BOARD);
         }
 
-        return GetPostMyResDto.from(posts);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        List<Post> posts = postRepository.findWithDetailsFetchByBoardIdAndKeyword(boardId, keyword.replaceAll(" ", ""), pageRequest);
+
+        return GetPostSearchResDto.from(posts);
     }
 }

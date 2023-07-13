@@ -2,10 +2,7 @@ package com.ssafy.ssafsound.domain.member.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.validator.Authentication;
-import com.ssafy.ssafsound.domain.member.dto.GetMemberResDto;
-import com.ssafy.ssafsound.domain.member.dto.PostMemberInfoReqDto;
-import com.ssafy.ssafsound.domain.member.dto.PostNicknameReqDto;
-import com.ssafy.ssafsound.domain.member.dto.PostNicknameResDto;
+import com.ssafy.ssafsound.domain.member.dto.*;
 import com.ssafy.ssafsound.domain.member.service.MemberService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +36,14 @@ public class MemberController {
     public EnvelopeResponse<PostNicknameResDto> checkNicknamePossible(@Valid @RequestBody PostNicknameReqDto postNicknameReqDto) {
         return EnvelopeResponse.<PostNicknameResDto>builder()
                 .data(memberService.checkNicknamePossible(postNicknameReqDto))
+                .build();
+    }
+
+    @PostMapping("/ssafy-certification")
+    public EnvelopeResponse<PostCertificationInfoResDto> certifySSAFYInformation(@Authentication AuthenticatedMember authenticatedMember,
+                                                       @Valid @RequestBody PostCertificationInfoReqDto postCertificationInfoReqDto) {
+        return EnvelopeResponse.<PostCertificationInfoResDto>builder()
+                .data(memberService.certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto))
                 .build();
     }
 }

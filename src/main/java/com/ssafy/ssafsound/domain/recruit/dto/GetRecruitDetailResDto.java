@@ -1,7 +1,7 @@
 package com.ssafy.ssafsound.domain.recruit.dto;
 
-import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
 import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
@@ -27,9 +27,8 @@ public class GetRecruitDetailResDto {
     private List<RecruitLimitElement> limits;
     private long memberId;
     private String nickName;
-    private boolean ssafyMember;
-    private boolean certification;
-    private Integer year;
+    private Boolean isMajor;
+    private SSAFYInfo ssafyInfo;
 
     public static GetRecruitDetailResDto from(Recruit recruit) {
 
@@ -48,21 +47,25 @@ public class GetRecruitDetailResDto {
         // 등록자의 모집 타입도 조회 api에서는 인원에 포함되어야한다.
         addRegisterRecruitType(limits, registerRecruitType);
 
+        SSAFYInfo ssafyInfo = null;
+        if(register.getSsafyMember()) {
+            ssafyInfo = SSAFYInfo.from(register);
+        }
+
         return GetRecruitDetailResDto.builder()
                 .recruitId(recruit.getId())
                 .title(recruit.getTitle())
                 .content(recruit.getContent())
                 .memberId(register.getId())
                 .nickName(register.getNickname())
-                .ssafyMember(register.getSsafyMember())
-                .certification(register.getCertificationState().name().equals(AuthenticationStatus.CERTIFIED.name()))
-                .year(register.getSemester())
                 .recruitStart(recruit.getStartDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .recruitEnd(recruit.getEndDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .finishedRecruit(recruit.isFinishedRecruit())
                 .skills(skills)
                 .limits(limits)
                 .view(recruit.getView())
+                .isMajor(register.getMajor())
+                .ssafyInfo(ssafyInfo)
                 .build();
     }
 

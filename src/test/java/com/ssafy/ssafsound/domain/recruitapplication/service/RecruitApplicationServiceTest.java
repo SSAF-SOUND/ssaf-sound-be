@@ -1,12 +1,9 @@
 package com.ssafy.ssafsound.domain.recruitapplication.service;
 
 import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
-import com.ssafy.ssafsound.domain.member.domain.MajorType;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
-import com.ssafy.ssafsound.domain.meta.domain.MetaData;
-import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
-import com.ssafy.ssafsound.domain.meta.domain.RecruitType;
+import com.ssafy.ssafsound.domain.meta.domain.*;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import com.ssafy.ssafsound.domain.recruit.domain.RecruitLimitation;
@@ -61,16 +58,19 @@ class RecruitApplicationServiceTest {
             .ssafyMember(true)
             .certificationState(AuthenticationStatus.CERTIFIED)
             .major(true)
-            .majorType(new MajorType(1, "자바전공"))
+            .semester(9)
+            .campus(new MetaData(Campus.BUSAN))
+            .majorTrack(new MetaData(MajorTrack.JAVA))
             .build();
 
     Member participant = Member.builder()
             .id(2L)
             .nickname("kds")
-            .ssafyMember(true)
+            .ssafyMember(false)
             .certificationState(AuthenticationStatus.CERTIFIED)
             .major(false)
-            .majorType(null)
+            .majorTrack(null)
+            .campus(null)
             .build();
 
     Recruit recruit = Recruit.builder()

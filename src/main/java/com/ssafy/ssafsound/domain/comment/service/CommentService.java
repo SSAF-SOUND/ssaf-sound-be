@@ -4,7 +4,11 @@ import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.comment.domain.Comment;
 import com.ssafy.ssafsound.domain.comment.domain.CommentNumber;
 import com.ssafy.ssafsound.domain.comment.dto.GetCommentResDto;
+import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReplyReqDto;
 import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReqDto;
+import com.ssafy.ssafsound.domain.comment.dto.PutCommentUpdateReqDto;
+import com.ssafy.ssafsound.domain.comment.exception.CommentErrorInfo;
+import com.ssafy.ssafsound.domain.comment.exception.CommentException;
 import com.ssafy.ssafsound.domain.comment.repository.CommentNumberRepository;
 import com.ssafy.ssafsound.domain.comment.repository.CommentRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
@@ -65,15 +69,63 @@ public class CommentService {
         return comment.getId();
     }
 
-
     @Transactional(readOnly = true)
     public GetCommentResDto findComments(Long postId, AuthenticatedMember member, Pageable pageable) {
-        if (!postRepository.existsById(postId)) {
+          if (!postRepository.existsById(postId)) {
             throw new PostException(PostErrorInfo.NOT_FOUND_POST);
         }
-
+  
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         List<Comment> comments = commentRepository.findAllPostIdWithDetailsFetchOrderByCommentGroupId(postId, pageRequest);
         return GetCommentResDto.of(comments, member);
+    }
+    @Transactional
+    public Long updateComment(Long commentId, Long memberId, PutCommentUpdateReqDto putCommentUpdateReqDto) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT));
+
+        if (!comment.getMember().getId().equals(memberId)) {
+            throw new CommentException(CommentErrorInfo.UNAUTHORIZED_UPDATE_COMMENT);
+        }
+
+        comment.updateComment(putCommentUpdateReqDto.getContent(), putCommentUpdateReqDto.getAnonymous());
+        return comment.getId();
+    }
+  
+    @Transactional
+    public Long writeCommentReply(Long postId, Long commentId, Long memberId, PostCommentWriteReplyReqDto postCommentWriteReplyReqDto) {
+        if (!postRepository.existsById(postId)) {
+            throw new PostException(PostErrorInfo.NOT_FOUND_POST);
+        }
+      
+        if (!commentRepository.existsById(commentId)) {
+            throw new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT);
+        }
+
+        // 1. 익명 번호 부여
+        CommentNumber commentNumber = commentNumberRepository.
+                findByPostIdAndMemberId(postId, memberId).orElse(null);
+
+        if (commentNumber == null) {
+            commentNumber = CommentNumber.builder()
+                    .post(postRepository.getReferenceById(postId))
+                    .member(memberRepository.getReferenceById(memberId))
+                    .number(commentNumberRepository.countAllByPostId(postId) + 1)
+                    .build();
+            commentNumberRepository.save(commentNumber);
+        }
+
+        // 2. 대댓글 저장
+        Comment comment = Comment.builder()
+                .post(postRepository.getReferenceById(postId))
+                .member(memberRepository.getReferenceById(memberId))
+                .content(postCommentWriteReplyReqDto.getContent())
+                .anonymous(postCommentWriteReplyReqDto.getAnonymous())
+                .commentNumber(commentNumber)
+                .commentGroup(commentRepository.getReferenceById(commentId))
+                .build();
+
+        comment = commentRepository.save(comment);
+        return comment.getId();
     }
 }

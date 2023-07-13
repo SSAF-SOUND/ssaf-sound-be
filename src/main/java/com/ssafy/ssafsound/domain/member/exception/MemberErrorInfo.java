@@ -10,7 +10,8 @@ public enum MemberErrorInfo {
     MEMBER_TOKEN_NOT_FOUND("708", "멤버 ID로 토큰을 찾을 수 없습니다."),
     MEMBER_OAUTH_NOT_FOUND("709", "소셜 로그인에 문제가 발생했습니다."),
     MEMBER_INFORMATION_ERROR("710", "멤버 정보 조회에서 문제가 발생했습니다."),
-    MEMBER_NICKNAME_DUPLICATION("711", "중복되는 닉네임입니다.");
+    MEMBER_NICKNAME_DUPLICATION("711", "중복되는 닉네임입니다."),
+    MEMBER_CERTIFICATED_FAIL("712", "인증 시도 가능 횟수를 초과하여 일정 시간이 자나야 재시도 할 수 있습니다.");
 
     private final String code;
     private final String message;
