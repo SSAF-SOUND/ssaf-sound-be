@@ -7,16 +7,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity(name = "comment")
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLDelete(sql = "UPDATE comment SET deleted_comment = true WHERE comment_id = ?")
+@Where(clause = "deleted_comment = false")
 public class Comment extends BaseTimeEntity {
 
     @Id
@@ -33,9 +35,6 @@ public class Comment extends BaseTimeEntity {
 
     @Column
     private Boolean anonymous;
-
-//    @OneToMany(mappedBy = "commentGroup")
-//    private List<Comment> replies = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "comment_number_id")
