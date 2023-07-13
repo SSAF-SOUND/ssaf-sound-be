@@ -24,9 +24,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.SliceImpl;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -133,6 +133,21 @@ class RecruitServiceTest {
 
     private final Pageable pageInfo = PageRequest.of(0, 10);
 
+    private final GetRecruitsReqDto emptyKeywordDto = GetRecruitsReqDto.builder()
+            .category(Category.PROJECT.name())
+            .keyword("")
+            .build();
+
+    private final GetRecruitsReqDto findTitleDto = GetRecruitsReqDto.builder()
+            .category(Category.PROJECT.name())
+            .keyword("제목")
+            .build();
+
+    private final GetRecruitsReqDto notFindKeywordDto = GetRecruitsReqDto.builder()
+            .category(Category.PROJECT.name())
+            .keyword("없는거")
+            .build();
+
     @BeforeEach
     void setStub() {
         savedRecruit.setRecruitLimitations(limits);
@@ -147,11 +162,17 @@ class RecruitServiceTest {
                 .thenReturn(java.util.Optional.ofNullable(savedRecruit));
         Mockito.lenient().when(recruitRepository.findById(2L)).thenReturn(java.util.Optional.ofNullable(savedRecruit));
 
-        Mockito.lenient().when(recruitRepository.findByDeletedRecruitIsFalse(pageInfo)).thenReturn(new PageImpl<>(List.of(savedRecruit)));
-        Mockito.lenient().when(recruitRepository.findByDeletedRecruitIsFalseAndTitleContainsOrContentContains("컨텐츠", "컨텐츠", pageInfo))
-                .thenReturn(new PageImpl<>(List.of(savedRecruit)));
-        Mockito.lenient().when(recruitRepository.findByDeletedRecruitIsFalseAndTitleContainsOrContentContains("없는거", "없는거", pageInfo))
-                .thenReturn(new PageImpl<>(List.of()));
+        Mockito.lenient().when(recruitRepository
+                .findRecruitByGetRecruitsReqDto(emptyKeywordDto, pageInfo))
+                .thenReturn(new SliceImpl<>(List.of(savedRecruit)));
+
+        Mockito.lenient().when(recruitRepository.findRecruitByGetRecruitsReqDto(findTitleDto, pageInfo))
+                .thenReturn(new SliceImpl<>(List.of(savedRecruit)));
+
+        Mockito.lenient().when(recruitRepository.findRecruitByGetRecruitsReqDto(notFindKeywordDto, pageInfo))
+                .thenReturn(new SliceImpl<>(List.of()));
+
+
         Mockito.lenient().when(recruitApplicationRepository.findDoneRecruitApplicationByRecruitIdInFetchRecruitAndMember(List.of(2L)))
                 .thenReturn(List.of(recruitApplication));
 
@@ -346,25 +367,14 @@ class RecruitServiceTest {
     @DisplayName("키워드를 입력하지 않은 리크루트 목록 검색")
     @Test
     void Given_NotIncludeKeyword_When_GetPagingRecruits_Then_Success() {
-        GetRecruitsReqDto requestDto = GetRecruitsReqDto.builder()
-                .category(Category.PROJECT.name())
-                .keyword("")
-                .build();
-
-        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(requestDto, pageInfo);
-
+        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(emptyKeywordDto, pageInfo);
         assertEquals(1, getRecruitsResDto.getRecruits().size());
     }
 
     @DisplayName("키워드를 입력한 리크루트 목록 검색 (검색 결과 O)")
     @Test
     void Given_IncludeKeyword_When_GetPagingRecruits_Then_Success() {
-        GetRecruitsReqDto requestDto = GetRecruitsReqDto.builder()
-                .category(Category.PROJECT.name())
-                .keyword("컨텐츠")
-                .build();
-
-        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(requestDto, pageInfo);
+        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(findTitleDto, pageInfo);
         assertEquals(1, getRecruitsResDto.getRecruits().size());
     }
 
@@ -373,12 +383,7 @@ class RecruitServiceTest {
     void Given_IncludeKeywordAndIncludeRegisterRecruitType_When_GetPagingRecruits_Then_Success() {
         savedRecruit.setRegisterRecruitType(new MetaData(RecruitType.DESIGN));
 
-        GetRecruitsReqDto requestDto = GetRecruitsReqDto.builder()
-                .category(Category.PROJECT.name())
-                .keyword("컨텐츠")
-                .build();
-
-        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(requestDto, pageInfo);
+        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(findTitleDto, pageInfo);
         assertEquals(1, getRecruitsResDto.getRecruits().size());
         assertEquals(1, getRecruitsResDto.getRecruits().get(0).getParticipants().size());
         assertEquals(3, getRecruitsResDto.getRecruits().get(0).getParticipants().get(0).getLimit());
@@ -389,12 +394,7 @@ class RecruitServiceTest {
     @DisplayName("키워드를 입력한 리크루트 목록 검색 (검색 결과 X)")
     @Test
     void Given_IncludeKeyword_When_GetPagingRecruits_Then_EmptySet() {
-        GetRecruitsReqDto requestDto = GetRecruitsReqDto.builder()
-                .category(Category.PROJECT.name())
-                .keyword("없는거")
-                .build();
-
-        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(requestDto, pageInfo);
+        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(notFindKeywordDto, pageInfo);
         assertEquals(0, getRecruitsResDto.getRecruits().size());
     }
 }
