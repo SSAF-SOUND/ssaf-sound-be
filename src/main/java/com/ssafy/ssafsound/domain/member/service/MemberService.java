@@ -54,7 +54,6 @@ public class MemberService {
         } else {
             Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
             memberToken = MemberToken.builder()
-                    .id(member.getId())
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
                     .member(member)
