@@ -6,6 +6,7 @@ import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListReqDto;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchResDto;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListResDto;
 import com.ssafy.ssafsound.domain.lunch.dto.PostLunchPollResDto;
+import com.ssafy.ssafsound.domain.lunch.service.LunchPollService;
 import com.ssafy.ssafsound.domain.lunch.service.LunchService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import javax.validation.Valid;
 public class LunchController {
 
     private final LunchService lunchService;
+    private final LunchPollService lunchPollService;
 
     @GetMapping("/{lunchId}")
     public EnvelopeResponse<GetLunchResDto> getLunchByLunchId(@PathVariable @NumberFormat Long lunchId){
@@ -41,7 +43,7 @@ public class LunchController {
     public EnvelopeResponse<PostLunchPollResDto> postLunchPoll(@Authentication AuthenticatedMember user, @PathVariable @NumberFormat Long lunchId){
 
         return EnvelopeResponse.<PostLunchPollResDto>builder()
-                .data(lunchService.saveLunchPoll(user.getMemberId(), lunchId))
+                .data(lunchPollService.saveLunchPoll(user.getMemberId(), lunchId))
                 .build();
     }
 
@@ -49,7 +51,7 @@ public class LunchController {
     public EnvelopeResponse<PostLunchPollResDto> revertLunchPoll(@Authentication AuthenticatedMember user, @PathVariable @NumberFormat Long lunchId){
 
         return EnvelopeResponse.<PostLunchPollResDto>builder()
-                .data(lunchService.deleteLunchPoll(user.getMemberId(), lunchId))
+                .data(lunchPollService.deleteLunchPoll(user.getMemberId(), lunchId))
                 .build();
     }
 
