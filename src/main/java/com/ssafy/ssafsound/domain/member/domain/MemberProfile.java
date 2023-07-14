@@ -25,4 +25,8 @@ public class MemberProfile {
     @MapsId
     @JoinColumn(name="member_id")
     private Member member;
+
+    public void changeIntroduceMyself(String introduceMyself) {
+        this.introduce = introduceMyself;
+    }
 }

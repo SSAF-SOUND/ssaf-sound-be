@@ -19,6 +19,9 @@ public class MemberLink {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "link_name")
+    private String linkName;
+
     @Column
     private String path;
 
