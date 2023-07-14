@@ -15,6 +15,7 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class LunchPoll {
 
     @Id
@@ -32,15 +33,6 @@ public class LunchPoll {
 
     @Column
     private LocalDate polledAt;
-
-    @Builder
-    public LunchPoll(Lunch lunch, Member member, LocalDate polledAt) {
-        this.lunch = lunch;
-        this.member = member;
-        this.polledAt = polledAt;
-
-        lunch.getLunchPolls().add(this);
-    }
 
     public void setLunch(Lunch lunch){
 
