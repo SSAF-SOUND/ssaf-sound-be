@@ -47,10 +47,10 @@ public class MemberController {
                 .build();
     }
 
-    @PutMapping("/profile")
-    public EnvelopeResponse registerMemberProfile(@Authentication AuthenticatedMember authenticatedMember,
+    @PutMapping("/portfolio")
+    public EnvelopeResponse registerMemberPortfolio(@Authentication AuthenticatedMember authenticatedMember,
                                                  @Valid @RequestBody PutMemberProfileReqDto putMemberProfileReqDto) {
-        memberService.registerMemberProfile(authenticatedMember, putMemberProfileReqDto);
+        memberService.registerMemberPortfolio(authenticatedMember, putMemberProfileReqDto);
         return EnvelopeResponse.builder()
                 .build();
     }

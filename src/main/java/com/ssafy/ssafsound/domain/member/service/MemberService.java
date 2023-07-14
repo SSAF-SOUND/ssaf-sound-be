@@ -106,9 +106,9 @@ public class MemberService {
     }
 
     @Transactional
-    public void registerMemberProfile(AuthenticatedMember authenticatedMember, PutMemberProfileReqDto putMemberProfileReqDto) {
+    public void registerMemberPortfolio(AuthenticatedMember authenticatedMember, PutMemberProfileReqDto putMemberProfileReqDto) {
         Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
-        setMemberProfileIntroduceByMember(member, putMemberProfileReqDto);
+        setMemberPortfolioIntroduceByMember(member, putMemberProfileReqDto);
         deleteExistMemberLinksAllByMemberAndSaveNewRequest(member, putMemberProfileReqDto.getMemberLinks());
         deleteExistMemberSkillsAllByMemberAndSaveNewRequest(member, putMemberProfileReqDto.getSkills());
     }
@@ -122,7 +122,7 @@ public class MemberService {
         memberSkillRepository.deleteMemberSkillsByMember(member);
         member.setMemberSkills(memberSkills, metaDataConsumer);
     }
-    public void setMemberProfileIntroduceByMember(Member member, PutMemberProfileReqDto putMemberProfileReqDto) {
+    public void setMemberPortfolioIntroduceByMember(Member member, PutMemberProfileReqDto putMemberProfileReqDto) {
         if (putMemberProfileReqDto.getIntroduceMyself() != null) {
             memberProfileRepository.findMemberProfileByMember(member).ifPresentOrElse(
                     memberProfile -> memberProfile.changeIntroduceMyself(putMemberProfileReqDto.getIntroduceMyself()),
