@@ -28,6 +28,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         if (isGetMethodWithReissue(request)) {
             String token = AuthorizationExtractor.extractToken("refreshToken", request);
+            log.info("Auth intercept token value: {}", token);
             validToken(token);
             return true;
         }
@@ -46,6 +47,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
 
         String token = AuthorizationExtractor.extractToken("accessToken", request);
+        log.info("Auth intercept token value: {}", token);
         validToken(token);
         return true;
     }
