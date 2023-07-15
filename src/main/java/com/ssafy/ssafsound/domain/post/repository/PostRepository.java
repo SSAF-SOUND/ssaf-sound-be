@@ -34,4 +34,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "OR REPLACE(p.content, ' ', '') LIKE CONCAT('%', :keyword, '%')) " +
             "AND b.id = :boardId ")
     List<Post> findWithDetailsFetchByBoardIdAndKeyword(@Param("boardId") Long boardId, @Param("keyword") String keyword, Pageable pageable);
+
+    @Query("SELECT DISTINCT p FROM post p " +
+            "JOIN FETCH p.member " +
+            "LEFT JOIN FETCH p.images " +
+            "WHERE p.id = :id ")
+    Optional<Post> findWithMemberAndImagesFetchById(@Param("id") Long id);
 }
