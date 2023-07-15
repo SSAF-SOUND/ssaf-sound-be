@@ -63,7 +63,7 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public GetPostDetailResDto findPost(Long postId, Long memberId) {
-        Post post = postRepository.findWithMemberAndImagesFetchById(postId)
+        Post post = postRepository.findWithMemberAndPostImageFetchById(postId)
                 .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
         if (memberId != null) {
@@ -201,13 +201,6 @@ public class PostService {
         return post.getId();
     }
 
-    private void deletePostImages(List<PostImage> images) {
-        images.stream()
-                .map(PostImage::getImagePath)
-                .forEach(awsS3StorageSerive::deleteObject);
-        postImageRepository.deleteAllInBatch(images);
-    }
-
     @Transactional
     public Long deletePost(Long postId, Long memberId) {
         // 1. 게시글 삭제
@@ -227,24 +220,30 @@ public class PostService {
 
     @Transactional
     public Long updatePost(Long postId, Long memberId, PostPutUpdateReqDto postPutUpdateReqDto) {
-        Post post = postRepository.findByIdWithMemberAndPostImageFetch(postId)
+        Post post = postRepository.findWithMemberAndPostImageFetchById(postId)
                 .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
-        if (!post.getMember().getId().equals(memberId)) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        if (!post.getMember().getId().equals(member.getId())) {
             throw new PostException(PostErrorInfo.UNAUTHORIZED_UPDATE_POST);
         }
 
-        // 1. 수정
         post.updatePost(postPutUpdateReqDto.getTitle(), postPutUpdateReqDto.getContent(), postPutUpdateReqDto.isAnonymous());
+        postImageRepository.deleteAllInBatch(post.getImages());
 
-//        // 2. 새 이미지 업로드
-//        if (!postPutUpdateReqDto.getImages().get(0).isEmpty())
-//            uploadPostImages(post, memberId, postPutUpdateReqDto.getImages());
-
-        // 3. 기존 이미지 삭제
-        if (post.getImages().size() >= 1)
-            deletePostImages(post.getImages());
-
+        List<ImageInfo> images = postPutUpdateReqDto.getImages();
+        if (images.size() > 0) {
+            for (ImageInfo image : images) {
+                PostImage postImage = PostImage.builder()
+                        .post(post)
+                        .imagePath(image.getImagePath())
+                        .imageUrl(image.getImageUrl())
+                        .build();
+                postImageRepository.save(postImage);
+            }
+        }
         return post.getId();
     }
 
