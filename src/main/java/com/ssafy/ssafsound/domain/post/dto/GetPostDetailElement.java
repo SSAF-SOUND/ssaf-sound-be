@@ -1,5 +1,7 @@
 package com.ssafy.ssafsound.domain.post.dto;
 
+import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
+import com.ssafy.ssafsound.domain.comment.domain.Comment;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.domain.MemberRole;
 import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
@@ -27,6 +29,7 @@ public class GetPostDetailElement {
     private final Boolean modified;
     private final Boolean scraped;
     private final Boolean liked;
+    private final Boolean mine;
     private final List<ImageUrlElement> images;
     private final MemberRole memberRole;
     private final Boolean ssafyMember;
@@ -37,7 +40,9 @@ public class GetPostDetailElement {
         Boolean modified = post.getModifiedAt() != null;
         Boolean scraped = isScrap(post, member);
         Boolean liked = isLike(post, member);
+        Boolean mine = isMine(post, member);
         Boolean anonymous = post.getAnonymous();
+        List<ImageUrlElement> images = findImageUrls(post);
 
         return GetPostDetailElement.builder()
                 .title(post.getTitle())
@@ -51,7 +56,8 @@ public class GetPostDetailElement {
                 .modified(modified)
                 .scraped(scraped)
                 .liked(liked)
-                .images(findImageUrls(post))
+                .mine(mine)
+                .images(images)
                 .memberRole(member.getRole())
                 .ssafyMember(member.getSsafyMember())
                 .isMajor(member.getMajor())
@@ -85,5 +91,12 @@ public class GetPostDetailElement {
         return post.getImages().stream()
                 .map(image -> ImageUrlElement.from(image.getImageUrl()))
                 .collect(Collectors.toList());
+    }
+
+    private static Boolean isMine(Post post, Member member) {
+        if (member == null)
+            return false;
+
+        return post.getMember().getId().equals(member.getId());
     }
 }
