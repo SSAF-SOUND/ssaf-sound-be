@@ -3,14 +3,12 @@ package com.ssafy.ssafsound.domain.chat.controller;
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.validator.Authentication;
 import com.ssafy.ssafsound.domain.chat.dto.*;
+import com.ssafy.ssafsound.domain.chat.service.ChatRoomService;
 import com.ssafy.ssafsound.domain.chat.service.ChatService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -21,12 +19,14 @@ public class ChatController {
 
     private final ChatService chatService;
 
+    private final ChatRoomService chatRoomService;
+
     @GetMapping
     public EnvelopeResponse<GetChatRoomsResDto> getChatRooms(@Authentication AuthenticatedMember member,
                                                              GetChatRoomsReqDto getChatRoomsReqDto) {
 
         return EnvelopeResponse.<GetChatRoomsResDto>builder()
-                .data(chatService.getChatRooms(member.getMemberId(), getChatRoomsReqDto))
+                .data(chatRoomService.getChatRooms(member.getMemberId(), getChatRoomsReqDto))
                 .build();
     }
 
@@ -35,16 +35,16 @@ public class ChatController {
                                                                  @Valid GetChatExistReqDto getChatExistReqDto) {
 
         return EnvelopeResponse.<GetChatExistResDto>builder()
-                .data(chatService.getChatExistence(member.getMemberId(), getChatExistReqDto))
+                .data(chatRoomService.getChatExistence(member.getMemberId(), getChatExistReqDto))
                 .build();
     }
 
     @PatchMapping("/{chatRoomId}")
-    public EnvelopeResponse<PatchChatResDto> patchChat(@Authentication AuthenticatedMember member,
-                                                       PatchChatReqDto patchChatReqDto, Pageable pageable) {
+    public EnvelopeResponse<PatchChatResDto> readChatRoom(@Authentication AuthenticatedMember member,
+                                                          @PathVariable Long chatRoomId, Pageable pageable) {
 
         return EnvelopeResponse.<PatchChatResDto>builder()
-                .data(chatService.readChatRoom(member.getMemberId(), patchChatReqDto, pageable))
+                .data(chatService.readChatRoom(member.getMemberId(), chatRoomId, pageable))
                 .build();
     }
 
