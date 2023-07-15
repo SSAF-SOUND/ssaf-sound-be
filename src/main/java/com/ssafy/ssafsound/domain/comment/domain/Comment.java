@@ -53,9 +53,6 @@ public class Comment extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "comment")
-    private List<CommentLike> commentLikes = new ArrayList<>();
-
     public void setCommentGroup(Comment commentGroup) {
         this.commentGroup = commentGroup;
     }

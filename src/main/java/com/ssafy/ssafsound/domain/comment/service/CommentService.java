@@ -118,41 +118,33 @@ public class CommentService {
 
     @Transactional
     public Long likeComment(Long commentId, Long memberId) {
-        if (!commentRepository.existsById(commentId)) {
-            throw new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT);
-        }
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT));
 
         CommentLike commentLike = commentLikeRepository.findByCommentIdAndMemberId(commentId, memberId)
                 .orElse(null);
-        toggleLike(commentId, memberId, commentLike);
 
-        return 1L;
+        return toggleLike(comment, memberId, commentLike);
     }
 
-    private Long toggleLike(Long commentId, Long memberId, CommentLike commentLike) {
+    private Long toggleLike(Comment comment, Long memberId, CommentLike commentLike) {
         if (commentLike != null) {
-            deleteCommentLike(commentLike);
+            return deleteCommentLike(commentLike);
         }
-
-        if (commentLike == null) {
-            saveCommentLike(commentId, memberId);
-        }
-        return getCommentLikeCount(commentId);
+        return saveCommentLike(comment, memberId);
     }
 
-    private void saveCommentLike(Long commentId, Long memberId) {
+    private Long saveCommentLike(Comment comment, Long memberId) {
         CommentLike commentLike = CommentLike.builder()
                 .member(memberRepository.getReferenceById(memberId))
-                .comment(commentRepository.getReferenceById(commentId))
+                .comment(comment)
                 .build();
         commentLikeRepository.save(commentLike);
+        return commentLike.getId();
     }
 
-    private void deleteCommentLike(CommentLike commentLike) {
+    private Long deleteCommentLike(CommentLike commentLike) {
         commentLikeRepository.delete(commentLike);
-    }
-
-    private Long getCommentLikeCount(Long commentId) {
-        return commentLikeRepository.countById(commentId);
+        return commentLike.getId();
     }
 }
