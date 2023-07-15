@@ -165,7 +165,8 @@ public class CommentService {
     private Long deleteCommentLike(CommentLike commentLike) {
         commentLikeRepository.delete(commentLike);
         return commentLike.getId();
-     
+    }
+
     @Transactional
     public Long deleteComment(Long commentId, Long memberId) {
         Comment comment = commentRepository.findById(commentId)
