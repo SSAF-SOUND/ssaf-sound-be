@@ -1,12 +1,13 @@
 package com.ssafy.ssafsound.domain.post.service;
 
-import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.board.exception.BoardErrorInfo;
 import com.ssafy.ssafsound.domain.board.exception.BoardException;
 import com.ssafy.ssafsound.domain.board.repository.BoardRepository;
+import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
+import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.post.domain.*;
-import com.ssafy.ssafsound.domain.post.dto.GetPostDetailListResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
@@ -28,8 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -62,20 +61,21 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public GetPostDetailListResDto findPost(Long postId, AuthenticatedMember authenticatedMember) {
-        Post post = postRepository.findById(postId)
+    public GetPostDetailResDto findPost(Long postId, Long memberId) {
+        Post post = postRepository.findWithMemberAndImagesFetchById(postId)
                 .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
-        return GetPostDetailListResDto.builder()
-                .post(Optional.of(post)
-                        .stream()
-                        .map(p -> GetPostDetailResDto.from(p, authenticatedMember))
-                        .collect(Collectors.toList()))
-                .build();
+        if (memberId != null) {
+            Member member = memberRepository.findById(memberId)
+                    .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+            return GetPostDetailResDto.of(post, member);
+        }
+
+        return GetPostDetailResDto.of(post, null);
     }
 
     @Transactional
-    public void postLike(Long postId, Long memberId) {
+    public void likePost(Long postId, Long memberId) {
         PostLike postLike = postLikeRepository.findByPostIdAndMemberId(postId, memberId)
                 .orElse(null);
         togglePostLike(postId, memberId, postLike);
@@ -123,7 +123,7 @@ public class PostService {
     }
 
     @Transactional
-    public void postScrap(Long postId, Long memberId) {
+    public void scrapPost(Long postId, Long memberId) {
         PostScrap postScrap = postScrapRepository.findByPostIdAndMemberId(postId, memberId)
                 .orElse(null);
         togglePostScrap(postId, memberId, postScrap);
@@ -297,7 +297,7 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public GetPostHotResDto searchHotPosts(String keyword, Pageable pageable){
+    public GetPostHotResDto searchHotPosts(String keyword, Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         List<HotPost> hotPosts = hotPostRepository.findWithDetailsFetchByKeyword(keyword.replaceAll(" ", ""), pageRequest);
         return GetPostHotResDto.from(hotPosts);
