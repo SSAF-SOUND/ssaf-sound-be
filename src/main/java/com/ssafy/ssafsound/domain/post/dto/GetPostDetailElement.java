@@ -1,6 +1,8 @@
 package com.ssafy.ssafsound.domain.post.dto;
 
-import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
+import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.domain.MemberRole;
+import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.domain.PostLike;
 import com.ssafy.ssafsound.domain.post.domain.PostScrap;
@@ -14,24 +16,28 @@ import java.util.stream.Collectors;
 @Getter
 @Builder
 public class GetPostDetailElement {
-    private String title;
-    private String content;
-    private int likeCount;
-    private int commentCount;
-    private int scrapCount;
-    private LocalDateTime createdAt;
-    private Long memberId;
-    private String nickname;
-    private Boolean anonymous;
-    private Boolean modified;
-    private Boolean scraped;
-    private Boolean liked;
-    private List<ImageUrl> images;
+    private final String title;
+    private final String content;
+    private final int likeCount;
+    private final int commentCount;
+    private final int scrapCount;
+    private final LocalDateTime createdAt;
+    private final String nickname;
+    private final Boolean anonymous;
+    private final Boolean modified;
+    private final Boolean scraped;
+    private final Boolean liked;
+    private final List<ImageUrlElement> images;
+    private final MemberRole memberRole;
+    private final Boolean ssafyMember;
+    private final Boolean isMajor;
+    private final SSAFYInfo ssafyInfo;
 
-    public static GetPostDetailElement from(Post post, AuthenticatedMember authenticatedMember) {
-        boolean modified = post.getModifiedAt() != null;
-        boolean scraped = isScrap(post, authenticatedMember);
-        boolean liked = isLike(post, authenticatedMember);
+    public static GetPostDetailElement of(Post post, Member member) {
+        Boolean modified = post.getModifiedAt() != null;
+        Boolean scraped = isScrap(post, member);
+        Boolean liked = isLike(post, member);
+        Boolean anonymous = post.getAnonymous();
 
         return GetPostDetailElement.builder()
                 .title(post.getTitle())
@@ -40,37 +46,44 @@ public class GetPostDetailElement {
                 .commentCount(post.getComments().size())
                 .scrapCount(post.getScraps().size())
                 .createdAt(post.getCreatedAt())
-                .memberId(post.getMember().getId())
-                .nickname(post.getMember().getNickname())
-                .anonymous(post.getAnonymous())
+                .nickname(anonymous ? "익명" : post.getMember().getNickname())
+                .anonymous(anonymous)
                 .modified(modified)
                 .scraped(scraped)
                 .liked(liked)
                 .images(findImageUrls(post))
+                .memberRole(member.getRole())
+                .ssafyMember(member.getSsafyMember())
+                .isMajor(member.getMajor())
+                .ssafyInfo(SSAFYInfo.from(member))
                 .build();
     }
 
-    private static boolean isScrap(Post post, AuthenticatedMember authenticatedMember) {
+    private static Boolean isScrap(Post post, Member member) {
         List<PostScrap> scraps = post.getScraps();
+        Long memberId = member.getId();
+
         for (PostScrap scrap : scraps) {
-            if (scrap.getMember().getId().equals(authenticatedMember.getMemberId()))
+            if (scrap.getMember().getId().equals(memberId))
                 return true;
         }
         return false;
     }
 
-    private static boolean isLike(Post post, AuthenticatedMember authenticatedMember) {
+    private static Boolean isLike(Post post, Member member) {
         List<PostLike> likes = post.getLikes();
+        Long memberId = member.getId();
+
         for (PostLike like : likes) {
-            if (like.getMember().getId().equals(authenticatedMember.getMemberId()))
+            if (like.getMember().getId().equals(memberId))
                 return true;
         }
         return false;
     }
 
-    private static List<ImageUrl> findImageUrls(Post post) {
+    private static List<ImageUrlElement> findImageUrls(Post post) {
         return post.getImages().stream()
-                .map(i -> new ImageUrl(i.getImageUrl()))
+                .map(image -> ImageUrlElement.from(image.getImageUrl()))
                 .collect(Collectors.toList());
     }
 }

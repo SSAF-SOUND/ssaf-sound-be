@@ -1,13 +1,19 @@
 package com.ssafy.ssafsound.domain.post.dto;
 
+import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.post.domain.Post;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 @Builder
 public class GetPostDetailResDto {
-    private List<GetPostDetailElement> post;
+    private GetPostDetailElement post;
 
+    public static GetPostDetailResDto of(Post post, Member member) {
+
+        return GetPostDetailResDto.builder()
+                .post(GetPostDetailElement.of(post, member))
+                .build();
+    }
 }
