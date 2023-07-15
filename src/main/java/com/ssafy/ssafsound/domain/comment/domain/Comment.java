@@ -55,7 +55,6 @@ public class Comment extends BaseTimeEntity {
     @OneToMany(mappedBy = "comment")
     private List<CommentLike> likes = new ArrayList<>();
 
-
     public void setCommentGroup(Comment commentGroup) {
         this.commentGroup = commentGroup;
     }

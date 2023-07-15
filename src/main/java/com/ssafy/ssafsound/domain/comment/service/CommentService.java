@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.domain.comment.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.comment.domain.Comment;
+import com.ssafy.ssafsound.domain.comment.domain.CommentLike;
 import com.ssafy.ssafsound.domain.comment.domain.CommentNumber;
 import com.ssafy.ssafsound.domain.comment.dto.GetCommentResDto;
 import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReplyReqDto;
@@ -9,6 +10,7 @@ import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReqDto;
 import com.ssafy.ssafsound.domain.comment.dto.PutCommentUpdateReqDto;
 import com.ssafy.ssafsound.domain.comment.exception.CommentErrorInfo;
 import com.ssafy.ssafsound.domain.comment.exception.CommentException;
+import com.ssafy.ssafsound.domain.comment.repository.CommentLikeRepository;
 import com.ssafy.ssafsound.domain.comment.repository.CommentNumberRepository;
 import com.ssafy.ssafsound.domain.comment.repository.CommentRepository;
 import com.ssafy.ssafsound.domain.member.domain.Member;
@@ -33,6 +35,7 @@ import java.util.List;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final CommentNumberRepository commentNumberRepository;
+    private final CommentLikeRepository commentLikeRepository;
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
 
@@ -132,6 +135,37 @@ public class CommentService {
         return comment.getId();
     }
 
+    @Transactional
+    public Long likeComment(Long commentId, Long memberId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT));
+
+        CommentLike commentLike = commentLikeRepository.findByCommentIdAndMemberId(commentId, memberId)
+                .orElse(null);
+
+        return toggleLike(comment, memberId, commentLike);
+    }
+
+    private Long toggleLike(Comment comment, Long memberId, CommentLike commentLike) {
+        if (commentLike != null) {
+            return deleteCommentLike(commentLike);
+        }
+        return saveCommentLike(comment, memberId);
+    }
+
+    private Long saveCommentLike(Comment comment, Long memberId) {
+        CommentLike commentLike = CommentLike.builder()
+                .member(memberRepository.getReferenceById(memberId))
+                .comment(comment)
+                .build();
+        commentLikeRepository.save(commentLike);
+        return commentLike.getId();
+    }
+
+    private Long deleteCommentLike(CommentLike commentLike) {
+        commentLikeRepository.delete(commentLike);
+        return commentLike.getId();
+     
     @Transactional
     public Long deleteComment(Long commentId, Long memberId) {
         Comment comment = commentRepository.findById(commentId)

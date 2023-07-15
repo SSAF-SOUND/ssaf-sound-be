@@ -58,6 +58,14 @@ public class CommentController {
                 .build();
     }
 
+    @PostMapping("/{commentId}/like")
+    public EnvelopeResponse<Long> likeComment(@PathVariable Long commentId, AuthenticatedMember authenticatedMember) {
+
+        return EnvelopeResponse.<Long>builder()
+                .data(commentService.likeComment(commentId, authenticatedMember.getMemberId()))
+                .build();
+    }
+  
     @DeleteMapping("/{commentId}")
     public EnvelopeResponse<Long> deleteComment(@PathVariable Long commentId, AuthenticatedMember authenticatedMember) {
 
