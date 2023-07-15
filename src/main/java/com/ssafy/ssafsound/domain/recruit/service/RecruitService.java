@@ -16,11 +16,10 @@ import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicati
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -93,9 +92,11 @@ public class RecruitService {
     @Transactional(readOnly = true)
     public GetRecruitsResDto getRecruits(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable) {
         // 페이지네이션 조건에 따라 프로젝트/스터디 글 목록을 조회한다.
-        Page<Recruit> recruitPages = getRecruitsByInputKeyword(pageable, getRecruitsReqDto.getKeyword());
+        Slice<Recruit> recruitPages = recruitRepository.findRecruitByGetRecruitsReqDto(getRecruitsReqDto, pageable);
         GetRecruitsResDto recruitsResDto = GetRecruitsResDto.fromPage(recruitPages);
-        addRecruitParticipants(recruitsResDto);
+        if(!recruitsResDto.getRecruits().isEmpty()) {
+            addRecruitParticipants(recruitsResDto);
+        }
         return recruitsResDto;
     }
 
@@ -117,13 +118,6 @@ public class RecruitService {
             Member member = recruitApplication.getMember();
             participant.addParticipant(member.getNickname(), member.getMajor());
         }
-    }
-
-    private Page<Recruit> getRecruitsByInputKeyword(Pageable pageable, String keyword) {
-        if(StringUtils.hasText(keyword)) {
-            return recruitRepository.findByDeletedRecruitIsFalseAndTitleContainsOrContentContains(keyword, keyword, pageable);
-        }
-        return recruitRepository.findByDeletedRecruitIsFalse(pageable);
     }
 
     private void updateRecruitLimitations(PatchRecruitReqDto recruitReqDto, Recruit recruit) {

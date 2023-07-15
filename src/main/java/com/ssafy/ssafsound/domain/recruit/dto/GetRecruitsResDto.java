@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 
 import java.util.List;
 import java.util.Map;
@@ -15,9 +15,8 @@ import java.util.stream.Collectors;
 @Builder
 public class GetRecruitsResDto {
     private List<RecruitElement> recruits;
-    private int currentPage;
-    private int totalPages;
-    private boolean isLastPage;
+    private Long nextCursor;
+    private boolean isLast;
 
     @JsonIgnore
     public List<Long> getRecruitsId() {
@@ -33,17 +32,17 @@ public class GetRecruitsResDto {
         return result;
     }
 
-    public static GetRecruitsResDto fromPage(Page<Recruit> pageRecruits) {
-        List<RecruitElement> recruits = pageRecruits.toList()
+    public static GetRecruitsResDto fromPage(Slice<Recruit> sliceRecruit) {
+        List<RecruitElement> recruits = sliceRecruit.toList()
                 .stream()
                 .map(RecruitElement::from)
                 .collect(Collectors.toList());
+        Long nextCursor = recruits.isEmpty() ? -1L : recruits.get(recruits.size()-1).getRecruitId();
 
         return GetRecruitsResDto.builder()
                 .recruits(recruits)
-                .currentPage(pageRecruits.getNumber())
-                .totalPages(pageRecruits.getTotalPages())
-                .isLastPage(pageRecruits.isLast())
+                .nextCursor(nextCursor)
+                .isLast(sliceRecruit.isLast())
                 .build();
     }
 }

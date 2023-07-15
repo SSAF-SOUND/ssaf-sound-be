@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.domain.comment.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
+import com.ssafy.ssafsound.domain.comment.dto.GetCommentResDto;
 import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReplyReqDto;
 import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReqDto;
 import com.ssafy.ssafsound.domain.comment.dto.PutCommentUpdateReqDto;
@@ -8,6 +9,7 @@ import com.ssafy.ssafsound.domain.comment.service.CommentService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,6 +31,13 @@ public class CommentController {
                 .build();
     }
 
+    @GetMapping
+    public EnvelopeResponse<GetCommentResDto> findComments(@RequestParam Long postId, Pageable pageable, AuthenticatedMember authenticatedMember) {
+
+        return EnvelopeResponse.<GetCommentResDto>builder()
+                .data(commentService.findComments(postId, authenticatedMember, pageable))
+                .build();
+    }
     @PutMapping("/{commentId}")
     public EnvelopeResponse<Long> updateComment(@PathVariable Long commentId,
                                                 @Valid @RequestBody PutCommentUpdateReqDto putCommentUpdateReqDto,
@@ -54,6 +63,14 @@ public class CommentController {
 
         return EnvelopeResponse.<Long>builder()
                 .data(commentService.likeComment(commentId, authenticatedMember.getMemberId()))
+                .build();
+    }
+  
+    @DeleteMapping("/{commentId}")
+    public EnvelopeResponse<Long> deleteComment(@PathVariable Long commentId, AuthenticatedMember authenticatedMember) {
+
+        return EnvelopeResponse.<Long>builder()
+                .data(commentService.deleteComment(commentId, authenticatedMember.getMemberId()))
                 .build();
     }
 }
