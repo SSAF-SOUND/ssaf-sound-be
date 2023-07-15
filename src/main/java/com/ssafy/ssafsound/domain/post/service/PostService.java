@@ -297,9 +297,9 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public GetPostHotSearchResDto searchHotPosts(String keyword, Pageable pageable){
+    public GetPostHotResDto searchHotPosts(String keyword, Pageable pageable){
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        List<HotPost> hotposts = hotPostRepository.findWithDetailsFetchByKeyword(keyword.replaceAll(" ", ""), pageRequest);
-        return GetPostHotSearchResDto.from(hotposts);
+        List<HotPost> hotPosts = hotPostRepository.findWithDetailsFetchByKeyword(keyword.replaceAll(" ", ""), pageRequest);
+        return GetPostHotResDto.from(hotPosts);
     }
 }
