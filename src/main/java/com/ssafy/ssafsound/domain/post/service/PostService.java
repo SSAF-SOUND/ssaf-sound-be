@@ -207,9 +207,13 @@ public class PostService {
         Post post = postRepository.findByIdWithMember(postId)
                 .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
-        if (!post.getMember().getId().equals(memberId)) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        if (!post.getMember().getId().equals(member.getId())) {
             throw new PostException((PostErrorInfo.UNAUTHORIZED_DELETE_POST));
         }
+
         postRepository.delete(post);
 
         // 2. 핫 게시글이 있으면 삭제
