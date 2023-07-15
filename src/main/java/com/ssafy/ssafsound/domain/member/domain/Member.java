@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.domain.member.domain;
 
 import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberInfoReqDto;
+import com.ssafy.ssafsound.domain.member.dto.PutMemberLink;
 import com.ssafy.ssafsound.domain.meta.converter.CampusConverter;
 import com.ssafy.ssafsound.domain.meta.converter.MajorTrackConverter;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
@@ -14,6 +15,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity(name="member")
 @Table(indexes = @Index(name = "nickname_index", columnList = "nickname", unique = true))
@@ -73,6 +77,14 @@ public class Member extends BaseTimeEntity {
     @Column
     private Boolean publicPortfolio;
 
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @Builder.Default
+    private Set<MemberLink> memberLinks = new HashSet<>();
+
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @Builder.Default
+    private Set<MemberSkill> memberSkills = new HashSet<>();
+
     @PreUpdate
     public void preUpdateCertificationTryTime() {
         this.certificationTryTime = LocalDateTime.now();
@@ -92,6 +104,25 @@ public class Member extends BaseTimeEntity {
         this.semester = postMemberInfoReqDto.getSemester();
         this.major = postMemberInfoReqDto.getIsMajor();
         this.campus = consumer.getMetaData(MetaDataType.CAMPUS.name(), postMemberInfoReqDto.getCampus());
+    }
+
+    public void setMemberLinks(List<PutMemberLink> memberLinks) {
+        memberLinks.forEach(memberLink -> {
+            this.memberLinks.add(MemberLink.builder()
+                    .member(this)
+                    .linkName(memberLink.getLinkName())
+                    .path(memberLink.getPath())
+                    .build());
+        });
+    }
+
+    public void setMemberSkills(List<String> memberSkills, MetaDataConsumer consumer) {
+        memberSkills.forEach(memberSkill -> {
+            this.memberSkills.add(MemberSkill.builder()
+                    .member(this)
+                    .skill(consumer.getMetaData(MetaDataType.SKILL.name(), memberSkill))
+                    .build());
+        });
     }
 
     public void setMajorTrack(MetaData majorTrack) {
