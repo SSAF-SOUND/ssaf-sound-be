@@ -285,7 +285,7 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public GetPostSearchResDto searchPosts(Long boardId, String keyword, Pageable pageable) {
+    public GetPostResDto searchPosts(Long boardId, String keyword, Pageable pageable) {
         if (!boardRepository.existsById(boardId)) {
             throw new BoardException(BoardErrorInfo.NO_BOARD);
         }
@@ -293,6 +293,13 @@ public class PostService {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         List<Post> posts = postRepository.findWithDetailsFetchByBoardIdAndKeyword(boardId, keyword.replaceAll(" ", ""), pageRequest);
 
-        return GetPostSearchResDto.from(posts);
+        return GetPostResDto.from(posts);
+    }
+
+    @Transactional(readOnly = true)
+    public GetPostHotResDto searchHotPosts(String keyword, Pageable pageable){
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        List<HotPost> hotPosts = hotPostRepository.findWithDetailsFetchByKeyword(keyword.replaceAll(" ", ""), pageRequest);
+        return GetPostHotResDto.from(hotPosts);
     }
 }
