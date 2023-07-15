@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.post.service;
 
+import com.ssafy.ssafsound.domain.board.domain.Board;
 import com.ssafy.ssafsound.domain.board.exception.BoardErrorInfo;
 import com.ssafy.ssafsound.domain.board.exception.BoardException;
 import com.ssafy.ssafsound.domain.board.repository.BoardRepository;
@@ -169,34 +170,35 @@ public class PostService {
     }
 
     @Transactional
-    public Long writePost(Long boardId, Long memberId, PostPostWriteReqDto postPostWriteReqDto, List<MultipartFile> images) {
-        if (isImageIncluded(images)) {
-            // 1. 게시글 등록
-            Post post = savePost(boardId, memberId, postPostWriteReqDto);
+    public Long writePost(Long boardId, Long memberId, PostPostWriteReqDto postPostWriteReqDto) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new BoardException(BoardErrorInfo.NO_BOARD));
 
-            // 2. 이미지 s3에 업로드 및 URL 등록
-            uploadPostImages(post, memberId, images);
-            return post.getId();
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        List<ImageInfo> images = postPostWriteReqDto.getImages();
+
+        Post post = Post.builder()
+                .board(board)
+                .member(member)
+                .title(postPostWriteReqDto.getTitle())
+                .content(postPostWriteReqDto.getContent())
+                .anonymous(postPostWriteReqDto.isAnonymous())
+                .build();
+        postRepository.save(post);
+
+        if (images.size() > 0) {
+            for (ImageInfo image : images) {
+                PostImage postImage = PostImage.builder()
+                        .post(post)
+                        .imagePath(image.getImagePath())
+                        .imageUrl(image.getImageUrl())
+                        .build();
+                postImageRepository.save(postImage);
+            }
         }
-
-        Post post = savePost(boardId, memberId, postPostWriteReqDto);
         return post.getId();
-    }
-
-    private boolean isImageIncluded(List<MultipartFile> images) {
-        return !images.get(0).isEmpty();
-    }
-
-    private void uploadPostImages(Post post, Long memberId, List<MultipartFile> images) {
-        MetaData metaData = new MetaData(UploadDirectory.POST);
-        List<PostImage> postImages = new ArrayList<>();
-
-        images.stream()
-                .map(image -> awsS3StorageSerive.putObject(image, metaData, memberId))
-                .map(uploadFileInfo -> generatePostImage(post, uploadFileInfo))
-                .forEach(postImages::add);
-
-        postImageRepository.saveAll(postImages);
     }
 
     private void deletePostImages(List<PostImage> images) {
@@ -204,27 +206,6 @@ public class PostService {
                 .map(PostImage::getImagePath)
                 .forEach(awsS3StorageSerive::deleteObject);
         postImageRepository.deleteAllInBatch(images);
-    }
-
-    private PostImage generatePostImage(Post post, UploadFileInfo uploadFileInfo) {
-        return PostImage.builder()
-                .post(post)
-                .imagePath(uploadFileInfo.getFilePath())
-                .imageUrl(uploadFileInfo.getFileUrl())
-                .build();
-    }
-
-    private Post savePost(Long boardId, Long memberId, PostPostWriteReqDto postPostWriteReqDto) {
-        return postRepository.save(Post.builder()
-                .board(boardRepository.findById(boardId).orElseThrow(
-                        () -> new BoardException(BoardErrorInfo.NO_BOARD)
-                ))
-                .member(memberRepository.getReferenceById(memberId))
-                .title(postPostWriteReqDto.getTitle())
-                .content(postPostWriteReqDto.getContent())
-                .deletedPost(false)
-                .anonymous(postPostWriteReqDto.isAnonymous())
-                .build());
     }
 
     @Transactional
@@ -256,9 +237,9 @@ public class PostService {
         // 1. 수정
         post.updatePost(postPutUpdateReqDto.getTitle(), postPutUpdateReqDto.getContent(), postPutUpdateReqDto.isAnonymous());
 
-        // 2. 새 이미지 업로드
-        if (!postPutUpdateReqDto.getImages().get(0).isEmpty())
-            uploadPostImages(post, memberId, postPutUpdateReqDto.getImages());
+//        // 2. 새 이미지 업로드
+//        if (!postPutUpdateReqDto.getImages().get(0).isEmpty())
+//            uploadPostImages(post, memberId, postPutUpdateReqDto.getImages());
 
         // 3. 기존 이미지 삭제
         if (post.getImages().size() >= 1)

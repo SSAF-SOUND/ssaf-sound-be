@@ -63,25 +63,41 @@ public class PostController {
     }
 
     @PostMapping
-    public EnvelopeResponse<Long> writePost(@Valid @ModelAttribute PostPostWriteReqDto postPostWriteReqDto,
+    public EnvelopeResponse<Long> writePost(@Valid @RequestBody PostPostWriteReqDto postPostWriteReqDto,
                                             @RequestParam Long boardId, AuthenticatedMember authenticatedMember) {
+        AuthenticatedMember member = AuthenticatedMember.builder()
+                .memberId(1L)
+                .memberRole("user")
+                .build();
+
         return EnvelopeResponse.<Long>builder()
-                .data(postService.writePost(boardId, authenticatedMember.getMemberId(), postPostWriteReqDto, postPostWriteReqDto.getImages()))
+                .data(postService.writePost(boardId, member.getMemberId(), postPostWriteReqDto))
                 .build();
     }
 
     @DeleteMapping("/{postId}")
-    public EnvelopeResponse<Long> deletePost(AuthenticatedMember authenticatedMember, @PathVariable Long postId) {
+    public EnvelopeResponse<Long> deletePost(@PathVariable Long postId, AuthenticatedMember authenticatedMember) {
+        AuthenticatedMember member = AuthenticatedMember.builder()
+                .memberId(1L)
+                .memberRole("user")
+                .build();
+
         return EnvelopeResponse.<Long>builder()
-                .data(postService.deletePost(postId, authenticatedMember.getMemberId()))
+                .data(postService.deletePost(postId, member.getMemberId()))
                 .build();
     }
 
     @PutMapping("/{postId}")
-    public EnvelopeResponse<Long> updatePost(@Valid @ModelAttribute PostPutUpdateReqDto postPutUpdateReqDto,
+    public EnvelopeResponse<Long> updatePost(@Valid @RequestBody PostPutUpdateReqDto postPutUpdateReqDto,
                                              @PathVariable Long postId, AuthenticatedMember authenticatedMember) {
+
+        AuthenticatedMember member = AuthenticatedMember.builder()
+                .memberId(1L)
+                .memberRole("user")
+                .build();
+
         return EnvelopeResponse.<Long>builder()
-                .data(postService.updatePost(postId, authenticatedMember.getMemberId(), postPutUpdateReqDto))
+                .data(postService.updatePost(postId, member.getMemberId(), postPutUpdateReqDto))
                 .build();
     }
 
