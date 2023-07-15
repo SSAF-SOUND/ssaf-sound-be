@@ -1,7 +1,5 @@
 package com.ssafy.ssafsound.domain.post.dto;
 
-import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
-import com.ssafy.ssafsound.domain.comment.domain.Comment;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.domain.MemberRole;
 import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
@@ -37,7 +35,6 @@ public class GetPostDetailElement {
     private final SSAFYInfo ssafyInfo;
 
     public static GetPostDetailElement of(Post post, Member member) {
-        Boolean modified = post.getModifiedAt() != null;
         Boolean scraped = isScrap(post, member);
         Boolean liked = isLike(post, member);
         Boolean mine = isMine(post, member);
@@ -53,19 +50,22 @@ public class GetPostDetailElement {
                 .createdAt(post.getCreatedAt())
                 .nickname(anonymous ? "익명" : post.getMember().getNickname())
                 .anonymous(anonymous)
-                .modified(modified)
+                .modified(post.getModifiedAt() != null)
                 .scraped(scraped)
                 .liked(liked)
                 .mine(mine)
                 .images(images)
-                .memberRole(member.getRole())
-                .ssafyMember(member.getSsafyMember())
-                .isMajor(member.getMajor())
-                .ssafyInfo(SSAFYInfo.from(member))
+                .memberRole(post.getMember().getRole())
+                .ssafyMember(post.getMember().getSsafyMember())
+                .isMajor(post.getMember().getMajor())
+                .ssafyInfo(SSAFYInfo.from(post.getMember()))
                 .build();
     }
 
     private static Boolean isScrap(Post post, Member member) {
+        if (member == null)
+            return false;
+
         List<PostScrap> scraps = post.getScraps();
         Long memberId = member.getId();
 
@@ -77,6 +77,9 @@ public class GetPostDetailElement {
     }
 
     private static Boolean isLike(Post post, Member member) {
+        if (member == null)
+            return false;
+
         List<PostLike> likes = post.getLikes();
         Long memberId = member.getId();
 
