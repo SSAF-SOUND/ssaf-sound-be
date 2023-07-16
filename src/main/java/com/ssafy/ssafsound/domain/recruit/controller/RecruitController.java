@@ -30,6 +30,12 @@ public class RecruitController {
         return EnvelopeResponse.<Void>builder().build();
     }
 
+    @PostMapping("/{recruitId}/expired")
+    public EnvelopeResponse<Void> expiredRecruit(@PathVariable Long recruitId, @Authentication AuthenticatedMember memberInfo) {
+        recruitService.expiredRecruit(recruitId, memberInfo.getMemberId());
+        return EnvelopeResponse.<Void>builder().build();
+    }
+
     @GetMapping("/{recruitId}")
     public EnvelopeResponse<GetRecruitDetailResDto> getRecruitDetail(@PathVariable Long recruitId) {
         return EnvelopeResponse.<GetRecruitDetailResDto>builder()
