@@ -75,7 +75,8 @@ public class Member extends BaseTimeEntity {
     private Boolean major;
 
     @Column
-    private Boolean publicPortfolio;
+    @Builder.Default
+    private Boolean publicPortfolio = true;
 
     @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     @Builder.Default
