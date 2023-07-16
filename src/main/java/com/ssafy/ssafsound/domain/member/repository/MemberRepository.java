@@ -11,7 +11,9 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByOauthIdentifier(String oauthIdentifier);
+    
     boolean existsByNickname(String nickname);
+
     @EntityGraph(attributePaths = {"memberLinks", "memberSkills"})
     @Query("select m from member m where m.id = :memberId")
     Optional<Member> findWithMemberLinksAndMemberSkills(@Param("memberId") Long memberId);
