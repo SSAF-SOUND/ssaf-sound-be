@@ -69,26 +69,30 @@ public class PostService {
 
     @Transactional
     public void likePost(Long postId, Long loginMemberId) {
-        PostLike postLike = postLikeRepository.findByPostIdAndMemberId(postId, loginMemberId)
+        Member loginMember = memberRepository.findById(loginMemberId)
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        PostLike postLike = postLikeRepository.findByPostIdAndMemberId(postId, loginMember.getId())
                 .orElse(null);
-        togglePostLike(postId, loginMemberId, postLike);
+
+        togglePostLike(postId, loginMember, postLike);
     }
 
-    private void togglePostLike(Long postId, Long loginMemberId, PostLike postLike) {
+    private void togglePostLike(Long postId, Member loginMember, PostLike postLike) {
         if (postLike != null) {
             deleteLike(postLike);
             return;
         }
-        saveLike(postId, loginMemberId);
+        saveLike(postId, loginMember);
         if (isSelectedHotPost(postId)) {
             saveHotPost(postId);
         }
     }
 
-    private void saveLike(Long postId, Long loginMemberId) {
+    private void saveLike(Long postId, Member loginMember) {
         PostLike postLike = PostLike.builder()
                 .post(postRepository.getReferenceById(postId))
-                .member(memberRepository.getReferenceById(loginMemberId))
+                .member(loginMember)
                 .build();
         postLikeRepository.save(postLike);
     }
@@ -117,23 +121,26 @@ public class PostService {
 
     @Transactional
     public void scrapPost(Long postId, Long loginMemberId) {
-        PostScrap postScrap = postScrapRepository.findByPostIdAndMemberId(postId, loginMemberId)
+        Member loginMember = memberRepository.findById(loginMemberId)
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        PostScrap postScrap = postScrapRepository.findByPostIdAndMemberId(postId, loginMember.getId())
                 .orElse(null);
-        togglePostScrap(postId, loginMemberId, postScrap);
+        togglePostScrap(postId, loginMember, postScrap);
     }
 
-    private void togglePostScrap(Long postId, Long loginMemberId, PostScrap postScrap) {
+    private void togglePostScrap(Long postId, Member loginMember, PostScrap postScrap) {
         if (postScrap != null) {
             deleteScrapIfAlreadyExists(postScrap);
             return;
         }
-        saveScrap(postId, loginMemberId);
+        saveScrap(postId, loginMember);
     }
 
-    private void saveScrap(Long postId, Long loginMemberId) {
+    private void saveScrap(Long postId, Member loginMember) {
         PostScrap postScrap = PostScrap.builder()
                 .post(postRepository.getReferenceById(postId))
-                .member(memberRepository.getReferenceById(loginMemberId))
+                .member(loginMember)
                 .build();
         postScrapRepository.save(postScrap);
     }
@@ -144,17 +151,20 @@ public class PostService {
 
     @Transactional
     public Long reportPost(Long postId, Long loginMemberId, String content) {
-        if (postReportRepository.existsByPostIdAndMemberId(postId, loginMemberId)) {
+        Member loginMember = memberRepository.findById(loginMemberId)
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        if (postReportRepository.existsByPostIdAndMemberId(postId, loginMember.getId())) {
             throw new PostException(PostErrorInfo.DUPLICATE_REPORT);
         }
 
-        if (postRepository.existsByIdAndMemberId(postId, loginMemberId)) {
+        if (postRepository.existsByIdAndMemberId(postId, loginMember.getId())) {
             throw new PostException(PostErrorInfo.UNABLE_REPORT_MY_POST);
         }
 
         PostReport postReport = PostReport.builder()
                 .post(postRepository.getReferenceById(postId))
-                .member(memberRepository.getReferenceById(loginMemberId))
+                .member(loginMember)
                 .content(content)
                 .build();
 
@@ -255,7 +265,11 @@ public class PostService {
     @Transactional(readOnly = true)
     public GetPostMyResDto findMyPosts(Pageable pageable, Long loginMemberId) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        List<Post> posts = postRepository.findWithDetailsByMemberId(loginMemberId, pageRequest);
+
+        Member loginMember = memberRepository.findById(loginMemberId)
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        List<Post> posts = postRepository.findWithDetailsByMemberId(loginMember.getId(), pageRequest);
 
         return GetPostMyResDto.from(posts);
     }

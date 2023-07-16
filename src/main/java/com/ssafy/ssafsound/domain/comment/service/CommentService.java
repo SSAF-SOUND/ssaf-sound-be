@@ -46,6 +46,9 @@ public class CommentService {
             throw new PostException(PostErrorInfo.NOT_FOUND_POST);
         }
 
+        Member loginMember = memberRepository.findById(loginMemberId)
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
         // 1. 익명 번호 부여
         CommentNumber commentNumber = commentNumberRepository.
                 findByPostIdAndMemberId(postId, loginMemberId).orElse(null);
@@ -53,7 +56,7 @@ public class CommentService {
         if (commentNumber == null) {
             commentNumber = CommentNumber.builder()
                     .post(postRepository.getReferenceById(postId))
-                    .member(memberRepository.getReferenceById(loginMemberId))
+                    .member(loginMember)
                     .number(commentNumberRepository.countAllByPostId(postId) + 1)
                     .build();
             commentNumberRepository.save(commentNumber);
@@ -90,7 +93,10 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT));
 
-        if (!comment.getMember().getId().equals(loginMemberId)) {
+        Member loginMember = memberRepository.findById(loginMemberId)
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        if (!comment.getMember().getId().equals(loginMember.getId())) {
             throw new CommentException(CommentErrorInfo.UNAUTHORIZED_UPDATE_COMMENT);
         }
 
@@ -108,6 +114,9 @@ public class CommentService {
             throw new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT);
         }
 
+        Member loginMember = memberRepository.findById(loginMemberId)
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
         // 1. 익명 번호 부여
         CommentNumber commentNumber = commentNumberRepository.
                 findByPostIdAndMemberId(postId, loginMemberId).orElse(null);
@@ -115,7 +124,7 @@ public class CommentService {
         if (commentNumber == null) {
             commentNumber = CommentNumber.builder()
                     .post(postRepository.getReferenceById(postId))
-                    .member(memberRepository.getReferenceById(loginMemberId))
+                    .member(loginMember)
                     .number(commentNumberRepository.countAllByPostId(postId) + 1)
                     .build();
             commentNumberRepository.save(commentNumber);
@@ -124,7 +133,7 @@ public class CommentService {
         // 2. 대댓글 저장
         Comment comment = Comment.builder()
                 .post(postRepository.getReferenceById(postId))
-                .member(memberRepository.getReferenceById(loginMemberId))
+                .member(loginMember)
                 .content(postCommentWriteReplyReqDto.getContent())
                 .anonymous(postCommentWriteReplyReqDto.getAnonymous())
                 .commentNumber(commentNumber)
@@ -140,22 +149,25 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT));
 
-        CommentLike commentLike = commentLikeRepository.findByCommentIdAndMemberId(commentId, loginMemberId)
+        Member loginMember = memberRepository.findById(loginMemberId)
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        CommentLike commentLike = commentLikeRepository.findByCommentIdAndMemberId(commentId, loginMember.getId())
                 .orElse(null);
 
-        return toggleLike(comment, loginMemberId, commentLike);
+        return toggleLike(comment, loginMember, commentLike);
     }
 
-    private Long toggleLike(Comment comment, Long loginMemberId, CommentLike commentLike) {
+    private Long toggleLike(Comment comment, Member loginMember, CommentLike commentLike) {
         if (commentLike != null) {
             return deleteCommentLike(commentLike);
         }
-        return saveCommentLike(comment, loginMemberId);
+        return saveCommentLike(comment, loginMember);
     }
 
-    private Long saveCommentLike(Comment comment, Long loginMemberId) {
+    private Long saveCommentLike(Comment comment, Member loginMember) {
         CommentLike commentLike = CommentLike.builder()
-                .member(memberRepository.getReferenceById(loginMemberId))
+                .member(loginMember)
                 .comment(comment)
                 .build();
         commentLikeRepository.save(commentLike);
