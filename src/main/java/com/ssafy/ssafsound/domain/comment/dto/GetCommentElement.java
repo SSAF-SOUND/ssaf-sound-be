@@ -21,7 +21,7 @@ public class GetCommentElement {
     private Boolean liked;
     private Boolean mine;
 
-    public static GetCommentElement of(Comment comment, AuthenticatedMember member) {
+    public static GetCommentElement of(Comment comment, AuthenticatedMember loginMember) {
         Boolean anonymous = comment.getAnonymous();
 
         return GetCommentElement.builder()
@@ -32,8 +32,8 @@ public class GetCommentElement {
                 .nickname(setNickName(comment, anonymous))
                 .anonymous(anonymous)
                 .modified(comment.getModifiedAt() != null)
-                .liked(isLiked(comment, member))
-                .mine(isMine(comment, member))
+                .liked(isLiked(comment, loginMember))
+                .mine(isMine(comment, loginMember))
                 .build();
     }
 
@@ -43,22 +43,22 @@ public class GetCommentElement {
         return comment.getMember().getNickname();
     }
 
-    private static Boolean isLiked(Comment comment, AuthenticatedMember member) {
-        if (member == null)
+    private static Boolean isLiked(Comment comment, AuthenticatedMember loginMember) {
+        if (loginMember == null)
             return false;
 
-        Long memberId = member.getMemberId();
+        Long loginMemberId = loginMember.getMemberId();
         for (CommentLike like : comment.getLikes()) {
-            if (like.getMember().getId().equals(memberId))
+            if (like.getMember().getId().equals(loginMemberId))
                 return true;
         }
         return false;
     }
 
-    private static Boolean isMine(Comment comment, AuthenticatedMember member) {
-        if (member == null)
+    private static Boolean isMine(Comment comment, AuthenticatedMember loginMember) {
+        if (loginMember == null)
             return false;
 
-        return comment.getMember().getId().equals(member.getMemberId());
+        return comment.getMember().getId().equals(loginMember.getMemberId());
     }
 }

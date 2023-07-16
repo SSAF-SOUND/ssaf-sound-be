@@ -34,10 +34,10 @@ public class GetPostDetailElement {
     private final Boolean isMajor;
     private final SSAFYInfo ssafyInfo;
 
-    public static GetPostDetailElement of(Post post, Member member) {
-        Boolean scraped = isScrap(post, member);
-        Boolean liked = isLike(post, member);
-        Boolean mine = isMine(post, member);
+    public static GetPostDetailElement of(Post post, Member loginMember) {
+        Boolean scraped = isScrap(post, loginMember);
+        Boolean liked = isLike(post, loginMember);
+        Boolean mine = isMine(post, loginMember);
         Boolean anonymous = post.getAnonymous();
         List<ImageUrlElement> images = findImageUrls(post);
 
@@ -62,29 +62,29 @@ public class GetPostDetailElement {
                 .build();
     }
 
-    private static Boolean isScrap(Post post, Member member) {
-        if (member == null)
+    private static Boolean isScrap(Post post, Member loginMember) {
+        if (loginMember == null)
             return false;
 
         List<PostScrap> scraps = post.getScraps();
-        Long memberId = member.getId();
+        Long loginMemberId = loginMember.getId();
 
         for (PostScrap scrap : scraps) {
-            if (scrap.getMember().getId().equals(memberId))
+            if (scrap.getMember().getId().equals(loginMemberId))
                 return true;
         }
         return false;
     }
 
-    private static Boolean isLike(Post post, Member member) {
-        if (member == null)
+    private static Boolean isLike(Post post, Member loginMember) {
+        if (loginMember == null)
             return false;
 
         List<PostLike> likes = post.getLikes();
-        Long memberId = member.getId();
+        Long loginMemberId = loginMember.getId();
 
         for (PostLike like : likes) {
-            if (like.getMember().getId().equals(memberId))
+            if (like.getMember().getId().equals(loginMemberId))
                 return true;
         }
         return false;
@@ -96,10 +96,10 @@ public class GetPostDetailElement {
                 .collect(Collectors.toList());
     }
 
-    private static Boolean isMine(Post post, Member member) {
-        if (member == null)
+    private static Boolean isMine(Post post, Member loginMember) {
+        if (loginMember == null)
             return false;
 
-        return post.getMember().getId().equals(member.getId());
+        return post.getMember().getId().equals(loginMember.getId());
     }
 }

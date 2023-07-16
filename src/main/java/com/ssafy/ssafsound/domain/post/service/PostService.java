@@ -14,9 +14,6 @@ import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
 import com.ssafy.ssafsound.domain.post.exception.PostException;
 import com.ssafy.ssafsound.domain.post.repository.*;
-import com.ssafy.ssafsound.domain.meta.domain.MetaData;
-import com.ssafy.ssafsound.domain.meta.domain.UploadDirectory;
-import com.ssafy.ssafsound.domain.meta.dto.UploadFileInfo;
 import com.ssafy.ssafsound.domain.post.dto.*;
 import com.ssafy.ssafsound.infra.storage.service.StorageService;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +23,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -40,7 +34,6 @@ public class PostService {
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
-    private final StorageService awsS3StorageSerive;
 
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
@@ -62,12 +55,12 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public GetPostDetailResDto findPost(Long postId, Long memberId) {
+    public GetPostDetailResDto findPost(Long postId, Long loginMemberId) {
         Post post = postRepository.findWithMemberAndPostImageFetchById(postId)
                 .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
-        if (memberId != null) {
-            Member member = memberRepository.findById(memberId)
+        if (loginMemberId != null) {
+            Member member = memberRepository.findById(loginMemberId)
                     .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
             return GetPostDetailResDto.of(post, member);
         }
@@ -76,27 +69,27 @@ public class PostService {
     }
 
     @Transactional
-    public void likePost(Long postId, Long memberId) {
-        PostLike postLike = postLikeRepository.findByPostIdAndMemberId(postId, memberId)
+    public void likePost(Long postId, Long loginMemberId) {
+        PostLike postLike = postLikeRepository.findByPostIdAndMemberId(postId, loginMemberId)
                 .orElse(null);
-        togglePostLike(postId, memberId, postLike);
+        togglePostLike(postId, loginMemberId, postLike);
     }
 
-    private void togglePostLike(Long postId, Long memberId, PostLike postLike) {
+    private void togglePostLike(Long postId, Long loginMemberId, PostLike postLike) {
         if (postLike != null) {
             deleteLike(postLike);
             return;
         }
-        saveLike(postId, memberId);
+        saveLike(postId, loginMemberId);
         if (isSelectedHotPost(postId)) {
             saveHotPost(postId);
         }
     }
 
-    private void saveLike(Long postId, Long memberId) {
+    private void saveLike(Long postId, Long loginMemberId) {
         PostLike postLike = PostLike.builder()
                 .post(postRepository.getReferenceById(postId))
-                .member(memberRepository.getReferenceById(memberId))
+                .member(memberRepository.getReferenceById(loginMemberId))
                 .build();
         postLikeRepository.save(postLike);
     }
@@ -124,24 +117,24 @@ public class PostService {
     }
 
     @Transactional
-    public void scrapPost(Long postId, Long memberId) {
-        PostScrap postScrap = postScrapRepository.findByPostIdAndMemberId(postId, memberId)
+    public void scrapPost(Long postId, Long loginMemberId) {
+        PostScrap postScrap = postScrapRepository.findByPostIdAndMemberId(postId, loginMemberId)
                 .orElse(null);
-        togglePostScrap(postId, memberId, postScrap);
+        togglePostScrap(postId, loginMemberId, postScrap);
     }
 
-    private void togglePostScrap(Long postId, Long memberId, PostScrap postScrap) {
+    private void togglePostScrap(Long postId, Long loginMemberId, PostScrap postScrap) {
         if (postScrap != null) {
             deleteScrapIfAlreadyExists(postScrap);
             return;
         }
-        saveScrap(postId, memberId);
+        saveScrap(postId, loginMemberId);
     }
 
-    private void saveScrap(Long postId, Long memberId) {
+    private void saveScrap(Long postId, Long loginMemberId) {
         PostScrap postScrap = PostScrap.builder()
                 .post(postRepository.getReferenceById(postId))
-                .member(memberRepository.getReferenceById(memberId))
+                .member(memberRepository.getReferenceById(loginMemberId))
                 .build();
         postScrapRepository.save(postScrap);
     }
@@ -151,18 +144,18 @@ public class PostService {
     }
 
     @Transactional
-    public Long reportPost(Long postId, Long memberId, String content) {
-        if (postReportRepository.existsByPostIdAndMemberId(postId, memberId)) {
+    public Long reportPost(Long postId, Long loginMemberId, String content) {
+        if (postReportRepository.existsByPostIdAndMemberId(postId, loginMemberId)) {
             throw new PostException(PostErrorInfo.DUPLICATE_REPORT);
         }
 
-        if (postRepository.existsByIdAndMemberId(postId, memberId)) {
+        if (postRepository.existsByIdAndMemberId(postId, loginMemberId)) {
             throw new PostException(PostErrorInfo.UNABLE_REPORT_MY_POST);
         }
 
         PostReport postReport = PostReport.builder()
                 .post(postRepository.getReferenceById(postId))
-                .member(memberRepository.getReferenceById(memberId))
+                .member(memberRepository.getReferenceById(loginMemberId))
                 .content(content)
                 .build();
 
@@ -170,18 +163,18 @@ public class PostService {
     }
 
     @Transactional
-    public Long writePost(Long boardId, Long memberId, PostPostWriteReqDto postPostWriteReqDto) {
+    public Long writePost(Long boardId, Long loginMemberId, PostPostWriteReqDto postPostWriteReqDto) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorInfo.NO_BOARD));
 
-        Member member = memberRepository.findById(memberId)
+        Member loginMember = memberRepository.findById(loginMemberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
         List<ImageInfo> images = postPostWriteReqDto.getImages();
 
         Post post = Post.builder()
                 .board(board)
-                .member(member)
+                .member(loginMember)
                 .title(postPostWriteReqDto.getTitle())
                 .content(postPostWriteReqDto.getContent())
                 .anonymous(postPostWriteReqDto.isAnonymous())
@@ -202,15 +195,15 @@ public class PostService {
     }
 
     @Transactional
-    public Long deletePost(Long postId, Long memberId) {
+    public Long deletePost(Long postId, Long loginMemberId) {
         // 1. 게시글 삭제
         Post post = postRepository.findByIdWithMember(postId)
                 .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
-        Member member = memberRepository.findById(memberId)
+        Member loginMember = memberRepository.findById(loginMemberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-        if (!post.getMember().getId().equals(member.getId())) {
+        if (!post.getMember().getId().equals(loginMember.getId())) {
             throw new PostException((PostErrorInfo.UNAUTHORIZED_DELETE_POST));
         }
 
@@ -223,14 +216,14 @@ public class PostService {
     }
 
     @Transactional
-    public Long updatePost(Long postId, Long memberId, PostPutUpdateReqDto postPutUpdateReqDto) {
+    public Long updatePost(Long postId, Long loginMemberId, PostPutUpdateReqDto postPutUpdateReqDto) {
         Post post = postRepository.findWithMemberAndPostImageFetchById(postId)
                 .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
-        Member member = memberRepository.findById(memberId)
+        Member loginMember = memberRepository.findById(loginMemberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-        if (!post.getMember().getId().equals(member.getId())) {
+        if (!post.getMember().getId().equals(loginMember.getId())) {
             throw new PostException(PostErrorInfo.UNAUTHORIZED_UPDATE_POST);
         }
 
@@ -261,9 +254,9 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public GetPostMyResDto findMyPosts(Pageable pageable, Long memberId) {
+    public GetPostMyResDto findMyPosts(Pageable pageable, Long loginMemberId) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        List<Post> posts = postRepository.findWithDetailsByMemberId(memberId, pageRequest);
+        List<Post> posts = postRepository.findWithDetailsByMemberId(loginMemberId, pageRequest);
 
         return GetPostMyResDto.from(posts);
     }

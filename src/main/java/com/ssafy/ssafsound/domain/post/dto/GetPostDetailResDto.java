@@ -10,10 +10,10 @@ import lombok.Getter;
 public class GetPostDetailResDto {
     private GetPostDetailElement post;
 
-    public static GetPostDetailResDto of(Post post, Member member) {
+    public static GetPostDetailResDto of(Post post, Member loginMember) {
 
         return GetPostDetailResDto.builder()
-                .post(GetPostDetailElement.of(post, member))
+                .post(GetPostDetailElement.of(post, loginMember))
                 .build();
     }
 }
