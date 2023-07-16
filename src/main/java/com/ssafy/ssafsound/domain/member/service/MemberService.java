@@ -162,7 +162,7 @@ public class MemberService {
     public void setMemberPortfolioIntroduceByMember(Member member, PutMemberProfileReqDto putMemberProfileReqDto) {
         if (putMemberProfileReqDto.getSelfIntroduction() != null) {
             memberProfileRepository.findMemberProfileByMember(member).ifPresentOrElse(
-                    memberProfile -> memberProfile.changeIntroduceMyself(putMemberProfileReqDto.getSelfIntroduction()),
+                    memberProfile -> memberProfile.changeSelfIntroduction(putMemberProfileReqDto.getSelfIntroduction()),
                     () -> memberProfileRepository.save(putMemberProfileReqDto.toMemberProfile(member))
             );
         }

@@ -26,7 +26,7 @@ public class MemberProfile {
     @JoinColumn(name="member_id")
     private Member member;
 
-    public void changeIntroduceMyself(String introduceMyself) {
-        this.introduce = introduceMyself;
+    public void changeSelfIntroduction(String selfIntroduction) {
+        this.introduce = selfIntroduction;
     }
 }
