@@ -32,56 +32,57 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public EnvelopeResponse<GetPostDetailResDto> findPost(@PathVariable Long postId, AuthenticatedMember authenticatedMember) {
+    public EnvelopeResponse<GetPostDetailResDto> findPost(@PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<GetPostDetailResDto>builder()
-                .data(postService.findPost(postId, authenticatedMember.getMemberId()))
+                .data(postService.findPost(postId, loginMember.getMemberId()))
                 .build();
     }
 
     @PostMapping("/{postId}/like")
-    public EnvelopeResponse<Void> likePost(@PathVariable Long postId, AuthenticatedMember authenticatedMember) {
-        postService.likePost(postId, authenticatedMember.getMemberId());
+    public EnvelopeResponse<Void> likePost(@PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
+        postService.likePost(postId, loginMember.getMemberId());
 
         return EnvelopeResponse.<Void>builder()
                 .build();
     }
 
     @PostMapping("/{postId}/scrap")
-    public EnvelopeResponse<Void> scrapPost(AuthenticatedMember authenticatedMember, @PathVariable Long postId) {
-        postService.scrapPost(postId, authenticatedMember.getMemberId());
+    public EnvelopeResponse<Void> scrapPost(@PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
+        postService.scrapPost(postId, loginMember.getMemberId());
 
         return EnvelopeResponse.<Void>builder()
                 .build();
     }
 
     @PostMapping("/{postId}/report")
-    public EnvelopeResponse<Long> reportPost(AuthenticatedMember authenticatedMember, @PathVariable Long postId,
-                                             @Valid @RequestBody PostPostReportReqDto postPostReportReqDto) {
+    public EnvelopeResponse<Long> reportPost(@PathVariable Long postId,
+                                             @Valid @RequestBody PostPostReportReqDto postPostReportReqDto,
+                                             @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<Long>builder()
-                .data(postService.reportPost(postId, authenticatedMember.getMemberId(), postPostReportReqDto.getContent()))
+                .data(postService.reportPost(postId, loginMember.getMemberId(), postPostReportReqDto.getContent()))
                 .build();
     }
 
     @PostMapping
     public EnvelopeResponse<Long> writePost(@Valid @RequestBody PostPostWriteReqDto postPostWriteReqDto,
-                                            @RequestParam Long boardId, AuthenticatedMember authenticatedMember) {
+                                            @RequestParam Long boardId, @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<Long>builder()
-                .data(postService.writePost(boardId, authenticatedMember.getMemberId(), postPostWriteReqDto))
+                .data(postService.writePost(boardId, loginMember.getMemberId(), postPostWriteReqDto))
                 .build();
     }
 
     @DeleteMapping("/{postId}")
-    public EnvelopeResponse<Long> deletePost(@PathVariable Long postId, AuthenticatedMember authenticatedMember) {
+    public EnvelopeResponse<Long> deletePost(@PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<Long>builder()
-                .data(postService.deletePost(postId, authenticatedMember.getMemberId()))
+                .data(postService.deletePost(postId, loginMember.getMemberId()))
                 .build();
     }
 
     @PutMapping("/{postId}")
     public EnvelopeResponse<Long> updatePost(@Valid @RequestBody PostPutUpdateReqDto postPutUpdateReqDto,
-                                             @PathVariable Long postId, AuthenticatedMember authenticatedMember) {
+                                             @PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<Long>builder()
-                .data(postService.updatePost(postId, authenticatedMember.getMemberId(), postPutUpdateReqDto))
+                .data(postService.updatePost(postId, loginMember.getMemberId(), postPutUpdateReqDto))
                 .build();
     }
 
@@ -93,9 +94,9 @@ public class PostController {
     }
 
     @GetMapping("/my")
-    public EnvelopeResponse<GetPostMyResDto> findMyPosts(Pageable pageable, AuthenticatedMember authenticatedMember) {
+    public EnvelopeResponse<GetPostMyResDto> findMyPosts(Pageable pageable, @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<GetPostMyResDto>builder()
-                .data(postService.findMyPosts(pageable, authenticatedMember.getMemberId()))
+                .data(postService.findMyPosts(pageable, loginMember.getMemberId()))
                 .build();
     }
 
