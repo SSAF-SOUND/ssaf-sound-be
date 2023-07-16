@@ -3,6 +3,7 @@ package com.ssafy.ssafsound.global.config;
 import com.ssafy.ssafsound.domain.auth.validator.AuthenticationArgumentResolver;
 import com.ssafy.ssafsound.global.interceptor.AuthInterceptor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -38,7 +39,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowCredentials(true)
-                .allowedMethods("GET", "POST")
+                .allowedHeaders("Authorization", "authorization")
+                .allowedMethods(
+                        HttpMethod.GET.name(),
+                        HttpMethod.HEAD.name(),
+                        HttpMethod.POST.name(),
+                        HttpMethod.PUT.name(),
+                        HttpMethod.DELETE.name())
                 .allowedOrigins("http://localhost:8081", "http://localhost:8082");
     }
 }
