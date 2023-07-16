@@ -1,6 +1,10 @@
 package com.ssafy.ssafsound.domain.chat.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ssafy.ssafsound.domain.chat.domain.Chat;
+import com.ssafy.ssafsound.domain.chat.domain.ChatRoom;
+import com.ssafy.ssafsound.domain.chat.domain.Talker;
+import com.ssafy.ssafsound.domain.member.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -17,8 +21,21 @@ public class ChatRoomElementDto {
     @JsonProperty("talker")
     private TalkerInfoDto talkerInfoDto;
 
-    private LocalDateTime readAt;
-
     @JsonProperty("latestChat")
     private LatestChatDto latestChatDto;
+
+    private LocalDateTime readAt;
+
+    public static ChatRoomElementDto of(ChatRoom chatRoom, TalkerInfoDto partnerTalkerInfoDto,
+                                        Talker talker, Chat chat) {
+
+        return ChatRoomElementDto.builder()
+                .chatRoomId(chatRoom.getId())
+                .anonymous(chatRoom.getAnonymity())
+                .talkerInfoDto(partnerTalkerInfoDto)
+                .latestChatDto(LatestChatDto.from(chat))
+                .readAt(talker.getReadAt())
+                .build();
+    }
+
 }

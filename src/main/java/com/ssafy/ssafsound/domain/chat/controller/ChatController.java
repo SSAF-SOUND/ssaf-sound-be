@@ -22,11 +22,10 @@ public class ChatController {
     private final ChatRoomService chatRoomService;
 
     @GetMapping
-    public EnvelopeResponse<GetChatRoomsResDto> getChatRooms(@Authentication AuthenticatedMember member,
-                                                             GetChatRoomsReqDto getChatRoomsReqDto) {
+    public EnvelopeResponse<GetChatRoomsResDto> getChatRooms(@Authentication AuthenticatedMember member) {
 
         return EnvelopeResponse.<GetChatRoomsResDto>builder()
-                .data(chatRoomService.getChatRooms(member.getMemberId(), getChatRoomsReqDto))
+                .data(chatRoomService.getChatRooms(member.getMemberId()))
                 .build();
     }
 
