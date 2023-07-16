@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
 public class GetCommentResDto {
     List<GetCommentElement> comments;
 
-    public static GetCommentResDto of(List<Comment> comments, AuthenticatedMember member) {
+    public static GetCommentResDto of(List<Comment> comments, AuthenticatedMember loginMember) {
         return GetCommentResDto.builder()
                 .comments(comments.stream()
-                        .map(comment -> GetCommentElement.of(comment, member))
+                        .map(comment -> GetCommentElement.of(comment, loginMember))
                         .collect(Collectors.toList()))
                 .build();
     }

@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.global.advice;
 
 
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
 import com.ssafy.ssafsound.domain.board.exception.BoardException;
 import com.ssafy.ssafsound.domain.comment.exception.CommentException;
@@ -15,6 +16,7 @@ import com.ssafy.ssafsound.infra.exception.InfraException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -76,7 +78,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public EnvelopeResponse RuntimeExceptionHandler(RuntimeException e) {
-        log.error(e.getMessage());
+        e.printStackTrace();
 
         return EnvelopeResponse.builder()
                 .code(GlobalErrorInfo.INTERNAL_SERVER_ERROR.getCode())
@@ -108,7 +110,7 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(InfraException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public EnvelopeResponse InfraExceptionHandler(InfraException e){
+    public EnvelopeResponse InfraExceptionHandler(InfraException e) {
         log.error(e.getMessage());
 
         return EnvelopeResponse.builder()
@@ -129,7 +131,7 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(BoardException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public EnvelopeResponse BoardExceptionHandler(BoardException e){
+    public EnvelopeResponse BoardExceptionHandler(BoardException e) {
         log.error(e.getMessage());
 
         return EnvelopeResponse.builder()
@@ -140,7 +142,7 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(PostException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public EnvelopeResponse PostExceptionHandler(PostException e){
+    public EnvelopeResponse PostExceptionHandler(PostException e) {
         log.error(e.getMessage());
 
         return EnvelopeResponse.builder()
@@ -168,6 +170,17 @@ public class ExceptionControllerAdvice {
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
                 .message(e.getInfo().getMessage())
+                .build();
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public EnvelopeResponse HttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        log.error(e.getMessage());
+
+        return EnvelopeResponse.builder()
+                .code(GlobalErrorInfo.BAD_REQUEST.getCode())
+                .message(GlobalErrorInfo.BAD_REQUEST.getMessage())
                 .build();
     }
 }

@@ -1,11 +1,8 @@
 package com.ssafy.ssafsound.domain.post.dto;
 
-import com.ssafy.ssafsound.global.validator.CheckFileCount;
-import com.ssafy.ssafsound.global.validator.CheckFileSize;
-import com.ssafy.ssafsound.global.validator.CheckImage;
+import com.ssafy.ssafsound.global.validator.CheckImageInfo;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -24,8 +21,6 @@ public class PostPostWriteReqDto {
 
     private boolean anonymous;
 
-    @CheckFileCount(maxFileCount = 10)
-    @CheckFileSize(maxFileSize = 50 * 1024 * 1024)
-    @CheckImage
-    private List<MultipartFile> images;
+    @CheckImageInfo
+    private List<ImageInfo> images;
 }
