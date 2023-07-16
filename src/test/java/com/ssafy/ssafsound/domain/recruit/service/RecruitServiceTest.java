@@ -8,6 +8,7 @@ import com.ssafy.ssafsound.domain.meta.domain.*;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.domain.recruit.domain.*;
 import com.ssafy.ssafsound.domain.recruit.dto.*;
+import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
@@ -159,6 +160,8 @@ class RecruitServiceTest {
 
         Mockito.lenient().when(recruitScrapRepository.findByRecruitIdAndMemberId(1L, 1L)).thenReturn(java.util.Optional.ofNullable(recruitScrap));
         Mockito.lenient().when(recruitRepository.findByIdUsingFetchJoinRegisterAndRecruitLimitation(2L))
+                .thenReturn(java.util.Optional.ofNullable(savedRecruit));
+        Mockito.lenient().when(recruitRepository.findByIdUsingFetchJoinRegister(2L))
                 .thenReturn(java.util.Optional.ofNullable(savedRecruit));
         Mockito.lenient().when(recruitRepository.findById(2L)).thenReturn(java.util.Optional.ofNullable(savedRecruit));
 
@@ -396,5 +399,26 @@ class RecruitServiceTest {
     void Given_IncludeKeyword_When_GetPagingRecruits_Then_EmptySet() {
         GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(notFindKeywordDto, pageInfo);
         assertEquals(0, getRecruitsResDto.getRecruits().size());
+    }
+
+    @DisplayName("등록자 리크루트 완료 성공")
+    @Test
+    void Given_RecruitId_When_ExpiredRecruit_Then_Success() {
+        recruitService.expiredRecruit(2L, 1L);
+        assertEquals(true, savedRecruit.getFinishedRecruit());
+        Mockito.verify(recruitRepository).findByIdUsingFetchJoinRegister(2L);
+    }
+
+    @DisplayName("등록자가 아닌 사용자의 리크루트 완료 요쳥")
+    @Test
+    void Given_RecruitId_When_ExpiredRecruit_Then_Fail() {
+        RecruitException recruitException = assertThrows(
+                RecruitException.class,
+                () -> recruitService.expiredRecruit(2L, 2L));
+
+        assertEquals(
+                RecruitErrorInfo.INVALID_CHANGE_MEMBER_OPERATION.getCode(),
+                recruitException.getInfo().getCode()
+        );
     }
 }
