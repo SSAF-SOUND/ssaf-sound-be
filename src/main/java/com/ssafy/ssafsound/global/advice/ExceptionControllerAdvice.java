@@ -78,7 +78,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public EnvelopeResponse RuntimeExceptionHandler(RuntimeException e) {
-        log.error(e.getMessage());
+        e.printStackTrace();
 
         return EnvelopeResponse.builder()
                 .code(GlobalErrorInfo.INTERNAL_SERVER_ERROR.getCode())
