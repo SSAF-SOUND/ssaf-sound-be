@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Getter
 public class GetMemberPortfolioResDto {
 
-    private String introduceMyself;
+    private String selfIntroduction;
 
     private List<String> skills;
 
@@ -24,7 +24,7 @@ public class GetMemberPortfolioResDto {
 
     public static GetMemberPortfolioResDto from(Member member, MemberProfile memberProfile) {
         return GetMemberPortfolioResDto.builder()
-                .introduceMyself(memberProfile.getIntroduce())
+                .selfIntroduction(memberProfile.getIntroduce())
                 .skills(member.getMemberSkills()
                         .stream()
                         .map(memberSkill -> memberSkill.getSkill().getName())

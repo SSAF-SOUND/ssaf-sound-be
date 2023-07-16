@@ -160,15 +160,15 @@ public class MemberService {
         member.setMemberSkills(memberSkills, metaDataConsumer);
     }
     public void setMemberPortfolioIntroduceByMember(Member member, PutMemberProfileReqDto putMemberProfileReqDto) {
-        if (putMemberProfileReqDto.getIntroduceMyself() != null) {
+        if (putMemberProfileReqDto.getSelfIntroduction() != null) {
             memberProfileRepository.findMemberProfileByMember(member).ifPresentOrElse(
-                    memberProfile -> memberProfile.changeIntroduceMyself(putMemberProfileReqDto.getIntroduceMyself()),
+                    memberProfile -> memberProfile.changeIntroduceMyself(putMemberProfileReqDto.getSelfIntroduction()),
                     () -> memberProfileRepository.save(putMemberProfileReqDto.toMemberProfile(member))
             );
         }
     }
 
-    public boolean isInvalidOauthLogin(Member member, PostMemberReqDto postMemberReqDto) {
+    private boolean isInvalidOauthLogin(Member member, PostMemberReqDto postMemberReqDto) {
         OAuthType oAuthType = member.getOauthType();
         return !member.getOauthIdentifier().equals(postMemberReqDto.getOauthIdentifier()) || !oAuthType.isEqual(postMemberReqDto.getOauthName());
     }
