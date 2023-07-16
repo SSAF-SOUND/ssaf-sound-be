@@ -22,7 +22,7 @@ public class GetMemberPortfolioResDto {
 
     private List<PutMemberLink> memberLinks;
 
-    public static GetMemberPortfolioResDto from(Member member, MemberProfile memberProfile) {
+    public static GetMemberPortfolioResDto of(Member member, MemberProfile memberProfile) {
         return GetMemberPortfolioResDto.builder()
                 .selfIntroduction(memberProfile.getIntroduce())
                 .skills(member.getMemberSkills()
