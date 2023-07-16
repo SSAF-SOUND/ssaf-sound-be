@@ -143,6 +143,13 @@ public class MemberService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public GetMemberPortfolioResDto getMemberPortfolioById(Long memberId) {
+        Member member = memberRepository.findWithMemberLinksAndMemberSkills(memberId).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+        MemberProfile memberProfile = memberProfileRepository.findMemberProfileByMember(member).orElseGet(MemberProfile::new);
+        return GetMemberPortfolioResDto.from(member, memberProfile);
+    }
+
     public void deleteExistMemberLinksAllByMemberAndSaveNewRequest(Member member, List<PutMemberLink> memberLinks) {
         memberLinkRepository.deleteMemberLinksByMember(member);
         member.setMemberLinks(memberLinks);
