@@ -11,5 +11,5 @@ public interface TalkerRepository extends JpaRepository<Talker, Long> {
     List<Talker> findAllByMember(Member member);
 
 
-    Talker findByChatRoomAndTalkerNot(ChatRoom chatRoom, Talker talker);
+    Talker findByChatRoomAndIdNot(ChatRoom chatRoom, Long id);
 }

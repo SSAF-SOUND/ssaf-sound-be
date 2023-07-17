@@ -11,6 +11,14 @@ import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
+import com.ssafy.ssafsound.domain.meta.domain.MetaData;
+import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
+import com.ssafy.ssafsound.domain.meta.exception.MetaDataIntegrityException;
+import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
+import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
+import com.ssafy.ssafsound.domain.post.exception.PostException;
+import com.ssafy.ssafsound.domain.post.repository.PostRepository;
+import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +35,10 @@ public class ChatRoomService {
     private final TalkerRepository talkerRepository;
 
     private final MemberRepository memberRepository;
+
+    private final PostRepository postRepository;
+
+    private final MetaDataConsumer metaDataConsumer;
 
     public GetChatRoomsResDto getChatRooms(Long memberId) {
 
@@ -45,7 +57,7 @@ public class ChatRoomService {
 
             TalkerInfoDto partnerTalkerInfoDto =
                     chatRoom.getAnonymity() ? null : TalkerInfoDto.from(
-                            talkerRepository.findByChatRoomAndTalkerNot(chatRoom, memberAsTalker));
+                            talkerRepository.findByChatRoomAndIdNot(chatRoom, memberAsTalker.getId()));
 
             chatRooms.add(ChatRoomElementDto.of(
                     chatRoom,
@@ -63,8 +75,22 @@ public class ChatRoomService {
     }
 
     public GetChatExistResDto getChatExistence(Long memberId, GetChatExistReqDto getChatExistReqDto) {
-        return null;
-    }
 
+        memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        MetaData entityType = metaDataConsumer.getMetaData(MetaDataType.ENTITY_TYPE.name(),
+                getChatExistReqDto.getSourceType());
+
+        if (!entityType.getName().equals("post")) throw new MetaDataIntegrityException(GlobalErrorInfo.BAD_REQUEST);
+
+        postRepository.findById(getChatExistReqDto.getSourceId())
+                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
+
+        return GetChatExistResDto.of(chatRoomRepository.findBySourceTypeAndSourceIdAndInitialMemberId(
+                getChatExistReqDto.getSourceType(),
+                getChatExistReqDto.getSourceId(),
+                memberId));
+    }
 
 }

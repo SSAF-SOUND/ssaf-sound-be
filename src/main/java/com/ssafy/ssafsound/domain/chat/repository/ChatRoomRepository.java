@@ -4,4 +4,5 @@ import com.ssafy.ssafsound.domain.chat.domain.ChatRoom;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
+    ChatRoom findBySourceTypeAndSourceIdAndInitialMemberId(String sourceType, Long sourceId, Long memberId);
 }
