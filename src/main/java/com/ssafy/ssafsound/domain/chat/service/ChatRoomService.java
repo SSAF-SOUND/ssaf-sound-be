@@ -1,6 +1,5 @@
 package com.ssafy.ssafsound.domain.chat.service;
 
-import com.ssafy.ssafsound.domain.chat.domain.Chat;
 import com.ssafy.ssafsound.domain.chat.domain.ChatRoom;
 import com.ssafy.ssafsound.domain.chat.domain.ChatRoomStatus;
 import com.ssafy.ssafsound.domain.chat.domain.Talker;
