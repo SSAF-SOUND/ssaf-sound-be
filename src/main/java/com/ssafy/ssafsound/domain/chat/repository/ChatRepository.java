@@ -5,5 +5,5 @@ import com.ssafy.ssafsound.domain.chat.domain.ChatRoom;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ChatRepository extends JpaRepository<Chat, Long> {
-    Chat findFirstByChatRoomOrderByCreatAtDesc(ChatRoom chatRoom);
+    Chat findFirstByChatRoomOrderByCreatedAtDesc(ChatRoom chatRoom);
 }

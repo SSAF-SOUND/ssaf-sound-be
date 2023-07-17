@@ -45,13 +45,13 @@ public class ChatRoomService {
 
             TalkerInfoDto partnerTalkerInfoDto =
                     chatRoom.getAnonymity() ? null : TalkerInfoDto.from(
-                            talkerRepository.findByChatRoomAndNotTalker(chatRoom, memberAsTalker));
+                            talkerRepository.findByChatRoomAndTalkerNot(chatRoom, memberAsTalker));
 
             chatRooms.add(ChatRoomElementDto.of(
                     chatRoom,
                     partnerTalkerInfoDto,
                     memberAsTalker,
-                    chatRepository.findFirstByChatRoomOrderByCreatAtDesc(chatRoom)));
+                    chatRepository.findFirstByChatRoomOrderByCreatedAtDesc(chatRoom)));
         }
 
         Collections.sort(chatRooms, (dto1, dto2) ->

@@ -10,5 +10,6 @@ import java.util.List;
 public interface TalkerRepository extends JpaRepository<Talker, Long> {
     List<Talker> findAllByMember(Member member);
 
-    Talker findByChatRoomAndNotTalker(ChatRoom chatRoom, Talker memberAsTalker);
+
+    Talker findByChatRoomAndTalkerNot(ChatRoom chatRoom, Talker talker);
 }
