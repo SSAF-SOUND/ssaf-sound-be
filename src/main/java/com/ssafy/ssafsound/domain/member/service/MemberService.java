@@ -155,6 +155,12 @@ public class MemberService {
         return null;
     }
 
+    @Transactional(readOnly = true)
+    public GetMemberProfileResDto getMemberProfileById(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+        return GetMemberProfileResDto.from(member);
+    }
+
     public void deleteExistMemberLinksAllByMemberAndSaveNewRequest(Member member, List<PutMemberLink> memberLinks) {
         memberLinkRepository.deleteMemberLinksByMember(member);
         member.setMemberLinks(memberLinks);
@@ -164,6 +170,7 @@ public class MemberService {
         memberSkillRepository.deleteMemberSkillsByMember(member);
         member.setMemberSkills(memberSkills, metaDataConsumer);
     }
+
     public void setMemberPortfolioIntroduceByMember(Member member, PutMemberProfileReqDto putMemberProfileReqDto) {
         if (putMemberProfileReqDto.getSelfIntroduction() != null) {
             memberProfileRepository.findMemberProfileByMember(member).ifPresentOrElse(
