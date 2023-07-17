@@ -46,6 +46,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         HttpMethod.POST.name(),
                         HttpMethod.PUT.name(),
                         HttpMethod.DELETE.name())
-                .allowedOrigins("http://localhost:8081", "http://localhost:8082");
+                .allowedOrigins("*");
     }
 }
