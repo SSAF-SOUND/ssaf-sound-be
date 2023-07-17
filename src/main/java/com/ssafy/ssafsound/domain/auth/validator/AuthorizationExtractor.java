@@ -16,15 +16,14 @@ public class AuthorizationExtractor {
         // cookie 없는 경우(미인증)
         if (cookies == null) {
             bearHeader = request.getHeader("Authorization");
-        }
-
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(tokenType)) {
-                return cookie.getValue();
+        } else {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(tokenType)) {
+                    return cookie.getValue();
+                }
             }
         }
-
-        bearHeader = request.getHeader("Authorization");
+        
         if(bearHeader!=null) {
             String[] headerToken = bearHeader.split(" ");
             bearHeader = headerToken[1];
