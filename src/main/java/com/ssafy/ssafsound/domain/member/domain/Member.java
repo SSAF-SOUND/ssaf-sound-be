@@ -62,10 +62,11 @@ public class Member extends BaseTimeEntity {
     private MetaData majorTrack;
 
     @Column
-    private Boolean ssafyMember;
-
     @Builder.Default
+    private Boolean ssafyMember = false;
+
     @Column
+    @Builder.Default
     private Integer certificationInquiryCount = 0;
 
     @Column
