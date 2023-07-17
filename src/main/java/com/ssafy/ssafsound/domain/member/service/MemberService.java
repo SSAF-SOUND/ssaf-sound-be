@@ -147,12 +147,9 @@ public class MemberService {
     public GetMemberPortfolioResDto getMemberPortfolioById(Long memberId) {
         Member member = memberRepository.findWithMemberLinksAndMemberSkills(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+        MemberProfile memberProfile = memberProfileRepository.findMemberProfileByMember(member).orElseGet(MemberProfile::new);
 
-        if (member.getPublicPortfolio()) {
-            MemberProfile memberProfile = memberProfileRepository.findMemberProfileByMember(member).orElseGet(MemberProfile::new);
-            return GetMemberPortfolioResDto.of(member, memberProfile);
-        }
-        return null;
+        return GetMemberPortfolioResDto.of(member, memberProfile);
     }
 
     @Transactional(readOnly = true)
