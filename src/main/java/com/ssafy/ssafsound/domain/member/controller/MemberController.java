@@ -24,6 +24,13 @@ public class MemberController {
                 .build();
     }
 
+    @GetMapping("/{memberId}/portfolio")
+    public EnvelopeResponse<GetMemberPortfolioResDto> getMemberPortfolioById(@PathVariable Long memberId) {
+        return EnvelopeResponse.<GetMemberPortfolioResDto>builder()
+                .data(memberService.getMemberPortfolioById(memberId))
+                .build();
+    }
+
     @PatchMapping
     public EnvelopeResponse<GetMemberResDto> registerMemberInformation(@Authentication AuthenticatedMember authenticatedMember,
                                                                        @Valid @RequestBody PostMemberInfoReqDto postMemberInfoReqDto) {

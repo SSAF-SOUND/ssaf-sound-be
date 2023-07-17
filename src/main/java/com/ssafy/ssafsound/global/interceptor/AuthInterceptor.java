@@ -23,7 +23,7 @@ import java.util.Objects;
 public class AuthInterceptor implements HandlerInterceptor {
     private final JwtTokenProvider jwtTokenProvider;
 
-    private final List<String> excludePathByClientGetRequest = List.of("/auth", "/recruits", "/comments", "/lunch", "/meta", "/members", "/posts");
+    private final List<String> excludePathByClientGetRequest = List.of("/", "/auth", "/recruits", "/comments", "/lunch", "/meta", "/members", "/posts");
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         if (isGetMethodWithReissue(request)) {

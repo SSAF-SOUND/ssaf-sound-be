@@ -113,33 +113,11 @@ public class MemberService {
         deleteExistMemberSkillsAllByMemberAndSaveNewRequest(member, putMemberProfileReqDto.getSkills());
     }
 
-    public void deleteExistMemberLinksAllByMemberAndSaveNewRequest(Member member, List<PutMemberLink> memberLinks) {
-        memberLinkRepository.deleteMemberLinksByMember(member);
-        member.setMemberLinks(memberLinks);
-    }
-
-    public void deleteExistMemberSkillsAllByMemberAndSaveNewRequest(Member member, List<String> memberSkills) {
-        memberSkillRepository.deleteMemberSkillsByMember(member);
-        member.setMemberSkills(memberSkills, metaDataConsumer);
-    }
-    public void setMemberPortfolioIntroduceByMember(Member member, PutMemberProfileReqDto putMemberProfileReqDto) {
-        if (putMemberProfileReqDto.getIntroduceMyself() != null) {
-            memberProfileRepository.findMemberProfileByMember(member).ifPresentOrElse(
-                    memberProfile -> memberProfile.changeIntroduceMyself(putMemberProfileReqDto.getIntroduceMyself()),
-                    () -> memberProfileRepository.save(putMemberProfileReqDto.toMemberProfile(member))
-            );
-        }
-    }
-
     @Transactional(readOnly = true)
     public MemberRole findMemberRoleByRoleName(String roleType) {
         return memberRoleRepository.findByRoleType(roleType).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_ROLE_TYPE_NOT_FOUND));
     }
 
-    public boolean isInvalidOauthLogin(Member member, PostMemberReqDto postMemberReqDto) {
-        OAuthType oAuthType = member.getOauthType();
-        return !member.getOauthIdentifier().equals(postMemberReqDto.getOauthIdentifier()) || !oAuthType.isEqual(postMemberReqDto.getOauthName());
-    }
     @Transactional(readOnly = true)
     public GetMemberResDto getMemberInformation(AuthenticatedMember authenticatedMember) {
         Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
@@ -163,6 +141,41 @@ public class MemberService {
         } else {
             return PostNicknameResDto.of(true);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public GetMemberPortfolioResDto getMemberPortfolioById(Long memberId) {
+        Member member = memberRepository.findWithMemberLinksAndMemberSkills(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        if (member.getPublicPortfolio()) {
+            MemberProfile memberProfile = memberProfileRepository.findMemberProfileByMember(member).orElseGet(MemberProfile::new);
+            return GetMemberPortfolioResDto.of(member, memberProfile);
+        }
+        return null;
+    }
+
+    public void deleteExistMemberLinksAllByMemberAndSaveNewRequest(Member member, List<PutMemberLink> memberLinks) {
+        memberLinkRepository.deleteMemberLinksByMember(member);
+        member.setMemberLinks(memberLinks);
+    }
+
+    public void deleteExistMemberSkillsAllByMemberAndSaveNewRequest(Member member, List<String> memberSkills) {
+        memberSkillRepository.deleteMemberSkillsByMember(member);
+        member.setMemberSkills(memberSkills, metaDataConsumer);
+    }
+    public void setMemberPortfolioIntroduceByMember(Member member, PutMemberProfileReqDto putMemberProfileReqDto) {
+        if (putMemberProfileReqDto.getSelfIntroduction() != null) {
+            memberProfileRepository.findMemberProfileByMember(member).ifPresentOrElse(
+                    memberProfile -> memberProfile.changeSelfIntroduction(putMemberProfileReqDto.getSelfIntroduction()),
+                    () -> memberProfileRepository.save(putMemberProfileReqDto.toMemberProfile(member))
+            );
+        }
+    }
+
+    private boolean isInvalidOauthLogin(Member member, PostMemberReqDto postMemberReqDto) {
+        OAuthType oAuthType = member.getOauthType();
+        return !member.getOauthIdentifier().equals(postMemberReqDto.getOauthIdentifier()) || !oAuthType.isEqual(postMemberReqDto.getOauthName());
     }
 
     private long getMinutesByDifferenceCertificationTryTime(LocalDateTime certificationTryTime) {

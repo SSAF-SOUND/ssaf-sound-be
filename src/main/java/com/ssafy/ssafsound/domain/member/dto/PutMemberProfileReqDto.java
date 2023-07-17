@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 public class PutMemberProfileReqDto {
-    private String introduceMyself;
+    private String selfIntroduction;
 
     @CheckSkills
     private List<String> skills;
@@ -24,7 +24,7 @@ public class PutMemberProfileReqDto {
     public MemberProfile toMemberProfile(Member member) {
         return MemberProfile.builder()
                 .member(member)
-                .introduce(this.getIntroduceMyself())
+                .introduce(this.selfIntroduction)
                 .build();
     }
 }
