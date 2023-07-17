@@ -28,7 +28,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(MemberException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse MemberExceptionHandler(MemberException e) {
-        log.error(e.getInfo().getMessage());
+        e.printStackTrace();
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
                 .message(e.getInfo().getMessage())
@@ -38,7 +38,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(AuthException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse AuthExceptionHandler(AuthException e) {
-        log.error(e.getInfo().getMessage());
+        e.printStackTrace();
 
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
@@ -49,7 +49,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(LunchException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse LunchExceptionHandler(LunchException e) {
-        log.error(e.getMessage());
+        e.printStackTrace();
 
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
@@ -76,7 +76,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public EnvelopeResponse RuntimeExceptionHandler(RuntimeException e) {
-        log.error(e.getMessage());
+        e.printStackTrace();
 
         return EnvelopeResponse.builder()
                 .code(GlobalErrorInfo.INTERNAL_SERVER_ERROR.getCode())
@@ -87,7 +87,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public EnvelopeResponse ResourceNotFoundExceptionHandler(ResourceNotFoundException e) {
-        log.error(e.getMessage());
+        e.printStackTrace();
 
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
@@ -98,7 +98,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public EnvelopeResponse DataIntegrityViolationExceptionHandler(DataIntegrityViolationException e) {
-        log.error(e.getMessage());
+        e.printStackTrace();
 
         return EnvelopeResponse.builder()
                 .code(GlobalErrorInfo.NOT_FOUND.getCode())
@@ -109,7 +109,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(InfraException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse InfraExceptionHandler(InfraException e){
-        log.error(e.getMessage());
+        e.printStackTrace();
 
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
@@ -130,7 +130,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(BoardException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse BoardExceptionHandler(BoardException e){
-        log.error(e.getMessage());
+        e.printStackTrace();
 
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
@@ -141,7 +141,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(PostException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse PostExceptionHandler(PostException e){
-        log.error(e.getMessage());
+        e.printStackTrace();
 
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
@@ -152,7 +152,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(BindException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse BindExceptionHandler(BindException e) {
-        log.error(e.getMessage());
+        e.printStackTrace();
 
         return EnvelopeResponse.builder()
                 .code(GlobalErrorInfo.BAD_REQUEST.getCode())
@@ -163,7 +163,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(CommentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse CommentExceptionHandler(CommentException e) {
-        log.error(e.getMessage());
+        e.printStackTrace();
 
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
