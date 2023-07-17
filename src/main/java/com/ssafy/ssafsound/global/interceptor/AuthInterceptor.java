@@ -41,10 +41,10 @@ public class AuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        if (isNotExistCookie(request)) {
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            return false;
-        }
+        // if (isNotExistCookie(request)) {
+        //     response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        //     return false;
+        // }
 
         String token = AuthorizationExtractor.extractToken("accessToken", request);
         log.info("Auth intercept token value: {}", token);
