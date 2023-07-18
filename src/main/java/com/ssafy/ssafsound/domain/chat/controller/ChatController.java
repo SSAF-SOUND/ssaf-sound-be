@@ -21,7 +21,7 @@ public class ChatController {
 
     private final ChatRoomService chatRoomService;
 
-    @GetMapping
+    @GetMapping("/rooms")
     public EnvelopeResponse<GetChatRoomsResDto> getChatRooms(@Authentication AuthenticatedMember member) {
 
         return EnvelopeResponse.<GetChatRoomsResDto>builder()

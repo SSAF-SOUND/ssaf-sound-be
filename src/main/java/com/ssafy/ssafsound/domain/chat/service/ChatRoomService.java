@@ -88,7 +88,7 @@ public class ChatRoomService {
                 .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
         return GetChatExistResDto.of(chatRoomRepository.findBySourceTypeAndSourceIdAndInitialMemberId(
-                getChatExistReqDto.getSourceType(),
+                entityType,
                 getChatExistReqDto.getSourceId(),
                 memberId));
     }
