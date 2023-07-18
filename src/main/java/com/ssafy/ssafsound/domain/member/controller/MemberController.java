@@ -38,7 +38,7 @@ public class MemberController {
                 .build();
     }
 
-    @PatchMapping
+    @PutMapping
     public EnvelopeResponse<GetMemberResDto> registerMemberInformation(@Authentication AuthenticatedMember authenticatedMember,
                                                                        @Valid @RequestBody PostMemberInfoReqDto postMemberInfoReqDto) {
         return EnvelopeResponse.<GetMemberResDto>builder()
