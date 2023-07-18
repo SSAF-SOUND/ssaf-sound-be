@@ -18,7 +18,6 @@ public class GetPostHotElement {
     private int likeCount;
     private int commentCount;
     private LocalDateTime createAt;
-    private Long memberId;
     private String nickname;
     private Boolean anonymous;
     private String thumbnail;
@@ -35,7 +34,6 @@ public class GetPostHotElement {
                 .likeCount(post.getLikes().size())
                 .commentCount(post.getComments().size())
                 .createAt(post.getCreatedAt())
-                .memberId(anonymous ? -1 : post.getMember().getId())
                 .nickname(anonymous ? "익명" : post.getMember().getNickname())
                 .anonymous(anonymous)
                 .thumbnail(thumbnail)
