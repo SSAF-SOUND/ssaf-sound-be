@@ -14,22 +14,20 @@ public class GetMemberProfileResDto {
 
     private String nickname;
 
-    private Boolean ssafyMember;
+    private Boolean ssafyMember = false;
 
     private Boolean isMajor;
 
     private SSAFYInfo ssafyInfo;
 
     private GetMemberProfileResDto(String nickname, Boolean isMajor, Member member) {
-        this.nickname = nickname;
+        this(nickname, isMajor);
         this.ssafyMember = true;
-        this.isMajor = isMajor;
         this.ssafyInfo = SSAFYInfo.from(member);
     }
 
     private GetMemberProfileResDto(String nickname,  Boolean isMajor) {
         this.nickname = nickname;
-        this.ssafyMember = false;
         this.isMajor = isMajor;
     }
 
