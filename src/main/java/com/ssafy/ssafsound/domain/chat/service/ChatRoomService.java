@@ -79,16 +79,18 @@ public class ChatRoomService {
         memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-        MetaData entityType = metaDataConsumer.getMetaData(MetaDataType.ENTITY_TYPE.name(),
+        MetaData requestedSourceType = metaDataConsumer.getMetaData(MetaDataType.SOURCE_TYPE.name(),
                 getChatExistReqDto.getSourceType());
 
-        if (!entityType.getName().equals("post")) throw new MetaDataIntegrityException(GlobalErrorInfo.BAD_REQUEST);
+        MetaData chatEnableSourceType = metaDataConsumer.getMetaData(MetaDataType.SOURCE_TYPE.name(), "POST");
+
+        if (!requestedSourceType.equals(chatEnableSourceType)) throw new MetaDataIntegrityException(GlobalErrorInfo.BAD_REQUEST);
 
         postRepository.findById(getChatExistReqDto.getSourceId())
                 .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
         return GetChatExistResDto.of(chatRoomRepository.findBySourceTypeAndSourceIdAndInitialMemberId(
-                entityType,
+                requestedSourceType,
                 getChatExistReqDto.getSourceId(),
                 memberId));
     }

@@ -1,6 +1,6 @@
 package com.ssafy.ssafsound.domain.meta.domain;
 
-public enum EntityType implements MetaDataProvider {
+public enum SourceType implements MetaDataProvider {
     POST(1, "post"),
     COMMENT(2,"comment"),
     CHAT(3, "chat"),
@@ -14,7 +14,7 @@ public enum EntityType implements MetaDataProvider {
 
     private String name;
 
-    EntityType(int id, String name) {
+    SourceType(int id, String name) {
         this.id = id;
         this.name = name;
     }

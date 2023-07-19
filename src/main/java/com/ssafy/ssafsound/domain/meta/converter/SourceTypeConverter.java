@@ -6,10 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EntityTypeConverter extends BaseConverter{
+public class SourceTypeConverter extends BaseConverter{
 
     @Autowired
-    public EntityTypeConverter(MetaDataConsumer metaDataConsumer) {
-        super(metaDataConsumer, MetaDataType.ENTITY_TYPE.name());
+    public SourceTypeConverter(MetaDataConsumer metaDataConsumer) {
+        super(metaDataConsumer, MetaDataType.SOURCE_TYPE.name());
     }
 }
