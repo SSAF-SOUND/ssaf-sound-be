@@ -6,6 +6,7 @@ import com.ssafy.ssafsound.domain.member.dto.*;
 import com.ssafy.ssafsound.domain.member.service.MemberService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -65,6 +66,15 @@ public class MemberController {
     public EnvelopeResponse registerMemberPortfolio(@Authentication AuthenticatedMember authenticatedMember,
                                                  @Valid @RequestBody PutMemberProfileReqDto putMemberProfileReqDto) {
         memberService.registerMemberPortfolio(authenticatedMember, putMemberProfileReqDto);
+        return EnvelopeResponse.builder()
+                .build();
+    }
+
+    @PatchMapping("/default-information")
+    public EnvelopeResponse patchMemberDefaultInformation(
+            @Authentication AuthenticatedMember authenticatedMember,
+            @Valid @RequestBody PatchMemberDefaultInfoReqDto patchMemberDefaultInfoReqDto) {
+        memberService.patchMemberDefaultInf();
         return EnvelopeResponse.builder()
                 .build();
     }
