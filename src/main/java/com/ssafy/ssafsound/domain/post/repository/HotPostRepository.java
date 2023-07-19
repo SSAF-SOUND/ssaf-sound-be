@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface HotPostRepository extends JpaRepository<HotPost, Long> {
+public interface HotPostRepository extends JpaRepository<HotPost, Long>, HotPostCustomRepository{
     @Modifying
     @Query("DELETE FROM hot_post h " +
             "WHERE h.id IN ( " +
@@ -23,12 +23,6 @@ public interface HotPostRepository extends JpaRepository<HotPost, Long> {
             "  HAVING COUNT(p.id) < :threshold " +
             ")")
     void deleteHotPostsUnderThreshold(@Param("threshold") Long threshold);
-
-    @Query("SELECT h FROM hot_post h " +
-            "JOIN FETCH h.post p " +
-            "JOIN FETCH p.board " +
-            "JOIN FETCH p.member ")
-    List<HotPost> findWithDetailsFetch(Pageable pageable);
 
     Optional<HotPost> findByPostId(Long postId);
 
