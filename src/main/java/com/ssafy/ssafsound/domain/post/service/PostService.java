@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -255,11 +256,9 @@ public class PostService {
 
 
     @Transactional(readOnly = true)
-    public GetPostHotResDto findHotPosts(Pageable pageable) {
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        List<HotPost> hotPosts = hotPostRepository.findWithDetailsFetch(pageRequest);
-
-        return GetPostHotResDto.from(hotPosts);
+    public GetPostHotResDto findHotPosts(int cursor, int size) {
+        List<HotPost> hotPosts = hotPostRepository.findWithDetailsFetch(cursor, size);
+        return GetPostHotResDto.from(hotPosts, size);
     }
 
     @Transactional(readOnly = true)
@@ -290,6 +289,6 @@ public class PostService {
     public GetPostHotResDto searchHotPosts(String keyword, Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         List<HotPost> hotPosts = hotPostRepository.findWithDetailsFetchByKeyword(keyword.replaceAll(" ", ""), pageRequest);
-        return GetPostHotResDto.from(hotPosts);
+        return GetPostHotResDto.from(hotPosts, 10);
     }
 }
