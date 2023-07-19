@@ -10,6 +10,7 @@ import com.ssafy.ssafsound.domain.recruit.domain.RecruitQuestion;
 import com.ssafy.ssafsound.domain.recruit.domain.RecruitQuestionReply;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
+import com.ssafy.ssafsound.domain.recruit.repository.RecruitLimitationRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitQuestionReplyRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
@@ -37,6 +38,7 @@ public class RecruitApplicationService {
     private final RecruitRepository recruitRepository;
     private final RecruitQuestionReplyRepository recruitQuestionReplyRepository;
     private final RecruitApplicationRepository recruitApplicationRepository;
+    private final RecruitLimitationRepository recruitLimitationRepository;
     private final MemberRepository memberRepository;
     private final MetaDataConsumer metaDataConsumer;
 
@@ -111,7 +113,9 @@ public class RecruitApplicationService {
         List<RecruitApplication> recruitApplications = recruitApplicationRepository
                 .findByRecruitIdAndMatchStatusFetchMember(recruitId, MatchStatus.DONE);
 
-        GetRecruitParticipantsResDto getRecruitParticipantsResDto = GetRecruitParticipantsResDto.from(recruitApplications);
+        List<RecruitLimitation> recruitLimitations = recruitLimitationRepository.findByRecruitId(recruitId);
+
+        GetRecruitParticipantsResDto getRecruitParticipantsResDto = GetRecruitParticipantsResDto.of(recruitApplications, recruitLimitations);
         getRecruitParticipantsResDto.addRegisterInfo(recruitRepository.findByIdFetchJoinRegister(recruitId));
         return getRecruitParticipantsResDto;
     }
