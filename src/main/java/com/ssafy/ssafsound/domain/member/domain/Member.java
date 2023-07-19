@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.domain.member.domain;
 
 import com.ssafy.ssafsound.domain.BaseTimeEntity;
+import com.ssafy.ssafsound.domain.member.dto.PatchMemberDefaultInfoReqDto;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberInfoReqDto;
 import com.ssafy.ssafsound.domain.member.dto.PutMemberLink;
 import com.ssafy.ssafsound.domain.meta.converter.CampusConverter;
@@ -142,5 +143,17 @@ public class Member extends BaseTimeEntity {
         this.nickname = postMemberInfoReqDto.getNickname();
         this.ssafyMember = postMemberInfoReqDto.getSsafyMember();
         this.major = postMemberInfoReqDto.getIsMajor();
+    }
+
+    public void exchangeDefaultInformation(
+            PatchMemberDefaultInfoReqDto patchMemberDefaultInfoReqDto,
+            MetaDataConsumer metaDataConsumer) {
+        if (patchMemberDefaultInfoReqDto.getSsafyMember()) {
+            this.ssafyMember = true;
+            this.semester = patchMemberDefaultInfoReqDto.getSemester();
+            this.campus = metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), patchMemberDefaultInfoReqDto.getCampus());
+        } else {
+            this.ssafyMember = false;
+        }
     }
 }

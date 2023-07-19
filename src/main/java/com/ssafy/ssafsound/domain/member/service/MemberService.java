@@ -113,6 +113,16 @@ public class MemberService {
         deleteExistMemberSkillsAllByMemberAndSaveNewRequest(member, putMemberProfileReqDto.getSkills());
     }
 
+    @Transactional
+    public void patchMemberDefaultInfo(
+            AuthenticatedMember authenticatedMember,
+            PatchMemberDefaultInfoReqDto patchMemberDefaultInfoReqDto) {
+        Member member = memberRepository.findById(authenticatedMember.getMemberId())
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        member.exchangeDefaultInformation(patchMemberDefaultInfoReqDto, metaDataConsumer);
+    }
+
     @Transactional(readOnly = true)
     public MemberRole findMemberRoleByRoleName(String roleType) {
         return memberRoleRepository.findByRoleType(roleType).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_ROLE_TYPE_NOT_FOUND));
