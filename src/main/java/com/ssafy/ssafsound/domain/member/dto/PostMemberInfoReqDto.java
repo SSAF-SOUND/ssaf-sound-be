@@ -29,4 +29,8 @@ public class PostMemberInfoReqDto {
     private Boolean isMajor;
 
     private String campus;
+
+    public boolean isNotSemesterPresent() {
+        return this.semester == null;
+    }
 }

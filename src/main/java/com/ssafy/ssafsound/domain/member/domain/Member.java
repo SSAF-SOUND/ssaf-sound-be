@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.domain.member.domain;
 
 import com.ssafy.ssafsound.domain.BaseTimeEntity;
+import com.ssafy.ssafsound.domain.member.dto.GetMemberResDto;
 import com.ssafy.ssafsound.domain.member.dto.PatchMemberDefaultInfoReqDto;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberInfoReqDto;
 import com.ssafy.ssafsound.domain.member.dto.PutMemberLink;
@@ -148,8 +149,7 @@ public class Member extends BaseTimeEntity {
     }
 
     public void exchangeDefaultInformation(
-            PatchMemberDefaultInfoReqDto patchMemberDefaultInfoReqDto,
-            MetaDataConsumer metaDataConsumer) {
+            PatchMemberDefaultInfoReqDto patchMemberDefaultInfoReqDto, MetaDataConsumer metaDataConsumer) {
         if (patchMemberDefaultInfoReqDto.getSsafyMember()) {
             if(patchMemberDefaultInfoReqDto.isNotSemesterPresent()) {
                 throw new MemberException(MemberErrorInfo.SEMESTER_NOT_FOUND);
@@ -159,6 +159,20 @@ public class Member extends BaseTimeEntity {
             this.campus = metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), patchMemberDefaultInfoReqDto.getCampus());
         } else {
             this.ssafyMember = false;
+        }
+    }
+
+    public GetMemberResDto registerMemberInformation(
+            PostMemberInfoReqDto postMemberInfoReqDto, MetaDataConsumer metaDataConsumer) {
+        if (postMemberInfoReqDto.getSsafyMember()) {
+            if(postMemberInfoReqDto.isNotSemesterPresent()) {
+                throw new MemberException(MemberErrorInfo.SEMESTER_NOT_FOUND);
+            }
+            this.setSSAFYMemberInformation(postMemberInfoReqDto, metaDataConsumer);
+            return GetMemberResDto.fromSSAFYUser(this);
+        } else {
+            this.setGeneralMemberInformation(postMemberInfoReqDto);
+            return GetMemberResDto.fromGeneralUser(this);
         }
     }
 }

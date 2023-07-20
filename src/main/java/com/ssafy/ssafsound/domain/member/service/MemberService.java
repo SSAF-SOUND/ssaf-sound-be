@@ -75,16 +75,13 @@ public class MemberService {
     @Transactional
     public GetMemberResDto registerMemberInformation(AuthenticatedMember authenticatedMember, PostMemberInfoReqDto postMemberInfoReqDto) {
         boolean existNickname = memberRepository.existsByNickname(postMemberInfoReqDto.getNickname());
+
         if(existNickname) throw new MemberException(MemberErrorInfo.MEMBER_NICKNAME_DUPLICATION);
-        Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
-        MemberRole memberRole = member.getRole();
-        if (postMemberInfoReqDto.getSsafyMember()) {
-            member.setSSAFYMemberInformation(postMemberInfoReqDto, metaDataConsumer);
-            return GetMemberResDto.fromSSAFYUser(member, memberRole);
-        } else {
-            member.setGeneralMemberInformation(postMemberInfoReqDto);
-            return GetMemberResDto.fromGeneralUser(member, memberRole);
-        }
+
+        Member member = memberRepository.findById(authenticatedMember.getMemberId())
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        return member.registerMemberInformation(postMemberInfoReqDto, metaDataConsumer);
     }
 
     @Transactional
@@ -130,15 +127,15 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public GetMemberResDto getMemberInformation(AuthenticatedMember authenticatedMember) {
-        Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
-        MemberRole memberRole = member.getRole();
+        Member member = memberRepository.findById(authenticatedMember.getMemberId())
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
         if (isNotInputMemberInformation(member)) {
-            return GetMemberResDto.fromGeneralUser(member, memberRole);
+            return GetMemberResDto.fromGeneralUser(member);
         } else if(isGeneralMemberInformation(member)){
-            return GetMemberResDto.fromGeneralUser(member, memberRole);
+            return GetMemberResDto.fromGeneralUser(member);
         } else if (isSSAFYMemberInformation(member)) {
-            return GetMemberResDto.fromSSAFYUser(member, memberRole);
+            return GetMemberResDto.fromSSAFYUser(member);
         }
         throw new MemberException(MemberErrorInfo.MEMBER_INFORMATION_ERROR);
     }
