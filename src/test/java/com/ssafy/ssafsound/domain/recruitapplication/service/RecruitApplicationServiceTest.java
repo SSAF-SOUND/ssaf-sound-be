@@ -298,7 +298,6 @@ class RecruitApplicationServiceTest {
     @DisplayName("리크루트 참여자 목록 조회")
     @Test
     void Given_RecruitId_When_GetRecruitParticipants_Then_Success() {
-        recruitApplicationService.getRecruitParticipants(1L);
         GetRecruitParticipantsResDto dto = recruitApplicationService.getRecruitParticipants(1L);
 
         List<ParticipantElement> members = dto.getRecruitTypes().get(RecruitType.DESIGN.getName()).getMembers();
