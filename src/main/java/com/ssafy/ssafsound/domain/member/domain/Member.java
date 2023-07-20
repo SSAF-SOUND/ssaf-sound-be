@@ -4,6 +4,8 @@ import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.member.dto.PatchMemberDefaultInfoReqDto;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberInfoReqDto;
 import com.ssafy.ssafsound.domain.member.dto.PutMemberLink;
+import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
+import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.meta.converter.CampusConverter;
 import com.ssafy.ssafsound.domain.meta.converter.MajorTrackConverter;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
@@ -149,6 +151,9 @@ public class Member extends BaseTimeEntity {
             PatchMemberDefaultInfoReqDto patchMemberDefaultInfoReqDto,
             MetaDataConsumer metaDataConsumer) {
         if (patchMemberDefaultInfoReqDto.getSsafyMember()) {
+            if(patchMemberDefaultInfoReqDto.isNotSemesterPresent()) {
+                throw new MemberException(MemberErrorInfo.SEMESTER_NOT_FOUND);
+            }
             this.ssafyMember = true;
             this.semester = patchMemberDefaultInfoReqDto.getSemester();
             this.campus = metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), patchMemberDefaultInfoReqDto.getCampus());
