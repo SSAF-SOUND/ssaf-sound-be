@@ -13,6 +13,7 @@ import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
+import com.ssafy.ssafsound.domain.meta.domain.SourceType;
 import com.ssafy.ssafsound.domain.meta.exception.MetaDataIntegrityException;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
@@ -82,7 +83,7 @@ public class ChatRoomService {
         MetaData requestedSourceType = metaDataConsumer.getMetaData(MetaDataType.SOURCE_TYPE.name(),
                 getChatExistReqDto.getSourceType());
 
-        MetaData chatEnableSourceType = metaDataConsumer.getMetaData(MetaDataType.SOURCE_TYPE.name(), "POST");
+        MetaData chatEnableSourceType = metaDataConsumer.getMetaData(MetaDataType.SOURCE_TYPE.name(), SourceType.POST.getName());
 
         if (!requestedSourceType.equals(chatEnableSourceType)) throw new MetaDataIntegrityException(GlobalErrorInfo.BAD_REQUEST);
 
