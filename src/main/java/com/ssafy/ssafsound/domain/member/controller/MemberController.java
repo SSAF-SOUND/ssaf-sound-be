@@ -31,7 +31,14 @@ public class MemberController {
                 .build();
     }
 
-    @PatchMapping
+    @GetMapping("/{memberId}/profile")
+    public EnvelopeResponse<GetMemberProfileResDto> getMemberProfileById(@PathVariable Long memberId) {
+        return EnvelopeResponse.<GetMemberProfileResDto>builder()
+                .data(memberService.getMemberProfileById(memberId))
+                .build();
+    }
+
+    @PutMapping
     public EnvelopeResponse<GetMemberResDto> registerMemberInformation(@Authentication AuthenticatedMember authenticatedMember,
                                                                        @Valid @RequestBody PostMemberInfoReqDto postMemberInfoReqDto) {
         return EnvelopeResponse.<GetMemberResDto>builder()

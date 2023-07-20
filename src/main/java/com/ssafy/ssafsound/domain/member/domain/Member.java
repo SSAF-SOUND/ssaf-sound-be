@@ -64,8 +64,8 @@ public class Member extends BaseTimeEntity {
     @Column
     private Boolean ssafyMember;
 
-    @Builder.Default
     @Column
+    @Builder.Default
     private Integer certificationInquiryCount = 0;
 
     @Column

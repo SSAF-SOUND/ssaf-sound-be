@@ -147,12 +147,15 @@ public class MemberService {
     public GetMemberPortfolioResDto getMemberPortfolioById(Long memberId) {
         Member member = memberRepository.findWithMemberLinksAndMemberSkills(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+        MemberProfile memberProfile = memberProfileRepository.findMemberProfileByMember(member).orElseGet(MemberProfile::new);
 
-        if (member.getPublicPortfolio()) {
-            MemberProfile memberProfile = memberProfileRepository.findMemberProfileByMember(member).orElseGet(MemberProfile::new);
-            return GetMemberPortfolioResDto.of(member, memberProfile);
-        }
-        return null;
+        return GetMemberPortfolioResDto.of(member, memberProfile);
+    }
+
+    @Transactional(readOnly = true)
+    public GetMemberProfileResDto getMemberProfileById(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+        return GetMemberProfileResDto.from(member);
     }
 
     public void deleteExistMemberLinksAllByMemberAndSaveNewRequest(Member member, List<PutMemberLink> memberLinks) {
@@ -164,6 +167,7 @@ public class MemberService {
         memberSkillRepository.deleteMemberSkillsByMember(member);
         member.setMemberSkills(memberSkills, metaDataConsumer);
     }
+
     public void setMemberPortfolioIntroduceByMember(Member member, PutMemberProfileReqDto putMemberProfileReqDto) {
         if (putMemberProfileReqDto.getSelfIntroduction() != null) {
             memberProfileRepository.findMemberProfileByMember(member).ifPresentOrElse(

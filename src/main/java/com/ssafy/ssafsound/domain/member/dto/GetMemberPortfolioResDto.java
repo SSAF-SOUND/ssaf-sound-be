@@ -7,32 +7,25 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 public class GetMemberPortfolioResDto {
 
-    private String selfIntroduction;
+    private Boolean isPublic;
 
-    private List<String> skills;
-
-    private List<PutMemberLink> memberLinks;
+    private PortfolioElement portfolioElement;
 
     public static GetMemberPortfolioResDto of(Member member, MemberProfile memberProfile) {
+        if(member.getPublicPortfolio()) {
+            return GetMemberPortfolioResDto.builder()
+                    .isPublic(true)
+                    .portfolioElement(PortfolioElement.of(member, memberProfile))
+                    .build();
+        }
         return GetMemberPortfolioResDto.builder()
-                .selfIntroduction(memberProfile.getIntroduce())
-                .skills(member.getMemberSkills()
-                        .stream()
-                        .map(memberSkill -> memberSkill.getSkill().getName())
-                        .collect(Collectors.toList()))
-                .memberLinks(member.getMemberLinks()
-                        .stream()
-                        .map(memberLink -> new PutMemberLink(memberLink.getLinkName(), memberLink.getPath()))
-                        .collect(Collectors.toList()))
+                .isPublic(false)
                 .build();
     }
 }
