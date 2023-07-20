@@ -367,11 +367,15 @@ class MemberServiceTest {
                 .answer(answer)
                 .build();
 
-        given(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TRACK.name(), majorTrack)).willReturn(new MetaData(MajorTrack.JAVA));
-        given(metaDataConsumer.getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer())).willReturn(new MetaData(Certification.valueOf(name)));
-        given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
+        given(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TRACK.name(), majorTrack))
+                .willReturn(new MetaData(MajorTrack.JAVA));
+        given(metaDataConsumer.getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer()))
+                .willReturn(new MetaData(Certification.valueOf(name)));
+        given(memberRepository.findById(authenticatedMember.getMemberId()))
+                .willReturn(Optional.of(member));
 
-        PostCertificationInfoResDto postCertificationInfoResDto = memberService.certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto);
+        PostCertificationInfoResDto postCertificationInfoResDto = memberService
+                .certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto);
 
         assertThat(member.getCertificationState()).isEqualTo(AuthenticationStatus.CERTIFIED);
         assertThat(member.getMajorTrack().getName()).isEqualTo(majorTrack);
@@ -392,12 +396,15 @@ class MemberServiceTest {
                 .semester(semester)
                 .answer(answer)
                 .build();
+        given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
+        given(metaDataConsumer.getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer().toLowerCase()))
+                .willReturn(new MetaData(Certification.valueOf(name)));
 
-        given(metaDataConsumer.getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer())).willReturn(new MetaData(Certification.valueOf(name)));
+        PostCertificationInfoResDto postCertificationInfoResDto = memberService.certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto);
 
-        assertThrows(MemberException.class, () -> memberService.certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto));
+        assertThat(postCertificationInfoResDto.isPossible()).isFalse();
 
-        verify(metaDataConsumer).getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer());
+        verify(metaDataConsumer).getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer().toLowerCase());
     }
 
 
@@ -409,12 +416,10 @@ class MemberServiceTest {
                 .answer("선물")
                 .build();
 
-        given(metaDataConsumer.getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer())).willReturn(new MetaData(Certification.ONE_SEMESTER));
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.empty());
 
         assertThrows(MemberException.class, () -> memberService.certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto));
 
-        verify(metaDataConsumer).getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer());
         verify(memberRepository).findById(authenticatedMember.getMemberId());
     }
 }
