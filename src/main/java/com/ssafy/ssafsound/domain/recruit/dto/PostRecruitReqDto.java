@@ -1,8 +1,6 @@
 package com.ssafy.ssafsound.domain.recruit.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
-import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.domain.recruit.validator.CheckRecruitLimitElement;
 import com.ssafy.ssafsound.domain.recruit.validator.CheckRecruitType;
 import com.ssafy.ssafsound.domain.meta.validator.CheckSkills;

@@ -9,11 +9,13 @@ import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import com.ssafy.ssafsound.domain.recruit.domain.RecruitLimitation;
 import com.ssafy.ssafsound.domain.recruit.domain.RecruitQuestion;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
+import com.ssafy.ssafsound.domain.recruit.repository.RecruitLimitationRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitQuestionReplyRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitParticipantsResDto;
+import com.ssafy.ssafsound.domain.recruitapplication.dto.ParticipantElement;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.PostRecruitApplicationReqDto;
 import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicationRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,6 +44,9 @@ class RecruitApplicationServiceTest {
 
     @Mock
     private RecruitQuestionReplyRepository recruitQuestionReplyRepository;
+
+    @Mock
+    private RecruitLimitationRepository recruitLimitationRepository;
 
     @Mock
     private MemberRepository memberRepository;
@@ -131,6 +136,8 @@ class RecruitApplicationServiceTest {
                 .thenReturn(java.util.Optional.ofNullable(recruitApplication));
         Mockito.lenient().when(recruitApplicationRepository.findByRecruitIdAndMatchStatusFetchMember(1L, MatchStatus.DONE))
                 .thenReturn(recruitApplications);
+        Mockito.lenient().when(recruitLimitationRepository.findByRecruitId(1L))
+                .thenReturn(limits);
 
         Mockito.lenient().when(memberRepository.getReferenceById(1L)).thenReturn(register);
         Mockito.lenient().when(memberRepository.getReferenceById(2L)).thenReturn(participant);
@@ -291,11 +298,12 @@ class RecruitApplicationServiceTest {
     @DisplayName("리크루트 참여자 목록 조회")
     @Test
     void Given_RecruitId_When_GetRecruitParticipants_Then_Success() {
-        recruitApplicationService.getRecruitParticipants(1L);
         GetRecruitParticipantsResDto dto = recruitApplicationService.getRecruitParticipants(1L);
 
+        List<ParticipantElement> members = dto.getRecruitTypes().get(RecruitType.DESIGN.getName()).getMembers();
+
         assertAll(
-                ()->assertEquals(2, dto.getMembers().size())
+                ()->assertEquals(2, members.size())
         );
     }
 

@@ -2,49 +2,38 @@ package com.ssafy.ssafsound.domain.recruitapplication.dto;
 
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
-import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
-import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
-@Builder
+@NoArgsConstructor
 public class RecruitParticipantElement {
-    private String recruitType;
-    private Long memberId;
-    private String nickName;
-    private Boolean isMajor;
-    private SSAFYInfo ssafyInfo;
+    private Integer limit;
+    private List<ParticipantElement> members;
 
-    public static RecruitParticipantElement from(RecruitApplication recruitApplication) {
-        Member member = recruitApplication.getMember();
+    public RecruitParticipantElement(Integer limit) {
+        this.limit = limit;
+        members = new ArrayList<>();
+    }
+
+    public void addMember(Member member) {
         SSAFYInfo ssafyInfo = null;
         if(member.getSsafyMember()) {
             ssafyInfo = SSAFYInfo.from(member);
         }
 
-        return RecruitParticipantElement.builder()
-                .recruitType(recruitApplication.getType().getName())
+        members.add(ParticipantElement.builder()
                 .memberId(member.getId())
                 .nickName(member.getNickname())
                 .isMajor(member.getMajor())
                 .ssafyInfo(ssafyInfo)
-                .build();
+                .build());
     }
 
-    public static RecruitParticipantElement from(Recruit recruit) {
-        Member register = recruit.getMember();
-        SSAFYInfo ssafyInfo = null;
-        if(register.getSsafyMember()) {
-            ssafyInfo = SSAFYInfo.from(register);
-        }
-
-        return RecruitParticipantElement.builder()
-                .recruitType(recruit.getRegisterRecruitType().getName())
-                .memberId(register.getId())
-                .nickName(register.getNickname())
-                .isMajor(register.getMajor())
-                .ssafyInfo(ssafyInfo)
-                .build();
+    public void increaseLimit() {
+        this.limit++;
     }
 }

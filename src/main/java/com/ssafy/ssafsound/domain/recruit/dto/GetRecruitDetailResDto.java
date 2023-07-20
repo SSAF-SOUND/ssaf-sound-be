@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.domain.recruit.dto;
 
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
+import com.ssafy.ssafsound.domain.recruit.domain.GetRecruitLimitDetail;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
@@ -24,7 +25,7 @@ public class GetRecruitDetailResDto {
     private String recruitStart;
     private String recruitEnd;
     private List<RecruitSkillElement> skills;
-    private List<RecruitLimitElement> limits;
+    private List<GetRecruitLimitDetail> limits;
     private long memberId;
     private String nickName;
     private Boolean isMajor;
@@ -39,8 +40,8 @@ public class GetRecruitDetailResDto {
                 .map(RecruitSkillElement::from)
                 .collect(Collectors.toList());
 
-        List<RecruitLimitElement> limits = recruit.getLimitations().stream()
-                .map(RecruitLimitElement::from)
+        List<GetRecruitLimitDetail> limits = recruit.getLimitations().stream()
+                .map(GetRecruitLimitDetail::from)
                 .collect(Collectors.toList());
 
         String registerRecruitType = recruit.getRegisterRecruitType().getName();
@@ -69,8 +70,8 @@ public class GetRecruitDetailResDto {
                 .build();
     }
 
-    private static void addRegisterRecruitType(List<RecruitLimitElement> limits, String registerRecruitType) {
-        for(RecruitLimitElement limit: limits) {
+    private static void addRegisterRecruitType(List<GetRecruitLimitDetail> limits, String registerRecruitType) {
+        for(GetRecruitLimitDetail limit: limits) {
             if(limit.getRecruitType().equals(registerRecruitType)) {
                 limit.addRegisterLimit();
                 return;
@@ -78,6 +79,6 @@ public class GetRecruitDetailResDto {
         }
 
         // 리크루트 등록 시 모집 인원 제한에 등록자가 포함되지 않는 경우 인원 제한 타입을 추가한다.
-        limits.add(new RecruitLimitElement(registerRecruitType, 1));
+        limits.add(new GetRecruitLimitDetail(registerRecruitType, 1, 1));
     }
 }
