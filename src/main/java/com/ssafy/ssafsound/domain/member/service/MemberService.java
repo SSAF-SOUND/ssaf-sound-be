@@ -10,7 +10,6 @@ import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,10 +29,7 @@ public class MemberService {
     private final MemberSkillRepository memberSkillRepository;
     private final MemberLinkRepository memberLinkRepository;
     private final MetaDataConsumer metaDataConsumer;
-    @Value("${spring.constant.certification.CERTIFICATION_INQUIRY_TIME}")
-    private Integer MAX_CERTIFICATION_INQUIRY_COUNT;
-    @Value("${spring.constant.certification.MAX_MINUTES}")
-    private Integer MAX_MINUTES;
+    private final MemberConstantProvider memberConstantProvider;
 
     @Transactional
     public AuthenticatedMember createMemberByOauthIdentifier(PostMemberReqDto postMemberReqDto) {
@@ -89,8 +85,12 @@ public class MemberService {
         Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
         long minutes = getMinutesByDifferenceCertificationTryTime(member.getCertificationTryTime());
-        if(minutes > MAX_MINUTES) member.initializeCertificationInquiryCount();
-        if(member.getCertificationInquiryCount() >= MAX_CERTIFICATION_INQUIRY_COUNT) throw new MemberException(MemberErrorInfo.MEMBER_CERTIFICATED_FAIL);
+        if(minutes > memberConstantProvider.getMAX_MINUTES()) {
+            member.initializeCertificationInquiryCount();
+        }
+        if(member.getCertificationInquiryCount() >= memberConstantProvider.getCERTIFICATION_INQUIRY_TIME()) {
+            throw new MemberException(MemberErrorInfo.MEMBER_CERTIFICATED_FAIL);
+        }
 
         if (isValidCertification(postCertificationInfoReqDto)) {
             member.setCertificationState(AuthenticationStatus.CERTIFIED);
