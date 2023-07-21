@@ -41,6 +41,8 @@ class MemberServiceTest {
     private MetaDataConsumer metaDataConsumer;
     @Mock
     private JwtTokenProvider jwtTokenProvider;
+    @Mock
+    private MemberConstantProvider memberConstantProvider;
     @InjectMocks
     private MemberService memberService;
     @Captor
@@ -234,7 +236,7 @@ class MemberServiceTest {
     @Test
     @DisplayName("회원가입 이후 정보 입력을 하지 않았다면 닉네임과 싸피멤버여부에 대해 null을 가진 dto를 반환한다.")
     void Given_Member_When_GetMemberInfo_Then_Success() {
-        GetMemberResDto getMemberResDto = GetMemberResDto.fromGeneralUser(member, member.getRole());
+        GetMemberResDto getMemberResDto = GetMemberResDto.fromGeneralUser(member);
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
 
         GetMemberResDto result = memberService.getMemberInformation(authenticatedMember);
@@ -253,7 +255,7 @@ class MemberServiceTest {
     @DisplayName("회원가입 이후 싸피유저가 아닌 일반 유저에 대해 정보 입력을 했다면 일반 유저 dto를 반환한다.")
     void Given_Member_When_GetGeneralMemberInfo_Then_Success() {
         member.setGeneralMemberInformation(generalMemberInfoReqDto);
-        GetMemberResDto getMemberResDto = GetMemberResDto.fromGeneralUser(member, member.getRole());
+        GetMemberResDto getMemberResDto = GetMemberResDto.fromGeneralUser(member);
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
 
         GetMemberResDto result = memberService.getMemberInformation(authenticatedMember);
@@ -273,7 +275,7 @@ class MemberServiceTest {
     void Given_Member_When_GetSSAFYMemberInfo_Then_Success() {
         given(metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), SSAFYMemberInfoReqDto.getCampus())).willReturn(new MetaData(Campus.SEOUL));
         member.setSSAFYMemberInformation(SSAFYMemberInfoReqDto, metaDataConsumer);
-        GetMemberResDto getMemberResDto = GetMemberResDto.fromSSAFYUser(member, member.getRole());
+        GetMemberResDto getMemberResDto = GetMemberResDto.fromSSAFYUser(member);
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
 
         GetMemberResDto result = memberService.getMemberInformation(authenticatedMember);
@@ -318,7 +320,7 @@ class MemberServiceTest {
     @DisplayName("소셜 로그인 이후, 일반 회원 정보에 대해 입력했다면 일반 회원정보 dto를 return 받는다.")
     void Given_PostGeneralMemberInfo_When_Register_MemberInfo_Then_ReturnGeneralMemberResDto() {
         member.setGeneralMemberInformation(generalMemberInfoReqDto);
-        GetMemberResDto getMemberResDto = GetMemberResDto.fromGeneralUser(member, memberRole);
+        GetMemberResDto getMemberResDto = GetMemberResDto.fromGeneralUser(member);
         given(memberRepository.existsByNickname(generalMemberInfoReqDto.getNickname())).willReturn(false);
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
 
@@ -338,7 +340,7 @@ class MemberServiceTest {
     void Given_PostSSAFYMemberInfo_When_Register_MemberInfo_Then_ReturnSSAFYMemberResDto() {
         given(metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), SSAFYMemberInfoReqDto.getCampus())).willReturn(new MetaData(Campus.SEOUL));
         member.setSSAFYMemberInformation(SSAFYMemberInfoReqDto, metaDataConsumer);
-        GetMemberResDto getMemberResDto = GetMemberResDto.fromSSAFYUser(member, memberRole);
+        GetMemberResDto getMemberResDto = GetMemberResDto.fromSSAFYUser(member);
         given(memberRepository.existsByNickname(SSAFYMemberInfoReqDto.getNickname())).willReturn(false);
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
 
@@ -373,6 +375,8 @@ class MemberServiceTest {
                 .willReturn(new MetaData(Certification.valueOf(name)));
         given(memberRepository.findById(authenticatedMember.getMemberId()))
                 .willReturn(Optional.of(member));
+        given(memberConstantProvider.getCERTIFICATION_INQUIRY_TIME()).willReturn(5);
+        given(memberConstantProvider.getMAX_MINUTES()).willReturn(5);
 
         PostCertificationInfoResDto postCertificationInfoResDto = memberService
                 .certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto);
@@ -389,8 +393,8 @@ class MemberServiceTest {
     @ParameterizedTest
     @CsvSource({"Java, 2, ONE_SEMESTER, 선물", "Java, 3, TWO_SEMESTER, 하나", "Java, 1, THREE_SEMESTER, 출발", "Java, 5, FOUR_SEMESTER, 충전", "Java, 6, FIVE_SEMESTER, 극복",
             "Java, 2, SIX_SEMESTER, hot식스", "Java, 4, SEVEN_SEMESTER, 럭키", "Java, 7, EIGHT_SEMESTER, 칠전팔", "Java, 8, NINE_SEMESTER, great", "Java, 9, TEN_SEMESTER, 텐션"})
-    @DisplayName("싸피생 인증 요청 시, 정답에 대한 요청이 존재하지만 기수 정보가 다를 때 예외가 발생한다.")
-    void Given_PostCertificationInfo_When_Submit_SSAFY_Certification_Answer_Then_ThrowMemberException(String majorTrack, int semester, String name, String answer) {
+    @DisplayName("싸피생 인증 요청 시, 정답에 대한 요청이 존재하지만 기수 정보가 다를 때 인증에 실패한다.")
+    void Given_PostCertificationInfo_When_Submit_SSAFY_Certification_Answer_Then_Fail(String majorTrack, int semester, String name, String answer) {
         PostCertificationInfoReqDto postCertificationInfoReqDto = PostCertificationInfoReqDto.builder()
                 .majorTrack(majorTrack)
                 .semester(semester)
@@ -399,6 +403,8 @@ class MemberServiceTest {
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
         given(metaDataConsumer.getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer().toLowerCase()))
                 .willReturn(new MetaData(Certification.valueOf(name)));
+        given(memberConstantProvider.getMAX_MINUTES()).willReturn(5);
+        given(memberConstantProvider.getCERTIFICATION_INQUIRY_TIME()).willReturn(5);
 
         PostCertificationInfoResDto postCertificationInfoResDto = memberService.certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto);
 
