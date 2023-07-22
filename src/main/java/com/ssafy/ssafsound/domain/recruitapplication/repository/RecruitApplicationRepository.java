@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.recruitapplication.repository;
 
+import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement;
@@ -39,4 +40,8 @@ public interface RecruitApplicationRepository extends JpaRepository<RecruitAppli
 
     @Query("SELECT ra FROM recruit_application ra join fetch ra.recruit as r join fetch ra.member where r.id in (:recruitId) and ra.matchStatus = com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus.DONE")
     List<RecruitApplication> findDoneRecruitApplicationByRecruitIdInFetchRecruitAndMember(List<Long> recruitId);
+
+    List<RecruitApplication> findByRecruitIdAndMatchStatus(Long recruitId, MatchStatus matchStatus);
+
+    void deletNotIncludeRecruitTypes(List<MetaData> recruitTypes);
 }

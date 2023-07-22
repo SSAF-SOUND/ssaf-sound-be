@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.domain.recruit.service;
 
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
+import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.domain.recruit.domain.*;
@@ -11,6 +12,8 @@ import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitLimitationRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitScrapRepository;
+import com.ssafy.ssafsound.domain.recruit.repository.RecruitSkillRepository;
+import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicationRepository;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
@@ -21,6 +24,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,6 +37,7 @@ public class RecruitService {
     private final RecruitLimitationRepository recruitLimitationRepository;
     private final RecruitScrapRepository recruitScrapRepository;
     private final RecruitApplicationRepository recruitApplicationRepository;
+    private final RecruitSkillRepository recruitSkillRepository;
     private final MemberRepository memberRepository;
     private final MetaDataConsumer metaDataConsumer;
 
@@ -44,7 +49,8 @@ public class RecruitService {
         recruit.setRegister(register);
         recruit.setRegisterRecruitType(metaDataConsumer.getMetaData(MetaDataType.RECRUIT_TYPE.name(), postRecruitReqDto.getRegisterRecruitType()));
 
-        setRecruitSkillFromPredefinedMetaData(metaDataConsumer, recruit, postRecruitReqDto.getSkills());
+        List<RecruitSkill> skills = makeRecruitSkillFromPredefinedMetaData(metaDataConsumer, recruit, postRecruitReqDto.getSkills());
+        recruit.setRecruitSkill(skills);
         recruitRepository.save(recruit);
 
         recruitLimitationRepository.saveAll(createRecruitLimitations(recruit, postRecruitReqDto.getLimitations()));
@@ -73,12 +79,35 @@ public class RecruitService {
         if(!recruit.getMember().getId().equals(memberId)) throw new RecruitException(RecruitErrorInfo.INVALID_CHANGE_MEMBER_OPERATION);
 
         // 리크루트 기술 스택 업데이트
-        setRecruitSkillFromPredefinedMetaData(metaDataConsumer, recruit, recruitReqDto.getSkills());
-
-        // 등록자 모집군 및 모집 인원 제한 수정 -> 등록자의 모집군은 항상 변경가능하며, 그 외의 인원 제한의 경우 등록시 설정한 인원 제한 아래로 수정할 수 없다.
+        recruitSkillRepository.deleteAllByRecruit(recruit);
+        List<RecruitSkill> recruitSkills = makeRecruitSkillFromPredefinedMetaData(metaDataConsumer, recruit, recruitReqDto.getSkills());
+        if(recruitSkills != null) {
+            recruit.setRecruitSkill(recruitSkills);
+        }
+        /*
+            등록자 모집군 및 모집 인원 제한 수정
+            1. 등록자의 모집군은 항상 변경가능하다.
+            2. 모집인원 수정 시, 모집 완료된 인원이 있는 경우 해당 숫자 이하로 인원 제한을 수정할 수 없다.
+            3. 모집군은 삭제할 수 있지만, 모집 완료된 인원이 있는 모집군의 경우 삭제할 수 없다.
+            4. 모집군이 삭제되는 경우, 해당 타입에 존재하는 완료하지 않은 리크루팅 신청은 삭제되어야한다.
+        */
         recruit.setRegisterRecruitType(metaDataConsumer.getMetaData(MetaDataType.RECRUIT_TYPE.name(), recruitReqDto.getRegisterRecruitType()));
-        updateRecruitLimitations(recruitReqDto, recruit);
+
+        List<RecruitApplication> recruitApplications = recruitApplicationRepository.findByRecruitIdAndMatchStatus(recruitId, MatchStatus.DONE);
+        List<RecruitLimitation> recruitLimitations = createRecruitLimitations(recruit, recruitReqDto.getLimitations());
+        if(!increaseLimitationCurrentNumberByPreMatchDoneMember(recruitApplications, recruitLimitations)) {
+            throw new RecruitException(RecruitErrorInfo.NOT_BELOW_PREV_LIMITATIONS);
+        }
+
+        recruitLimitationRepository.deleteAllByRecruit(recruit);
+        recruit.setRecruitLimitations(recruitLimitations);
         recruit.update(recruitReqDto);
+
+        List<MetaData> recruitTypes = recruitLimitations.stream()
+                .map(RecruitLimitation::getType)
+                .collect(Collectors.toList());
+
+        recruitApplicationRepository.deletNotIncludeRecruitTypes(recruitTypes);
     }
 
     @Transactional
@@ -131,32 +160,38 @@ public class RecruitService {
         }
     }
 
-    private void updateRecruitLimitations(PatchRecruitReqDto recruitReqDto, Recruit recruit) {
-        List<RecruitLimitation> prevLimitations = recruit.getLimitations();
-        List<RecruitLimitation> updateLimitations = createRecruitLimitations(recruit, recruitReqDto.getLimitations());
-
-        for(RecruitLimitation prevLimitation: prevLimitations) {
-            RecruitLimitation updateInfo = updateLimitations.stream().filter(updateLimit ->
-                    updateLimit.getType().getName()
-                            .equals(prevLimitation.getType().getName()))
-                    .findAny().orElseThrow(()->new RecruitException(RecruitErrorInfo.NOT_BELOW_PREV_LIMITATIONS));
-
-            if(updateInfo.getLimitation() < prevLimitation.getLimitation()) {
-                throw new RecruitException(RecruitErrorInfo.NOT_BELOW_PREV_LIMITATIONS);
-            }
+    private boolean increaseLimitationCurrentNumberByPreMatchDoneMember(List<RecruitApplication> recruitApplications, List<RecruitLimitation> recruitLimitations) {
+        Map<String, Integer> prevMatchDoneApplicationCounterMap = new HashMap<>();
+        for(RecruitApplication recruitApplication: recruitApplications) {
+            String recruitType = recruitApplication.getType().getName();
+            Integer existCount = prevMatchDoneApplicationCounterMap.getOrDefault(recruitType, 0);
+            prevMatchDoneApplicationCounterMap.put(recruitType, existCount+1);
         }
-        recruit.setRecruitLimitations(updateLimitations);
+
+        for(RecruitLimitation recruitLimitation: recruitLimitations) {
+            String recruitType = recruitLimitation.getType().getName();
+            Integer count = prevMatchDoneApplicationCounterMap.get(recruitType);
+            if(count == null) {
+                continue;
+            }
+            if(count > recruitLimitation.getLimitation()) {
+                return false;
+            }
+
+            recruitLimitation.setCurrentNumber(count);
+            prevMatchDoneApplicationCounterMap.remove(recruitType);
+        }
+        return prevMatchDoneApplicationCounterMap.isEmpty();
     }
 
-    private void setRecruitSkillFromPredefinedMetaData(MetaDataConsumer consumer, Recruit recruit, List<String> skills) {
-        if(skills == null) return;
-        List<RecruitSkill> recruitSkills = skills.stream().map((skill)->(
+    private List<RecruitSkill> makeRecruitSkillFromPredefinedMetaData(MetaDataConsumer consumer, Recruit recruit, List<String> skills) {
+        if(skills == null) return null;
+        return skills.stream().map((skill)->(
                 RecruitSkill.builder()
                         .recruit(recruit)
                         .skill(consumer.getMetaData(MetaDataType.SKILL.name(), skill)))
                 .build()
         ).collect(Collectors.toList());
-        recruit.setRecruitSkill(recruitSkills);
     }
 
     private boolean isPreExistRecruitScrap(Long recruitId, Long memberId, RecruitScrap recruitScrap) {
