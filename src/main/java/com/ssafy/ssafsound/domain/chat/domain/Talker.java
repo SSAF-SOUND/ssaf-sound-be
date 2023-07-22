@@ -34,4 +34,8 @@ public class Talker {
 
     @Column
     private LocalDateTime readAt;
+
+    public void setStartedAt(LocalDateTime inputTime) {
+        this.startedAt = inputTime;
+    }
 }

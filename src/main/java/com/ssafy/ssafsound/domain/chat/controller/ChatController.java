@@ -36,4 +36,14 @@ public class ChatController {
                 .build();
     }
 
+    @DeleteMapping("/{chatRoomId}")
+    public EnvelopeResponse<DeleteChatResDto> deleteChatRoom(@Authentication AuthenticatedMember member,
+                                                             @PathVariable Long chatRoomId) {
+
+        return EnvelopeResponse.<DeleteChatResDto>builder()
+                .data(chatRoomService.deleteChatRoom(member.getMemberId(), chatRoomId))
+                .build();
+    }
+
+
 }
