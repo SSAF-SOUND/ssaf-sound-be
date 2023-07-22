@@ -5,14 +5,11 @@ import com.ssafy.ssafsound.domain.chat.domain.ChatRoom;
 import com.ssafy.ssafsound.domain.chat.domain.Talker;
 import com.ssafy.ssafsound.domain.chat.dto.*;
 import com.ssafy.ssafsound.domain.chat.repository.ChatRepository;
-import com.ssafy.ssafsound.domain.chat.repository.ChatRoomRepository;
 import com.ssafy.ssafsound.domain.chat.repository.TalkerRepository;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
-import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
-import com.ssafy.ssafsound.domain.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,17 +19,11 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ChatRoomService {
 
-    private final ChatRoomRepository chatRoomRepository;
-
     private final ChatRepository chatRepository;
 
     private final TalkerRepository talkerRepository;
 
     private final MemberRepository memberRepository;
-
-    private final PostRepository postRepository;
-
-    private final MetaDataConsumer metaDataConsumer;
 
     public GetChatRoomsResDto getChatRooms(Long memberId) {
 
@@ -50,8 +41,8 @@ public class ChatRoomService {
             TalkerInfoDto partnerTalkerInfoDto = getPartnerTalkerInfoDtoByAnonymity(memberAsTalker, chatRoom);
 
             // 채팅 참여자인 talker 의 채팅 시작일 이후 채팅방 전체 메시지 중 가장 최신 메시지
-            Chat chat = chatRepository
-                    .findFirstByChatRoomCreatedAtAfterOrderByCreatedAtDesc(memberAsTalker.getStartedAt(), chatRoom);
+            Chat chat = chatRepository.findFirstByChatRoomAndModifiedAtGreaterThanEqualOrderByCreatedAtDesc(chatRoom,
+                            memberAsTalker.getStartedAt());
 
             if (chat == null) {
                 continue;
@@ -76,7 +67,7 @@ public class ChatRoomService {
 
     private TalkerInfoDto getPartnerTalkerInfoDtoByAnonymity(Talker memberAsTalker, ChatRoom chatRoom) {
 
-        if (chatRoom.getAnonymity() == null) return null;
+        if (chatRoom.getAnonymity()) return null;
 
         return TalkerInfoDto.from(talkerRepository.findByChatRoomAndIdNot(chatRoom, memberAsTalker.getId()));
     }

@@ -10,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
 @RestController
 @RequestMapping("/chats")
 @RequiredArgsConstructor
@@ -26,15 +24,6 @@ public class ChatController {
 
         return EnvelopeResponse.<GetChatRoomsResDto>builder()
                 .data(chatRoomService.getChatRooms(member.getMemberId()))
-                .build();
-    }
-
-    @GetMapping("/check")
-    public EnvelopeResponse<GetChatExistResDto> getChatExistence(@Authentication AuthenticatedMember member,
-                                                                 @Valid GetChatExistReqDto getChatExistReqDto) {
-
-        return EnvelopeResponse.<GetChatExistResDto>builder()
-                .data(chatRoomService.getChatExistence(member.getMemberId(), getChatExistReqDto))
                 .build();
     }
 

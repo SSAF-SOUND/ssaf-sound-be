@@ -1,10 +1,8 @@
 package com.ssafy.ssafsound.domain.chat.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ssafy.ssafsound.domain.chat.domain.Chat;
 import com.ssafy.ssafsound.domain.chat.domain.ChatRoom;
 import com.ssafy.ssafsound.domain.chat.domain.Talker;
-import com.ssafy.ssafsound.domain.member.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
 

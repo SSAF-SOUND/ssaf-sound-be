@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDateTime;
 
 public interface ChatRepository extends JpaRepository<Chat, Long> {
-    Chat findFirstByChatRoomCreatedAtAfterOrderByCreatedAtDesc(LocalDateTime startedAt,ChatRoom chatRoom);
+    Chat findFirstByChatRoomAndModifiedAtGreaterThanEqualOrderByCreatedAtDesc(ChatRoom chatRoom, LocalDateTime startedAt);
 }

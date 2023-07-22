@@ -9,8 +9,6 @@ import lombok.Getter;
 @Builder
 public class TalkerInfoDto {
 
-    private Long talkerId;
-
     private String nickname;
 
     private Boolean isMajor;
@@ -22,7 +20,6 @@ public class TalkerInfoDto {
     public static TalkerInfoDto from(Talker talker) {
 
         return TalkerInfoDto.builder()
-                .talkerId(talker.getId())
                 .nickname(talker.getMember().getNickname())
                 .isMajor(talker.getMember().getMajor())
                 .ssafyMember(talker.getMember().getSsafyMember())
