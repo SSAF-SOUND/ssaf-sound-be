@@ -28,8 +28,11 @@ public class ChatRoom extends BaseTimeEntity {
     @Column
     private Long sourceId;
 
-    @Enumerated(EnumType.STRING)
-    private ChatRoomStatus chatRoomStatus;
+    @Column
+    private String sourceMessage;
+
+    @Column
+    private Boolean activated;
 
     @Column
     private Long initialMemberId;

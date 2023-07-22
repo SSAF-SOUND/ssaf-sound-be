@@ -1,7 +1,6 @@
 package com.ssafy.ssafsound.domain.chat.dto;
 
 import com.ssafy.ssafsound.domain.chat.domain.ChatRoom;
-import com.ssafy.ssafsound.domain.chat.domain.ChatRoomStatus;
 import lombok.Builder;
 import lombok.Getter;
 

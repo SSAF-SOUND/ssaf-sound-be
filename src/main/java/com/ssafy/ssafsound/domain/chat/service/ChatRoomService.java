@@ -1,7 +1,7 @@
 package com.ssafy.ssafsound.domain.chat.service;
 
+import com.ssafy.ssafsound.domain.chat.domain.Chat;
 import com.ssafy.ssafsound.domain.chat.domain.ChatRoom;
-import com.ssafy.ssafsound.domain.chat.domain.ChatRoomStatus;
 import com.ssafy.ssafsound.domain.chat.domain.Talker;
 import com.ssafy.ssafsound.domain.chat.dto.*;
 import com.ssafy.ssafsound.domain.chat.repository.ChatRepository;
@@ -11,15 +11,8 @@ import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
-import com.ssafy.ssafsound.domain.meta.domain.MetaData;
-import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
-import com.ssafy.ssafsound.domain.meta.domain.SourceType;
-import com.ssafy.ssafsound.domain.meta.exception.MetaDataIntegrityException;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
-import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
-import com.ssafy.ssafsound.domain.post.exception.PostException;
 import com.ssafy.ssafsound.domain.post.repository.PostRepository;
-import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -54,17 +47,23 @@ public class ChatRoomService {
 
             ChatRoom chatRoom = memberAsTalker.getChatRoom();
 
-            if (chatRoom.getChatRoomStatus().equals(ChatRoomStatus.TERMINATED)) continue;
+            TalkerInfoDto partnerTalkerInfoDto = getPartnerTalkerInfoDtoByAnonymity(memberAsTalker, chatRoom);
 
-            TalkerInfoDto partnerTalkerInfoDto =
-                    chatRoom.getAnonymity() ? null : TalkerInfoDto.from(
-                            talkerRepository.findByChatRoomAndIdNot(chatRoom, memberAsTalker.getId()));
+            // 채팅 참여자인 talker 의 채팅 시작일 이후 채팅방 전체 메시지 중 가장 최신 메시지
+            Chat chat = chatRepository
+                    .findFirstByChatRoomCreatedAtAfterOrderByCreatedAtDesc(memberAsTalker.getStartedAt(), chatRoom);
+
+            if (chat == null) {
+                continue;
+            }
+
+            LatestChatDto latestChatDto = LatestChatDto.from(chat);
 
             chatRooms.add(ChatRoomElementDto.of(
                     chatRoom,
                     partnerTalkerInfoDto,
                     memberAsTalker,
-                    chatRepository.findFirstByChatRoomOrderByCreatedAtDesc(chatRoom)));
+                    latestChatDto));
         }
 
         Collections.sort(chatRooms, (dto1, dto2) ->
@@ -75,25 +74,11 @@ public class ChatRoomService {
                 .build();
     }
 
-    public GetChatExistResDto getChatExistence(Long memberId, GetChatExistReqDto getChatExistReqDto) {
+    private TalkerInfoDto getPartnerTalkerInfoDtoByAnonymity(Talker memberAsTalker, ChatRoom chatRoom) {
 
-        memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+        if (chatRoom.getAnonymity() == null) return null;
 
-        MetaData requestedSourceType = metaDataConsumer.getMetaData(MetaDataType.SOURCE_TYPE.name(),
-                getChatExistReqDto.getSourceType());
-
-        MetaData chatEnableSourceType = metaDataConsumer.getMetaData(MetaDataType.SOURCE_TYPE.name(), SourceType.POST.getName());
-
-        if (!requestedSourceType.equals(chatEnableSourceType)) throw new MetaDataIntegrityException(GlobalErrorInfo.BAD_REQUEST);
-
-        postRepository.findById(getChatExistReqDto.getSourceId())
-                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
-
-        return GetChatExistResDto.of(chatRoomRepository.findBySourceTypeAndSourceIdAndInitialMemberId(
-                requestedSourceType,
-                getChatExistReqDto.getSourceId(),
-                memberId));
+        return TalkerInfoDto.from(talkerRepository.findByChatRoomAndIdNot(chatRoom, memberAsTalker.getId()));
     }
 
 }

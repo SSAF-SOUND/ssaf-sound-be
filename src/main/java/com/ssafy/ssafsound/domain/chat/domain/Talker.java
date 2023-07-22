@@ -29,8 +29,8 @@ public class Talker {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Enumerated(EnumType.STRING)
-    private TalkerStatus talkerStatus;
+    @Column
+    private LocalDateTime startedAt;
 
     @Column
     private LocalDateTime readAt;

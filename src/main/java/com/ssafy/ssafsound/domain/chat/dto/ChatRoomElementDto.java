@@ -27,13 +27,13 @@ public class ChatRoomElementDto {
     private LocalDateTime readAt;
 
     public static ChatRoomElementDto of(ChatRoom chatRoom, TalkerInfoDto partnerTalkerInfoDto,
-                                        Talker talker, Chat chat) {
+                                        Talker talker, LatestChatDto latestChatDto) {
 
         return ChatRoomElementDto.builder()
                 .chatRoomId(chatRoom.getId())
                 .anonymous(chatRoom.getAnonymity())
                 .talkerInfoDto(partnerTalkerInfoDto)
-                .latestChatDto(LatestChatDto.from(chat))
+                .latestChatDto(latestChatDto)
                 .readAt(talker.getReadAt())
                 .build();
     }
