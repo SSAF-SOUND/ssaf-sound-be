@@ -42,12 +42,16 @@ spring:
         format_sql: true
         jdbc:
           time_zone: Asia/Seoul
-
     show-sql: true
+    defer-datasource-initialization: true
 
   h2:
     console:
       enabled: true
+
+  sql:
+    init:
+      mode: always
 
   config:
     import:
