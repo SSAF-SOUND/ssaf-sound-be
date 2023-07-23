@@ -8,4 +8,6 @@ public interface PostCustomRepository {
     List<Post> findWithDetailsByBoardId(Long boardId, Long cursor, int size);
 
     List<Post> findWithDetailsFetchByBoardIdAndKeyword(Long boardId, String keyword, Long cursor, int size);
+
+    List<Post> findWithDetailsByMemberId(Long memberId, Long cursor, int size);
 }

@@ -54,6 +54,22 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<Post> findWithDetailsByMemberId(Long memberId, Long cursor, int size) {
+        List<Tuple> tuples = jpaQueryFactory.select(post, board, member)
+                .from(post)
+                .innerJoin(post.board, board).fetchJoin()
+                .innerJoin(post.member, member).fetchJoin()
+                .where(postIdLtCursor(cursor), member.id.eq(memberId))
+                .limit(size + 1)
+                .orderBy(post.id.desc())
+                .fetch();
+
+        return tuples.stream()
+                .map(tuple -> tuple.get(post))
+                .collect(Collectors.toList());
+    }
+
     private BooleanExpression postIdLtCursor(Long cursor) {
         return cursor != -1 ? post.id.lt(cursor) : null;
     }
