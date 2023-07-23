@@ -6,14 +6,13 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ssafsound.domain.post.domain.HotPost;
-import com.ssafy.ssafsound.domain.post.domain.QHotPost;
-import com.ssafy.ssafsound.domain.post.domain.QPost;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.ssafy.ssafsound.domain.post.domain.QHotPost.hotPost;
 import static com.ssafy.ssafsound.domain.post.domain.QPost.post;
 import static com.ssafy.ssafsound.domain.board.domain.QBoard.board;
 import static com.ssafy.ssafsound.domain.member.domain.QMember.member;
@@ -27,8 +26,6 @@ public class HotPostCustomRepositoryImpl implements HotPostCustomRepository {
 
     @Override
     public List<HotPost> findWithDetailsFetch(Long cursor, int size) {
-        QHotPost hotPost = QHotPost.hotPost;
-
         List<Tuple> tuples = jpaQueryFactory.select(hotPost, post, board, member)
                 .from(hotPost)
                 .innerJoin(hotPost.post, post).fetchJoin()
@@ -39,17 +36,13 @@ public class HotPostCustomRepositoryImpl implements HotPostCustomRepository {
                 .orderBy(post.id.desc())
                 .fetch();
 
-        List<HotPost> hotPosts = tuples.stream()
+        return tuples.stream()
                 .map(tuple -> tuple.get(hotPost))
                 .collect(Collectors.toList());
-
-        return hotPosts;
     }
 
     @Override
     public List<HotPost> findWithDetailsFetchByKeyword(String keyword, Long cursor, int size) {
-        QHotPost hotPost = QHotPost.hotPost;
-
         List<Tuple> tuples = jpaQueryFactory.select(hotPost, post, board, member)
                 .from(hotPost)
                 .innerJoin(hotPost.post, post).fetchJoin()
@@ -60,11 +53,9 @@ public class HotPostCustomRepositoryImpl implements HotPostCustomRepository {
                 .orderBy(post.id.desc())
                 .fetch();
 
-        List<HotPost> hotPosts = tuples.stream()
+        return tuples.stream()
                 .map(tuple -> tuple.get(hotPost))
                 .collect(Collectors.toList());
-
-        return hotPosts;
     }
 
     private BooleanExpression postIdLtCursor(Long cursor) {
@@ -72,8 +63,8 @@ public class HotPostCustomRepositoryImpl implements HotPostCustomRepository {
     }
 
     private BooleanExpression containTitleOrContent(String keyword) {
-        StringTemplate title = Expressions.stringTemplate("replace({0}, ' ', '')", QPost.post.title);
-        StringTemplate content = Expressions.stringTemplate("replace({0}, ' ', '')", QPost.post.content);
+        StringTemplate title = Expressions.stringTemplate("replace({0}, ' ', '')", post.title);
+        StringTemplate content = Expressions.stringTemplate("replace({0}, ' ', '')", post.content);
         return title.like("%" + keyword + "%").or(content.like("%" + keyword + "%"));
     }
 }

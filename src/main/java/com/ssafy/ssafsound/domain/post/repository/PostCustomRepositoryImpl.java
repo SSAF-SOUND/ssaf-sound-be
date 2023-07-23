@@ -6,7 +6,6 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ssafsound.domain.post.domain.Post;
-import com.ssafy.ssafsound.domain.post.domain.QPost;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -25,13 +24,27 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
     @Override
     public List<Post> findWithDetailsByBoardId(Long boardId, Long cursor, int size) {
-        QPost post = QPost.post;
-
         List<Tuple> tuples = jpaQueryFactory.select(post, board, member)
                 .from(post)
                 .innerJoin(post.board, board).fetchJoin()
                 .innerJoin(post.member, member).fetchJoin()
-                .where(postIdLtCursor(cursor))
+                .where(postIdLtCursor(cursor), board.id.eq(boardId))
+                .limit(size + 1)
+                .orderBy(post.id.desc())
+                .fetch();
+
+        return tuples.stream()
+                .map(tuple -> tuple.get(post))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Post> findWithDetailsFetchByBoardIdAndKeyword(Long boardId, String keyword, Long cursor, int size) {
+        List<Tuple> tuples = jpaQueryFactory.select(post, board, member)
+                .from(post)
+                .innerJoin(post.board, board).fetchJoin()
+                .innerJoin(post.member, member).fetchJoin()
+                .where(postIdLtCursor(cursor), board.id.eq(boardId), containTitleOrContent(keyword))
                 .limit(size + 1)
                 .orderBy(post.id.desc())
                 .fetch();
@@ -46,8 +59,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     }
 
     private BooleanExpression containTitleOrContent(String keyword) {
-        StringTemplate title = Expressions.stringTemplate("replace({0}, ' ', '')", QPost.post.title);
-        StringTemplate content = Expressions.stringTemplate("replace({0}, ' ', '')", QPost.post.content);
+        StringTemplate title = Expressions.stringTemplate("replace({0}, ' ', '')", post.title);
+        StringTemplate content = Expressions.stringTemplate("replace({0}, ' ', '')", post.content);
         return title.like("%" + keyword + "%").or(content.like("%" + keyword + "%"));
     }
 }

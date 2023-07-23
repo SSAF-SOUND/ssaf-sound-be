@@ -27,11 +27,11 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRep
     @EntityGraph(attributePaths = {"board", "member"})
     List<Post> findWithDetailsByMemberId(@Param("memberId") Long memberId, Pageable pageable);
 
-    @Query("SELECT p FROM post p " +
-            "JOIN FETCH p.board b " +
-            "JOIN FETCH p.member " +
-            "WHERE (REPLACE(p.title, ' ', '') LIKE CONCAT('%', :keyword, '%') " +
-            "OR REPLACE(p.content, ' ', '') LIKE CONCAT('%', :keyword, '%')) " +
-            "AND b.id = :boardId ")
-    List<Post> findWithDetailsFetchByBoardIdAndKeyword(@Param("boardId") Long boardId, @Param("keyword") String keyword, Pageable pageable);
+//    @Query("SELECT p FROM post p " +
+//            "JOIN FETCH p.board b " +
+//            "JOIN FETCH p.member " +
+//            "WHERE (REPLACE(p.title, ' ', '') LIKE CONCAT('%', :keyword, '%') " +
+//            "OR REPLACE(p.content, ' ', '') LIKE CONCAT('%', :keyword, '%')) " +
+//            "AND b.id = :boardId ")
+//    List<Post> findWithDetailsFetchByBoardIdAndKeyword(@Param("boardId") Long boardId, @Param("keyword") String keyword, Pageable pageable);
 }
