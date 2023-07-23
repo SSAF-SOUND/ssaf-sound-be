@@ -13,7 +13,7 @@ public class GetPostHotResDto {
     private List<GetPostHotElement> posts;
     private Long cursor;
 
-    public static GetPostHotResDto from(List<HotPost> hotPosts, int size) {
+    public static GetPostHotResDto of(List<HotPost> hotPosts, int size) {
         Long nextCursor = null;
         if (hotPosts.size() > size) {
             hotPosts = hotPosts.subList(0, hotPosts.size() - 1);
@@ -21,8 +21,7 @@ public class GetPostHotResDto {
         }
 
         return GetPostHotResDto.builder()
-                .posts(hotPosts
-                        .stream()
+                .posts(hotPosts.stream()
                         .map(GetPostHotElement::from)
                         .collect(Collectors.toList()))
                 .cursor(nextCursor)
