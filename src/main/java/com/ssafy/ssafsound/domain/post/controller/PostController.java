@@ -94,9 +94,9 @@ public class PostController {
     }
 
     @GetMapping("/my")
-    public EnvelopeResponse<GetPostMyResDto> findMyPosts(Pageable pageable, @Authentication AuthenticatedMember loginMember) {
+    public EnvelopeResponse<GetPostMyResDto> findMyPosts(GetPostMyReqDto getPostMyReqDto, @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<GetPostMyResDto>builder()
-                .data(postService.findMyPosts(pageable, loginMember.getMemberId()))
+                .data(postService.findMyPosts(getPostMyReqDto.getCursor(), getPostMyReqDto.getSize(), loginMember.getMemberId()))
                 .build();
     }
 

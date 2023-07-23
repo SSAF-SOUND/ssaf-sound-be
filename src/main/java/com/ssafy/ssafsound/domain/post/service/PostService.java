@@ -18,10 +18,9 @@ import com.ssafy.ssafsound.domain.post.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
@@ -259,15 +258,12 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public GetPostMyResDto findMyPosts(Pageable pageable, Long loginMemberId) {
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-
+    public GetPostMyResDto findMyPosts(Long cursor, int size, Long loginMemberId) {
         Member loginMember = memberRepository.findById(loginMemberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-        List<Post> posts = postRepository.findWithDetailsByMemberId(loginMember.getId(), pageRequest);
-
-        return GetPostMyResDto.from(posts);
+        List<Post> posts = postRepository.findWithDetailsByMemberId(loginMember.getId(), cursor, size);
+        return GetPostMyResDto.of(posts, size);
     }
 
     @Transactional(readOnly = true)
