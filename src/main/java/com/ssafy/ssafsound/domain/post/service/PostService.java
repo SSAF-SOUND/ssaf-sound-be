@@ -256,7 +256,7 @@ public class PostService {
 
 
     @Transactional(readOnly = true)
-    public GetPostHotResDto findHotPosts(int cursor, int size) {
+    public GetPostHotResDto findHotPosts(Long cursor, int size) {
         List<HotPost> hotPosts = hotPostRepository.findWithDetailsFetch(cursor, size);
         return GetPostHotResDto.from(hotPosts, size);
     }

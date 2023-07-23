@@ -23,7 +23,7 @@ public class HotPostCustomRepositoryImpl implements HotPostCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<HotPost> findWithDetailsFetch(int cursor, int size) {
+    public List<HotPost> findWithDetailsFetch(Long cursor, int size) {
         QHotPost hotPost = QHotPost.hotPost;
 
         List<Tuple> tuples = jpaQueryFactory.select(hotPost, post, board, member)
@@ -43,7 +43,7 @@ public class HotPostCustomRepositoryImpl implements HotPostCustomRepository {
         return hotPosts;
     }
 
-    private BooleanExpression checkCursor(Integer cursor) {
+    private BooleanExpression checkCursor(Long cursor) {
         return cursor != -1 ? post.id.lt(cursor) : null;
     }
 }
