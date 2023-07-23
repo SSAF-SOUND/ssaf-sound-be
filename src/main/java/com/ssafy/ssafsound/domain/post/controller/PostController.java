@@ -25,9 +25,9 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping
-    public EnvelopeResponse<GetPostResDto> findPosts(@RequestParam Long boardId, Pageable pageable) {
+    public EnvelopeResponse<GetPostResDto> findPosts(@Valid GetPostReqDto getPostReqDto) {
         return EnvelopeResponse.<GetPostResDto>builder()
-                .data(postService.findPosts(boardId, pageable))
+                .data(postService.findPosts(getPostReqDto.getBoardId(), getPostReqDto.getCursor(), getPostReqDto.getSize()))
                 .build();
     }
 
@@ -110,7 +110,7 @@ public class PostController {
     @GetMapping("/hot/search")
     public EnvelopeResponse<GetPostHotResDto> searchHotPosts(@Valid GetPostHotSearchReqDto getPostHotSearchReqDto) {
         return EnvelopeResponse.<GetPostHotResDto>builder()
-                .data(postService.searchHotPosts(getPostHotSearchReqDto.getKeyword(), getPostHotSearchReqDto.getCursor(), getPostHotSearchReqDto. getSize()))
+                .data(postService.searchHotPosts(getPostHotSearchReqDto.getKeyword(), getPostHotSearchReqDto.getCursor(), getPostHotSearchReqDto.getSize()))
                 .build();
     }
 }

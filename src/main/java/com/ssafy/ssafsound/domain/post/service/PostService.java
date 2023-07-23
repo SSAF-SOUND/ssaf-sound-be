@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -43,15 +42,13 @@ public class PostService {
     private final PostImageRepository postImageRepository;
 
     @Transactional(readOnly = true)
-    public GetPostResDto findPosts(Long boardId, Pageable pageable) {
+    public GetPostResDto findPosts(Long boardId, Long cursor, int size) {
         if (!boardRepository.existsById(boardId)) {
             throw new BoardException(BoardErrorInfo.NO_BOARD);
         }
 
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        List<Post> posts = postRepository.findWithDetailsByBoardId(boardId, pageRequest);
-
-        return GetPostResDto.from(posts);
+        List<Post> posts = postRepository.findWithDetailsByBoardId(boardId, cursor, size);
+        return GetPostResDto.of(posts, size);
     }
 
     @Transactional(readOnly = true)
@@ -258,7 +255,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public GetPostHotResDto findHotPosts(Long cursor, int size) {
         List<HotPost> hotPosts = hotPostRepository.findWithDetailsFetch(cursor, size);
-        return GetPostHotResDto.from(hotPosts, size);
+        return GetPostHotResDto.of(hotPosts, size);
     }
 
     @Transactional(readOnly = true)
@@ -282,12 +279,12 @@ public class PostService {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         List<Post> posts = postRepository.findWithDetailsFetchByBoardIdAndKeyword(boardId, keyword.replaceAll(" ", ""), pageRequest);
 
-        return GetPostResDto.from(posts);
+        return GetPostResDto.of(posts, 10);
     }
 
     @Transactional(readOnly = true)
     public GetPostHotResDto searchHotPosts(String keyword, Long cursor, int size) {
         List<HotPost> hotPosts = hotPostRepository.findWithDetailsFetchByKeyword(keyword.replaceAll(" ", ""), cursor, size);
-        return GetPostHotResDto.from(hotPosts, size);
+        return GetPostHotResDto.of(hotPosts, size);
     }
 }
