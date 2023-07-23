@@ -72,7 +72,7 @@ public class MemberController {
     public EnvelopeResponse patchMemberDefaultInformation(
             @Authentication AuthenticatedMember authenticatedMember,
             @Valid @RequestBody PatchMemberDefaultInfoReqDto patchMemberDefaultInfoReqDto) {
-        memberService.patchMemberDefaultInfo(authenticatedMember, patchMemberDefaultInfoReqDto);
+        memberService.patchMemberDefaultInfo(authenticatedMember.getMemberId(), patchMemberDefaultInfoReqDto);
         return EnvelopeResponse.builder()
                 .build();
     }

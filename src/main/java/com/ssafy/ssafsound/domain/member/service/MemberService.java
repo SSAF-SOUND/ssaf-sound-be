@@ -112,11 +112,14 @@ public class MemberService {
 
     @Transactional
     public void patchMemberDefaultInfo(
-            AuthenticatedMember authenticatedMember,
+            Long memberId,
             PatchMemberDefaultInfoReqDto patchMemberDefaultInfoReqDto) {
-        Member member = memberRepository.findById(authenticatedMember.getMemberId())
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
+        if(patchMemberDefaultInfoReqDto.getSemester() == null) {
+            throw new MemberException(MemberErrorInfo.SEMESTER_NOT_FOUND);
+        }
         member.exchangeDefaultInformation(patchMemberDefaultInfoReqDto, metaDataConsumer);
     }
 

@@ -19,8 +19,4 @@ public class PatchMemberDefaultInfoReqDto {
     private Integer semester;
 
     private String campus;
-
-    public boolean isNotSemesterPresent() {
-        return semester == null;
-    }
 }
