@@ -3,7 +3,6 @@ package com.ssafy.ssafsound.domain.post.dto;
 import com.ssafy.ssafsound.domain.post.domain.HotPost;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.data.domain.Slice;
 
 import java.util.List;
 import java.util.stream.Collectors;
