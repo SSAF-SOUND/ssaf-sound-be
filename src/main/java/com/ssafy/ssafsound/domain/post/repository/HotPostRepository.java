@@ -1,14 +1,12 @@
 package com.ssafy.ssafsound.domain.post.repository;
 
 import com.ssafy.ssafsound.domain.post.domain.HotPost;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -25,12 +23,4 @@ public interface HotPostRepository extends JpaRepository<HotPost, Long>, HotPost
     void deleteHotPostsUnderThreshold(@Param("threshold") Long threshold);
 
     Optional<HotPost> findByPostId(Long postId);
-
-    @Query("SELECT h FROM hot_post h " +
-            "JOIN FETCH h.post p " +
-            "JOIN FETCH p.board b " +
-            "JOIN FETCH p.member " +
-            "WHERE (REPLACE(p.title, ' ', '') LIKE CONCAT('%', :keyword, '%') " +
-            "OR REPLACE(p.content, ' ', '') LIKE CONCAT('%', :keyword, '%')) ")
-    List<HotPost> findWithDetailsFetchByKeyword(@Param("keyword") String keyword, Pageable pageable);
 }

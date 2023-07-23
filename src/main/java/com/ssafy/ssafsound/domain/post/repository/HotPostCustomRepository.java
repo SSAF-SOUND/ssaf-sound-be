@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface HotPostCustomRepository {
     List<HotPost> findWithDetailsFetch(Long cursor, int size);
+
+    List<HotPost> findWithDetailsFetchByKeyword(String keyword, Long cursor, int size);
 }

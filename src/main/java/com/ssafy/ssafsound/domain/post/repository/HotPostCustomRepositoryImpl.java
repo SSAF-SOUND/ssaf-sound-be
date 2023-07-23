@@ -2,9 +2,12 @@ package com.ssafy.ssafsound.domain.post.repository;
 
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ssafsound.domain.post.domain.HotPost;
 import com.ssafy.ssafsound.domain.post.domain.QHotPost;
+import com.ssafy.ssafsound.domain.post.domain.QPost;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -31,7 +34,7 @@ public class HotPostCustomRepositoryImpl implements HotPostCustomRepository {
                 .innerJoin(hotPost.post, post).fetchJoin()
                 .innerJoin(post.board, board).fetchJoin()
                 .innerJoin(post.member, member).fetchJoin()
-                .where(checkCursor(cursor))
+                .where(postIdLtCursor(cursor))
                 .limit(size + 1)
                 .orderBy(post.id.desc())
                 .fetch();
@@ -43,7 +46,34 @@ public class HotPostCustomRepositoryImpl implements HotPostCustomRepository {
         return hotPosts;
     }
 
-    private BooleanExpression checkCursor(Long cursor) {
+    @Override
+    public List<HotPost> findWithDetailsFetchByKeyword(String keyword, Long cursor, int size) {
+        QHotPost hotPost = QHotPost.hotPost;
+
+        List<Tuple> tuples = jpaQueryFactory.select(hotPost, post, board, member)
+                .from(hotPost)
+                .innerJoin(hotPost.post, post).fetchJoin()
+                .innerJoin(post.board, board).fetchJoin()
+                .innerJoin(post.member, member).fetchJoin()
+                .where(postIdLtCursor(cursor), containTitleOrContent(keyword))
+                .limit(size + 1)
+                .orderBy(post.id.desc())
+                .fetch();
+
+        List<HotPost> hotPosts = tuples.stream()
+                .map(tuple -> tuple.get(hotPost))
+                .collect(Collectors.toList());
+
+        return hotPosts;
+    }
+
+    private BooleanExpression postIdLtCursor(Long cursor) {
         return cursor != -1 ? post.id.lt(cursor) : null;
+    }
+
+    private BooleanExpression containTitleOrContent(String keyword) {
+        StringTemplate title = Expressions.stringTemplate("replace({0}, ' ', '')", QPost.post.title);
+        StringTemplate content = Expressions.stringTemplate("replace({0}, ' ', '')", QPost.post.content);
+        return title.like("%" + keyword + "%").or(content.like("%" + keyword + "%"));
     }
 }
