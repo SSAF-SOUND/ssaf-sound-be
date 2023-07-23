@@ -108,9 +108,9 @@ public class PostController {
     }
 
     @GetMapping("/hot/search")
-    public EnvelopeResponse<GetPostHotResDto> searchHotPosts(@Valid GetPostHotSearchReqDto getPostHotSearchReqDto, Pageable pageable) {
+    public EnvelopeResponse<GetPostHotResDto> searchHotPosts(@Valid GetPostHotSearchReqDto getPostHotSearchReqDto) {
         return EnvelopeResponse.<GetPostHotResDto>builder()
-                .data(postService.searchHotPosts(getPostHotSearchReqDto.getKeyword(), pageable))
+                .data(postService.searchHotPosts(getPostHotSearchReqDto.getKeyword(), getPostHotSearchReqDto.getCursor(), getPostHotSearchReqDto. getSize()))
                 .build();
     }
 }
