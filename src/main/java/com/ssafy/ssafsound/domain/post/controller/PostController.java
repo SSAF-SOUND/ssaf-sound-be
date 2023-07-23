@@ -101,9 +101,10 @@ public class PostController {
     }
 
     @GetMapping("/search")
-    public EnvelopeResponse<GetPostResDto> searchPosts(@Valid GetPostSearchReqDto getPostSearchReqDto, Pageable pageable) {
+    public EnvelopeResponse<GetPostResDto> searchPosts(@Valid GetPostSearchReqDto getPostSearchReqDto) {
         return EnvelopeResponse.<GetPostResDto>builder()
-                .data(postService.searchPosts(getPostSearchReqDto.getBoardId(), getPostSearchReqDto.getKeyword(), pageable))
+                .data(postService.searchPosts(getPostSearchReqDto.getBoardId(), getPostSearchReqDto.getKeyword(),
+                        getPostSearchReqDto.getCursor(), getPostSearchReqDto.getSize()))
                 .build();
     }
 

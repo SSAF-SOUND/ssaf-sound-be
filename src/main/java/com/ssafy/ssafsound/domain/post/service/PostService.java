@@ -271,15 +271,13 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public GetPostResDto searchPosts(Long boardId, String keyword, Pageable pageable) {
+    public GetPostResDto searchPosts(Long boardId, String keyword, Long cursor, int size) {
         if (!boardRepository.existsById(boardId)) {
             throw new BoardException(BoardErrorInfo.NO_BOARD);
         }
 
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        List<Post> posts = postRepository.findWithDetailsFetchByBoardIdAndKeyword(boardId, keyword.replaceAll(" ", ""), pageRequest);
-
-        return GetPostResDto.of(posts, 10);
+        List<Post> posts = postRepository.findWithDetailsFetchByBoardIdAndKeyword(boardId, keyword.replaceAll(" ", ""), cursor, size);
+        return GetPostResDto.of(posts, size);
     }
 
     @Transactional(readOnly = true)
