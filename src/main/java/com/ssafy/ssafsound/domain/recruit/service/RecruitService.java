@@ -107,7 +107,7 @@ public class RecruitService {
                 .map(RecruitLimitation::getType)
                 .collect(Collectors.toList());
 
-        recruitApplicationRepository.deletNotIncludeRecruitTypes(recruitTypes);
+        recruitApplicationRepository.deleteByTypeNotIn(recruitTypes);
     }
 
     @Transactional
