@@ -15,9 +15,10 @@ public class GetPostMyResDto {
 
     public static GetPostMyResDto of(List<Post> posts, int size) {
         Long nextCursor = null;
-        if (posts.size() > size) {
-            posts = posts.subList(0, posts.size() - 1);
-            nextCursor = posts.get(posts.size() - 1).getId();
+        int pageSize = posts.size() - 1;
+        if (pageSize >= size) {
+            posts = posts.subList(0, pageSize);
+            nextCursor = posts.get(pageSize).getId();
         }
 
         return GetPostMyResDto.builder()

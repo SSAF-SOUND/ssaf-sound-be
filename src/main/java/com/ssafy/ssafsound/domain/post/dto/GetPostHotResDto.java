@@ -15,9 +15,10 @@ public class GetPostHotResDto {
 
     public static GetPostHotResDto of(List<HotPost> hotPosts, int size) {
         Long nextCursor = null;
-        if (hotPosts.size() > size) {
-            hotPosts = hotPosts.subList(0, hotPosts.size() - 1);
-            nextCursor = hotPosts.get(hotPosts.size() - 1).getId();
+        int pageSize = hotPosts.size() - 1;
+        if (pageSize >= size) {
+            hotPosts = hotPosts.subList(0, pageSize);
+            nextCursor = hotPosts.get(pageSize).getId();
         }
 
         return GetPostHotResDto.builder()
