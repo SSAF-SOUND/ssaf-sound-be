@@ -162,7 +162,7 @@ class RecruitCommentServiceTest {
         PostRecruitCommentResDto response = recruitCommentService.saveRecruitComment(1L, userInfo, recruitCommentReqDto);
 
         assertAll(
-                ()->assertEquals(member1.getNickname(), response.getNickName()),
+                ()->assertEquals(member1.getNickname(), response.getNickname()),
                 ()->assertEquals(member1.getId(), response.getMemberId()),
                 // 리크루트 QNA 질문 등록의 경우 페이지네이션을 위해 자기 자신을 CommentGroup으로 가진다.
                 ()->assertEquals(commentGroup.getContent(), response.getContent())

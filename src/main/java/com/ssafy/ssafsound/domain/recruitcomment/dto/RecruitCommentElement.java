@@ -18,7 +18,7 @@ public class RecruitCommentElement {
     private Boolean deletedComment;
 
     private Long memberId;
-    private String nickName;
+    private String nickname;
     private Boolean ssafyMember;
     private Boolean major;
     private String majorTrack;
@@ -33,7 +33,7 @@ public class RecruitCommentElement {
                 .children(new ArrayList<>())
                 .deletedComment(comment.getDeletedComment())
                 .memberId(register.getId())
-                .nickName(register.getNickname())
+                .nickname(register.getNickname())
                 .ssafyMember(register.getSsafyMember())
                 .major(register.getMajor())
                 .majorTrack(register.getMajorTrack().getName())

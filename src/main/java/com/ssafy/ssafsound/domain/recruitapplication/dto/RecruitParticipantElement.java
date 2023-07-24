@@ -27,7 +27,7 @@ public class RecruitParticipantElement {
 
         members.add(ParticipantElement.builder()
                 .memberId(member.getId())
-                .nickName(member.getNickname())
+                .nickname(member.getNickname())
                 .isMajor(member.getMajor())
                 .ssafyInfo(ssafyInfo)
                 .build());

@@ -27,7 +27,7 @@ public class GetRecruitDetailResDto {
     private List<RecruitSkillElement> skills;
     private List<GetRecruitLimitDetail> limits;
     private long memberId;
-    private String nickName;
+    private String nickname;
     private Boolean isMajor;
     private SSAFYInfo ssafyInfo;
 
@@ -58,7 +58,7 @@ public class GetRecruitDetailResDto {
                 .title(recruit.getTitle())
                 .content(recruit.getContent())
                 .memberId(register.getId())
-                .nickName(register.getNickname())
+                .nickname(register.getNickname())
                 .recruitStart(recruit.getStartDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .recruitEnd(recruit.getEndDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .finishedRecruit(recruit.getFinishedRecruit())

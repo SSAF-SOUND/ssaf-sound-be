@@ -22,12 +22,12 @@ public class RecruitParticipant {
                 .build();
     }
 
-    public void addParticipant(String nickName, Boolean isMajor) {
-        members.add(Participant.builder().nickName(nickName).isMajor(isMajor).build());
+    public void addParticipant(String nickname, Boolean isMajor) {
+        members.add(Participant.builder().nickname(nickname).isMajor(isMajor).build());
     }
 
-    public void addRegister(String nickName, Boolean isMajor) {
+    public void addRegister(String nickname, Boolean isMajor) {
         limit++;
-        this.addParticipant(nickName, isMajor);
+        this.addParticipant(nickname, isMajor);
     }
 }

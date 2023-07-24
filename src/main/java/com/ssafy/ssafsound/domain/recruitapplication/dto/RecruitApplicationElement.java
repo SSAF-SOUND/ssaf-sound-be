@@ -25,7 +25,7 @@ public class RecruitApplicationElement {
     private Long memberId;
 
     @JsonProperty
-    private String nickName;
+    private String nickname;
 
     @JsonProperty
     private Boolean isMajor;
@@ -43,7 +43,7 @@ public class RecruitApplicationElement {
     private Boolean isLike;
 
     public RecruitApplicationElement(Long recruitApplicationId, MetaData recruitType, MatchStatus matchStatus, MetaData type,
-                                     Long memberId, String nickName,
+                                     Long memberId, String nickname,
                                      Integer semester, Boolean major, MetaData campus,
                                      AuthenticationStatus certificationState, MetaData majorTrack,
                                      String reply, String question, Boolean isLike) {
@@ -53,7 +53,7 @@ public class RecruitApplicationElement {
         this.matchStatus = matchStatus;
         this.type = type;
         this.memberId = memberId;
-        this.nickName = nickName;
+        this.nickname = nickname;
         this.isMajor = major;
         this.ssafyInfo = SSAFYInfo.of(semester, campus.getName(), certificationState.name(), majorTrack);
         this.reply = reply;
