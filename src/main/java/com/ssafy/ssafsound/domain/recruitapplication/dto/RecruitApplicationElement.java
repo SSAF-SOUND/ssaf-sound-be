@@ -44,7 +44,7 @@ public class RecruitApplicationElement {
 
     public RecruitApplicationElement(Long recruitApplicationId, MetaData recruitType, MatchStatus matchStatus, MetaData type,
                                      Long memberId, String nickname,
-                                     Integer semester, Boolean major, MetaData campus,
+                                     Integer semester, Boolean isMajor, MetaData campus,
                                      AuthenticationStatus certificationState, MetaData majorTrack,
                                      String reply, String question, Boolean isLike) {
 
@@ -54,7 +54,7 @@ public class RecruitApplicationElement {
         this.type = type;
         this.memberId = memberId;
         this.nickname = nickname;
-        this.isMajor = major;
+        this.isMajor = isMajor;
         this.ssafyInfo = SSAFYInfo.of(semester, campus.getName(), certificationState.name(), majorTrack);
         this.reply = reply;
         this.question = question;
