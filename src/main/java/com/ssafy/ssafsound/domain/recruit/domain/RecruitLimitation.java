@@ -37,4 +37,7 @@ public class RecruitLimitation {
     public void increaseCurrentNumber() {
         this.currentNumber++;
     }
+    public void setCurrentNumber(Integer currentNumber) {
+        this.currentNumber = currentNumber;
+    }
 }

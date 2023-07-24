@@ -10,6 +10,7 @@ import com.ssafy.ssafsound.domain.recruit.domain.*;
 import com.ssafy.ssafsound.domain.recruit.dto.*;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
+import com.ssafy.ssafsound.domain.recruit.repository.RecruitSkillRepository;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicationRepository;
@@ -47,6 +48,9 @@ class RecruitServiceTest {
 
     @Mock
     private RecruitLimitationRepository recruitLimitationRepository;
+
+    @Mock
+    private RecruitSkillRepository recruitSkillRepository;
 
     @Mock
     private RecruitApplicationRepository recruitApplicationRepository;
@@ -178,6 +182,9 @@ class RecruitServiceTest {
 
         Mockito.lenient().when(recruitApplicationRepository.findDoneRecruitApplicationByRecruitIdInFetchRecruitAndMember(List.of(2L)))
                 .thenReturn(List.of(recruitApplication));
+        Mockito.lenient().when(recruitApplicationRepository.findByRecruitIdAndMatchStatus(2L, MatchStatus.DONE))
+                .thenReturn(List.of(recruitApplication));
+
 
         // MetaData Consumer Mocking
         Arrays.stream(RecruitType.values()).forEach(recruitType -> Mockito.lenient()
@@ -337,22 +344,7 @@ class RecruitServiceTest {
         );
     }
 
-    @DisplayName("기존 존재하는 인원 제한 이하로 설정된 리크루트 수정 실패")
-    @Test
-    void Given_BelowRecruitLimitAndPatchRecruitDto_When_DeleteRecruit_Then_Fail() {
-        List<RecruitLimitElement> limits = List.of(
-                new RecruitLimitElement(RecruitType.DESIGN.getName(), 1)
-        );
-
-        List<String> skills = Arrays.stream(Skill.values()).map(Skill::getName).collect(Collectors.toList());
-
-        PatchRecruitReqDto patchRecruitReqDto = new PatchRecruitReqDto("PROJECT", RecruitType.BACK_END.getName(),
-                LocalDate.now(), "제목 수정", "컨텐츠 수정", skills, limits);
-
-        assertThrows(RecruitException.class, ()->recruitService.updateRecruit(2L, 1L, patchRecruitReqDto));
-    }
-
-    @DisplayName("기존에 존재하는 모집군을 삭제하는 리크루트 수정 실패")
+    @DisplayName("기존에 모집완료된 인원이 있는 모집군을 삭제하는 리크루트 수정 실패")
     @Test
     void Given_NotIncludePrevExistLimitAndPatchRecruitDto_When_DeleteRecruit_Then_Fail() {
         List<RecruitLimitElement> limits = List.of(
@@ -364,7 +356,8 @@ class RecruitServiceTest {
         PatchRecruitReqDto patchRecruitReqDto = new PatchRecruitReqDto("PROJECT", RecruitType.BACK_END.getName(),
                 LocalDate.now(), "제목 수정", "컨텐츠 수정", skills, limits);
 
-        assertThrows(RecruitException.class, ()->recruitService.updateRecruit(2L, 1L, patchRecruitReqDto));
+        RecruitException recruitException = assertThrows(RecruitException.class, () -> recruitService.updateRecruit(2L, 1L, patchRecruitReqDto));
+        assertEquals(recruitException.getInfo(), RecruitErrorInfo.NOT_BELOW_PREV_LIMITATIONS);
     }
 
     @DisplayName("키워드를 입력하지 않은 리크루트 목록 검색")
