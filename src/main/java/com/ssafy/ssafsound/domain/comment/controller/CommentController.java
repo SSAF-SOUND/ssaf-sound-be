@@ -10,7 +10,6 @@ import com.ssafy.ssafsound.domain.comment.service.CommentService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -32,10 +31,10 @@ public class CommentController {
     }
 
     @GetMapping
-    public EnvelopeResponse<GetCommentResDto> findComments(@RequestParam Long postId, Pageable pageable,
+    public EnvelopeResponse<GetCommentResDto> findComments(@RequestParam Long postId,
                                                            @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<GetCommentResDto>builder()
-                .data(commentService.findComments(postId, loginMember, pageable))
+                .data(commentService.findComments(postId, loginMember))
                 .build();
     }
 
