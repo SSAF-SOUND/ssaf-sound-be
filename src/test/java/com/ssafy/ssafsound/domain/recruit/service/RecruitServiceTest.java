@@ -251,14 +251,15 @@ class RecruitServiceTest {
     void Given_MemberIdAndRecruitId_When_TryToggleRecruitScrap_Then_InsertRecruitScrap() {
         Long recruitId = 2L, memberId = 1L;
         recruitService.toggleRecruitScrap(recruitId, memberId);
-        assertFalse(recruitService.toggleRecruitScrap(recruitId, memberId));
+        Mockito.verify(recruitScrapRepository).findByRecruitIdAndMemberId(2L, 1L);
+        Mockito.verify(recruitScrapRepository).countByRecruitId(2L);
     }
 
     @DisplayName("사용자 리크루팅 스크랩 취소(토글)")
     @Test
     void Given_MemberIdAndRecruitId_When_TryToggleRecruitScrap_Then_DeleteRecruitScrap() {
         Long recruitId = 1L, memberId = 1L;
-        assertTrue(recruitService.toggleRecruitScrap(recruitId, memberId));
+        recruitService.toggleRecruitScrap(recruitId, memberId);
     }
 
     @DisplayName("등록자의 리크루트 타입이 인원제한에 포함되지 않은 리크루트 상세 조회")

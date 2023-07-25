@@ -58,10 +58,12 @@ public class RecruitService {
     }
 
     @Transactional
-    public boolean toggleRecruitScrap(Long recruitId, Long memberId) {
+    public PostRecruitScrapCountResDto toggleRecruitScrap(Long recruitId, Long memberId) {
         RecruitScrap recruitScrap = recruitScrapRepository.findByRecruitIdAndMemberId(recruitId, memberId)
                 .orElse(null);
-        return isPreExistRecruitScrap(recruitId, memberId, recruitScrap);
+
+        isPreExistRecruitScrap(recruitId, memberId, recruitScrap);
+        return new PostRecruitScrapCountResDto(recruitScrapRepository.countByRecruitId(recruitId));
     }
 
     @Transactional
