@@ -29,8 +29,9 @@ public class GetRecruitDetailResDto {
     private String nickname;
     private Boolean isMajor;
     private SSAFYInfo ssafyInfo;
+    private long scrapCount;
 
-    public static GetRecruitDetailResDto from(Recruit recruit) {
+    public static GetRecruitDetailResDto of(Recruit recruit, long scrapCount) {
 
         if(recruit.getDeletedRecruit()) throw new RecruitException(RecruitErrorInfo.IS_DELETED);
 
@@ -66,6 +67,7 @@ public class GetRecruitDetailResDto {
                 .view(recruit.getView())
                 .isMajor(register.getMajor())
                 .ssafyInfo(ssafyInfo)
+                .scrapCount(scrapCount)
                 .build();
     }
 
