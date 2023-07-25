@@ -2,7 +2,6 @@ package com.ssafy.ssafsound.domain.recruit.dto;
 
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
-import com.ssafy.ssafsound.domain.recruit.domain.GetRecruitLimitDetail;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
