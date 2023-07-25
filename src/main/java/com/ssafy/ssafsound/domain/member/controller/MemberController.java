@@ -17,7 +17,8 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping
-    public EnvelopeResponse<GetMemberResDto> getMemberInformation(@Authentication AuthenticatedMember authenticatedMember) {
+    public EnvelopeResponse<GetMemberResDto> getMemberInformation(
+            @Authentication AuthenticatedMember authenticatedMember) {
         return EnvelopeResponse.<GetMemberResDto>builder()
                 .data(memberService.getMemberInformation(authenticatedMember))
                 .build();
@@ -38,31 +39,35 @@ public class MemberController {
     }
 
     @PutMapping
-    public EnvelopeResponse<GetMemberResDto> registerMemberInformation(@Authentication AuthenticatedMember authenticatedMember,
-                                                                       @Valid @RequestBody PostMemberInfoReqDto postMemberInfoReqDto) {
+    public EnvelopeResponse<GetMemberResDto> registerMemberInformation(
+            @Authentication AuthenticatedMember authenticatedMember,
+            @Valid @RequestBody PostMemberInfoReqDto postMemberInfoReqDto) {
         return EnvelopeResponse.<GetMemberResDto>builder()
                 .data(memberService.registerMemberInformation(authenticatedMember, postMemberInfoReqDto))
                 .build();
     }
 
     @PostMapping("/nickname")
-    public EnvelopeResponse<PostNicknameResDto> checkNicknamePossible(@Valid @RequestBody PostNicknameReqDto postNicknameReqDto) {
+    public EnvelopeResponse<PostNicknameResDto> checkNicknamePossible(
+            @Valid @RequestBody PostNicknameReqDto postNicknameReqDto) {
         return EnvelopeResponse.<PostNicknameResDto>builder()
                 .data(memberService.checkNicknamePossible(postNicknameReqDto))
                 .build();
     }
 
     @PostMapping("/ssafy-certification")
-    public EnvelopeResponse<PostCertificationInfoResDto> certifySSAFYInformation(@Authentication AuthenticatedMember authenticatedMember,
-                                                                                @Valid @RequestBody PostCertificationInfoReqDto postCertificationInfoReqDto) {
+    public EnvelopeResponse<PostCertificationInfoResDto> certifySSAFYInformation(
+            @Authentication AuthenticatedMember authenticatedMember,
+            @Valid @RequestBody PostCertificationInfoReqDto postCertificationInfoReqDto) {
         return EnvelopeResponse.<PostCertificationInfoResDto>builder()
                 .data(memberService.certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto))
                 .build();
     }
 
     @PutMapping("/portfolio")
-    public EnvelopeResponse registerMemberPortfolio(@Authentication AuthenticatedMember authenticatedMember,
-                                                 @Valid @RequestBody PutMemberProfileReqDto putMemberProfileReqDto) {
+    public EnvelopeResponse registerMemberPortfolio(
+            @Authentication AuthenticatedMember authenticatedMember,
+            @Valid @RequestBody PutMemberProfileReqDto putMemberProfileReqDto) {
         memberService.registerMemberPortfolio(authenticatedMember, putMemberProfileReqDto);
         return EnvelopeResponse.builder()
                 .build();
@@ -73,6 +78,16 @@ public class MemberController {
             @Authentication AuthenticatedMember authenticatedMember,
             @Valid @RequestBody PatchMemberDefaultInfoReqDto patchMemberDefaultInfoReqDto) {
         memberService.patchMemberDefaultInfo(authenticatedMember.getMemberId(), patchMemberDefaultInfoReqDto);
+        return EnvelopeResponse.builder()
+                .build();
+    }
+
+    @PatchMapping("/profile-public")
+    public EnvelopeResponse patchMemberProfilePublic(
+            @Authentication AuthenticatedMember authenticatedMember,
+            @Valid @RequestBody PatchMemberProfilePublicReqDto patchMemberProfilePublicReqDto) {
+
+        memberService.patchMemberProfilePublic(authenticatedMember.getMemberId(), patchMemberProfilePublicReqDto);
         return EnvelopeResponse.builder()
                 .build();
     }
