@@ -239,7 +239,7 @@ class MemberServiceTest {
         GetMemberResDto getMemberResDto = GetMemberResDto.fromGeneralUser(member);
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
 
-        GetMemberResDto result = memberService.getMemberInformation(authenticatedMember);
+        GetMemberResDto result = memberService.getMemberInformation(authenticatedMember.getMemberId());
 
         assertAll(
                 () -> assertThat(result.getMemberId()).isEqualTo(getMemberResDto.getMemberId()),
@@ -258,7 +258,7 @@ class MemberServiceTest {
         GetMemberResDto getMemberResDto = GetMemberResDto.fromGeneralUser(member);
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
 
-        GetMemberResDto result = memberService.getMemberInformation(authenticatedMember);
+        GetMemberResDto result = memberService.getMemberInformation(authenticatedMember.getMemberId());
 
         assertAll(
                 () -> assertThat(result.getMemberId()).isEqualTo(getMemberResDto.getMemberId()),
@@ -278,7 +278,7 @@ class MemberServiceTest {
         GetMemberResDto getMemberResDto = GetMemberResDto.fromSSAFYUser(member);
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
 
-        GetMemberResDto result = memberService.getMemberInformation(authenticatedMember);
+        GetMemberResDto result = memberService.getMemberInformation(authenticatedMember.getMemberId());
 
         assertAll(
                 () -> assertThat(result.getMemberId()).isEqualTo(getMemberResDto.getMemberId()),
@@ -379,7 +379,7 @@ class MemberServiceTest {
         given(memberConstantProvider.getMAX_MINUTES()).willReturn(5);
 
         PostCertificationInfoResDto postCertificationInfoResDto = memberService
-                .certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto);
+                .certifySSAFYInformation(authenticatedMember.getMemberId(), postCertificationInfoReqDto);
 
         assertThat(member.getCertificationState()).isEqualTo(AuthenticationStatus.CERTIFIED);
         assertThat(member.getMajorTrack().getName()).isEqualTo(majorTrack);
@@ -406,7 +406,8 @@ class MemberServiceTest {
         given(memberConstantProvider.getMAX_MINUTES()).willReturn(5);
         given(memberConstantProvider.getCERTIFICATION_INQUIRY_TIME()).willReturn(5);
 
-        PostCertificationInfoResDto postCertificationInfoResDto = memberService.certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto);
+        PostCertificationInfoResDto postCertificationInfoResDto = memberService.certifySSAFYInformation(
+                authenticatedMember.getMemberId(), postCertificationInfoReqDto);
 
         assertThat(postCertificationInfoResDto.isPossible()).isFalse();
 
@@ -424,7 +425,8 @@ class MemberServiceTest {
 
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.empty());
 
-        assertThrows(MemberException.class, () -> memberService.certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto));
+        assertThrows(MemberException.class, () -> memberService.certifySSAFYInformation(
+                authenticatedMember.getMemberId(), postCertificationInfoReqDto));
 
         verify(memberRepository).findById(authenticatedMember.getMemberId());
     }

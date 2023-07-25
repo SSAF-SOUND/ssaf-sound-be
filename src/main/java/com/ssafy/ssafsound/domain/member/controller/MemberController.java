@@ -20,7 +20,7 @@ public class MemberController {
     public EnvelopeResponse<GetMemberResDto> getMemberInformation(
             @Authentication AuthenticatedMember authenticatedMember) {
         return EnvelopeResponse.<GetMemberResDto>builder()
-                .data(memberService.getMemberInformation(authenticatedMember))
+                .data(memberService.getMemberInformation(authenticatedMember.getMemberId()))
                 .build();
     }
 
@@ -68,7 +68,9 @@ public class MemberController {
             @Authentication AuthenticatedMember authenticatedMember,
             @Valid @RequestBody PostCertificationInfoReqDto postCertificationInfoReqDto) {
         return EnvelopeResponse.<PostCertificationInfoResDto>builder()
-                .data(memberService.certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto))
+                .data(memberService.certifySSAFYInformation(
+                        authenticatedMember.getMemberId(),
+                        postCertificationInfoReqDto))
                 .build();
     }
 
@@ -76,7 +78,9 @@ public class MemberController {
     public EnvelopeResponse registerMemberPortfolio(
             @Authentication AuthenticatedMember authenticatedMember,
             @Valid @RequestBody PutMemberProfileReqDto putMemberProfileReqDto) {
-        memberService.registerMemberPortfolio(authenticatedMember, putMemberProfileReqDto);
+        memberService.registerMemberPortfolio(
+                authenticatedMember.getMemberId(),
+                putMemberProfileReqDto);
         return EnvelopeResponse.builder()
                 .build();
     }
