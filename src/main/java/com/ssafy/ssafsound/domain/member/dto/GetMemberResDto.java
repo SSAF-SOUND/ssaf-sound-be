@@ -20,20 +20,20 @@ public class GetMemberResDto {
     private Boolean isMajor;
     private SSAFYInfo ssafyInfo;
 
-    public static GetMemberResDto fromGeneralUser(Member member, MemberRole memberRole) {
+    public static GetMemberResDto fromGeneralUser(Member member) {
         return GetMemberResDto.builder()
                 .memberId(member.getId())
-                .memberRole(memberRole.getRoleType())
+                .memberRole(member.getRole().getRoleType())
                 .nickname(member.getNickname())
                 .ssafyMember(member.getSsafyMember())
                 .isMajor(member.getMajor())
                 .build();
     }
 
-    public static GetMemberResDto fromSSAFYUser(Member member, MemberRole memberRole) {
+    public static GetMemberResDto fromSSAFYUser(Member member) {
         return GetMemberResDto.builder()
                 .memberId(member.getId())
-                .memberRole(memberRole.getRoleType())
+                .memberRole(member.getRole().getRoleType())
                 .nickname(member.getNickname())
                 .ssafyMember(member.getSsafyMember())
                 .isMajor(member.getMajor())

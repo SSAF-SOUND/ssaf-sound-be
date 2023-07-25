@@ -10,7 +10,6 @@ import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,10 +29,7 @@ public class MemberService {
     private final MemberSkillRepository memberSkillRepository;
     private final MemberLinkRepository memberLinkRepository;
     private final MetaDataConsumer metaDataConsumer;
-    @Value("${spring.constant.certification.CERTIFICATION_INQUIRY_TIME}")
-    private Integer MAX_CERTIFICATION_INQUIRY_COUNT;
-    @Value("${spring.constant.certification.MAX_MINUTES}")
-    private Integer MAX_MINUTES;
+    private final MemberConstantProvider memberConstantProvider;
 
     @Transactional
     public AuthenticatedMember createMemberByOauthIdentifier(PostMemberReqDto postMemberReqDto) {
@@ -75,16 +71,13 @@ public class MemberService {
     @Transactional
     public GetMemberResDto registerMemberInformation(AuthenticatedMember authenticatedMember, PostMemberInfoReqDto postMemberInfoReqDto) {
         boolean existNickname = memberRepository.existsByNickname(postMemberInfoReqDto.getNickname());
+
         if(existNickname) throw new MemberException(MemberErrorInfo.MEMBER_NICKNAME_DUPLICATION);
-        Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
-        MemberRole memberRole = member.getRole();
-        if (postMemberInfoReqDto.getSsafyMember()) {
-            member.setSSAFYMemberInformation(postMemberInfoReqDto, metaDataConsumer);
-            return GetMemberResDto.fromSSAFYUser(member, memberRole);
-        } else {
-            member.setGeneralMemberInformation(postMemberInfoReqDto);
-            return GetMemberResDto.fromGeneralUser(member, memberRole);
-        }
+
+        Member member = memberRepository.findById(authenticatedMember.getMemberId())
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        return member.registerMemberInformation(postMemberInfoReqDto, metaDataConsumer);
     }
 
     @Transactional
@@ -92,8 +85,12 @@ public class MemberService {
         Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
         long minutes = getMinutesByDifferenceCertificationTryTime(member.getCertificationTryTime());
-        if(minutes > MAX_MINUTES) member.initializeCertificationInquiryCount();
-        if(member.getCertificationInquiryCount() >= MAX_CERTIFICATION_INQUIRY_COUNT) throw new MemberException(MemberErrorInfo.MEMBER_CERTIFICATED_FAIL);
+        if(minutes > memberConstantProvider.getMAX_MINUTES()) {
+            member.initializeCertificationInquiryCount();
+        }
+        if(member.getCertificationInquiryCount() >= memberConstantProvider.getCERTIFICATION_INQUIRY_TIME()) {
+            throw new MemberException(MemberErrorInfo.MEMBER_CERTIFICATED_FAIL);
+        }
 
         if (isValidCertification(postCertificationInfoReqDto)) {
             member.setCertificationState(AuthenticationStatus.CERTIFIED);
@@ -113,6 +110,27 @@ public class MemberService {
         deleteExistMemberSkillsAllByMemberAndSaveNewRequest(member, putMemberProfileReqDto.getSkills());
     }
 
+    /**
+     *  Member의 기본 정보 수정을 한다.
+     * @author : YongsHub
+     * @param : PatchMemberDefaultInfoReqDto : ssafyMember가 true라면 기수정보와 캠퍼스 정보가 필수임
+     * @param : PatchMemberDefaultInfoReqDto :ssafyMember가 false라면 기수정보와 캠퍼스 정보가 필요하지 않음
+     * @return : void
+     * @see : CargoShip#getRemainingCapacity()용량 확인하는 함수
+     * @throws : ssafyMember가 true인데 semester가 null일 경우 SEMESTER_NOT_FOUND Exception,
+     * @throws : memberId를 찾을 수 없을때 MEMBER_NOT_FOUND_BY_ID Exception
+     * @see : CargoShip#unload() 제품을 내리는 함수
+     */
+    @Transactional
+    public void patchMemberDefaultInfo(
+            Long memberId,
+            PatchMemberDefaultInfoReqDto patchMemberDefaultInfoReqDto) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        member.exchangeDefaultInformation(patchMemberDefaultInfoReqDto, metaDataConsumer);
+    }
+
     @Transactional(readOnly = true)
     public MemberRole findMemberRoleByRoleName(String roleType) {
         return memberRoleRepository.findByRoleType(roleType).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_ROLE_TYPE_NOT_FOUND));
@@ -120,15 +138,15 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public GetMemberResDto getMemberInformation(AuthenticatedMember authenticatedMember) {
-        Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
-        MemberRole memberRole = member.getRole();
+        Member member = memberRepository.findById(authenticatedMember.getMemberId())
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
         if (isNotInputMemberInformation(member)) {
-            return GetMemberResDto.fromGeneralUser(member, memberRole);
+            return GetMemberResDto.fromGeneralUser(member);
         } else if(isGeneralMemberInformation(member)){
-            return GetMemberResDto.fromGeneralUser(member, memberRole);
+            return GetMemberResDto.fromGeneralUser(member);
         } else if (isSSAFYMemberInformation(member)) {
-            return GetMemberResDto.fromSSAFYUser(member, memberRole);
+            return GetMemberResDto.fromSSAFYUser(member);
         }
         throw new MemberException(MemberErrorInfo.MEMBER_INFORMATION_ERROR);
     }

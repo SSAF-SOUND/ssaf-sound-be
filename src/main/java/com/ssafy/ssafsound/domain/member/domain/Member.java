@@ -1,8 +1,12 @@
 package com.ssafy.ssafsound.domain.member.domain;
 
 import com.ssafy.ssafsound.domain.BaseTimeEntity;
+import com.ssafy.ssafsound.domain.member.dto.GetMemberResDto;
+import com.ssafy.ssafsound.domain.member.dto.PatchMemberDefaultInfoReqDto;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberInfoReqDto;
 import com.ssafy.ssafsound.domain.member.dto.PutMemberLink;
+import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
+import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.meta.converter.CampusConverter;
 import com.ssafy.ssafsound.domain.meta.converter.MajorTrackConverter;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
@@ -142,5 +146,33 @@ public class Member extends BaseTimeEntity {
         this.nickname = postMemberInfoReqDto.getNickname();
         this.ssafyMember = postMemberInfoReqDto.getSsafyMember();
         this.major = postMemberInfoReqDto.getIsMajor();
+    }
+
+    public void exchangeDefaultInformation(
+            PatchMemberDefaultInfoReqDto patchMemberDefaultInfoReqDto, MetaDataConsumer metaDataConsumer) {
+        if (patchMemberDefaultInfoReqDto.getSsafyMember()) {
+            if(patchMemberDefaultInfoReqDto.getSemester() == null) {
+                throw new MemberException(MemberErrorInfo.SEMESTER_NOT_FOUND);
+            }
+            this.ssafyMember = true;
+            this.semester = patchMemberDefaultInfoReqDto.getSemester();
+            this.campus = metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), patchMemberDefaultInfoReqDto.getCampus());
+        } else {
+            this.ssafyMember = false;
+        }
+    }
+
+    public GetMemberResDto registerMemberInformation(
+            PostMemberInfoReqDto postMemberInfoReqDto, MetaDataConsumer metaDataConsumer) {
+        if (postMemberInfoReqDto.getSsafyMember()) {
+            if(postMemberInfoReqDto.isNotSemesterPresent()) {
+                throw new MemberException(MemberErrorInfo.SEMESTER_NOT_FOUND);
+            }
+            this.setSSAFYMemberInformation(postMemberInfoReqDto, metaDataConsumer);
+            return GetMemberResDto.fromSSAFYUser(this);
+        } else {
+            this.setGeneralMemberInformation(postMemberInfoReqDto);
+            return GetMemberResDto.fromGeneralUser(this);
+        }
     }
 }
