@@ -132,13 +132,23 @@ public class MemberService {
     }
 
     @Transactional
-    public void patchMemberProfilePublic(
+    public void patchMemberPublicProfile(
             Long memberId,
-            PatchMemberProfilePublicReqDto patchMemberProfilePublicReqDto) {
+            PatchMemberPublicProfileReqDto patchMemberPublicProfileReqDto) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-        member.exchangeProfilePublic(patchMemberProfilePublicReqDto.getIsPublic());
+        member.exchangeProfilePublic(patchMemberPublicProfileReqDto.getIsPublic());
+    }
+
+    @Transactional(readOnly = true)
+    public GetMemberPublicProfileResDto getMemberPublicProfileByMemberId(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        return GetMemberPublicProfileResDto.builder()
+                .isPublic(member.getPublicProfile())
+                .build();
     }
 
     @Transactional(readOnly = true)
