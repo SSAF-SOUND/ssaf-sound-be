@@ -41,7 +41,11 @@ public class PostService {
     private final PostImageRepository postImageRepository;
 
     @Transactional(readOnly = true)
-    public GetPostResDto findPosts(Long boardId, Long cursor, int size) {
+    public GetPostResDto findPosts(GetPostReqDto getPostReqDto) {
+        Long boardId = getPostReqDto.getBoardId();
+        Long cursor = getPostReqDto.getCursor();
+        int size = getPostReqDto.getSize();
+
         if (!boardRepository.existsById(boardId)) {
             throw new BoardException(BoardErrorInfo.NO_BOARD);
         }
@@ -147,7 +151,9 @@ public class PostService {
     }
 
     @Transactional
-    public Long reportPost(Long postId, Long loginMemberId, String content) {
+    public Long reportPost(Long postId, Long loginMemberId, PostPostReportReqDto postPostReportReqDto) {
+        String content = postPostReportReqDto.getContent();
+
         Member loginMember = memberRepository.findById(loginMemberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
@@ -252,13 +258,19 @@ public class PostService {
 
 
     @Transactional(readOnly = true)
-    public GetPostHotResDto findHotPosts(Long cursor, int size) {
+    public GetPostHotResDto findHotPosts(GetPostHotReqDto getPostHotReqDto) {
+        Long cursor = getPostHotReqDto.getCursor();
+        int size = getPostHotReqDto.getSize();
+
         List<HotPost> hotPosts = hotPostRepository.findWithDetailsFetch(cursor, size);
         return GetPostHotResDto.of(hotPosts, size);
     }
 
     @Transactional(readOnly = true)
-    public GetPostMyResDto findMyPosts(Long cursor, int size, Long loginMemberId) {
+    public GetPostMyResDto findMyPosts(GetPostMyReqDto getPostMyReqDto, Long loginMemberId) {
+        Long cursor = getPostMyReqDto.getCursor();
+        int size = getPostMyReqDto.getSize();
+
         Member loginMember = memberRepository.findById(loginMemberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
@@ -267,7 +279,12 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public GetPostResDto searchPosts(Long boardId, String keyword, Long cursor, int size) {
+    public GetPostResDto searchPosts(GetPostSearchReqDto getPostSearchReqDto) {
+        Long boardId = getPostSearchReqDto.getBoardId();
+        String keyword = getPostSearchReqDto.getKeyword();
+        Long cursor = getPostSearchReqDto.getCursor();
+        int size = getPostSearchReqDto.getSize();
+
         if (!boardRepository.existsById(boardId)) {
             throw new BoardException(BoardErrorInfo.NO_BOARD);
         }
@@ -277,7 +294,11 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public GetPostHotResDto searchHotPosts(String keyword, Long cursor, int size) {
+    public GetPostHotResDto searchHotPosts(GetPostHotSearchReqDto getPostHotSearchReqDto) {
+        String keyword = getPostHotSearchReqDto.getKeyword();
+        Long cursor = getPostHotSearchReqDto.getCursor();
+        int size = getPostHotSearchReqDto.getSize();
+
         List<HotPost> hotPosts = hotPostRepository.findWithDetailsFetchByKeyword(keyword.replaceAll(" ", ""), cursor, size);
         return GetPostHotResDto.of(hotPosts, size);
     }
