@@ -83,8 +83,7 @@ public class CommentService {
           if (!postRepository.existsById(postId)) {
             throw new PostException(PostErrorInfo.NOT_FOUND_POST);
         }
-  
-//        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+          
         List<Comment> comments = commentRepository.findAllPostIdWithDetailsFetchOrderByCommentGroupId(postId);
         return GetCommentResDto.of(comments, loginMember);
     }
