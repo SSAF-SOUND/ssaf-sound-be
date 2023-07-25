@@ -151,6 +151,9 @@ public class Member extends BaseTimeEntity {
     public void exchangeDefaultInformation(
             PatchMemberDefaultInfoReqDto patchMemberDefaultInfoReqDto, MetaDataConsumer metaDataConsumer) {
         if (patchMemberDefaultInfoReqDto.getSsafyMember()) {
+            if(patchMemberDefaultInfoReqDto.getSemester() == null) {
+                throw new MemberException(MemberErrorInfo.SEMESTER_NOT_FOUND);
+            }
             this.ssafyMember = true;
             this.semester = patchMemberDefaultInfoReqDto.getSemester();
             this.campus = metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), patchMemberDefaultInfoReqDto.getCampus());

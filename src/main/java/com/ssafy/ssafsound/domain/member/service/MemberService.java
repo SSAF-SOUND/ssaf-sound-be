@@ -110,6 +110,17 @@ public class MemberService {
         deleteExistMemberSkillsAllByMemberAndSaveNewRequest(member, putMemberProfileReqDto.getSkills());
     }
 
+    /**
+     *  Member의 기본 정보 수정을 한다.
+     * @author : YongsHub
+     * @param : PatchMemberDefaultInfoReqDto : ssafyMember가 true라면 기수정보와 캠퍼스 정보가 필수임
+     * @param : PatchMemberDefaultInfoReqDto :ssafyMember가 false라면 기수정보와 캠퍼스 정보가 필요하지 않음
+     * @return : void
+     * @see : CargoShip#getRemainingCapacity()용량 확인하는 함수
+     * @throws : ssafyMember가 true인데 semester가 null일 경우 SEMESTER_NOT_FOUND Exception,
+     * @throws : memberId를 찾을 수 없을때 MEMBER_NOT_FOUND_BY_ID Exception
+     * @see : CargoShip#unload() 제품을 내리는 함수
+     */
     @Transactional
     public void patchMemberDefaultInfo(
             Long memberId,
@@ -117,9 +128,6 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-        if(patchMemberDefaultInfoReqDto.getSemester() == null) {
-            throw new MemberException(MemberErrorInfo.SEMESTER_NOT_FOUND);
-        }
         member.exchangeDefaultInformation(patchMemberDefaultInfoReqDto, metaDataConsumer);
     }
 
