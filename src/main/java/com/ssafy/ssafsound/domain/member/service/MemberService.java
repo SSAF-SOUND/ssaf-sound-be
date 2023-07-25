@@ -201,9 +201,9 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public GetMemberProfileResDto getMemberProfileById(Long memberId) {
+    public GetMemberDefaultInfoResDto getMemberDefaultInfoByMemberId(Long memberId) {
         Member member = getMemberByMemberIdOrThrowException(memberId);
-        return GetMemberProfileResDto.from(member);
+        return GetMemberDefaultInfoResDto.from(member);
     }
 
     public void deleteExistMemberLinksAllByMemberAndSaveNewRequest(Member member, List<PutMemberLink> memberLinks) {

@@ -32,9 +32,9 @@ public class MemberController {
     }
 
     @GetMapping("/{memberId}/default-information")
-    public EnvelopeResponse<GetMemberProfileResDto> getMemberProfileById(@PathVariable Long memberId) {
-        return EnvelopeResponse.<GetMemberProfileResDto>builder()
-                .data(memberService.getMemberProfileById(memberId))
+    public EnvelopeResponse<GetMemberDefaultInfoResDto> getMemberDefaultInfoByMemberId(@PathVariable Long memberId) {
+        return EnvelopeResponse.<GetMemberDefaultInfoResDto>builder()
+                .data(memberService.getMemberDefaultInfoByMemberId(memberId))
                 .build();
     }
 
