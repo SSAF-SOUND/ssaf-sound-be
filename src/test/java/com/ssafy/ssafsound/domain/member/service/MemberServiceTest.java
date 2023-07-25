@@ -428,4 +428,33 @@ class MemberServiceTest {
 
         verify(memberRepository).findById(authenticatedMember.getMemberId());
     }
+
+    @Test
+    @DisplayName("마이 프로필 공개 여부 수정 시도 시, 회원 정보를 찾을 수 없다면 예외가 발생한다")
+    void Given_IsNotExistMember_When_Try_Change_Public_Profile_Then_ThrowMemberException() {
+        //given
+        PatchMemberPublicProfileReqDto patchMemberPublicProfileReqDto = new PatchMemberPublicProfileReqDto();
+        given(memberRepository.findById(member.getId())).willReturn(Optional.empty());
+
+        //then
+        assertThrows(MemberException.class,
+                () -> memberService.patchMemberPublicProfile(member.getId(), patchMemberPublicProfileReqDto));
+
+        //verify
+        verify(memberRepository, times(1)).findById(member.getId());
+    }
+
+    @Test
+    @DisplayName("마이 프로필 공개 여부 수정에 성공한다.")
+    void Given_Valid_PatchMemberPublicProfileReqDto_When_Try_Change_Public_Profile_Then_Success() {
+        //given
+        PatchMemberPublicProfileReqDto patchMemberPublicProfileReqDto = new PatchMemberPublicProfileReqDto(false);
+        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+
+        //then
+        memberService.patchMemberPublicProfile(member.getId(), patchMemberPublicProfileReqDto);
+
+        //verify
+        verify(memberRepository, times(1)).findById(member.getId());
+    }
 }
