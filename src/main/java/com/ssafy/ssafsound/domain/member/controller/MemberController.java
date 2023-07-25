@@ -99,4 +99,14 @@ public class MemberController {
         return EnvelopeResponse.builder()
                 .build();
     }
+
+    @PatchMapping("/nickname")
+    public EnvelopeResponse changeMemberNickname(
+            @Authentication AuthenticatedMember authenticatedMember,
+            @Valid @RequestBody PatchMemberNicknameReqDto patchMemberNicknameReqDto) {
+
+        memberService.changeMemberNickname(authenticatedMember.getMemberId(), patchMemberNicknameReqDto);
+        return EnvelopeResponse.builder()
+                .build();
+    }
 }

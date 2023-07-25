@@ -141,6 +141,21 @@ public class MemberService {
         member.exchangeProfilePublic(patchMemberPublicProfileReqDto.getIsPublic());
     }
 
+    @Transactional
+    public void changeMemberNickname(
+            Long memberId,
+            PatchMemberNicknameReqDto patchMemberNicknameReqDto) {
+        boolean isExistNickname = memberRepository.existsByNickname(patchMemberNicknameReqDto.getNickname());
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        if (isExistNickname) {
+            throw new MemberException(MemberErrorInfo.MEMBER_NICKNAME_DUPLICATION);
+        } else {
+            member.changeNickname(patchMemberNicknameReqDto.getNickname());
+        }
+    }
+
     @Transactional(readOnly = true)
     public GetMemberPublicProfileResDto getMemberPublicProfileByMemberId(Long memberId) {
         Member member = memberRepository.findById(memberId)

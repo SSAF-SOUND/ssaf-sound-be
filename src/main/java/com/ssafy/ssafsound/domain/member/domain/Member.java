@@ -179,4 +179,8 @@ public class Member extends BaseTimeEntity {
     public void exchangeProfilePublic(Boolean isPublic) {
         this.publicProfile = isPublic;
     }
+
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }
