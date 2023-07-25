@@ -18,7 +18,7 @@ public class GetMemberPortfolioResDto {
     private PortfolioElement portfolioElement;
 
     public static GetMemberPortfolioResDto of(Member member, MemberProfile memberProfile) {
-        if(member.getPublicPortfolio()) {
+        if(member.getPublicProfile()) {
             return GetMemberPortfolioResDto.builder()
                     .isPublic(true)
                     .portfolioElement(PortfolioElement.of(member, memberProfile))

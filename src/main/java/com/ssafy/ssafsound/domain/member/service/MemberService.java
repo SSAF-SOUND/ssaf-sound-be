@@ -131,6 +131,16 @@ public class MemberService {
         member.exchangeDefaultInformation(patchMemberDefaultInfoReqDto, metaDataConsumer);
     }
 
+    @Transactional
+    public void patchMemberProfilePublic(
+            Long memberId,
+            PatchMemberProfilePublicReqDto patchMemberProfilePublicReqDto) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        member.exchangeProfilePublic(patchMemberProfilePublicReqDto.getIsPublic());
+    }
+
     @Transactional(readOnly = true)
     public MemberRole findMemberRoleByRoleName(String roleType) {
         return memberRoleRepository.findByRoleType(roleType).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_ROLE_TYPE_NOT_FOUND));

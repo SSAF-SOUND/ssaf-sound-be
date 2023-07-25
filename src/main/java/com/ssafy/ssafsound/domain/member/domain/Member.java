@@ -80,7 +80,7 @@ public class Member extends BaseTimeEntity {
 
     @Column
     @Builder.Default
-    private Boolean publicPortfolio = true;
+    private Boolean publicProfile = true;
 
     @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     @Builder.Default
@@ -174,5 +174,9 @@ public class Member extends BaseTimeEntity {
             this.setGeneralMemberInformation(postMemberInfoReqDto);
             return GetMemberResDto.fromGeneralUser(this);
         }
+    }
+
+    public void exchangeProfilePublic(Boolean isPublic) {
+        this.publicProfile = isPublic;
     }
 }
