@@ -416,7 +416,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("싸피생 인증 요청 시, 회원 정보를 찾을 수 없다면 예외가 발생한다.")
-    void Given_Given_PostCertificationInfo_When_Submit_SSAFY_Certification_Answer_Then_ThrowMemberException() {
+    void Given_PostCertificationInfo_When_Submit_SSAFY_Certification_Answer_Then_ThrowMemberException() {
         PostCertificationInfoReqDto postCertificationInfoReqDto = PostCertificationInfoReqDto.builder()
                 .semester(1)
                 .answer("선물")
