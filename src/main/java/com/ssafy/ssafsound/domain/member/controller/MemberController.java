@@ -38,6 +38,14 @@ public class MemberController {
                 .build();
     }
 
+    @GetMapping("/public-profile")
+    public EnvelopeResponse<GetMemberPublicProfileResDto> getMemberProfilePublic(
+            @Authentication AuthenticatedMember authenticatedMember) {
+        return EnvelopeResponse.<GetMemberPublicProfileResDto>builder()
+                .data(memberService.getMemberPublicProfileByMemberId(authenticatedMember.getMemberId()))
+                .build();
+    }
+
     @PutMapping
     public EnvelopeResponse<GetMemberResDto> registerMemberInformation(
             @Authentication AuthenticatedMember authenticatedMember,
@@ -82,12 +90,12 @@ public class MemberController {
                 .build();
     }
 
-    @PatchMapping("/profile-public")
-    public EnvelopeResponse patchMemberProfilePublic(
+    @PatchMapping("/public-profile")
+    public EnvelopeResponse patchMemberPublicProfile(
             @Authentication AuthenticatedMember authenticatedMember,
-            @Valid @RequestBody PatchMemberProfilePublicReqDto patchMemberProfilePublicReqDto) {
+            @Valid @RequestBody PatchMemberPublicProfileReqDto patchMemberPublicProfileReqDto) {
 
-        memberService.patchMemberProfilePublic(authenticatedMember.getMemberId(), patchMemberProfilePublicReqDto);
+        memberService.patchMemberPublicProfile(authenticatedMember.getMemberId(), patchMemberPublicProfileReqDto);
         return EnvelopeResponse.builder()
                 .build();
     }

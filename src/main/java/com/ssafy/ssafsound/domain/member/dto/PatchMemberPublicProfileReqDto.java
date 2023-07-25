@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class PatchMemberProfilePublicReqDto {
+public class PatchMemberPublicProfileReqDto {
 
     private Boolean isPublic;
 }
