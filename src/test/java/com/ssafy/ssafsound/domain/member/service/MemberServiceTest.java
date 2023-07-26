@@ -5,9 +5,7 @@ import com.ssafy.ssafsound.domain.auth.service.token.JwtTokenProvider;
 import com.ssafy.ssafsound.domain.member.domain.*;
 import com.ssafy.ssafsound.domain.member.dto.*;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
-import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
-import com.ssafy.ssafsound.domain.member.repository.MemberRoleRepository;
-import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
+import com.ssafy.ssafsound.domain.member.repository.*;
 import com.ssafy.ssafsound.domain.meta.domain.*;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +35,12 @@ class MemberServiceTest {
     private MemberRoleRepository memberRoleRepository;
     @Mock
     private MemberTokenRepository memberTokenRepository;
+    @Mock
+    private MemberProfileRepository memberProfileRepository;
+    @Mock
+    private MemberLinkRepository memberLinkRepository;
+    @Mock
+    private MemberSkillRepository memberSkillRepository;
     @Mock
     private MetaDataConsumer metaDataConsumer;
     @Mock
@@ -485,5 +489,25 @@ class MemberServiceTest {
 
         //verify
         verify(memberRepository, times(1)).findById(member.getId());
+    }
+
+
+    @Test
+    @DisplayName("멤버의 포트폴리오 정보를 수정하는데 성공한다.")
+    void Given_Valid_Member_Portfolio_Information_When_Put_Portfolio_Then_Success() {
+        //given
+        Member mockMember = mock(Member.class);
+        MemberProfile mockMemberProfile = mock(MemberProfile.class);
+        PutMemberPortfolioReqDto putMemberPortfolioReqDto = mock(PutMemberPortfolioReqDto.class);
+        given(mockMember.getId()).willReturn(1L);
+        given(memberRepository.findById(1L)).willReturn(Optional.of(mockMember));
+        given(putMemberPortfolioReqDto.getSelfIntroduction()).willReturn("자기소개 합니다.");
+        given(memberProfileRepository.findMemberProfileByMember(mockMember)).willReturn(Optional.of(mockMemberProfile));
+
+        //then
+        memberService.registerMemberPortfolio(mockMember.getId(), putMemberPortfolioReqDto);
+
+        //verify
+        verify(memberRepository, times(1)).findById(mockMember.getId());
     }
 }
