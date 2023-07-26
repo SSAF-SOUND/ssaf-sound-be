@@ -30,6 +30,8 @@ public class AwsS3PreSignerService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+    private static final String CloudFrontDomain = "https://d39eiex97d56il.cloudfront.net";
+
     public ImagePathDto getPreSignedUrl(String uploadDir, Long memberId) {
 
         String fileName = makeFileName(uploadDir, memberId);
@@ -37,8 +39,8 @@ public class AwsS3PreSignerService {
         GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePreSignedUrlRequest(bucket, fileName);
 
         return ImagePathDto.builder()
-                .imageDir(fileName)
                 .preSignedUrl(amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString())
+                .imageDir(makeCDNFileUrl(fileName))
                 .build();
     }
 
@@ -51,7 +53,7 @@ public class AwsS3PreSignerService {
 
         generatePresignedUrlRequest.addRequestParameter(
                 Headers.S3_CANNED_ACL,
-                CannedAccessControlList.PublicRead.toString());
+                CannedAccessControlList.PublicReadWrite.toString());
 
         return generatePresignedUrlRequest;
     }
@@ -59,13 +61,13 @@ public class AwsS3PreSignerService {
     private Date getPreSignedUrlExpiration() {
         Date expiration = new Date();
         long expTimeMillis = expiration.getTime();
-        expTimeMillis += 1000 * 60 * 2;
+        expTimeMillis += 1000 * 60 * 20;
         expiration.setTime(expTimeMillis);
 
         return expiration;
     }
 
-    public String makeFileName(String uploadDir, Long memberId) {
+    private String makeFileName(String uploadDir, Long memberId) {
 
         StringBuffer fileName = new StringBuffer();
 
@@ -77,13 +79,23 @@ public class AwsS3PreSignerService {
                 .toString();
     }
 
+    private String makeCDNFileUrl(String filename) {
+
+        StringBuffer CDNFileUrl = new StringBuffer();
+
+        return CDNFileUrl.append(CloudFrontDomain)
+                .append("/")
+                .append(filename)
+                .toString();
+    }
+
     public List<ImagePathDto> getPreSignedUrlAsCount(Integer count, Long memberId) {
 
         List<ImagePathDto> imagePathDtos = new ArrayList<>();
 
         memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
-        
+
         for (int i = 0; i < count; i++) {
             imagePathDtos.add(getPreSignedUrl(UploadDirectory.POST.getName(), memberId));
         }
