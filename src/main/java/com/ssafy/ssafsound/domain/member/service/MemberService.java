@@ -107,11 +107,11 @@ public class MemberService {
     @Transactional
     public void registerMemberPortfolio(
             Long memberId,
-            PutMemberProfileReqDto putMemberProfileReqDto) {
+            PutMemberPortfolioReqDto putMemberPortfolioReqDto) {
         Member member = getMemberByMemberIdOrThrowException(memberId);
-        setMemberPortfolioIntroduceByMember(member, putMemberProfileReqDto);
-        deleteExistMemberLinksAllByMemberAndSaveNewRequest(member, putMemberProfileReqDto.getMemberLinks());
-        deleteExistMemberSkillsAllByMemberAndSaveNewRequest(member, putMemberProfileReqDto.getSkills());
+        setMemberPortfolioIntroduceByMember(member, putMemberPortfolioReqDto);
+        deleteExistMemberLinksAllByMemberAndSaveNewRequest(member, putMemberPortfolioReqDto.getMemberLinks());
+        deleteExistMemberSkillsAllByMemberAndSaveNewRequest(member, putMemberPortfolioReqDto.getSkills());
     }
 
     /**
@@ -216,11 +216,11 @@ public class MemberService {
         member.setMemberSkills(memberSkills, metaDataConsumer);
     }
 
-    public void setMemberPortfolioIntroduceByMember(Member member, PutMemberProfileReqDto putMemberProfileReqDto) {
-        if (putMemberProfileReqDto.getSelfIntroduction() != null) {
+    public void setMemberPortfolioIntroduceByMember(Member member, PutMemberPortfolioReqDto putMemberPortfolioReqDto) {
+        if (putMemberPortfolioReqDto.getSelfIntroduction() != null) {
             memberProfileRepository.findMemberProfileByMember(member).ifPresentOrElse(
-                    memberProfile -> memberProfile.changeSelfIntroduction(putMemberProfileReqDto.getSelfIntroduction()),
-                    () -> memberProfileRepository.save(putMemberProfileReqDto.toMemberProfile(member))
+                    memberProfile -> memberProfile.changeSelfIntroduction(putMemberPortfolioReqDto.getSelfIntroduction()),
+                    () -> memberProfileRepository.save(putMemberPortfolioReqDto.toMemberProfile(member))
             );
         }
     }

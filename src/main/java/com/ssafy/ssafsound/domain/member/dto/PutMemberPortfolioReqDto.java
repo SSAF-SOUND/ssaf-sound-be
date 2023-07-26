@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class PutMemberProfileReqDto {
+public class PutMemberPortfolioReqDto {
     private String selfIntroduction;
 
     @CheckSkills

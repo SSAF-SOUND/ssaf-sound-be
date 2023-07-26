@@ -77,10 +77,10 @@ public class MemberController {
     @PutMapping("/portfolio")
     public EnvelopeResponse registerMemberPortfolio(
             @Authentication AuthenticatedMember authenticatedMember,
-            @Valid @RequestBody PutMemberProfileReqDto putMemberProfileReqDto) {
+            @Valid @RequestBody PutMemberPortfolioReqDto putMemberPortfolioReqDto) {
         memberService.registerMemberPortfolio(
                 authenticatedMember.getMemberId(),
-                putMemberProfileReqDto);
+                putMemberPortfolioReqDto);
         return EnvelopeResponse.builder()
                 .build();
     }
