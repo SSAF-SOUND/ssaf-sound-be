@@ -18,10 +18,9 @@ import com.ssafy.ssafsound.domain.post.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
@@ -42,15 +41,17 @@ public class PostService {
     private final PostImageRepository postImageRepository;
 
     @Transactional(readOnly = true)
-    public GetPostResDto findPosts(Long boardId, Pageable pageable) {
+    public GetPostResDto findPosts(GetPostReqDto getPostReqDto) {
+        Long boardId = getPostReqDto.getBoardId();
+        Long cursor = getPostReqDto.getCursor();
+        int size = getPostReqDto.getSize();
+
         if (!boardRepository.existsById(boardId)) {
             throw new BoardException(BoardErrorInfo.NO_BOARD);
         }
 
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        List<Post> posts = postRepository.findWithDetailsByBoardId(boardId, pageRequest);
-
-        return GetPostResDto.from(posts);
+        List<Post> posts = postRepository.findWithDetailsByBoardId(boardId, cursor, size);
+        return GetPostResDto.of(posts, size);
     }
 
     @Transactional(readOnly = true)
@@ -150,7 +151,9 @@ public class PostService {
     }
 
     @Transactional
-    public Long reportPost(Long postId, Long loginMemberId, String content) {
+    public Long reportPost(Long postId, Long loginMemberId, PostPostReportReqDto postPostReportReqDto) {
+        String content = postPostReportReqDto.getContent();
+
         Member loginMember = memberRepository.findById(loginMemberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
@@ -255,41 +258,48 @@ public class PostService {
 
 
     @Transactional(readOnly = true)
-    public GetPostHotResDto findHotPosts(Pageable pageable) {
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        List<HotPost> hotPosts = hotPostRepository.findWithDetailsFetch(pageRequest);
+    public GetPostHotResDto findHotPosts(GetPostHotReqDto getPostHotReqDto) {
+        Long cursor = getPostHotReqDto.getCursor();
+        int size = getPostHotReqDto.getSize();
 
-        return GetPostHotResDto.from(hotPosts);
+        List<HotPost> hotPosts = hotPostRepository.findWithDetailsFetch(cursor, size);
+        return GetPostHotResDto.of(hotPosts, size);
     }
 
     @Transactional(readOnly = true)
-    public GetPostMyResDto findMyPosts(Pageable pageable, Long loginMemberId) {
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+    public GetPostMyResDto findMyPosts(GetPostMyReqDto getPostMyReqDto, Long loginMemberId) {
+        Long cursor = getPostMyReqDto.getCursor();
+        int size = getPostMyReqDto.getSize();
 
         Member loginMember = memberRepository.findById(loginMemberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-        List<Post> posts = postRepository.findWithDetailsByMemberId(loginMember.getId(), pageRequest);
-
-        return GetPostMyResDto.from(posts);
+        List<Post> posts = postRepository.findWithDetailsByMemberId(loginMember.getId(), cursor, size);
+        return GetPostMyResDto.of(posts, size);
     }
 
     @Transactional(readOnly = true)
-    public GetPostResDto searchPosts(Long boardId, String keyword, Pageable pageable) {
+    public GetPostResDto searchPosts(GetPostSearchReqDto getPostSearchReqDto) {
+        Long boardId = getPostSearchReqDto.getBoardId();
+        String keyword = getPostSearchReqDto.getKeyword();
+        Long cursor = getPostSearchReqDto.getCursor();
+        int size = getPostSearchReqDto.getSize();
+
         if (!boardRepository.existsById(boardId)) {
             throw new BoardException(BoardErrorInfo.NO_BOARD);
         }
 
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        List<Post> posts = postRepository.findWithDetailsFetchByBoardIdAndKeyword(boardId, keyword.replaceAll(" ", ""), pageRequest);
-
-        return GetPostResDto.from(posts);
+        List<Post> posts = postRepository.findWithDetailsFetchByBoardIdAndKeyword(boardId, keyword.replaceAll(" ", ""), cursor, size);
+        return GetPostResDto.of(posts, size);
     }
 
     @Transactional(readOnly = true)
-    public GetPostHotResDto searchHotPosts(String keyword, Pageable pageable) {
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        List<HotPost> hotPosts = hotPostRepository.findWithDetailsFetchByKeyword(keyword.replaceAll(" ", ""), pageRequest);
-        return GetPostHotResDto.from(hotPosts);
+    public GetPostHotResDto searchHotPosts(GetPostHotSearchReqDto getPostHotSearchReqDto) {
+        String keyword = getPostHotSearchReqDto.getKeyword();
+        Long cursor = getPostHotSearchReqDto.getCursor();
+        int size = getPostHotSearchReqDto.getSize();
+
+        List<HotPost> hotPosts = hotPostRepository.findWithDetailsFetchByKeyword(keyword.replaceAll(" ", ""), cursor, size);
+        return GetPostHotResDto.of(hotPosts, size);
     }
 }
