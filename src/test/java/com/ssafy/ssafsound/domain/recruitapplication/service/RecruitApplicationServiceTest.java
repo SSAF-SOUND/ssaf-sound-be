@@ -24,9 +24,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
+
+import static org.mockito.Mockito.lenient;
 
 import java.util.Arrays;
 import java.util.List;
@@ -124,28 +125,28 @@ class RecruitApplicationServiceTest {
         recruit.setRecruitQuestions(List.of(recruitQuestion));
 
         // Repository Mocking
-        Mockito.lenient().when(recruitRepository.findByIdUsingFetchJoinRecruitLimitation(1L))
+        lenient().when(recruitRepository.findByIdUsingFetchJoinRecruitLimitation(1L))
                 .thenReturn(java.util.Optional.ofNullable(recruit));
-        Mockito.lenient().when(recruitRepository.findByIdFetchJoinRegister(1L))
+        lenient().when(recruitRepository.findByIdFetchJoinRegister(1L))
                 .thenReturn(recruit);
-        Mockito.lenient().when(recruitApplicationRepository.findByIdAndMemberId(1L, 2L))
+        lenient().when(recruitApplicationRepository.findByIdAndMemberId(1L, 2L))
                 .thenReturn(java.util.Optional.ofNullable(recruitApplication));
-        Mockito.lenient().when(recruitApplicationRepository.findByIdFetchRecruitWriter(1L))
+        lenient().when(recruitApplicationRepository.findByIdFetchRecruitWriter(1L))
                 .thenReturn(java.util.Optional.ofNullable(recruitApplication));
-        Mockito.lenient().when(recruitApplicationRepository.findByIdAndMemberIdFetchRecruitWriter(1L))
+        lenient().when(recruitApplicationRepository.findByIdAndMemberIdFetchRecruitWriter(1L))
                 .thenReturn(java.util.Optional.ofNullable(recruitApplication));
-        Mockito.lenient().when(recruitApplicationRepository.findByRecruitIdAndMatchStatusFetchMember(1L, MatchStatus.DONE))
+        lenient().when(recruitApplicationRepository.findByRecruitIdAndMatchStatusFetchMember(1L, MatchStatus.DONE))
                 .thenReturn(recruitApplications);
-        Mockito.lenient().when(recruitLimitationRepository.findByRecruitId(1L))
+        lenient().when(recruitLimitationRepository.findByRecruitId(1L))
                 .thenReturn(limits);
 
-        Mockito.lenient().when(memberRepository.getReferenceById(1L)).thenReturn(register);
-        Mockito.lenient().when(memberRepository.getReferenceById(2L)).thenReturn(participant);
-        Mockito.lenient().when(memberRepository.getReferenceById(3L))
+        lenient().when(memberRepository.getReferenceById(1L)).thenReturn(register);
+        lenient().when(memberRepository.getReferenceById(2L)).thenReturn(participant);
+        lenient().when(memberRepository.getReferenceById(3L))
                 .thenThrow(new DataIntegrityViolationException(""));
 
         // MetaData Consumer Mocking
-        Arrays.stream(RecruitType.values()).forEach(recruitType -> Mockito.lenient()
+        Arrays.stream(RecruitType.values()).forEach(recruitType -> lenient()
                 .when(metaDataConsumer.getMetaData(MetaDataType.RECRUIT_TYPE.name(), recruitType.getName()))
                 .thenReturn(new MetaData(recruitType)));
     }

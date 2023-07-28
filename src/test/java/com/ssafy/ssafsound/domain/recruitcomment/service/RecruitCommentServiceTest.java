@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 
@@ -34,6 +34,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+
+import static org.mockito.Mockito.lenient;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -136,18 +138,18 @@ class RecruitCommentServiceTest {
         comments.get(2).setCommentGroup(comments.get(2));
         comments.get(3).setCommentGroup(comments.get(2));
 
-        Mockito.lenient().when(memberRepository.findById(1L)).thenReturn(Optional.ofNullable(member1));
-        Mockito.lenient().when(memberRepository.findById(2L)).thenReturn(Optional.ofNullable(member2));
-        Mockito.lenient().when(memberRepository.findById(3L)).thenThrow(new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+        lenient().when(memberRepository.findById(1L)).thenReturn(Optional.ofNullable(member1));
+        lenient().when(memberRepository.findById(2L)).thenReturn(Optional.ofNullable(member2));
+        lenient().when(memberRepository.findById(3L)).thenThrow(new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
-        Mockito.lenient().when(recruitRepository.getReferenceById(1L)).thenReturn(recruit);
-        Mockito.lenient().when(recruitRepository.getReferenceById(2L)).thenThrow(new DataIntegrityViolationException(""));
+        lenient().when(recruitRepository.getReferenceById(1L)).thenReturn(recruit);
+        lenient().when(recruitRepository.getReferenceById(2L)).thenThrow(new DataIntegrityViolationException(""));
 
-        Mockito.lenient().when(recruitCommentRepository.getReferenceById(1L)).thenReturn(commentGroup);
-        Mockito.lenient().when(recruitCommentRepository.findById(1L)).thenReturn(Optional.ofNullable(commentGroup));
-        Mockito.lenient().when(recruitCommentRepository.findByRecruitIdFetchJoinMemberAndReplies(1L)).thenReturn(comments);
+        lenient().when(recruitCommentRepository.getReferenceById(1L)).thenReturn(commentGroup);
+        lenient().when(recruitCommentRepository.findById(1L)).thenReturn(Optional.ofNullable(commentGroup));
+        lenient().when(recruitCommentRepository.findByRecruitIdFetchJoinMemberAndReplies(1L)).thenReturn(comments);
 
-        Mockito.lenient().when(recruitCommentLikeRepository.findByRecruitCommentIdAndMemberId(1L, 1L)).thenReturn(Optional.ofNullable(recruitCommentLike));
+        lenient().when(recruitCommentLikeRepository.findByRecruitCommentIdAndMemberId(1L, 1L)).thenReturn(Optional.ofNullable(recruitCommentLike));
     }
 
     @DisplayName("유효한 사용자 리크루팅 QNA 질문(댓글) 등록")
