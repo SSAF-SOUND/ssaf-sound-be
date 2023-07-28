@@ -28,4 +28,11 @@ public class GetMemberPortfolioResDto {
                 .isPublic(false)
                 .build();
     }
+
+    public static GetMemberPortfolioResDto ofMyPortfolio(Member member, MemberProfile memberProfile) {
+        return GetMemberPortfolioResDto.builder()
+                .isPublic(member.getPublicProfile())
+                .portfolioElement(PortfolioElement.of(member, memberProfile))
+                .build();
+    }
 }

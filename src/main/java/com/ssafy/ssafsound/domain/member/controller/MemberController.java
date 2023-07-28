@@ -24,6 +24,26 @@ public class MemberController {
                 .build();
     }
 
+    /**
+     *  나의 포트폴리오 가져오기
+     * @author : YongsHub
+     * @param : memberId
+     * 나의 포트폴리오 조회는 공개 여부와 상관 없이 가져올 수 있어야 합니다.
+     */
+    @GetMapping("/portfolio")
+    public EnvelopeResponse<GetMemberPortfolioResDto> getMyPortfolio(
+            @Authentication AuthenticatedMember authenticatedMember) {
+        return EnvelopeResponse.<GetMemberPortfolioResDto>builder()
+                .data(memberService.getMyPortfolio(authenticatedMember.getMemberId()))
+                .build();
+    }
+
+    /**
+     *  멤버 포트폴리오 가져오기
+     * @author : YongsHub
+     * @param : memberId
+     * 멤버 포트폴리오 조회는 공개 여부에 따라 조회가 될 수도 있고 조회가 안될수 있습니다.
+     */
     @GetMapping("/{memberId}/portfolio")
     public EnvelopeResponse<GetMemberPortfolioResDto> getMemberPortfolioById(@PathVariable Long memberId) {
         return EnvelopeResponse.<GetMemberPortfolioResDto>builder()
