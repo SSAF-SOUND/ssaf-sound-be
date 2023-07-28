@@ -496,18 +496,30 @@ class MemberServiceTest {
     @DisplayName("멤버의 포트폴리오 정보를 수정하는데 성공한다.")
     void Given_Valid_Member_Portfolio_Information_When_Put_Portfolio_Then_Success() {
         //given
-        Member mockMember = mock(Member.class);
-        MemberProfile mockMemberProfile = mock(MemberProfile.class);
         PutMemberPortfolioReqDto putMemberPortfolioReqDto = mock(PutMemberPortfolioReqDto.class);
-        given(mockMember.getId()).willReturn(1L);
-        given(memberRepository.findById(1L)).willReturn(Optional.of(mockMember));
+        MemberProfile memberProfile = mock(MemberProfile.class);
+        given(memberRepository.findById(1L)).willReturn(Optional.of(member));
         given(putMemberPortfolioReqDto.getSelfIntroduction()).willReturn("자기소개 합니다.");
-        given(memberProfileRepository.findMemberProfileByMember(mockMember)).willReturn(Optional.of(mockMemberProfile));
+        given(memberProfileRepository.findMemberProfileByMember(member)).willReturn(Optional.of(memberProfile));
 
         //then
-        memberService.registerMemberPortfolio(mockMember.getId(), putMemberPortfolioReqDto);
+        memberService.registerMemberPortfolio(member.getId(), putMemberPortfolioReqDto);
 
         //verify
-        verify(memberRepository, times(1)).findById(mockMember.getId());
+        verify(memberRepository, times(1)).findById(member.getId());
+    }
+
+    @Test
+    @DisplayName("멤버의 닉네임을 수정하는데 성공한다.")
+    void Given_Nickname_When_ChangeNickname_Then_Success() {
+        //given
+        PatchMemberNicknameReqDto patchMemberNicknameReqDto = mock(PatchMemberNicknameReqDto.class);
+        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+
+        //then
+        memberService.changeMemberNickname(member.getId(), patchMemberNicknameReqDto);
+
+        //verify
+        verify(memberRepository, times(1)).findById(member.getId());
     }
 }
