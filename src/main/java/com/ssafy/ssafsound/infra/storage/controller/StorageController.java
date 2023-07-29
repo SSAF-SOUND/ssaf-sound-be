@@ -23,8 +23,7 @@ public class StorageController {
         @Authentication AuthenticatedMember member) {
 
         return EnvelopeResponse.<PostStoreImageResDto>builder()
-            .data(
-                new PostStoreImageResDto(awsS3StorageService.getPreSignedUrl(member.getMemberId())))
+            .data(awsS3StorageService.getPreSignedUrl(member.getMemberId()))
             .build();
     }
 

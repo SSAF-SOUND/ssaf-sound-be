@@ -1,36 +1,106 @@
 package com.ssafy.ssafsound.infra.storage.service;
 
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.ssafy.ssafsound.domain.meta.domain.MetaData;
-import com.ssafy.ssafsound.domain.meta.dto.UploadFileInfo;
+import com.amazonaws.services.s3.Headers;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
+import com.ssafy.ssafsound.domain.member.exception.MemberException;
+import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
+import com.ssafy.ssafsound.domain.meta.domain.UploadDirectory;
 import com.ssafy.ssafsound.infra.exception.InfraErrorInfo;
 import com.ssafy.ssafsound.infra.exception.InfraException;
+import com.ssafy.ssafsound.infra.storage.dto.PostStoreImageResDto;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.Normalizer;
+import java.util.Date;
 import java.util.UUID;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
-public class AwsS3StorageService implements StorageService {
+public class AwsS3StorageService {
 
     private final AmazonS3 amazonS3;
+
+    private final MemberRepository memberRepository;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    @Override
-    public String makeFileName(String originalFileName, String uploadDir, String memberId) {
+    @Value("${cloud.aws.cloudfront.domain}")
+    private String cloudFrontDomain;
+
+    private static final String uploadDir = UploadDirectory.POST.getName();
+
+    public PostStoreImageResDto getPreSignedUrl(Long memberId) {
+
+        memberRepository.findById(memberId)
+            .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        String fileName = makeFileName(uploadDir, memberId);
+
+        try {
+            GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePreSignedUrlRequest(
+                bucket, fileName);
+
+            return PostStoreImageResDto.builder()
+                .imagePath(fileName)
+                .imageUrl(makeCDNFileUrl(fileName))
+                .preSignedUrl(amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString())
+                .build();
+
+        } catch (AmazonServiceException e) {
+            throw new InfraException(InfraErrorInfo.STORAGE_SERVICE_ERROR);
+        }
+    }
+
+    public void deleteObject(Long memberId, String imagePath) {
+
+        memberRepository.findById(memberId)
+            .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        // 파일경로의 멤버아이디와 요청 멤버 아이디를 비교
+        String parsedMemberId = imagePath.split("/")[1];
+
+        if (!memberId.equals(parsedMemberId)) {
+            throw new InfraException(InfraErrorInfo.STORAGE_DELETE_UNAUTHORIZED);
+        }
+
+        try {
+            amazonS3.deleteObject(bucket, imagePath);
+        } catch (AmazonServiceException e) {
+            throw new InfraException(InfraErrorInfo.STORAGE_SERVICE_ERROR);
+        }
+    }
+
+    private GeneratePresignedUrlRequest getGeneratePreSignedUrlRequest(String bucket, String fileName) {
+
+        GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                new GeneratePresignedUrlRequest(bucket, fileName)
+                        .withMethod(HttpMethod.PUT)
+                        .withExpiration(getPreSignedUrlExpiration());
+
+        generatePresignedUrlRequest.addRequestParameter(
+                Headers.S3_CANNED_ACL,
+                CannedAccessControlList.PublicReadWrite.toString());
+
+        return generatePresignedUrlRequest;
+    }
+
+    private Date getPreSignedUrlExpiration() {
+        Date expiration = new Date();
+        long expTimeMillis = expiration.getTime();
+        expTimeMillis += 1000 * 60 * 5;
+        expiration.setTime(expTimeMillis);
+
+        return expiration;
+    }
+
+    private String makeFileName(String uploadDir, Long memberId) {
 
         StringBuffer fileName = new StringBuffer();
 
@@ -39,59 +109,16 @@ public class AwsS3StorageService implements StorageService {
                 .append(memberId)
                 .append("/")
                 .append(UUID.randomUUID()) // 파일명 고유화
-                .append("_")
-                .append(Normalizer.normalize(StringUtils.cleanPath(originalFileName), Normalizer.Form.NFC))
                 .toString();
     }
 
-    @Override
-    public UploadFileInfo putObject(MultipartFile multipartFile, MetaData uploadDir, Long memberId) {
+    private String makeCDNFileUrl(String filename) {
 
-        if (multipartFile == null || multipartFile.isEmpty()) {
-            throw new InfraException(InfraErrorInfo.STORAGE_STORE_INVALID_OBJECT);
-        }
+        StringBuffer CDNFileUrl = new StringBuffer();
 
-        String fileName = makeFileName(multipartFile.getOriginalFilename(), uploadDir.getName(), String.valueOf(memberId));
-
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(multipartFile.getSize());
-        metadata.setContentType(multipartFile.getContentType());
-
-        try (InputStream inputStream = multipartFile.getInputStream()) {
-
-            amazonS3.putObject(bucket, fileName, inputStream, metadata);
-
-        } catch (AmazonServiceException e) {
-            log.error(e.getMessage());
-            throw new InfraException(InfraErrorInfo.STORAGE_SERVICE_ERROR);
-
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            throw new RuntimeException(e.getMessage());
-
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new RuntimeException(e.getMessage());
-
-        }
-
-        log.info("S3 저장 성공 : {} 객체 저장", fileName);
-
-        return UploadFileInfo.builder()
-                .filePath(fileName)
-                .fileUrl(amazonS3.getUrl(bucket, fileName).toString())
-                .build();
-    }
-
-    @Override
-    public void deleteObject(String storageFilename) {
-        try {
-            amazonS3.deleteObject(bucket, storageFilename);
-        } catch (AmazonServiceException e) {
-            log.error(e.getMessage());
-            throw new InfraException(InfraErrorInfo.STORAGE_SERVICE_ERROR);
-        }
-
-        log.info("S3 객체 삭제 성공");
+        return CDNFileUrl.append(cloudFrontDomain)
+                .append("/")
+                .append(filename)
+                .toString();
     }
 }
