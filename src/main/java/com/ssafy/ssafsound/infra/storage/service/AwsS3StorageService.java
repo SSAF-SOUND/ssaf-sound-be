@@ -34,6 +34,9 @@ public class AwsS3StorageService {
     @Value("${cloud.aws.cloudfront.domain}")
     private String cloudFrontDomain;
 
+    @Value("${cloud.aws.s3.expire-in}")
+    private Long expireIn;
+
     private static final String uploadDir = UploadDirectory.POST.getName();
 
     public PostStoreImageResDto getPreSignedUrl(Long memberId) {
@@ -94,7 +97,7 @@ public class AwsS3StorageService {
     private Date getPreSignedUrlExpiration() {
         Date expiration = new Date();
         long expTimeMillis = expiration.getTime();
-        expTimeMillis += 1000 * 60 * 5;
+        expTimeMillis += expireIn;
         expiration.setTime(expTimeMillis);
 
         return expiration;
