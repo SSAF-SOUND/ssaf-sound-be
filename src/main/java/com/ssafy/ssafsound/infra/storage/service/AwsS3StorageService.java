@@ -64,7 +64,7 @@ public class AwsS3StorageService {
             .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
         // 파일경로의 멤버아이디와 요청 멤버 아이디를 비교
-        String parsedMemberId = imagePath.split("/")[1];
+        Long parsedMemberId = Long.parseLong(imagePath.split("/")[1]);
 
         if (!memberId.equals(parsedMemberId)) {
             throw new InfraException(InfraErrorInfo.STORAGE_DELETE_UNAUTHORIZED);
