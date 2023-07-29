@@ -75,7 +75,7 @@ public class RecruitElement {
                 .recruitType(registerRecruitType)
                 .limit(1)
                 .members(List.of(Participant.builder()
-                        .nickName(register.getNickname())
+                        .nickname(register.getNickname())
                         .isMajor(register.getMajor())
                         .build()))
                 .build());

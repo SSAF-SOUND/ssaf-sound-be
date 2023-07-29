@@ -2,7 +2,6 @@ package com.ssafy.ssafsound.domain.recruit.dto;
 
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
-import com.ssafy.ssafsound.domain.recruit.domain.GetRecruitLimitDetail;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
@@ -27,11 +26,12 @@ public class GetRecruitDetailResDto {
     private List<RecruitSkillElement> skills;
     private List<GetRecruitLimitDetail> limits;
     private long memberId;
-    private String nickName;
+    private String nickname;
     private Boolean isMajor;
     private SSAFYInfo ssafyInfo;
+    private long scrapCount;
 
-    public static GetRecruitDetailResDto from(Recruit recruit) {
+    public static GetRecruitDetailResDto of(Recruit recruit, long scrapCount) {
 
         if(recruit.getDeletedRecruit()) throw new RecruitException(RecruitErrorInfo.IS_DELETED);
 
@@ -58,7 +58,7 @@ public class GetRecruitDetailResDto {
                 .title(recruit.getTitle())
                 .content(recruit.getContent())
                 .memberId(register.getId())
-                .nickName(register.getNickname())
+                .nickname(register.getNickname())
                 .recruitStart(recruit.getStartDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .recruitEnd(recruit.getEndDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .finishedRecruit(recruit.getFinishedRecruit())
@@ -67,6 +67,7 @@ public class GetRecruitDetailResDto {
                 .view(recruit.getView())
                 .isMajor(register.getMajor())
                 .ssafyInfo(ssafyInfo)
+                .scrapCount(scrapCount)
                 .build();
     }
 

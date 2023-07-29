@@ -58,18 +58,21 @@ public class RecruitService {
     }
 
     @Transactional
-    public boolean toggleRecruitScrap(Long recruitId, Long memberId) {
+    public PostRecruitScrapCountResDto toggleRecruitScrap(Long recruitId, Long memberId) {
         RecruitScrap recruitScrap = recruitScrapRepository.findByRecruitIdAndMemberId(recruitId, memberId)
                 .orElse(null);
-        return isPreExistRecruitScrap(recruitId, memberId, recruitScrap);
+
+        isPreExistRecruitScrap(recruitId, memberId, recruitScrap);
+        return new PostRecruitScrapCountResDto(recruitScrapRepository.countByRecruitId(recruitId));
     }
 
     @Transactional
     public GetRecruitDetailResDto getRecruitDetail(Long recruitId) {
         Recruit recruit = recruitRepository.findByIdUsingFetchJoinRegisterAndRecruitLimitation(recruitId)
                 .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+        long scrapCount = recruitScrapRepository.countByRecruitId(recruitId);
         recruit.increaseView();
-        return GetRecruitDetailResDto.from(recruit);
+        return GetRecruitDetailResDto.of(recruit, scrapCount);
     }
 
     @Transactional

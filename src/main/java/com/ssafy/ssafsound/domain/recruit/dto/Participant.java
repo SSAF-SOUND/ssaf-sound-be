@@ -6,6 +6,6 @@ import lombok.Getter;
 @Getter
 @Builder
 public class Participant {
-    private String nickName;
+    private String nickname;
     private boolean isMajor;
 }
