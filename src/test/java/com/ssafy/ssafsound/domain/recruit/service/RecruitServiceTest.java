@@ -135,6 +135,7 @@ class RecruitServiceTest {
 
     private final PostRecruitReqDto postRecruitReqDto = new PostRecruitReqDto(
             Category.STUDY.name(), LocalDate.now(),  "스터디/프로젝트 모집 제목", "컨텐츠",
+            "contact/uri",
             RecruitType.DESIGN.getName(), Arrays.stream(Skill.values()).map(Skill::getName).collect(Collectors.toList()),
             Collections.singletonList("프로젝트/스터디 등록자가 참여자에게 묻고 싶은 자유 질문"),
             Arrays.stream(RecruitType.values()).map(recruitType-> new RecruitLimitElement(recruitType.getName(), 2)).collect(Collectors.toList()));
@@ -336,7 +337,7 @@ class RecruitServiceTest {
         List<String> skills = Arrays.stream(Skill.values()).map(Skill::getName).collect(Collectors.toList());
 
         PatchRecruitReqDto patchRecruitReqDto = new PatchRecruitReqDto("PROJECT", RecruitType.BACK_END.getName(),
-                LocalDate.now(), "제목 수정", "컨텐츠 수정", skills, limits);
+                LocalDate.now(), "제목 수정", "컨텐츠 수정", "open.kakao.uri", skills, limits);
 
         recruitService.updateRecruit(2L, 1L, patchRecruitReqDto);
 
@@ -358,7 +359,7 @@ class RecruitServiceTest {
         List<String> skills = Arrays.stream(Skill.values()).map(Skill::getName).collect(Collectors.toList());
 
         PatchRecruitReqDto patchRecruitReqDto = new PatchRecruitReqDto("PROJECT", RecruitType.BACK_END.getName(),
-                LocalDate.now(), "제목 수정", "컨텐츠 수정", skills, limits);
+                LocalDate.now(), "제목 수정", "컨텐츠 수정","open.kakao.uri", skills, limits);
 
         RecruitException recruitException = assertThrows(RecruitException.class, () -> recruitService.updateRecruit(2L, 1L, patchRecruitReqDto));
         assertEquals(recruitException.getInfo(), RecruitErrorInfo.NOT_BELOW_PREV_LIMITATIONS);
