@@ -19,6 +19,7 @@ public class GetRecruitDetailResDto {
     private long recruitId;
     private String title;
     private String content;
+    private String contactURI;
     private Long view;
     private boolean finishedRecruit;
     private String recruitStart;
@@ -57,6 +58,7 @@ public class GetRecruitDetailResDto {
                 .recruitId(recruit.getId())
                 .title(recruit.getTitle())
                 .content(recruit.getContent())
+                .contactURI(recruit.getContactURI())
                 .memberId(register.getId())
                 .nickname(register.getNickname())
                 .recruitStart(recruit.getStartDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
