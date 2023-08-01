@@ -14,12 +14,14 @@ import com.ssafy.ssafsound.infra.exception.InfraErrorInfo;
 import com.ssafy.ssafsound.infra.exception.InfraException;
 import com.ssafy.ssafsound.infra.storage.dto.PostStoreImageResDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AwsS3StorageService {
@@ -44,7 +46,7 @@ public class AwsS3StorageService {
         memberRepository.findById(memberId)
             .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-        String fileName = makeFileName(uploadDir, memberId);
+        String fileName = makeFileName(uploadDir);
 
         try {
             GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePreSignedUrlRequest(
@@ -66,16 +68,12 @@ public class AwsS3StorageService {
         memberRepository.findById(memberId)
             .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-        // 파일경로의 멤버아이디와 요청 멤버 아이디를 비교
-        Long parsedMemberId = Long.parseLong(imagePath.split("/")[1]);
-
-        if (!memberId.equals(parsedMemberId)) {
-            throw new InfraException(InfraErrorInfo.STORAGE_DELETE_UNAUTHORIZED);
-        }
-
         try {
             amazonS3.deleteObject(bucket, imagePath);
         } catch (AmazonServiceException e) {
+
+            log.error("{} : imagePath={} memberId={}",
+                InfraErrorInfo.STORAGE_SERVICE_ERROR.getMessage(), imagePath, memberId);
             throw new InfraException(InfraErrorInfo.STORAGE_SERVICE_ERROR);
         }
     }
@@ -103,15 +101,13 @@ public class AwsS3StorageService {
         return expiration;
     }
 
-    private String makeFileName(String uploadDir, Long memberId) {
+    private String makeFileName(String uploadDir) {
 
         StringBuffer fileName = new StringBuffer();
 
         return fileName.append(uploadDir)
                 .append("/")
-                .append(memberId)
-                .append("/")
-                .append(UUID.randomUUID()) // 파일명 고유화
+                .append(UUID.randomUUID())
                 .toString();
     }
 
