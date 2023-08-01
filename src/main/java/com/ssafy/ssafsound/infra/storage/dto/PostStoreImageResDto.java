@@ -1,13 +1,15 @@
 package com.ssafy.ssafsound.infra.storage.dto;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
-import java.util.List;
-
 @Getter
-@AllArgsConstructor
+@Builder
 public class PostStoreImageResDto {
 
-    private List<ImagePathDto> imagePathDtos;
+    private String imagePath;
+
+    private String imageUrl;
+
+    private String preSignedUrl;
 }

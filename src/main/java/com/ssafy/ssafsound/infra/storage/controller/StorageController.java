@@ -1,14 +1,13 @@
-package com.ssafy.ssafsound.infra.storage;
+package com.ssafy.ssafsound.infra.storage.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.validator.Authentication;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import com.ssafy.ssafsound.infra.storage.dto.PostStoreImageResDto;
-import com.ssafy.ssafsound.infra.storage.service.AwsS3PreSignerService;
+import com.ssafy.ssafsound.infra.storage.service.AwsS3StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -16,14 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class StorageController {
 
-    private final AwsS3PreSignerService awsS3PresignerService;
+    private final AwsS3StorageService awsS3StorageService;
 
     @PostMapping("/image")
-    public EnvelopeResponse<PostStoreImageResDto> getPresignedUrl(@Authentication AuthenticatedMember member, @RequestParam Integer count) {
+    public EnvelopeResponse<PostStoreImageResDto> getPreSignedUrl(
+        @Authentication AuthenticatedMember member) {
 
         return EnvelopeResponse.<PostStoreImageResDto>builder()
-                .data(new PostStoreImageResDto(awsS3PresignerService.getPreSignedUrlAsCount(count, member.getMemberId())))
-                .build();
+            .data(awsS3StorageService.getPreSignedUrl(member.getMemberId()))
+            .build();
     }
-
 }
