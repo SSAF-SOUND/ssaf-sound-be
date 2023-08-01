@@ -37,10 +37,10 @@ class PostRecruitReqDtoTest {
     @MethodSource("invalidParameters")
     @ParameterizedTest(name = "{index}: {1}")
     void Given_SkillsAndNotQuestionsParameters_When_TryConvertEntity_Then_Success(String message, String recruitCategory, LocalDate recruitEndDate,
-                                                                                      String title, String content, String registerRecruitType,
+                                                                                      String title, String content, String contactURI, String registerRecruitType,
                                                                                       List<String> necessarySkills, List<String> freeQuestion) {
 
-        PostRecruitReqDto dto = new PostRecruitReqDto(recruitCategory, recruitEndDate, title, content, registerRecruitType, necessarySkills, freeQuestion, null);
+        PostRecruitReqDto dto = new PostRecruitReqDto(recruitCategory, recruitEndDate, title, content, contactURI, registerRecruitType, necessarySkills, freeQuestion, null);
 
         Arrays.stream(Skill.values()).forEach((skill)->{
             Mockito.lenient().when(metaDataConsumer.getMetaData(MetaDataType.SKILL.name(), skill.getName())).thenReturn(new MetaData(skill));
@@ -72,8 +72,8 @@ class PostRecruitReqDtoTest {
         List<String> necessarySkills = Arrays.stream(Skill.values()).map(Skill::getName).collect(Collectors.toList());
         List<String> freeQuestion = Collections.singletonList("프로젝트/스터디 등록자가 참여자에게 묻고 싶은 자유 질문");
         return Stream.of(
-                Arguments.of("엔티티 변환 Skill, Question Test", Category.STUDY.name(), LocalDate.now(),  "스터디/프로젝트 모집 제목", "컨텐츠", RecruitType.DESIGN.getName(), necessarySkills, freeQuestion),
-                Arguments.of("엔티티 변환 Skill, Question Test", Category.STUDY.name(), LocalDate.now(),  "스터디/프로젝트 모집 제목", "컨텐츠", RecruitType.DESIGN.getName(), null, null)
+                Arguments.of("엔티티 변환 Skill, Question Test", Category.STUDY.name(), LocalDate.now(),  "스터디/프로젝트 모집 제목", "컨텐츠", "requestURI", RecruitType.DESIGN.getName(), necessarySkills, freeQuestion),
+                Arguments.of("엔티티 변환 Skill, Question Test", Category.STUDY.name(), LocalDate.now(),  "스터디/프로젝트 모집 제목", "컨텐츠", "requestURI", RecruitType.DESIGN.getName(), null, null)
         );
     }
 }

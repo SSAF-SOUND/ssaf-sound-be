@@ -36,6 +36,8 @@ public class PostRecruitReqDto {
     @NotEmpty
     private String content;
 
+    private String contactURI;
+
     @CheckRecruitType
     private String registerRecruitType;
 
@@ -55,6 +57,7 @@ public class PostRecruitReqDto {
                 .content(content)
                 .startDateTime(LocalDateTime.now())
                 .endDateTime(recruitEnd.atTime(LocalTime.MAX))
+                .contactURI(contactURI)
                 .deletedRecruit(false)
                 .build();
 

@@ -60,6 +60,9 @@ public class Recruit extends BaseTimeEntity {
     @Convert(converter = RecruitTypeConverter.class)
     private MetaData registerRecruitType;
 
+    @Column
+    private String contactURI;
+
     @OneToMany(mappedBy = "recruit", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @Builder.Default
     private List<RecruitSkill> skills = new ArrayList<>();
@@ -107,6 +110,7 @@ public class Recruit extends BaseTimeEntity {
         this.endDateTime = patchRecruitReqDto.getRecruitEnd().atTime(LocalTime.MAX);
         this.title = patchRecruitReqDto.getTitle();
         this.content = patchRecruitReqDto.getContent();
+        this.contactURI = patchRecruitReqDto.getContactURI();
     }
 
     public void increaseView() {

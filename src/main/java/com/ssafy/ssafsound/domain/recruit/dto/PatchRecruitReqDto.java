@@ -35,6 +35,8 @@ public class PatchRecruitReqDto {
     @NotEmpty
     private String content;
 
+    private String contactURI;
+
     @CheckSkills
     private List<String> skills;
 
