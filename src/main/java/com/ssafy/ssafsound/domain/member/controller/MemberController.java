@@ -17,12 +17,33 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping
-    public EnvelopeResponse<GetMemberResDto> getMemberInformation(@Authentication AuthenticatedMember authenticatedMember) {
+    public EnvelopeResponse<GetMemberResDto> getMemberInformation(
+            @Authentication AuthenticatedMember authenticatedMember) {
         return EnvelopeResponse.<GetMemberResDto>builder()
-                .data(memberService.getMemberInformation(authenticatedMember))
+                .data(memberService.getMemberInformation(authenticatedMember.getMemberId()))
                 .build();
     }
 
+    /**
+     *  나의 포트폴리오 가져오기
+     * @author : YongsHub
+     * @param : memberId
+     * 나의 포트폴리오 조회는 공개 여부와 상관 없이 가져올 수 있어야 합니다.
+     */
+    @GetMapping("/portfolio")
+    public EnvelopeResponse<GetMemberPortfolioResDto> getMyPortfolio(
+            @Authentication AuthenticatedMember authenticatedMember) {
+        return EnvelopeResponse.<GetMemberPortfolioResDto>builder()
+                .data(memberService.getMyPortfolio(authenticatedMember.getMemberId()))
+                .build();
+    }
+
+    /**
+     *  멤버 포트폴리오 가져오기
+     * @author : YongsHub
+     * @param : memberId
+     * 멤버 포트폴리오 조회는 공개 여부에 따라 조회가 될 수도 있고 조회가 안될수 있습니다.
+     */
     @GetMapping("/{memberId}/portfolio")
     public EnvelopeResponse<GetMemberPortfolioResDto> getMemberPortfolioById(@PathVariable Long memberId) {
         return EnvelopeResponse.<GetMemberPortfolioResDto>builder()
@@ -30,40 +51,56 @@ public class MemberController {
                 .build();
     }
 
-    @GetMapping("/{memberId}/profile")
-    public EnvelopeResponse<GetMemberProfileResDto> getMemberProfileById(@PathVariable Long memberId) {
-        return EnvelopeResponse.<GetMemberProfileResDto>builder()
-                .data(memberService.getMemberProfileById(memberId))
+    @GetMapping("/{memberId}/default-information")
+    public EnvelopeResponse<GetMemberDefaultInfoResDto> getMemberDefaultInfoByMemberId(@PathVariable Long memberId) {
+        return EnvelopeResponse.<GetMemberDefaultInfoResDto>builder()
+                .data(memberService.getMemberDefaultInfoByMemberId(memberId))
+                .build();
+    }
+
+    @GetMapping("/public-profile")
+    public EnvelopeResponse<GetMemberPublicProfileResDto> getMemberProfilePublic(
+            @Authentication AuthenticatedMember authenticatedMember) {
+        return EnvelopeResponse.<GetMemberPublicProfileResDto>builder()
+                .data(memberService.getMemberPublicProfileByMemberId(authenticatedMember.getMemberId()))
                 .build();
     }
 
     @PutMapping
-    public EnvelopeResponse<GetMemberResDto> registerMemberInformation(@Authentication AuthenticatedMember authenticatedMember,
-                                                                       @Valid @RequestBody PostMemberInfoReqDto postMemberInfoReqDto) {
+    public EnvelopeResponse<GetMemberResDto> registerMemberInformation(
+            @Authentication AuthenticatedMember authenticatedMember,
+            @Valid @RequestBody PostMemberInfoReqDto postMemberInfoReqDto) {
         return EnvelopeResponse.<GetMemberResDto>builder()
                 .data(memberService.registerMemberInformation(authenticatedMember, postMemberInfoReqDto))
                 .build();
     }
 
     @PostMapping("/nickname")
-    public EnvelopeResponse<PostNicknameResDto> checkNicknamePossible(@Valid @RequestBody PostNicknameReqDto postNicknameReqDto) {
+    public EnvelopeResponse<PostNicknameResDto> checkNicknamePossible(
+            @Valid @RequestBody PostNicknameReqDto postNicknameReqDto) {
         return EnvelopeResponse.<PostNicknameResDto>builder()
                 .data(memberService.checkNicknamePossible(postNicknameReqDto))
                 .build();
     }
 
     @PostMapping("/ssafy-certification")
-    public EnvelopeResponse<PostCertificationInfoResDto> certifySSAFYInformation(@Authentication AuthenticatedMember authenticatedMember,
-                                                                                @Valid @RequestBody PostCertificationInfoReqDto postCertificationInfoReqDto) {
+    public EnvelopeResponse<PostCertificationInfoResDto> certifySSAFYInformation(
+            @Authentication AuthenticatedMember authenticatedMember,
+            @Valid @RequestBody PostCertificationInfoReqDto postCertificationInfoReqDto) {
         return EnvelopeResponse.<PostCertificationInfoResDto>builder()
-                .data(memberService.certifySSAFYInformation(authenticatedMember, postCertificationInfoReqDto))
+                .data(memberService.certifySSAFYInformation(
+                        authenticatedMember.getMemberId(),
+                        postCertificationInfoReqDto))
                 .build();
     }
 
     @PutMapping("/portfolio")
-    public EnvelopeResponse registerMemberPortfolio(@Authentication AuthenticatedMember authenticatedMember,
-                                                 @Valid @RequestBody PutMemberProfileReqDto putMemberProfileReqDto) {
-        memberService.registerMemberPortfolio(authenticatedMember, putMemberProfileReqDto);
+    public EnvelopeResponse registerMemberPortfolio(
+            @Authentication AuthenticatedMember authenticatedMember,
+            @Valid @RequestBody PutMemberPortfolioReqDto putMemberPortfolioReqDto) {
+        memberService.registerMemberPortfolio(
+                authenticatedMember.getMemberId(),
+                putMemberPortfolioReqDto);
         return EnvelopeResponse.builder()
                 .build();
     }
@@ -73,6 +110,26 @@ public class MemberController {
             @Authentication AuthenticatedMember authenticatedMember,
             @Valid @RequestBody PatchMemberDefaultInfoReqDto patchMemberDefaultInfoReqDto) {
         memberService.patchMemberDefaultInfo(authenticatedMember.getMemberId(), patchMemberDefaultInfoReqDto);
+        return EnvelopeResponse.builder()
+                .build();
+    }
+
+    @PatchMapping("/public-profile")
+    public EnvelopeResponse patchMemberPublicProfile(
+            @Authentication AuthenticatedMember authenticatedMember,
+            @Valid @RequestBody PatchMemberPublicProfileReqDto patchMemberPublicProfileReqDto) {
+
+        memberService.patchMemberPublicProfile(authenticatedMember.getMemberId(), patchMemberPublicProfileReqDto);
+        return EnvelopeResponse.builder()
+                .build();
+    }
+
+    @PatchMapping("/nickname")
+    public EnvelopeResponse changeMemberNickname(
+            @Authentication AuthenticatedMember authenticatedMember,
+            @Valid @RequestBody PatchMemberNicknameReqDto patchMemberNicknameReqDto) {
+
+        memberService.changeMemberNickname(authenticatedMember.getMemberId(), patchMemberNicknameReqDto);
         return EnvelopeResponse.builder()
                 .build();
     }

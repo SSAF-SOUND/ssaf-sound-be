@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class GetMemberProfileResDto {
+public class GetMemberDefaultInfoResDto {
 
     private String nickname;
 
@@ -20,21 +20,21 @@ public class GetMemberProfileResDto {
 
     private SSAFYInfo ssafyInfo;
 
-    private GetMemberProfileResDto(String nickname, Boolean isMajor, Member member) {
+    private GetMemberDefaultInfoResDto(String nickname, Boolean isMajor, Member member) {
         this(nickname, isMajor);
         this.ssafyMember = true;
         this.ssafyInfo = SSAFYInfo.from(member);
     }
 
-    private GetMemberProfileResDto(String nickname,  Boolean isMajor) {
+    private GetMemberDefaultInfoResDto(String nickname, Boolean isMajor) {
         this.nickname = nickname;
         this.isMajor = isMajor;
     }
 
-    public static GetMemberProfileResDto from(Member member) {
+    public static GetMemberDefaultInfoResDto from(Member member) {
         if (member.getSsafyMember()) {
-            return new GetMemberProfileResDto(member.getNickname(), member.getMajor(), member);
+            return new GetMemberDefaultInfoResDto(member.getNickname(), member.getMajor(), member);
         }
-        return new GetMemberProfileResDto(member.getNickname(), member.getMajor());
+        return new GetMemberDefaultInfoResDto(member.getNickname(), member.getMajor());
     }
 }
