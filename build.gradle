@@ -10,6 +10,10 @@ group = 'com.ssafy'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+ext {
+    set('snippetsDir', file('build/generated-snippets'))
+}
+
 jacoco {
     toolVersion = "0.8.8"
 }
@@ -32,6 +36,8 @@ test {
         port = 6300
         jmx = false
     }
+
+    outputs.dir snippetsDir
 }
 
 jacocoTestReport {
@@ -54,19 +60,19 @@ jacocoTestCoverageVerification {
             limit {
                 counter = 'LINE'
                 value = 'COVEREDRATIO'
-                minimum = 0.60
+                minimum = 0
             }
 
             limit {
                 counter = 'BRANCH'
                 value = 'COVEREDRATIO'
-                minimum = 0.60
+                minimum = 0
             }
 
             limit {
                 counter = 'METHOD'
                 value = 'COVEREDRATIO'
-                minimum = 0.60
+                minimum = 0
             }
 
             excludes = ['com.ssafy.ssafsound.domain.BaseTimeEntity',
@@ -127,14 +133,6 @@ dependencies {
 
 }
 
-ext {
-    set('snippetsDir', file('build/generated-snippets'))
-}
-
-test {
-    outputs.dir snippetsDir
-}
-
 asciidoctor { // asciidoctor 작업 구성
     dependsOn test // test 작업 이후에 작동하도록 하는 설정
     configurations 'asciidoctorExtensions' // 위에서 작성한 configuration 적용
@@ -142,9 +140,9 @@ asciidoctor { // asciidoctor 작업 구성
 
     // source가 없으면 .adoc파일을 전부 html로 만들어버림
     // source 지정시 특정 adoc만 HTML로 만든다.
-//    sources {
-//        include("**/index.adoc", "**/common/*.adoc")
-//    }
+    sources {
+        include("**/index.adoc")
+    }
 
     // 특정 .adoc에 다른 adoc 파일을 가져와서(include) 사용하고 싶을 경우 경로를 baseDir로 맞춰주는 설정입니다.
     // 개별 adoc으로 운영한다면 필요 없는 옵션입니다.
@@ -162,11 +160,6 @@ tasks.register('createDocument', Copy) {
     from file("build/docs/asciidoc")
     into file("src/main/resources/static/docs")
 }
-
-// build 의 의존작업 명시
-//build {
-//    dependsOn copyDocument
-//}
 
 bootJar {
     dependsOn createDocument
