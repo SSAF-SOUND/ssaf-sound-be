@@ -149,9 +149,8 @@ public class MemberService {
 
         if (isExistNickname) {
             throw new MemberException(MemberErrorInfo.MEMBER_NICKNAME_DUPLICATION);
-        } else {
-            member.changeNickname(patchMemberNicknameReqDto.getNickname());
         }
+        member.changeNickname(patchMemberNicknameReqDto.getNickname());
     }
 
     @Transactional(readOnly = true)
