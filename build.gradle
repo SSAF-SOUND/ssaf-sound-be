@@ -133,28 +133,22 @@ dependencies {
 
 }
 
-asciidoctor { // asciidoctor 작업 구성
-    dependsOn test // test 작업 이후에 작동하도록 하는 설정
-    configurations 'asciidoctorExtensions' // 위에서 작성한 configuration 적용
-    inputs.dir snippetsDir // snippetsDir 를 입력으로 구성
+asciidoctor {
+    dependsOn test
+    configurations 'asciidoctorExtensions'
+    inputs.dir snippetsDir
 
-    // source가 없으면 .adoc파일을 전부 html로 만들어버림
-    // source 지정시 특정 adoc만 HTML로 만든다.
     sources {
         include("**/index.adoc")
     }
 
-    // 특정 .adoc에 다른 adoc 파일을 가져와서(include) 사용하고 싶을 경우 경로를 baseDir로 맞춰주는 설정입니다.
-    // 개별 adoc으로 운영한다면 필요 없는 옵션입니다.
     baseDirFollowsSourceFile()
 }
 
-// static/docs 폴더 비우기
 asciidoctor.doFirst {
     delete file('src/main/resources/static/docs')
 }
 
-// asccidoctor 작업 이후 생성된 HTML 파일을 static/docs 로 copy
 tasks.register('createDocument', Copy) {
     dependsOn asciidoctor
     from file("build/docs/asciidoc")
