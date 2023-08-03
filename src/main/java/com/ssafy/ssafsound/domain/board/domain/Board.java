@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Entity(name="board")
+@Entity(name = "board")
 @Getter
 @Builder
 @NoArgsConstructor
@@ -22,6 +22,12 @@ public class Board {
 
     @Column
     private String title;
+
+    @Column
+    private String imageUrl;
+
+    @Column
+    private String description;
 
     @Column
     private Boolean usedBoard;

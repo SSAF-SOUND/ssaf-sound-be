@@ -9,13 +9,15 @@ import lombok.Getter;
 public class GetBoardElement {
     private Long boardId;
     private String title;
-    private Boolean usedBoard;
+    private String imageUrl;
+    private String description;
 
     public static GetBoardElement from(Board board) {
         return GetBoardElement.builder()
                 .boardId(board.getId())
                 .title(board.getTitle())
-                .usedBoard(board.getUsedBoard())
+                .imageUrl(board.getImageUrl())
+                .description(board.getDescription())
                 .build();
     }
 }
