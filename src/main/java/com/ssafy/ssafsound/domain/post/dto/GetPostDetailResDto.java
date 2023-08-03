@@ -9,11 +9,12 @@ import lombok.Getter;
 @Builder
 public class GetPostDetailResDto {
     private GetPostDetailElement post;
+    private AuthorElement author;
 
     public static GetPostDetailResDto of(Post post, Member loginMember) {
-
         return GetPostDetailResDto.builder()
                 .post(GetPostDetailElement.of(post, loginMember))
+                .author(AuthorElement.from(post))
                 .build();
     }
 }
