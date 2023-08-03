@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.post.dto;
 
+import com.ssafy.ssafsound.domain.board.domain.Board;
 import com.ssafy.ssafsound.domain.post.domain.HotPost;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.domain.PostImage;
@@ -12,7 +13,9 @@ import java.util.List;
 @Getter
 @Builder
 public class GetPostHotElement {
+    private Long boardId;
     private String boardTitle;
+    private Long postId;
     private String title;
     private String content;
     private int likeCount;
@@ -26,9 +29,12 @@ public class GetPostHotElement {
         Post post = hotPost.getPost();
         String thumbnail = findThumbnailUrl(post);
         Boolean anonymous = post.getAnonymous();
+        Board board = post.getBoard();
 
         return GetPostHotElement.builder()
-                .boardTitle(post.getBoard().getTitle())
+                .boardId(board.getId())
+                .boardTitle(board.getTitle())
+                .postId(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .likeCount(post.getLikes().size())

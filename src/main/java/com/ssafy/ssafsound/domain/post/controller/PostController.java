@@ -93,7 +93,7 @@ public class PostController {
     }
 
     @GetMapping("/my")
-    public EnvelopeResponse<GetPostMyResDto> findMyPosts(GetPostMyReqDto getPostMyReqDto, @Authentication AuthenticatedMember loginMember) {
+    public EnvelopeResponse<GetPostMyResDto> findMyPosts(@Valid GetPostMyReqDto getPostMyReqDto, @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<GetPostMyResDto>builder()
                 .data(postService.findMyPosts(getPostMyReqDto, loginMember.getMemberId()))
                 .build();
