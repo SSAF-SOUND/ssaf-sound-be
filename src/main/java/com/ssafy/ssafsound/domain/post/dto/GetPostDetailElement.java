@@ -35,7 +35,6 @@ public class GetPostDetailElement {
         Boolean scraped = isScrap(post, loginMember);
         Boolean liked = isLike(post, loginMember);
         Boolean mine = isMine(post, loginMember);
-        Boolean anonymous = post.getAnonymous();
         List<ImageUrlElement> images = findImageUrls(post);
         Board board = post.getBoard();
 
@@ -49,7 +48,7 @@ public class GetPostDetailElement {
                 .commentCount(post.getComments().size())
                 .scrapCount(post.getScraps().size())
                 .createdAt(post.getCreatedAt())
-                .anonymous(anonymous)
+                .anonymous(post.getAnonymous())
                 .modified(post.getModifiedAt() != null)
                 .scraped(scraped)
                 .liked(liked)

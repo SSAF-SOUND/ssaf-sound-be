@@ -3,28 +3,32 @@ package com.ssafy.ssafsound.domain.post.dto;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
 import com.ssafy.ssafsound.domain.post.domain.Post;
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
 public class AuthorElement {
     private final String nickname;
-    private final String memberRole;
-    private final Boolean ssafyMember;
-    private final Boolean isMajor;
-    private final SSAFYInfo ssafyInfo;
+    private String memberRole;
+    private Boolean ssafyMember;
+    private Boolean isMajor;
+    private SSAFYInfo ssafyInfo;
 
     public static AuthorElement from(Post post) {
         Member member = post.getMember();
-        Boolean anonymous = post.getAnonymous();
+        if (post.getAnonymous())
+            return new AuthorElement("익명");
+        return new AuthorElement(member);
+    }
 
-        return AuthorElement.builder()
-                .nickname(anonymous ? "익명" : post.getMember().getNickname())
-                .memberRole(member.getRole().getRoleType())
-                .ssafyMember(member.getSsafyMember())
-                .isMajor(member.getMajor())
-                .ssafyInfo(SSAFYInfo.from(member))
-                .build();
+    private AuthorElement(String nickname) {
+        this.nickname = nickname;
+    }
+
+    private AuthorElement(Member member) {
+        this.nickname = member.getNickname();
+        this.memberRole = member.getRole().getRoleType();
+        this.ssafyMember = member.getSsafyMember();
+        this.isMajor = member.getMajor();
+        this.ssafyInfo = SSAFYInfo.from(member);
     }
 }
