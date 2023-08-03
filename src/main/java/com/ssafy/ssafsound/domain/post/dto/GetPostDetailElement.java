@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.post.dto;
 
+import com.ssafy.ssafsound.domain.board.domain.Board;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.domain.PostLike;
@@ -14,6 +15,9 @@ import java.util.stream.Collectors;
 @Getter
 @Builder
 public class GetPostDetailElement {
+    private final Long boardId;
+    private final String boardTitle;
+    private final Long postId;
     private final String title;
     private final String content;
     private final int likeCount;
@@ -33,8 +37,12 @@ public class GetPostDetailElement {
         Boolean mine = isMine(post, loginMember);
         Boolean anonymous = post.getAnonymous();
         List<ImageUrlElement> images = findImageUrls(post);
+        Board board = post.getBoard();
 
         return GetPostDetailElement.builder()
+                .boardId(board.getId())
+                .boardTitle(board.getTitle())
+                .postId(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .likeCount(post.getLikes().size())
