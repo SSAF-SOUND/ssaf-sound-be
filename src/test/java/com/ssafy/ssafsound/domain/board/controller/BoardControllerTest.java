@@ -92,9 +92,9 @@ class BoardControllerTest {
                                         fieldWithPath("code").description("응답 코드"),
                                         fieldWithPath("message").description("응답 메시지"),
                                         fieldWithPath("data").description("응답 데이터"),
-                                        fieldWithPath("data.boards").description("게시글 목록")
+                                        fieldWithPath("data.boards").description("게시판 목록 데이터")
                                 ).andWithPrefix("data.boards[].",
-                                        fieldWithPath("boardId").description("게시판 ID"),
+                                        fieldWithPath("boardId").description("해당 게시판의 id"),
                                         fieldWithPath("title").description("게시판 이름"),
                                         fieldWithPath("usedBoard").description("게시판 사용여부")
                                 )
