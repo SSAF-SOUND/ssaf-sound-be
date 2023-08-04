@@ -46,10 +46,10 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/scrap")
-    public EnvelopeResponse<Void> scrapPost(@PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
-        postService.scrapPost(postId, loginMember.getMemberId());
+    public EnvelopeResponse<PostPostScrapResDto> scrapPost(@PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
 
-        return EnvelopeResponse.<Void>builder()
+        return EnvelopeResponse.<PostPostScrapResDto>builder()
+                .data(postService.scrapPost(postId, loginMember.getMemberId()))
                 .build();
     }
 

@@ -124,21 +124,24 @@ public class PostService {
     }
 
     @Transactional
-    public void scrapPost(Long postId, Long loginMemberId) {
+    public PostPostScrapResDto scrapPost(Long postId, Long loginMemberId) {
         Member loginMember = memberRepository.findById(loginMemberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
         PostScrap postScrap = postScrapRepository.findByPostIdAndMemberId(postId, loginMember.getId())
                 .orElse(null);
-        togglePostScrap(postId, loginMember, postScrap);
+
+        Integer scrapCount = postScrapRepository.countByPostId(postId);
+        return togglePostScrap(scrapCount, postId, loginMember, postScrap);
     }
 
-    private void togglePostScrap(Long postId, Member loginMember, PostScrap postScrap) {
+    private PostPostScrapResDto togglePostScrap(Integer scrapCount, Long postId, Member loginMember, PostScrap postScrap) {
         if (postScrap != null) {
             deleteScrapIfAlreadyExists(postScrap);
-            return;
+            return new PostPostScrapResDto(scrapCount - 1, false);
         }
         saveScrap(postId, loginMember);
+        return new PostPostScrapResDto(scrapCount + 1, true);
     }
 
     private void saveScrap(Long postId, Member loginMember) {

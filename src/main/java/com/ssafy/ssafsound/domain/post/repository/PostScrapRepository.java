@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface PostScrapRepository extends JpaRepository<PostScrap, Long> {
     Optional<PostScrap> findByPostIdAndMemberId(Long postId, Long memberId);
+
+    Integer countByPostId(Long postId);
 }
