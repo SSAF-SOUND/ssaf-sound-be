@@ -69,25 +69,28 @@ public class PostService {
     }
 
     @Transactional
-    public void likePost(Long postId, Long loginMemberId) {
+    public PostPostLikeResDto likePost(Long postId, Long loginMemberId) {
         Member loginMember = memberRepository.findById(loginMemberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
         PostLike postLike = postLikeRepository.findByPostIdAndMemberId(postId, loginMember.getId())
                 .orElse(null);
 
-        togglePostLike(postId, loginMember, postLike);
+        Integer likeCount = postLikeRepository.countByPostId(postId);
+        return togglePostLike(likeCount, postId, loginMember, postLike);
     }
 
-    private void togglePostLike(Long postId, Member loginMember, PostLike postLike) {
+    private PostPostLikeResDto togglePostLike(Integer likeCount, Long postId, Member loginMember, PostLike postLike) {
         if (postLike != null) {
             deleteLike(postLike);
-            return;
+            return new PostPostLikeResDto(likeCount - 1, false);
         }
+
         saveLike(postId, loginMember);
         if (isSelectedHotPost(postId)) {
             saveHotPost(postId);
         }
+        return new PostPostLikeResDto(likeCount + 1, true);
     }
 
     private void saveLike(Long postId, Member loginMember) {
