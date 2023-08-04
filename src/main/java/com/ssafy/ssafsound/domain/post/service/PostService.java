@@ -15,6 +15,8 @@ import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
 import com.ssafy.ssafsound.domain.post.exception.PostException;
 import com.ssafy.ssafsound.domain.post.repository.*;
 import com.ssafy.ssafsound.domain.post.dto.*;
+import com.ssafy.ssafsound.infra.exception.InfraException;
+import com.ssafy.ssafsound.infra.storage.service.AwsS3StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,6 +41,7 @@ public class PostService {
     private final PostScrapRepository postScrapRepository;
     private final PostReportRepository postReportRepository;
     private final PostImageRepository postImageRepository;
+    private final AwsS3StorageService awsS3StorageService;
 
     @Transactional(readOnly = true)
     public GetPostResDto findPosts(GetPostReqDto getPostReqDto) {
@@ -214,7 +217,6 @@ public class PostService {
 
     @Transactional
     public Long deletePost(Long postId, Long loginMemberId) {
-        // 1. 게시글 삭제
         Post post = postRepository.findByIdWithMember(postId)
                 .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
@@ -225,12 +227,22 @@ public class PostService {
             throw new PostException((PostErrorInfo.UNAUTHORIZED_DELETE_POST));
         }
 
+        deleteAllPostImages(post.getImages());
         postRepository.delete(post);
-
-        // 2. 핫 게시글이 있으면 삭제
         hotPostRepository.findByPostId(postId).ifPresent(hotPostRepository::delete);
+        return postId;
+    }
 
-        return post.getId();
+    private void deleteAllPostImages(List<PostImage> images) {
+        images.forEach(image -> {
+            try {
+                awsS3StorageService.deleteObject(image);
+
+            } catch (InfraException e) {
+                log.error("이미지 삭제에 오류가 발생했습니다.");
+            }
+            postImageRepository.delete(image);
+        });
     }
 
     @Transactional
