@@ -24,7 +24,7 @@ public class GetPostDetailElement {
     private final int commentCount;
     private final int scrapCount;
     private final LocalDateTime createdAt;
-    private final Boolean anonymous;
+    private final Boolean anonymity;
     private final Boolean modified;
     private final Boolean scraped;
     private final Boolean liked;
@@ -48,7 +48,7 @@ public class GetPostDetailElement {
                 .commentCount(post.getComments().size())
                 .scrapCount(post.getScraps().size())
                 .createdAt(post.getCreatedAt())
-                .anonymous(post.getAnonymous())
+                .anonymity(post.getAnonymity())
                 .modified(post.getModifiedAt() != null)
                 .scraped(scraped)
                 .liked(liked)

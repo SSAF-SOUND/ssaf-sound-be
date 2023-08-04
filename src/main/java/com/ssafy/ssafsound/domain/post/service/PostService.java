@@ -189,7 +189,7 @@ public class PostService {
                 .member(loginMember)
                 .title(postPostWriteReqDto.getTitle())
                 .content(postPostWriteReqDto.getContent())
-                .anonymous(postPostWriteReqDto.isAnonymous())
+                .anonymity(postPostWriteReqDto.isAnonymity())
                 .build();
         postRepository.save(post);
 
@@ -239,7 +239,7 @@ public class PostService {
             throw new PostException(PostErrorInfo.UNAUTHORIZED_UPDATE_POST);
         }
 
-        post.updatePost(postPutUpdateReqDto.getTitle(), postPutUpdateReqDto.getContent(), postPutUpdateReqDto.isAnonymous());
+        post.updatePost(postPutUpdateReqDto.getTitle(), postPutUpdateReqDto.getContent(), postPutUpdateReqDto.isAnonymity());
         postImageRepository.deleteAllInBatch(post.getImages());
 
         List<ImageInfo> images = postPutUpdateReqDto.getImages();

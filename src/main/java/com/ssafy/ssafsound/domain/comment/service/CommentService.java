@@ -22,8 +22,6 @@ import com.ssafy.ssafsound.domain.post.exception.PostException;
 import com.ssafy.ssafsound.domain.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,7 +65,7 @@ public class CommentService {
                 .post(postRepository.getReferenceById(postId))
                 .member(memberRepository.getReferenceById(loginMemberId))
                 .content(postCommentWriteReqDto.getContent())
-                .anonymous(postCommentWriteReqDto.getAnonymous())
+                .anonymity(postCommentWriteReqDto.getAnonymity())
                 .commentNumber(commentNumber)
                 .commentGroup(null)
                 .build();
@@ -99,7 +97,7 @@ public class CommentService {
             throw new CommentException(CommentErrorInfo.UNAUTHORIZED_UPDATE_COMMENT);
         }
 
-        comment.updateComment(putCommentUpdateReqDto.getContent(), putCommentUpdateReqDto.getAnonymous());
+        comment.updateComment(putCommentUpdateReqDto.getContent(), putCommentUpdateReqDto.getAnonymity());
         return comment.getId();
     }
 
@@ -134,7 +132,7 @@ public class CommentService {
                 .post(postRepository.getReferenceById(postId))
                 .member(loginMember)
                 .content(postCommentWriteReplyReqDto.getContent())
-                .anonymous(postCommentWriteReplyReqDto.getAnonymous())
+                .anonymity(postCommentWriteReplyReqDto.getAnonymity())
                 .commentNumber(commentNumber)
                 .commentGroup(commentRepository.getReferenceById(commentId))
                 .build();

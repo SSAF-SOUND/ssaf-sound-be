@@ -40,7 +40,7 @@ public class Post extends BaseTimeEntity {
     private Boolean deletedPost = Boolean.FALSE;
 
     @Column
-    private Boolean anonymous;
+    private Boolean anonymity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
@@ -66,9 +66,9 @@ public class Post extends BaseTimeEntity {
     @OneToMany(mappedBy = "post")
     private List<PostScrap> scraps = new ArrayList<>();
 
-    public void updatePost(String title, String content, Boolean anonymous){
+    public void updatePost(String title, String content, Boolean anonymity){
         this.title = title;
         this.content = content;
-        this.anonymous = anonymous;
+        this.anonymity = anonymity;
     }
 }

@@ -21,12 +21,12 @@ public class GetPostElement {
     private int commentCount;
     private LocalDateTime createdAt;
     private String nickname;
-    private Boolean anonymous;
+    private Boolean anonymity;
     private String thumbnail;
 
     public static GetPostElement from(Post post) {
         String thumbnail = findThumbnailUrl(post);
-        Boolean anonymous = post.getAnonymous();
+        Boolean anonymity = post.getAnonymity();
         Board board = post.getBoard();
 
         return GetPostElement.builder()
@@ -38,8 +38,8 @@ public class GetPostElement {
                 .likeCount(post.getLikes().size())
                 .commentCount(post.getComments().size())
                 .createdAt(post.getCreatedAt())
-                .nickname(anonymous ? "익명" : post.getMember().getNickname())
-                .anonymous(anonymous)
+                .nickname(anonymity ? "익명" : post.getMember().getNickname())
+                .anonymity(anonymity)
                 .thumbnail(thumbnail)
                 .build();
     }

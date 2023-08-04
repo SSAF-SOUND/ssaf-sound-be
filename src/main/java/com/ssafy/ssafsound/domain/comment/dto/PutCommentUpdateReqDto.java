@@ -10,5 +10,5 @@ import javax.validation.constraints.Size;
 public class PutCommentUpdateReqDto {
     @Size(min = 2)
     private String content;
-    private Boolean anonymous;
+    private Boolean anonymity;
 }

@@ -8,5 +8,5 @@ import javax.validation.constraints.Size;
 public class PostCommentWriteReplyReqDto {
     @Size(min = 2)
     private String content;
-    private Boolean anonymous;
+    private Boolean anonymity;
 }

@@ -15,15 +15,15 @@ public class AuthorElement {
 
     public static AuthorElement from(Comment comment) {
         Member member = comment.getMember();
-        Boolean anonymous = comment.getAnonymous();
+        Boolean anonymity = comment.getAnonymity();
 
-        if (comment.getAnonymous())
-            return new AuthorElement(comment, anonymous);
+        if (comment.getAnonymity())
+            return new AuthorElement(comment, anonymity);
         return new AuthorElement(member);
     }
 
-    private AuthorElement(Comment comment, Boolean anonymous) {
-        this.nickname = setNickName(comment, anonymous);
+    private AuthorElement(Comment comment, Boolean anonymity) {
+        this.nickname = setNickName(comment, anonymity);
     }
 
     private AuthorElement(Member member) {
@@ -34,8 +34,8 @@ public class AuthorElement {
         this.ssafyInfo = SSAFYInfo.from(member);
     }
 
-    private String setNickName(Comment comment, Boolean anonymous) {
-        if (anonymous)
+    private String setNickName(Comment comment, Boolean anonymity) {
+        if (anonymity)
             return "익명 " + comment.getCommentNumber().getNumber();
         return comment.getMember().getNickname();
     }

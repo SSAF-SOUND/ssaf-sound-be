@@ -15,7 +15,7 @@ public class AuthorElement {
 
     public static AuthorElement from(Post post) {
         Member member = post.getMember();
-        if (post.getAnonymous())
+        if (post.getAnonymity())
             return new AuthorElement("익명");
         return new AuthorElement(member);
     }
