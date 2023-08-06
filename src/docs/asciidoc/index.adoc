@@ -61,4 +61,4 @@ use of HTTP status codes.
 |===
 
 include::board.adoc[]
-
+include::metadata.adoc[]
