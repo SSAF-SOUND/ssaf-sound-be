@@ -1,5 +1,7 @@
 package com.ssafy.ssafsound.utils;
 
+import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
+import com.ssafy.ssafsound.domain.auth.service.token.JwtTokenProvider;
 import com.ssafy.ssafsound.global.config.RestDocsConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +28,9 @@ public class BaseRestDocControllerTest {
     @Autowired
     protected RestDocumentationResultHandler restDocs;
 
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
+
     protected MockMvc mockMvc;
 
     protected Cookie cookie;
@@ -41,4 +46,12 @@ public class BaseRestDocControllerTest {
                 .build();
     }
 
+    public Cookie createAccessCookieFixture() {
+        Cookie cookie = new Cookie("accessToken", jwtTokenProvider.createAccessToken(new AuthenticatedMember(1L, "user")));
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(2629744);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        return cookie;
+    }
 }
