@@ -13,6 +13,7 @@ import java.util.List;
 @Getter
 @Builder
 public class GetCommentElement {
+    private Long commentId;
     private String content;
     private int likeCount;
     private LocalDateTime createdAt;
@@ -30,7 +31,8 @@ public class GetCommentElement {
         Boolean anonymity = comment.getAnonymity();
 
         return GetCommentElement.builder()
-                .content(comment.getDeletedComment() ? "삭제된 댓글입니다." : comment.getContent())
+                .commentId(comment.getId())
+                .content(comment.getDeletedComment() ? "" : comment.getContent())
                 .likeCount(comment.getLikes().size())
                 .createdAt(comment.getCreatedAt())
                 .anonymity(anonymity)
