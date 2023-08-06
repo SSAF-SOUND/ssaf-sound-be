@@ -97,10 +97,11 @@ class LunchServiceTest {
                 .build();
 
         lunchPoll = LunchPoll.builder()
-                .lunch(lunch2)
                 .member(member1)
                 .polledAt(today)
                 .build();
+
+        lunchPoll.setLunch(lunch2);
 
         lenient().when(memberRepository.findById(1L)).thenReturn(Optional.of(member1));
         lenient().when(memberRepository.findById(2L)).thenReturn(Optional.of(member2));
@@ -115,43 +116,47 @@ class LunchServiceTest {
     @ParameterizedTest
     @CsvSource({"1, 서울, 2023-07-10, 0", "2, 서울, 2023-07-10, -1", "null, 서울, 2023-07-10, -1"})
     @DisplayName("멤버아이디, 캠퍼스, 날짜로 점심 메뉴 목록을 조회한다.")
-    void Given_DateAndCampus_When_FindLunches_Then_Succeed(@ConvertWith(NullableConverter.class)Long memberId, String inputCampus, LocalDate inputDate,
-                                                                Long outputPolledAt) {
+    void Given_DateAndCampus_When_FindLunches_Then_Succeed(
+        @ConvertWith(NullableConverter.class) Long memberId, String inputCampus,
+        LocalDate inputDate,
+        Long outputPolledAt) {
 
         // given
         given(clock.instant()).willReturn(Instant.parse(testLocalDateTime));
         given(clock.getZone()).willReturn(ZoneId.of("Asia/Seoul"));
 
         given(metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), inputCampus))
-                .willReturn(new MetaData(Campus.SEOUL));
+            .willReturn(new MetaData(Campus.SEOUL));
 
-        given(lunchRepository.findAllByCampusAndDate(metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), inputCampus), inputDate))
-                .willReturn(Optional.of(Arrays.asList(lunch2, lunch1)));
+        given(lunchRepository.findAllByCampusAndDate(
+            metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), inputCampus), inputDate))
+            .willReturn(Optional.of(Arrays.asList(lunch2, lunch1)));
 
         GetLunchListReqDto getLunchListReqDto = GetLunchListReqDto.builder()
-                .campus(inputCampus)
-                .date(inputDate)
-                .build();
+            .campus(inputCampus)
+            .date(inputDate)
+            .build();
 
         // when
         GetLunchListResDto result = lunchService.findLunches(memberId, getLunchListReqDto);
 
         // then
         assertAll(
-                () -> assertThat(result.getMenus().get(0))
-                        .usingRecursiveComparison()
-                        .isEqualTo(GetLunchListElementResDto.of(lunch2,1L)),
-                () -> assertThat(result.getMenus().get(1))
-                        .usingRecursiveComparison()
-                        .isEqualTo(GetLunchListElementResDto.of(lunch1,0L)),
-                ()-> assertThat(result.getPolledAt()).isEqualTo(outputPolledAt)
+            () -> assertThat(result.getMenus().get(0))
+                .usingRecursiveComparison()
+                .isEqualTo(GetLunchListElementResDto.of(lunch2, 1L)),
+            () -> assertThat(result.getMenus().get(1))
+                .usingRecursiveComparison()
+                .isEqualTo(GetLunchListElementResDto.of(lunch1, 0L)),
+            () -> assertThat(result.getPolledAt()).isEqualTo(outputPolledAt)
         );
 
         verify(clock).instant();
         verify(clock).getZone();
-        verify(metaDataConsumer, times(2)).getMetaData(MetaDataType.CAMPUS.name(), inputCampus);
+        verify(metaDataConsumer, times(2))
+            .getMetaData(MetaDataType.CAMPUS.name(), inputCampus);
         verify(lunchRepository).findAllByCampusAndDate(
-                metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), inputCampus), inputDate);
+            metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), inputCampus), inputDate);
 
     }
 
@@ -174,7 +179,8 @@ class LunchServiceTest {
 
         // when
         // then
-        LunchException exception = assertThrows(LunchException.class, () -> lunchService.findLunches(memberId, getLunchListReqDto));
+        LunchException exception = assertThrows(LunchException.class,
+            () -> lunchService.findLunches(memberId, getLunchListReqDto));
         assertEquals(LunchErrorInfo.INVALID_DATE, exception.getInfo());
 
         verify(clock).instant();
@@ -210,7 +216,8 @@ class LunchServiceTest {
 
         // when
         // then
-        LunchException exception = assertThrows(LunchException.class, () -> lunchService.findLunchDetail(lunchId));
+        LunchException exception = assertThrows(LunchException.class,
+            () -> lunchService.findLunchDetail(lunchId));
         assertEquals(LunchErrorInfo.INVALID_LUNCH_ID, exception.getInfo());
 
         verify(lunchRepository).findById(3L);
