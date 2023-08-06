@@ -14,7 +14,7 @@ public class ChatRoomElementDto {
 
     private Long chatRoomId;
 
-    private Boolean anonymous;
+    private Boolean anonymity;
 
     @JsonProperty("talker")
     private TalkerInfoDto talkerInfoDto;
@@ -29,7 +29,7 @@ public class ChatRoomElementDto {
 
         return ChatRoomElementDto.builder()
                 .chatRoomId(chatRoom.getId())
-                .anonymous(chatRoom.getAnonymity())
+                .anonymity(chatRoom.getAnonymity())
                 .talkerInfoDto(partnerTalkerInfoDto)
                 .latestChatDto(latestChatDto)
                 .readAt(talker.getReadAt())

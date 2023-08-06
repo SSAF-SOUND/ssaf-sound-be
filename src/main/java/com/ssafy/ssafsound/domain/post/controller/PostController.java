@@ -38,18 +38,18 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/like")
-    public EnvelopeResponse<Void> likePost(@PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
-        postService.likePost(postId, loginMember.getMemberId());
+    public EnvelopeResponse<PostPostLikeResDto> likePost(@PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
 
-        return EnvelopeResponse.<Void>builder()
+        return EnvelopeResponse.<PostPostLikeResDto>builder()
+                .data(postService.likePost(postId, loginMember.getMemberId()))
                 .build();
     }
 
     @PostMapping("/{postId}/scrap")
-    public EnvelopeResponse<Void> scrapPost(@PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
-        postService.scrapPost(postId, loginMember.getMemberId());
+    public EnvelopeResponse<PostPostScrapResDto> scrapPost(@PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
 
-        return EnvelopeResponse.<Void>builder()
+        return EnvelopeResponse.<PostPostScrapResDto>builder()
+                .data(postService.scrapPost(postId, loginMember.getMemberId()))
                 .build();
     }
 
@@ -93,7 +93,7 @@ public class PostController {
     }
 
     @GetMapping("/my")
-    public EnvelopeResponse<GetPostMyResDto> findMyPosts(GetPostMyReqDto getPostMyReqDto, @Authentication AuthenticatedMember loginMember) {
+    public EnvelopeResponse<GetPostMyResDto> findMyPosts(@Valid GetPostMyReqDto getPostMyReqDto, @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<GetPostMyResDto>builder()
                 .data(postService.findMyPosts(getPostMyReqDto, loginMember.getMemberId()))
                 .build();

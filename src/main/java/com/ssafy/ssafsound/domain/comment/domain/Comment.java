@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -35,7 +34,7 @@ public class Comment extends BaseTimeEntity {
     private Boolean deletedComment = Boolean.FALSE;
 
     @Column
-    private Boolean anonymous;
+    private Boolean anonymity;
 
     @ManyToOne
     @JoinColumn(name = "comment_number_id")
@@ -60,8 +59,8 @@ public class Comment extends BaseTimeEntity {
         this.commentGroup = commentGroup;
     }
 
-    public void updateComment(String content, Boolean anonymous) {
+    public void updateComment(String content, Boolean anonymity) {
         this.content = content;
-        this.anonymous = anonymous;
+        this.anonymity = anonymity;
     }
 }

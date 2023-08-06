@@ -1,8 +1,7 @@
 package com.ssafy.ssafsound.domain.post.dto;
 
+import com.ssafy.ssafsound.domain.board.domain.Board;
 import com.ssafy.ssafsound.domain.member.domain.Member;
-import com.ssafy.ssafsound.domain.member.domain.MemberRole;
-import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.domain.PostLike;
 import com.ssafy.ssafsound.domain.post.domain.PostScrap;
@@ -16,49 +15,45 @@ import java.util.stream.Collectors;
 @Getter
 @Builder
 public class GetPostDetailElement {
+    private final Long boardId;
+    private final String boardTitle;
+    private final Long postId;
     private final String title;
     private final String content;
     private final int likeCount;
     private final int commentCount;
     private final int scrapCount;
     private final LocalDateTime createdAt;
-    private final String nickname;
-    private final Boolean anonymous;
+    private final Boolean anonymity;
     private final Boolean modified;
     private final Boolean scraped;
     private final Boolean liked;
     private final Boolean mine;
     private final List<ImageUrlElement> images;
-    private final MemberRole memberRole;
-    private final Boolean ssafyMember;
-    private final Boolean isMajor;
-    private final SSAFYInfo ssafyInfo;
 
     public static GetPostDetailElement of(Post post, Member loginMember) {
         Boolean scraped = isScrap(post, loginMember);
         Boolean liked = isLike(post, loginMember);
         Boolean mine = isMine(post, loginMember);
-        Boolean anonymous = post.getAnonymous();
         List<ImageUrlElement> images = findImageUrls(post);
+        Board board = post.getBoard();
 
         return GetPostDetailElement.builder()
+                .boardId(board.getId())
+                .boardTitle(board.getTitle())
+                .postId(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .likeCount(post.getLikes().size())
                 .commentCount(post.getComments().size())
                 .scrapCount(post.getScraps().size())
                 .createdAt(post.getCreatedAt())
-                .nickname(anonymous ? "익명" : post.getMember().getNickname())
-                .anonymous(anonymous)
+                .anonymity(post.getAnonymity())
                 .modified(post.getModifiedAt() != null)
                 .scraped(scraped)
                 .liked(liked)
                 .mine(mine)
                 .images(images)
-                .memberRole(post.getMember().getRole())
-                .ssafyMember(post.getMember().getSsafyMember())
-                .isMajor(post.getMember().getMajor())
-                .ssafyInfo(SSAFYInfo.from(post.getMember()))
                 .build();
     }
 

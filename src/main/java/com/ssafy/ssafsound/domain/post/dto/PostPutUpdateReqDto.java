@@ -19,7 +19,7 @@ public class PostPutUpdateReqDto {
     @Size(min = 2)
     private String content;
 
-    private boolean anonymous;
+    private boolean anonymity;
 
     @CheckImageInfo
     private List<ImageInfo> images;

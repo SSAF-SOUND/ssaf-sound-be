@@ -10,6 +10,7 @@ import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.meta.domain.UploadDirectory;
+import com.ssafy.ssafsound.domain.post.domain.PostImage;
 import com.ssafy.ssafsound.infra.exception.InfraErrorInfo;
 import com.ssafy.ssafsound.infra.exception.InfraException;
 import com.ssafy.ssafsound.infra.storage.dto.PostStoreImageResDto;
@@ -63,17 +64,14 @@ public class AwsS3StorageService {
         }
     }
 
-    public void deleteObject(Long memberId, String imagePath) {
-
-        memberRepository.findById(memberId)
-            .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+    public void deleteObject(PostImage postImage) {
 
         try {
-            amazonS3.deleteObject(bucket, imagePath);
+            amazonS3.deleteObject(bucket, postImage.getImagePath());
         } catch (AmazonServiceException e) {
 
-            log.error("{} : imagePath={} memberId={}",
-                InfraErrorInfo.STORAGE_SERVICE_ERROR.getMessage(), imagePath, memberId);
+            log.error("{} : imagePath={}",
+                    InfraErrorInfo.STORAGE_SERVICE_ERROR.getMessage(), postImage.getImagePath());
             throw new InfraException(InfraErrorInfo.STORAGE_SERVICE_ERROR);
         }
     }
