@@ -9,7 +9,7 @@ import lombok.Getter;
 @Builder
 public class ParticipantElement {
     private Long memberId;
-    private String nickName;
+    private String nickname;
     private Boolean isMajor;
     private SSAFYInfo ssafyInfo;
 }

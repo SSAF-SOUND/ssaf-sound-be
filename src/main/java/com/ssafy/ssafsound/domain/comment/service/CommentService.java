@@ -79,13 +79,12 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public GetCommentResDto findComments(Long postId, AuthenticatedMember loginMember, Pageable pageable) {
+    public GetCommentResDto findComments(Long postId, AuthenticatedMember loginMember) {
           if (!postRepository.existsById(postId)) {
             throw new PostException(PostErrorInfo.NOT_FOUND_POST);
         }
-  
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        List<Comment> comments = commentRepository.findAllPostIdWithDetailsFetchOrderByCommentGroupId(postId, pageRequest);
+          
+        List<Comment> comments = commentRepository.findAllPostIdWithDetailsFetchOrderByCommentGroupId(postId);
         return GetCommentResDto.of(comments, loginMember);
     }
     @Transactional

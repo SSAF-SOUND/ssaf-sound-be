@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface RecruitScrapRepository extends JpaRepository<RecruitScrap, Long> {
     Optional<RecruitScrap> findByRecruitIdAndMemberId(Long recruitId, Long memberId);
+
+    Long countByRecruitId(Long recruitId);
 }

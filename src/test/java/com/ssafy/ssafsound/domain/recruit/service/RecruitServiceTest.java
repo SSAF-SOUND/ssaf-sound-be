@@ -24,11 +24,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
+
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.verify;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -132,6 +135,7 @@ class RecruitServiceTest {
 
     private final PostRecruitReqDto postRecruitReqDto = new PostRecruitReqDto(
             Category.STUDY.name(), LocalDate.now(),  "스터디/프로젝트 모집 제목", "컨텐츠",
+            "contact/uri",
             RecruitType.DESIGN.getName(), Arrays.stream(Skill.values()).map(Skill::getName).collect(Collectors.toList()),
             Collections.singletonList("프로젝트/스터디 등록자가 참여자에게 묻고 싶은 자유 질문"),
             Arrays.stream(RecruitType.values()).map(recruitType-> new RecruitLimitElement(recruitType.getName(), 2)).collect(Collectors.toList()));
@@ -159,43 +163,43 @@ class RecruitServiceTest {
         savedRecruit.setRecruitSkill(skills);
 
         // Repository Mocking
-        Mockito.lenient().when(memberRepository.findById(1L)).thenReturn(java.util.Optional.ofNullable(member));
-        Mockito.lenient().when(memberRepository.findById(2L)).thenThrow(new RuntimeException());
+        lenient().when(memberRepository.findById(1L)).thenReturn(java.util.Optional.ofNullable(member));
+        lenient().when(memberRepository.findById(2L)).thenThrow(new RuntimeException());
 
-        Mockito.lenient().when(recruitScrapRepository.findByRecruitIdAndMemberId(1L, 1L)).thenReturn(java.util.Optional.ofNullable(recruitScrap));
-        Mockito.lenient().when(recruitRepository.findByIdUsingFetchJoinRegisterAndRecruitLimitation(2L))
+        lenient().when(recruitScrapRepository.findByRecruitIdAndMemberId(1L, 1L)).thenReturn(java.util.Optional.ofNullable(recruitScrap));
+        lenient().when(recruitRepository.findByIdUsingFetchJoinRegisterAndRecruitLimitation(2L))
                 .thenReturn(java.util.Optional.ofNullable(savedRecruit));
-        Mockito.lenient().when(recruitRepository.findByIdUsingFetchJoinRegister(2L))
+        lenient().when(recruitRepository.findByIdUsingFetchJoinRegister(2L))
                 .thenReturn(java.util.Optional.ofNullable(savedRecruit));
-        Mockito.lenient().when(recruitRepository.findById(2L)).thenReturn(java.util.Optional.ofNullable(savedRecruit));
+        lenient().when(recruitRepository.findById(2L)).thenReturn(java.util.Optional.ofNullable(savedRecruit));
 
-        Mockito.lenient().when(recruitRepository
+        lenient().when(recruitRepository
                 .findRecruitByGetRecruitsReqDto(emptyKeywordDto, pageInfo))
                 .thenReturn(new SliceImpl<>(List.of(savedRecruit)));
 
-        Mockito.lenient().when(recruitRepository.findRecruitByGetRecruitsReqDto(findTitleDto, pageInfo))
+        lenient().when(recruitRepository.findRecruitByGetRecruitsReqDto(findTitleDto, pageInfo))
                 .thenReturn(new SliceImpl<>(List.of(savedRecruit)));
 
-        Mockito.lenient().when(recruitRepository.findRecruitByGetRecruitsReqDto(notFindKeywordDto, pageInfo))
+        lenient().when(recruitRepository.findRecruitByGetRecruitsReqDto(notFindKeywordDto, pageInfo))
                 .thenReturn(new SliceImpl<>(List.of()));
 
 
-        Mockito.lenient().when(recruitApplicationRepository.findDoneRecruitApplicationByRecruitIdInFetchRecruitAndMember(List.of(2L)))
+        lenient().when(recruitApplicationRepository.findDoneRecruitApplicationByRecruitIdInFetchRecruitAndMember(List.of(2L)))
                 .thenReturn(List.of(recruitApplication));
-        Mockito.lenient().when(recruitApplicationRepository.findByRecruitIdAndMatchStatus(2L, MatchStatus.DONE))
+        lenient().when(recruitApplicationRepository.findByRecruitIdAndMatchStatus(2L, MatchStatus.DONE))
                 .thenReturn(List.of(recruitApplication));
 
 
         // MetaData Consumer Mocking
-        Arrays.stream(RecruitType.values()).forEach(recruitType -> Mockito.lenient()
+        Arrays.stream(RecruitType.values()).forEach(recruitType ->lenient()
                 .when(metaDataConsumer.getMetaData(MetaDataType.RECRUIT_TYPE.name(), recruitType.getName()))
                 .thenReturn(new MetaData(recruitType)));
 
-        Arrays.stream(Skill.values()).forEach(skill -> Mockito.lenient()
+        Arrays.stream(Skill.values()).forEach(skill -> lenient()
                 .when(metaDataConsumer.getMetaData(MetaDataType.SKILL.name(), skill.getName()))
                 .thenReturn(new MetaData(skill)));
 
-        Arrays.stream(MajorTrack.values()).forEach(majorTrack -> Mockito.lenient()
+        Arrays.stream(MajorTrack.values()).forEach(majorTrack -> lenient()
                 .when(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TRACK.name(), majorTrack.getName()))
                 .thenReturn(new MetaData(majorTrack)));
     }
@@ -251,14 +255,15 @@ class RecruitServiceTest {
     void Given_MemberIdAndRecruitId_When_TryToggleRecruitScrap_Then_InsertRecruitScrap() {
         Long recruitId = 2L, memberId = 1L;
         recruitService.toggleRecruitScrap(recruitId, memberId);
-        assertFalse(recruitService.toggleRecruitScrap(recruitId, memberId));
+        verify(recruitScrapRepository).findByRecruitIdAndMemberId(2L, 1L);
+        verify(recruitScrapRepository).countByRecruitId(2L);
     }
 
     @DisplayName("사용자 리크루팅 스크랩 취소(토글)")
     @Test
     void Given_MemberIdAndRecruitId_When_TryToggleRecruitScrap_Then_DeleteRecruitScrap() {
         Long recruitId = 1L, memberId = 1L;
-        assertTrue(recruitService.toggleRecruitScrap(recruitId, memberId));
+        recruitService.toggleRecruitScrap(recruitId, memberId);
     }
 
     @DisplayName("등록자의 리크루트 타입이 인원제한에 포함되지 않은 리크루트 상세 조회")
@@ -332,7 +337,7 @@ class RecruitServiceTest {
         List<String> skills = Arrays.stream(Skill.values()).map(Skill::getName).collect(Collectors.toList());
 
         PatchRecruitReqDto patchRecruitReqDto = new PatchRecruitReqDto("PROJECT", RecruitType.BACK_END.getName(),
-                LocalDate.now(), "제목 수정", "컨텐츠 수정", skills, limits);
+                LocalDate.now(), "제목 수정", "컨텐츠 수정", "open.kakao.uri", skills, limits);
 
         recruitService.updateRecruit(2L, 1L, patchRecruitReqDto);
 
@@ -354,7 +359,7 @@ class RecruitServiceTest {
         List<String> skills = Arrays.stream(Skill.values()).map(Skill::getName).collect(Collectors.toList());
 
         PatchRecruitReqDto patchRecruitReqDto = new PatchRecruitReqDto("PROJECT", RecruitType.BACK_END.getName(),
-                LocalDate.now(), "제목 수정", "컨텐츠 수정", skills, limits);
+                LocalDate.now(), "제목 수정", "컨텐츠 수정","open.kakao.uri", skills, limits);
 
         RecruitException recruitException = assertThrows(RecruitException.class, () -> recruitService.updateRecruit(2L, 1L, patchRecruitReqDto));
         assertEquals(recruitException.getInfo(), RecruitErrorInfo.NOT_BELOW_PREV_LIMITATIONS);
@@ -399,7 +404,7 @@ class RecruitServiceTest {
     void Given_RecruitId_When_ExpiredRecruit_Then_Success() {
         recruitService.expiredRecruit(2L, 1L);
         assertEquals(true, savedRecruit.getFinishedRecruit());
-        Mockito.verify(recruitRepository).findByIdUsingFetchJoinRegister(2L);
+        verify(recruitRepository).findByIdUsingFetchJoinRegister(2L);
     }
 
     @DisplayName("등록자가 아닌 사용자의 리크루트 완료 요쳥")

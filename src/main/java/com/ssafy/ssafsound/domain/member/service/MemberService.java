@@ -81,8 +81,10 @@ public class MemberService {
     }
 
     @Transactional
-    public PostCertificationInfoResDto certifySSAFYInformation(AuthenticatedMember authenticatedMember, PostCertificationInfoReqDto postCertificationInfoReqDto) {
-        Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+    public PostCertificationInfoResDto certifySSAFYInformation(
+            Long memberId,
+            PostCertificationInfoReqDto postCertificationInfoReqDto) {
+        Member member = getMemberByMemberIdOrThrowException(memberId);
 
         long minutes = getMinutesByDifferenceCertificationTryTime(member.getCertificationTryTime());
         if(minutes > memberConstantProvider.getMAX_MINUTES()) {
@@ -103,11 +105,13 @@ public class MemberService {
     }
 
     @Transactional
-    public void registerMemberPortfolio(AuthenticatedMember authenticatedMember, PutMemberProfileReqDto putMemberProfileReqDto) {
-        Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
-        setMemberPortfolioIntroduceByMember(member, putMemberProfileReqDto);
-        deleteExistMemberLinksAllByMemberAndSaveNewRequest(member, putMemberProfileReqDto.getMemberLinks());
-        deleteExistMemberSkillsAllByMemberAndSaveNewRequest(member, putMemberProfileReqDto.getSkills());
+    public void registerMemberPortfolio(
+            Long memberId,
+            PutMemberPortfolioReqDto putMemberPortfolioReqDto) {
+        Member member = getMemberByMemberIdOrThrowException(memberId);
+        setMemberPortfolioIntroduceByMember(member, putMemberPortfolioReqDto);
+        deleteExistMemberLinksAllByMemberAndSaveNewRequest(member, putMemberPortfolioReqDto.getMemberLinks());
+        deleteExistMemberSkillsAllByMemberAndSaveNewRequest(member, putMemberPortfolioReqDto.getSkills());
     }
 
     /**
@@ -115,20 +119,56 @@ public class MemberService {
      * @author : YongsHub
      * @param : PatchMemberDefaultInfoReqDto : ssafyMember가 true라면 기수정보와 캠퍼스 정보가 필수임
      * @param : PatchMemberDefaultInfoReqDto :ssafyMember가 false라면 기수정보와 캠퍼스 정보가 필요하지 않음
-     * @return : void
-     * @see : CargoShip#getRemainingCapacity()용량 확인하는 함수
      * @throws : ssafyMember가 true인데 semester가 null일 경우 SEMESTER_NOT_FOUND Exception,
      * @throws : memberId를 찾을 수 없을때 MEMBER_NOT_FOUND_BY_ID Exception
-     * @see : CargoShip#unload() 제품을 내리는 함수
      */
     @Transactional
     public void patchMemberDefaultInfo(
             Long memberId,
             PatchMemberDefaultInfoReqDto patchMemberDefaultInfoReqDto) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+        Member member = getMemberByMemberIdOrThrowException(memberId);
 
         member.exchangeDefaultInformation(patchMemberDefaultInfoReqDto, metaDataConsumer);
+    }
+
+    @Transactional
+    public void patchMemberPublicProfile(
+            Long memberId,
+            PatchMemberPublicProfileReqDto patchMemberPublicProfileReqDto) {
+        Member member = getMemberByMemberIdOrThrowException(memberId);
+
+        member.exchangeProfilePublic(patchMemberPublicProfileReqDto.getIsPublic());
+    }
+
+    @Transactional
+    public void changeMemberNickname(
+            Long memberId,
+            PatchMemberNicknameReqDto patchMemberNicknameReqDto) {
+        boolean isExistNickname = memberRepository.existsByNickname(patchMemberNicknameReqDto.getNickname());
+        Member member = getMemberByMemberIdOrThrowException(memberId);
+
+        if (isExistNickname) {
+            throw new MemberException(MemberErrorInfo.MEMBER_NICKNAME_DUPLICATION);
+        }
+        member.changeNickname(patchMemberNicknameReqDto.getNickname());
+    }
+
+    @Transactional(readOnly = true)
+    public GetMemberPortfolioResDto getMyPortfolio(Long memberId) {
+        Member member = memberRepository.findWithMemberLinksAndMemberSkills(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+        MemberProfile memberProfile = memberProfileRepository.findMemberProfileByMember(member).orElseGet(MemberProfile::new);
+
+        return GetMemberPortfolioResDto.ofMyPortfolio(member, memberProfile);
+    }
+
+    @Transactional(readOnly = true)
+    public GetMemberPublicProfileResDto getMemberPublicProfileByMemberId(Long memberId) {
+        Member member = getMemberByMemberIdOrThrowException(memberId);
+
+        return GetMemberPublicProfileResDto.builder()
+                .isPublic(member.getPublicProfile())
+                .build();
     }
 
     @Transactional(readOnly = true)
@@ -137,9 +177,8 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public GetMemberResDto getMemberInformation(AuthenticatedMember authenticatedMember) {
-        Member member = memberRepository.findById(authenticatedMember.getMemberId())
-                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+    public GetMemberResDto getMemberInformation(Long memberId) {
+        Member member = getMemberByMemberIdOrThrowException(memberId);
 
         if (isNotInputMemberInformation(member)) {
             return GetMemberResDto.fromGeneralUser(member);
@@ -171,9 +210,9 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public GetMemberProfileResDto getMemberProfileById(Long memberId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
-        return GetMemberProfileResDto.from(member);
+    public GetMemberDefaultInfoResDto getMemberDefaultInfoByMemberId(Long memberId) {
+        Member member = getMemberByMemberIdOrThrowException(memberId);
+        return GetMemberDefaultInfoResDto.from(member);
     }
 
     public void deleteExistMemberLinksAllByMemberAndSaveNewRequest(Member member, List<PutMemberLink> memberLinks) {
@@ -186,11 +225,11 @@ public class MemberService {
         member.setMemberSkills(memberSkills, metaDataConsumer);
     }
 
-    public void setMemberPortfolioIntroduceByMember(Member member, PutMemberProfileReqDto putMemberProfileReqDto) {
-        if (putMemberProfileReqDto.getSelfIntroduction() != null) {
+    public void setMemberPortfolioIntroduceByMember(Member member, PutMemberPortfolioReqDto putMemberPortfolioReqDto) {
+        if (putMemberPortfolioReqDto.getSelfIntroduction() != null) {
             memberProfileRepository.findMemberProfileByMember(member).ifPresentOrElse(
-                    memberProfile -> memberProfile.changeSelfIntroduction(putMemberProfileReqDto.getSelfIntroduction()),
-                    () -> memberProfileRepository.save(putMemberProfileReqDto.toMemberProfile(member))
+                    memberProfile -> memberProfile.changeSelfIntroduction(putMemberPortfolioReqDto.getSelfIntroduction()),
+                    () -> memberProfileRepository.save(putMemberPortfolioReqDto.toMemberProfile(member))
             );
         }
     }
@@ -222,5 +261,10 @@ public class MemberService {
 
     private boolean isSSAFYMemberInformation(Member member) {
         return member.getSsafyMember() && member.getNickname() != null && member.getMajor() != null;
+    }
+
+    private Member getMemberByMemberIdOrThrowException(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
     }
 }

@@ -20,7 +20,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @SQLDelete(sql = "UPDATE comment SET deleted_comment = true WHERE comment_id = ?")
-@Where(clause = "deleted_comment = false")
 public class Comment extends BaseTimeEntity {
 
     @Id

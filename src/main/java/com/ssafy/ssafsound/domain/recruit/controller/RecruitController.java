@@ -25,9 +25,10 @@ public class RecruitController {
     }
 
     @PostMapping("/{recruitId}/scrap")
-    public EnvelopeResponse<Void> toggleRecruitScrap(@PathVariable Long recruitId, @Authentication AuthenticatedMember memberInfo) {
-        recruitService.toggleRecruitScrap(recruitId, memberInfo.getMemberId());
-        return EnvelopeResponse.<Void>builder().build();
+    public EnvelopeResponse<PostRecruitScrapCountResDto> toggleRecruitScrap(@PathVariable Long recruitId, @Authentication AuthenticatedMember memberInfo) {
+        return EnvelopeResponse.<PostRecruitScrapCountResDto>builder()
+                .data(recruitService.toggleRecruitScrap(recruitId, memberInfo.getMemberId()))
+                .build();
     }
 
     @PostMapping("/{recruitId}/expired")

@@ -11,7 +11,6 @@ import com.ssafy.ssafsound.domain.post.service.PostService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,9 +24,9 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping
-    public EnvelopeResponse<GetPostResDto> findPosts(@RequestParam Long boardId, Pageable pageable) {
+    public EnvelopeResponse<GetPostResDto> findPosts(@Valid GetPostReqDto getPostReqDto) {
         return EnvelopeResponse.<GetPostResDto>builder()
-                .data(postService.findPosts(boardId, pageable))
+                .data(postService.findPosts(getPostReqDto))
                 .build();
     }
 
@@ -59,7 +58,7 @@ public class PostController {
                                              @Valid @RequestBody PostPostReportReqDto postPostReportReqDto,
                                              @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<Long>builder()
-                .data(postService.reportPost(postId, loginMember.getMemberId(), postPostReportReqDto.getContent()))
+                .data(postService.reportPost(postId, loginMember.getMemberId(), postPostReportReqDto))
                 .build();
     }
 
@@ -87,30 +86,30 @@ public class PostController {
     }
 
     @GetMapping("/hot")
-    public EnvelopeResponse<GetPostHotResDto> findHotPosts(Pageable pageable) {
+    public EnvelopeResponse<GetPostHotResDto> findHotPosts(@Valid GetPostHotReqDto getPostHotReqDto) {
         return EnvelopeResponse.<GetPostHotResDto>builder()
-                .data(postService.findHotPosts(pageable))
+                .data(postService.findHotPosts(getPostHotReqDto))
                 .build();
     }
 
     @GetMapping("/my")
-    public EnvelopeResponse<GetPostMyResDto> findMyPosts(Pageable pageable, @Authentication AuthenticatedMember loginMember) {
+    public EnvelopeResponse<GetPostMyResDto> findMyPosts(GetPostMyReqDto getPostMyReqDto, @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<GetPostMyResDto>builder()
-                .data(postService.findMyPosts(pageable, loginMember.getMemberId()))
+                .data(postService.findMyPosts(getPostMyReqDto, loginMember.getMemberId()))
                 .build();
     }
 
     @GetMapping("/search")
-    public EnvelopeResponse<GetPostResDto> searchPosts(@Valid GetPostSearchReqDto getPostSearchReqDto, Pageable pageable) {
+    public EnvelopeResponse<GetPostResDto> searchPosts(@Valid GetPostSearchReqDto getPostSearchReqDto) {
         return EnvelopeResponse.<GetPostResDto>builder()
-                .data(postService.searchPosts(getPostSearchReqDto.getBoardId(), getPostSearchReqDto.getKeyword(), pageable))
+                .data(postService.searchPosts(getPostSearchReqDto))
                 .build();
     }
 
     @GetMapping("/hot/search")
-    public EnvelopeResponse<GetPostHotResDto> searchHotPosts(@Valid GetPostHotSearchReqDto getPostHotSearchReqDto, Pageable pageable) {
+    public EnvelopeResponse<GetPostHotResDto> searchHotPosts(@Valid GetPostHotSearchReqDto getPostHotSearchReqDto) {
         return EnvelopeResponse.<GetPostHotResDto>builder()
-                .data(postService.searchHotPosts(getPostHotSearchReqDto.getKeyword(), pageable))
+                .data(postService.searchHotPosts(getPostHotSearchReqDto))
                 .build();
     }
 }

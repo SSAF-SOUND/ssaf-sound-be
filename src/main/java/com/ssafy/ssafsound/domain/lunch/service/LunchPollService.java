@@ -65,9 +65,10 @@ public class LunchPollService {
             // 4-2. 오늘 첫 투표인 경우
             lunchPoll = LunchPoll.builder()
                     .member(member)
-                    .lunch(lunch)
                     .polledAt(currentTime)
                     .build();
+
+            lunchPoll.setLunch(lunch);
 
             lunchPollRepository.save(lunchPoll);
         }

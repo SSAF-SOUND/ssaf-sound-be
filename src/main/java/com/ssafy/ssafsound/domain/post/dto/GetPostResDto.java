@@ -11,10 +11,21 @@ import java.util.stream.Collectors;
 @Builder
 public class GetPostResDto {
     private List<GetPostElement> posts;
+    private Long cursor;
 
-    public static GetPostResDto from(List<Post> posts) {
+    public static GetPostResDto of(List<Post> posts, int size) {
+        Long nextCursor = null;
+        int pageSize = posts.size() - 1;
+        if (pageSize >= size) {
+            posts = posts.subList(0, pageSize);
+            nextCursor = posts.get(pageSize).getId();
+        }
+
         return GetPostResDto.builder()
-                .posts(posts.stream().map(GetPostElement::from).collect(Collectors.toList()))
+                .posts(posts.stream()
+                        .map(GetPostElement::from)
+                        .collect(Collectors.toList()))
+                .cursor(nextCursor)
                 .build();
 
     }

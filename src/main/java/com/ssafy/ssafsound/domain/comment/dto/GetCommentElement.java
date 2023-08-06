@@ -3,16 +3,19 @@ package com.ssafy.ssafsound.domain.comment.dto;
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.comment.domain.Comment;
 import com.ssafy.ssafsound.domain.comment.domain.CommentLike;
+import com.ssafy.ssafsound.domain.member.domain.MemberRole;
+import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Builder
 public class GetCommentElement {
     private String content;
-    private Boolean parent;
     private int likeCount;
     private LocalDateTime createdAt;
     private String nickname;
@@ -20,13 +23,18 @@ public class GetCommentElement {
     private Boolean modified;
     private Boolean liked;
     private Boolean mine;
+    private Boolean deletedComment;
+    private List<GetCommentElement> replies;
+    private final MemberRole memberRole;
+    private final Boolean ssafyMember;
+    private final Boolean isMajor;
+    private final SSAFYInfo ssafyInfo;
 
     public static GetCommentElement of(Comment comment, AuthenticatedMember loginMember) {
         Boolean anonymous = comment.getAnonymous();
 
         return GetCommentElement.builder()
-                .content(comment.getContent())
-                .parent(comment.getId().equals(comment.getCommentGroup().getId()))
+                .content(comment.getDeletedComment() ? "삭제된 댓글입니다." : comment.getContent())
                 .likeCount(comment.getLikes().size())
                 .createdAt(comment.getCreatedAt())
                 .nickname(setNickName(comment, anonymous))
@@ -34,6 +42,12 @@ public class GetCommentElement {
                 .modified(comment.getModifiedAt() != null)
                 .liked(isLiked(comment, loginMember))
                 .mine(isMine(comment, loginMember))
+                .deletedComment(comment.getDeletedComment())
+                .replies(new ArrayList<>())
+                .memberRole(comment.getMember().getRole())
+                .ssafyMember(comment.getMember().getSsafyMember())
+                .isMajor(comment.getMember().getMajor())
+                .ssafyInfo(SSAFYInfo.from(comment.getMember()))
                 .build();
     }
 
@@ -60,5 +74,9 @@ public class GetCommentElement {
             return false;
 
         return comment.getMember().getId().equals(loginMember.getMemberId());
+    }
+
+    public void addReply(GetCommentElement reply) {
+        this.replies.add(reply);
     }
 }

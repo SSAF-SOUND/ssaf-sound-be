@@ -1,6 +1,6 @@
-package com.ssafy.ssafsound.domain.recruit.domain;
+package com.ssafy.ssafsound.domain.recruit.dto;
 
-import com.ssafy.ssafsound.domain.recruit.dto.*;
+import com.ssafy.ssafsound.domain.recruit.domain.RecruitLimitation;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

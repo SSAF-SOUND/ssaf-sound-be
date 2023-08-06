@@ -12,7 +12,7 @@ public class PostRecruitCommentResDto {
     private Long recruitCommentId;
     private String content;
     private Long memberId;
-    private String nickName;
+    private String nickname;
     private Long commentGroup;
 
     public static PostRecruitCommentResDto from(RecruitComment recruitComment) {

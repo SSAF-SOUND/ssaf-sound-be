@@ -90,10 +90,11 @@ class LunchPollServiceTest {
                 .build();
 
         lunchPoll = LunchPoll.builder()
-                .lunch(lunch2)
                 .member(member1)
                 .polledAt(today)
                 .build();
+
+        lunchPoll.setLunch(lunch2);
 
         // Clock mocking
         given(clock.instant()).willReturn(Instant.parse(testLocalDateTime));

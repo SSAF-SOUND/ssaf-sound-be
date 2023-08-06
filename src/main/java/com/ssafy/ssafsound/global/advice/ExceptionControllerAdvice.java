@@ -111,7 +111,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(InfraException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse InfraExceptionHandler(InfraException e) {
-        log.error(e.getMessage());
+        log.error(e.getInfo().getMessage());
 
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
