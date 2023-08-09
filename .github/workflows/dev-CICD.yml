@@ -77,7 +77,6 @@ jobs:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
         with:
-          gradle-version: 6.9
           arguments: clean build -x test
 
       # (6) 전송할 파일 디렉토리 생성

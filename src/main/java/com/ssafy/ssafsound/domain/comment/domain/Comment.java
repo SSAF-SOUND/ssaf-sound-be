@@ -53,6 +53,7 @@ public class Comment extends BaseTimeEntity {
     private Member member;
 
     @OneToMany(mappedBy = "comment")
+    @Builder.Default
     private List<CommentLike> likes = new ArrayList<>();
 
     public void setCommentGroup(Comment commentGroup) {
