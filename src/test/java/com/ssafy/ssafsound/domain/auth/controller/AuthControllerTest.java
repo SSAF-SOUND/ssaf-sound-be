@@ -2,7 +2,6 @@ package com.ssafy.ssafsound.domain.auth.controller;
 
 import com.ssafy.ssafsound.domain.auth.service.AuthService;
 import com.ssafy.ssafsound.domain.auth.service.CookieProvider;
-import com.ssafy.ssafsound.domain.auth.service.token.JwtTokenProvider;
 import com.ssafy.ssafsound.domain.member.service.MemberService;
 import com.ssafy.ssafsound.global.docs.RestDocsTest;
 import org.junit.jupiter.api.DisplayName;
@@ -27,8 +26,7 @@ class AuthControllerTest extends RestDocsTest {
     MemberService memberService;
     @MockBean
     CookieProvider cookieProvider;
-    @MockBean
-    JwtTokenProvider jwtTokenProvider;
+
     @MockBean
     AuthService authService;
 

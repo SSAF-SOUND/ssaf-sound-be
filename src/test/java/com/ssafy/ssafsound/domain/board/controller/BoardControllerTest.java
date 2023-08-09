@@ -1,6 +1,5 @@
 package com.ssafy.ssafsound.domain.board.controller;
 
-import com.ssafy.ssafsound.domain.auth.service.token.JwtTokenProvider;
 import com.ssafy.ssafsound.domain.board.domain.Board;
 import com.ssafy.ssafsound.domain.board.dto.GetBoardResDto;
 import com.ssafy.ssafsound.domain.board.service.BoardService;
@@ -23,8 +22,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(BoardController.class)
 class BoardControllerTest extends RestDocsTest {
-    @MockBean
-    JwtTokenProvider jwtTokenProvider;
 
     @MockBean
     private BoardService boardService;

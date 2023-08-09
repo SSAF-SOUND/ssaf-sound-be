@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.global.docs;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.ssafsound.domain.auth.service.token.JwtTokenProvider;
 import com.ssafy.ssafsound.global.config.JpaConfig;
 import com.ssafy.ssafsound.global.config.WebMvcConfig;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
@@ -38,6 +40,9 @@ public class RestDocsTest {
 
     @Autowired
     protected RestDocumentationResultHandler restDocs;
+
+    @MockBean
+    JwtTokenProvider jwtTokenProvider;
 
     protected MockMvc mockMvc;
 
