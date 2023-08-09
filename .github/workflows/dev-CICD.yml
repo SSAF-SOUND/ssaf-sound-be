@@ -10,7 +10,7 @@ on:
 
 # 리전, 버킷 이름, CodeDeploy 앱 이름, CodeDeploy 배포 그룹 이름
 env:
-  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_REGION: ${{ secrets.SSAFSOUND_AWS_REGION }}
   S3_BUCKET_NAME: ssaf-sound-deploy-s3-bucket
   CODE_DEPLOY_APPLICATION_NAME:	ssaf-sound-codedeploy-app
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: ssaf-sound-deployment-group
@@ -96,7 +96,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ${{ secrets.SSAFSOUND_AWS_REGION }}
 
       # (9) 빌드 결과물을 카피 방식으로 S3 버킷에 업로드
       - name: Upload to AWS S3
