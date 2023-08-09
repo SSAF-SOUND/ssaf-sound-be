@@ -14,6 +14,9 @@ sourceCompatibility = '11'
 
 ext {
     set('snippetsDir', file('build/generated-snippets'))
+
+    // QueryDsl Version
+    queryDslVersion = "5.0.0"
 }
 
 jacoco {
@@ -97,13 +100,6 @@ configurations {
 
 repositories {
     mavenCentral()
-}
-
-ext {
-    set('snippetsDir', file("build/generated-snippets"))
-
-    // QueryDsl Version
-    queryDslVersion = "5.0.0"
 }
 
 dependencies {
