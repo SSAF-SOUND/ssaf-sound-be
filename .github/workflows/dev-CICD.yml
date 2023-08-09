@@ -10,7 +10,7 @@ on:
 
 # 리전, 버킷 이름, CodeDeploy 앱 이름, CodeDeploy 배포 그룹 이름
 env:
-  AWS_REGION: ${{ secrets.SSAFSOUND_AWS_REGION }}
+  SSAFSOUND_AWS_REGION: ${{ secrets.SSAFSOUND_AWS_REGION }}
   S3_BUCKET_NAME: ssaf-sound-deploy-s3-bucket
   CODE_DEPLOY_APPLICATION_NAME:	ssaf-sound-codedeploy-app
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: ssaf-sound-deployment-group
@@ -100,7 +100,7 @@ jobs:
 
       # (9) 빌드 결과물을 카피 방식으로 S3 버킷에 업로드
       - name: Upload to AWS S3
-        run: aws s3 cp --region $AWS_REGION SSAF-SOUND-APP.zip s3://$S3_BUCKET_NAME/SSAF-SOUND-APP.zip
+        run: aws s3 cp --region $SSAFSOUND_AWS_REGION SSAF-SOUND-APP.zip s3://$S3_BUCKET_NAME/SSAF-SOUND-APP.zip
 
       # (10) S3 버킷에 있는 파일을 대상으로 CodeDeploy 실행
       - name: Deploy to AWS EC2 from S3
