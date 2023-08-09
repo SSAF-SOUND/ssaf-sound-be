@@ -143,8 +143,16 @@ dependencies {
 
 }
 
+task prepareDirs {
+    mustRunAfter clean
+    doLast {
+        mkdir "$buildDir/generated-snippets"
+    }
+}
+
 asciidoctor {
     dependsOn test
+    dependsOn prepareDirs
     configurations 'asciidoctorExtensions'
     inputs.dir snippetsDir
 
