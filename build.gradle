@@ -14,6 +14,9 @@ sourceCompatibility = '11'
 
 ext {
     set('snippetsDir', file('build/generated-snippets'))
+
+    // QueryDsl Version
+    queryDslVersion = "5.0.0"
 }
 
 jacoco {
@@ -99,13 +102,6 @@ repositories {
     mavenCentral()
 }
 
-ext {
-    set('snippetsDir', file("build/generated-snippets"))
-
-    // QueryDsl Version
-    queryDslVersion = "5.0.0"
-}
-
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
@@ -147,8 +143,16 @@ dependencies {
 
 }
 
+task prepareDirs {
+    mustRunAfter clean
+    doLast {
+        mkdir "$buildDir/generated-snippets"
+    }
+}
+
 asciidoctor {
     dependsOn test
+    dependsOn prepareDirs
     configurations 'asciidoctorExtensions'
     inputs.dir snippetsDir
 

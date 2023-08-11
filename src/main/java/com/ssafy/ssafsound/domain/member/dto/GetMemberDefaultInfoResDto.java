@@ -14,6 +14,7 @@ public class GetMemberDefaultInfoResDto {
 
     private String nickname;
 
+    @Builder.Default
     private Boolean ssafyMember = false;
 
     private Boolean isMajor;

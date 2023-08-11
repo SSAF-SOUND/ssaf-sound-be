@@ -1,0 +1,68 @@
+name: dev CI to AWS EC2
+
+on:
+  pull_request:
+    branches:
+      - dev
+
+env:
+  APPLICATION_DIR: src/main/resources
+  APPLICATION_OAUTH: ${{ secrets.APPLICATION_OAUTH }}
+  APPLICATION_OAUTH_FILENAME: application-oauth.yml
+  APPLICATION_CLOUD: ${{ secrets.APPLICATION_CLOUD }}
+  APPLICATION_CLOUD_FILENAME: application-cloud.yml
+  APPLICATION_SECURITY: ${{ secrets.APPLICATION_SECURITY }}
+  APPLICATION_SECURITY_FILENAME: application-security.yml
+  APPLICATION_SCRAPER: ${{secrets.APPLICATION_SCRAPER}}
+  APPLICATION_SCRAPER_FILENAME: application-scraper.yml
+  APPLICATION_BIZ: ${{secrets.APPLICATION_BIZ}}
+  APPLICATION_BIZ_FILENAME: application-biz.yml
+  DATA_SQL: ${{secrets.DATA_SQL}}
+  DATA_SQL_FILENAME: data.sql
+
+jobs:
+  build:
+    name: CI
+    runs-on: ubuntu-latest
+    steps:
+      # (0) 시간 출력
+      - name: Get Current Time
+        uses: 1466587594/get-current-time@v2
+        id: current-time
+        with:
+          format: YYYY-MM-DDTHH:mm:ss
+          timezone: 'Asia/Seoul'
+
+      - name: Print Current Time
+        run: echo "Current Time=${{steps.current-time.outputs.formattedTime}}" # current-time 에서 지정한 포맷대로 현재 시간 출력
+        shell: bash
+
+      # (1) 기본 체크아웃
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # (2) JDK 11 세팅
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: 11
+          distribution: 'temurin'
+
+      # (3) 환경변수 파일 생성
+      - name: Copy properties
+        run: echo $APPLICATION_OAUTH | base64 --decode > $APPLICATION_DIR/$APPLICATION_OAUTH_FILENAME &&
+          echo $APPLICATION_CLOUD | base64 --decode > $APPLICATION_DIR/$APPLICATION_CLOUD_FILENAME &&
+          echo $APPLICATION_SECURITY | base64 --decode > $APPLICATION_DIR/$APPLICATION_SECURITY_FILENAME &&
+          echo $APPLICATION_SCRAPER | base64 --decode > $APPLICATION_DIR/$APPLICATION_SCRAPER_FILENAME &&
+          echo $APPLICATION_BIZ | base64 --decode > $APPLICATION_DIR/$APPLICATION_BIZ_FILENAME &&
+          echo $DATA_SQL | base64 --decode > $APPLICATION_DIR/$DATA_SQL_FILENAME
+
+      # (4) gradlew 권한 설정
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # (5) Gradle build (Test 포함)
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
+        with:
+          arguments: clean build
