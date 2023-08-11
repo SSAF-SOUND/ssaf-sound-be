@@ -25,9 +25,6 @@ jobs:
     name: CI
     runs-on: ubuntu-latest
     steps:
-      # secrets 임포트
-      - name: Get Secrets
-
       # (0) 시간 출력
       - name: Get Current Time
         uses: 1466587594/get-current-time@v2
