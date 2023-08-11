@@ -1,7 +1,7 @@
 name: dev CICD to AWS EC2
 
 on:
-  pull_request:
+  push:
     branches:
       - dev
 
