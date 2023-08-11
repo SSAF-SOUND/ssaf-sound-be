@@ -1,9 +1,24 @@
 name: dev CI to AWS EC2
 
 on:
-  pull_request:
+  push:
     branches:
       - dev
+
+env:
+  APPLICATION_DIR: src/main/resources
+  APPLICATION_OAUTH: ${{ secrets.APPLICATION_OAUTH }}
+  APPLICATION_OAUTH_FILENAME: application-oauth.yml
+  APPLICATION_CLOUD: ${{ secrets.APPLICATION_CLOUD }}
+  APPLICATION_CLOUD_FILENAME: application-cloud.yml
+  APPLICATION_SECURITY: ${{ secrets.APPLICATION_SECURITY }}
+  APPLICATION_SECURITY_FILENAME: application-security.yml
+  APPLICATION_SCRAPER: ${{secrets.APPLICATION_SCRAPER}}
+  APPLICATION_SCRAPER_FILENAME: application-scraper.yml
+  APPLICATION_BIZ: ${{secrets.APPLICATION_BIZ}}
+  APPLICATION_BIZ_FILENAME: application-biz.yml
+  DATA_SQL: ${{secrets.DATA_SQL}}
+  DATA_SQL_FILENAME: data.sql
 
 jobs:
   build:
@@ -12,20 +27,6 @@ jobs:
     steps:
       # secrets 임포트
       - name: Get Secrets
-        env:
-          APPLICATION_DIR: src/main/resources
-          APPLICATION_OAUTH: ${{ secrets.APPLICATION_OAUTH }}
-          APPLICATION_OAUTH_FILENAME: application-oauth.yml
-          APPLICATION_CLOUD: ${{ secrets.APPLICATION_CLOUD }}
-          APPLICATION_CLOUD_FILENAME: application-cloud.yml
-          APPLICATION_SECURITY: ${{ secrets.APPLICATION_SECURITY }}
-          APPLICATION_SECURITY_FILENAME: application-security.yml
-          APPLICATION_SCRAPER: ${{secrets.APPLICATION_SCRAPER}}
-          APPLICATION_SCRAPER_FILENAME: application-scraper.yml
-          APPLICATION_BIZ: ${{secrets.APPLICATION_BIZ}}
-          APPLICATION_BIZ_FILENAME: application-biz.yml
-          DATA_SQL: ${{secrets.DATA_SQL}}
-          DATA_SQL_FILENAME: data.sql
 
       # (0) 시간 출력
       - name: Get Current Time
