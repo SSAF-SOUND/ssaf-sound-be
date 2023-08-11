@@ -1,26 +1,18 @@
-name: dev CICD to AWS EC2
+name: dev CI to AWS EC2
 
 on:
-  push:
+  pull_request:
     branches:
       - dev
 
-permissions:
-  id-token: write
-  contents: write
-
 jobs:
   build:
-    name: CI & CD
+    name: CI
     runs-on: ubuntu-latest
     steps:
       # secrets 임포트
       - name: Get Secrets
         env:
-          AWS_REGION: ${{ SSAFSOUND_AWS_REGION }}
-          S3_BUCKET_NAME: ${{secrets.S3_BUCKET_NAME}}
-          CODE_DEPLOY_APPLICATION_NAME: ${{secrets.CODE_DEPLOY_APPLICATION_NAME}}
-          CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: ${{secrets.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME}}
           APPLICATION_DIR: src/main/resources
           APPLICATION_OAUTH: ${{ secrets.APPLICATION_OAUTH }}
           APPLICATION_OAUTH_FILENAME: application-oauth.yml
@@ -71,41 +63,8 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # (5) Gradle build (Test 제외)
+      # (5) Gradle build (Test 포함)
       - name: Build with Gradle
         uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
         with:
-          arguments: clean build -x test
-
-      # (6) 전송할 파일 디렉토리 생성
-      - name: Make file directory for transfer
-        run: mkdir deploy &&
-          cp build/libs/*.jar deploy/ &&
-          cp appspec.yml deploy/ &&
-          cp scripts/deploy.sh deploy/
-
-      # (7) 압축
-      - name: Make zip
-        run: zip -r -qq -j SSAF-SOUND-APP.zip deploy
-
-      # (8) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      # (9) 빌드 결과물을 카피 방식으로 S3 버킷에 업로드
-      - name: Upload to AWS S3
-        run: aws s3 cp --region $AWS_REGION SSAF-SOUND-APP.zip s3://$S3_BUCKET_NAME/SSAF-SOUND-APP.zip
-
-      # (10) S3 버킷에 있는 파일을 대상으로 CodeDeploy 실행
-      - name: Deploy to AWS EC2 from S3
-        run: |
-          aws deploy create-deployment \
-            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
-            --deployment-config-name CodeDeployDefault.AllAtOnce \
-            --file-exists-behavior OVERWRITE \
-            --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
-            --s3-location bucket=$S3_BUCKET_NAME,key=SSAF-SOUND-APP.zip,bundleType=zip
+          arguments: clean build -x
