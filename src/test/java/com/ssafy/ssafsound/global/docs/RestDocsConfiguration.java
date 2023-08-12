@@ -1,4 +1,4 @@
-package com.ssafy.ssafsound.global.config;
+package com.ssafy.ssafsound.global.docs;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
