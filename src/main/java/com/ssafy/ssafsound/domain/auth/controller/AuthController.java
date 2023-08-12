@@ -34,7 +34,7 @@ public class AuthController {
         authService.sendRedirectURL(oauthName, response);
     }
 
-    @GetMapping("/logout")
+    @DeleteMapping("/logout")
     public EnvelopeResponse logout(@CookieValue(value = "accessToken", defaultValue = "") String accessToken,
                                    @CookieValue(value = "refreshToken", defaultValue = "") String refreshToken,
                                    HttpServletResponse response) {
