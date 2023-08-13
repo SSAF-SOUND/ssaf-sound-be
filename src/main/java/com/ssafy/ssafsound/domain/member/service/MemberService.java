@@ -159,7 +159,7 @@ public class MemberService {
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
         MemberProfile memberProfile = memberProfileRepository.findMemberProfileByMember(member).orElseGet(MemberProfile::new);
 
-        return GetMemberPortfolioResDto.ofMyPortfolio(member, memberProfile);
+        return GetMemberPortfolioResDto.ofMemberProfile(member, memberProfile);
     }
 
     @Transactional(readOnly = true)
@@ -204,9 +204,13 @@ public class MemberService {
     public GetMemberPortfolioResDto getMemberPortfolioById(Long memberId) {
         Member member = memberRepository.findWithMemberLinksAndMemberSkills(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        if (isPrivateOfMemberProfile(member)) {
+            throw new MemberException(MemberErrorInfo.MEMBER_PROFILE_SECRET);
+        }
         MemberProfile memberProfile = memberProfileRepository.findMemberProfileByMember(member).orElseGet(MemberProfile::new);
 
-        return GetMemberPortfolioResDto.of(member, memberProfile);
+        return GetMemberPortfolioResDto.ofMemberProfile(member, memberProfile);
     }
 
     @Transactional(readOnly = true)
@@ -232,6 +236,10 @@ public class MemberService {
                     () -> memberProfileRepository.save(putMemberPortfolioReqDto.toMemberProfile(member))
             );
         }
+    }
+
+    private boolean isPrivateOfMemberProfile(Member member) {
+        return !member.getPublicProfile();
     }
 
     private boolean isInvalidOauthLogin(Member member, PostMemberReqDto postMemberReqDto) {
