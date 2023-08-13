@@ -6,6 +6,7 @@ import com.ssafy.ssafsound.domain.auth.dto.CreateMemberReqDto;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberTokensResDto;
 import com.ssafy.ssafsound.domain.auth.service.AuthService;
 import com.ssafy.ssafsound.domain.auth.service.CookieProvider;
+import com.ssafy.ssafsound.domain.member.domain.MemberToken;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import com.ssafy.ssafsound.domain.member.service.MemberService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
@@ -34,7 +35,7 @@ public class AuthController {
         authService.sendRedirectURL(oauthName, response);
     }
 
-    @GetMapping("/logout")
+    @DeleteMapping("/logout")
     public EnvelopeResponse logout(@CookieValue(value = "accessToken", defaultValue = "") String accessToken,
                                    @CookieValue(value = "refreshToken", defaultValue = "") String refreshToken,
                                    HttpServletResponse response) {
@@ -47,11 +48,16 @@ public class AuthController {
     }
 
     @GetMapping("/reissue")
-    public EnvelopeResponse<CreateMemberAccessTokenResDto> reissue(@CookieValue("refreshToken") String refreshToken, HttpServletResponse response) {
-        Long memberId = authService.validateRefreshToken(refreshToken);
-        CreateMemberAccessTokenResDto createMemberAccessTokenResDto = authService.reissueAccessToken(memberId);
-        Cookie accessTokenCookie = cookieProvider.setCookieWithOptions("accessToken", createMemberAccessTokenResDto.getAccessToken());
+    public EnvelopeResponse<CreateMemberAccessTokenResDto> reissue(
+            @CookieValue("refreshToken") String refreshToken,
+            HttpServletResponse response) {
+        MemberToken memberToken = authService.getMemberTokenByRefreshToken(refreshToken);
+        CreateMemberAccessTokenResDto createMemberAccessTokenResDto = authService.reissueAccessToken(memberToken);
+        Cookie accessTokenCookie = cookieProvider
+                .setCookieWithOptions("accessToken", createMemberAccessTokenResDto.getAccessToken());
+
         response.addCookie(accessTokenCookie);
+
         return EnvelopeResponse.<CreateMemberAccessTokenResDto>builder()
                 .data(createMemberAccessTokenResDto)
                 .build();

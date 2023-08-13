@@ -3,7 +3,7 @@ package com.ssafy.ssafsound.domain.board.controller;
 import com.ssafy.ssafsound.domain.board.domain.Board;
 import com.ssafy.ssafsound.domain.board.dto.GetBoardResDto;
 import com.ssafy.ssafsound.domain.board.service.BoardService;
-import com.ssafy.ssafsound.global.docs.RestDocsTest;
+import com.ssafy.ssafsound.global.docs.ControllerTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -20,8 +20,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(BoardController.class)
-class BoardControllerTest extends RestDocsTest {
+class BoardControllerTest extends ControllerTest {
 
     @MockBean
     private BoardService boardService;

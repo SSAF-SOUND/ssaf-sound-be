@@ -26,11 +26,6 @@ public class AuthInterceptor implements HandlerInterceptor {
     private final List<String> excludePathByClientGetRequest = List.of("/", "/auth", "/recruits", "/comments", "/lunch", "/meta", "/members", "/posts");
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        if (isGetMethodWithReissue(request)) {
-            String token = AuthorizationExtractor.extractToken("refreshToken", request);
-            validToken(token);
-            return true;
-        }
 
         if (CorsUtils.isPreFlightRequest(request)) {
             return true;
@@ -58,10 +53,6 @@ public class AuthInterceptor implements HandlerInterceptor {
     public boolean isExcludeGetRequest(HttpServletRequest request) {
         String url = excludePathByClientGetRequest.stream().filter(path->request.getRequestURI().contains(path)).findFirst().orElse(null);
         return url != null && request.getMethod().equalsIgnoreCase("GET");
-    }
-
-    public boolean isGetMethodWithReissue(HttpServletRequest request) {
-        return request.getRequestURI().contains("/auth/reissue") && request.getMethod().equalsIgnoreCase("GET");
     }
 
     public void validToken(String token) {

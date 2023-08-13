@@ -1,4 +1,4 @@
-name: dev CI to AWS EC2
+name: dev CI
 
 on:
   pull_request:

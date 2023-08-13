@@ -2,7 +2,7 @@ package com.ssafy.ssafsound.domain.meta.controller;
 
 import com.ssafy.ssafsound.domain.meta.domain.*;
 import com.ssafy.ssafsound.domain.meta.service.EnumMetaDataConsumer;
-import com.ssafy.ssafsound.global.docs.RestDocsTest;
+import com.ssafy.ssafsound.global.docs.ControllerTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -18,8 +18,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(MetaDataController.class)
-public class MetaDataControllerTest extends RestDocsTest {
+public class MetaDataControllerTest extends ControllerTest {
 
     @MockBean
     EnumMetaDataConsumer consumer;
