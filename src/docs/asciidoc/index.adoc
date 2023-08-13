@@ -5,6 +5,8 @@
 :toc: left
 :toclevels: 2
 :sectlinks:
+:sectnums:
+:docinfo: shared-head
 
 [[overview]]
 = Overview
@@ -62,3 +64,4 @@ use of HTTP status codes.
 
 include::board.adoc[]
 include::metadata.adoc[]
+include::auth.adoc[]

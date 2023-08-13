@@ -142,8 +142,8 @@ dependencies {
     asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 
     //restAssured
-    testImplementation 'io.rest-assured:rest-assured:5.3.1'
-    testImplementation 'io.rest-assured:spring-mock-mvc:5.3.1'
+    testImplementation 'io.rest-assured:rest-assured:4.4.0'
+    testImplementation 'io.rest-assured:spring-mock-mvc:4.4.0'
 }
 
 task prepareDirs {
