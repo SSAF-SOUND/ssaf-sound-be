@@ -19,7 +19,8 @@ public class MemberProfile {
     private Long id;
 
     @Column
-    private String introduce;
+    @Builder.Default
+    private String introduce = "";
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId

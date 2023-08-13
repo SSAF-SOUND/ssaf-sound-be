@@ -15,17 +15,7 @@ public class GetMemberPortfolioResDto {
 
     private PortfolioElement portfolioElement;
 
-    public static GetMemberPortfolioResDto of(Member member, MemberProfile memberProfile) {
-        if(member.getPublicProfile()) {
-            return GetMemberPortfolioResDto.builder()
-                    .portfolioElement(PortfolioElement.of(member, memberProfile))
-                    .build();
-        }
-        return GetMemberPortfolioResDto.builder()
-                .build();
-    }
-
-    public static GetMemberPortfolioResDto ofMyPortfolio(Member member, MemberProfile memberProfile) {
+    public static GetMemberPortfolioResDto ofMemberProfile(Member member, MemberProfile memberProfile) {
         return GetMemberPortfolioResDto.builder()
                 .portfolioElement(PortfolioElement.of(member, memberProfile))
                 .build();
