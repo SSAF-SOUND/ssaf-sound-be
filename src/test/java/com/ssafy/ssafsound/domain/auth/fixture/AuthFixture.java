@@ -23,13 +23,6 @@ public class AuthFixture {
         return new Cookie("accessToken", accessToken);
     }
 
-    public static Cookie getRefreshTokenCookie() {
-        return new Cookie("refreshToken", refreshToken);
-    }
-    public static CreateMemberReqDto createMemberReqDto = CreateMemberReqDto.builder()
-            .code("82309899c459f9aebeea")
-            .oauthName("github")
-            .build();
     public static AuthenticatedMember authenticatedMember = AuthenticatedMember
             .builder()
             .memberId(1L)
@@ -46,6 +39,13 @@ public class AuthFixture {
             .build();
 
     public static CreateMemberAccessTokenResDto createMemberAccessTokenResDto = CreateMemberAccessTokenResDto.builder()
-            .accessToken(AuthFixture.accessToken)
+            .accessToken(accessToken)
             .build();
+
+    public static CreateMemberReqDto getCreateMemberReqDto(String oauthName) {
+        return CreateMemberReqDto.builder()
+                .code("82309899c459f9aebeea")
+                .oauthName(oauthName)
+                .build();
+    }
 }
