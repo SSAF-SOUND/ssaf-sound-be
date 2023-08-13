@@ -1,0 +1,19 @@
+== 1. 인증
+
+=== 1.1 Oauth 로그인 페이지 리다이렉트
+operation::oauth/redirect/[snippets='http-request,http-response,path-parameters']
+
+
+=== 1.2 로그인
+operation::oauth/login/[snippets='http-request,http-response,response-fields']
+
+
+=== 1.3 로그아웃시(accessToken 또는 refreshToken이 존재하는 경우)
+operation::oauth/logout/ExistCookie/[snippets='http-request,http-response']
+
+
+=== 1.4 로그아웃시(토큰 존재하지 않을 경우)
+operation::oauth/logout/notExistCookie/[snippets='http-request,http-response']
+
+=== 1.5 토큰 재발급
+operation::oauth/reissue/[snippets='http-request,http-response']
