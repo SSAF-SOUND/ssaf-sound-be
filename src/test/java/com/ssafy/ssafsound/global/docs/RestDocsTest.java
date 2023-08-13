@@ -3,8 +3,10 @@ package com.ssafy.ssafsound.global.docs;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.ssafsound.domain.auth.service.token.JwtTokenProvider;
+import com.ssafy.ssafsound.domain.auth.validator.AuthenticationArgumentResolver;
 import com.ssafy.ssafsound.global.config.JpaConfig;
 import com.ssafy.ssafsound.global.config.WebMvcConfig;
+import com.ssafy.ssafsound.global.interceptor.AuthInterceptor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -42,6 +46,12 @@ public class RestDocsTest {
 
     @MockBean
     JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    protected AuthenticationArgumentResolver authenticationArgumentResolver;
+
+    @MockBean
+    protected AuthInterceptor authInterceptor;
 
     protected MockMvc mockMvc;
 
@@ -63,5 +73,9 @@ public class RestDocsTest {
                 .alwaysDo(print())
                 .alwaysDo(restDocs)
                 .build();
+
+        doReturn(true)
+                .when(authInterceptor)
+                .preHandle(any(), any(), any());
     }
 }
