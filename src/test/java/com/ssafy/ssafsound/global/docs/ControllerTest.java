@@ -14,12 +14,15 @@ import com.ssafy.ssafsound.domain.recruit.controller.RecruitController;
 import com.ssafy.ssafsound.domain.recruitapplication.controller.RecruitApplicationController;
 import com.ssafy.ssafsound.domain.recruitcomment.controller.RecruitCommentController;
 import com.ssafy.ssafsound.global.interceptor.AuthInterceptor;
+import io.restassured.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
@@ -28,20 +31,22 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
 
 @WebMvcTest({
         AuthController.class,
-        BoardController.class,
-        ChatController.class,
-        CommentController.class,
-        LunchController.class,
-        MemberController.class,
-        MetaDataController.class,
-        PostController.class,
-        RecruitController.class,
-        RecruitApplicationController.class,
-        RecruitCommentController.class
+//        BoardController.class,
+//        ChatController.class,
+//        CommentController.class,
+//        LunchController.class,
+//        MemberController.class,
+//        MetaDataController.class,
+//        PostController.class,
+//        RecruitController.class,
+//        RecruitApplicationController.class,
+//        RecruitCommentController.class
 })
 @ExtendWith(RestDocumentationExtension.class)
 public class ControllerTest {
@@ -57,6 +62,13 @@ public class ControllerTest {
     @MockBean
     protected AuthInterceptor authInterceptor;
 
+    protected static final Cookie ACCESS_TOKEN = new Cookie.Builder("accessToken", "accessTokenValue").build();
+    protected static final Cookie REFRESH_TOKEN = new Cookie.Builder("refreshToken", "refreshTokenValue").build();
+
+    private final ResponseFieldsSnippet envelopPattern = responseFields(
+            fieldWithPath("code").type(JsonFieldType.STRING).description("응답 코드"),
+            fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+            fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"));
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
@@ -72,5 +84,9 @@ public class ControllerTest {
         doReturn(true)
                 .when(authInterceptor)
                 .preHandle(any(), any(), any());
+    }
+
+    public ResponseFieldsSnippet getEnvelopPattern() {
+        return envelopPattern;
     }
 }
