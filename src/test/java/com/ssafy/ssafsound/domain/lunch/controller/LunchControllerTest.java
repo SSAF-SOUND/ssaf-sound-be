@@ -52,7 +52,7 @@ public class LunchControllerTest extends ControllerTest {
 
     @Test
     @DisplayName("점심 메뉴 상세 조회")
-    public void getLunchByLunchId() throws Exception {
+    public void getLunchByLunchId() {
 
         Long sampleLunchId = 1L;
 
@@ -75,6 +75,17 @@ public class LunchControllerTest extends ControllerTest {
                                 fieldWithPath("data.mainMenu").type(JsonFieldType.STRING).description("메인 메뉴명"),
                                 fieldWithPath("data.extraMenu").type(JsonFieldType.STRING).description("전체 메뉴명"),
                                 fieldWithPath("data.sumKcal").type(JsonFieldType.STRING).description("총 칼로리"))));
+    }
+
+    @Test
+    @DisplayName("점심 투표하기")
+    public void postLunchPoll() {
+
+    }
+
+    @Test
+    @DisplayName("점심 투표 취소하기")
+    public void revertLunchPoll() {
     }
 
 }
