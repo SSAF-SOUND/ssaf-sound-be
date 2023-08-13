@@ -1,7 +1,11 @@
 package com.ssafy.ssafsound.domain.auth.fixture;
 
+import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
+import com.ssafy.ssafsound.domain.auth.dto.CreateMemberAccessTokenResDto;
+import com.ssafy.ssafsound.domain.auth.dto.CreateMemberReqDto;
+import com.ssafy.ssafsound.domain.auth.dto.CreateMemberTokensResDto;
 import com.ssafy.ssafsound.domain.member.domain.MemberToken;
-import org.checkerframework.checker.units.qual.C;
+import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 
 import javax.servlet.http.Cookie;
 
@@ -22,4 +26,26 @@ public class AuthFixture {
     public static Cookie getRefreshTokenCookie() {
         return new Cookie("refreshToken", refreshToken);
     }
+    public static CreateMemberReqDto createMemberReqDto = CreateMemberReqDto.builder()
+            .code("82309899c459f9aebeea")
+            .oauthName("github")
+            .build();
+    public static AuthenticatedMember authenticatedMember = AuthenticatedMember
+            .builder()
+            .memberId(1L)
+            .memberRole("user")
+            .build();
+    public static CreateMemberTokensResDto createMemberTokensResDto = CreateMemberTokensResDto
+            .builder()
+            .accessToken(AuthFixture.accessToken)
+            .refreshToken(AuthFixture.refreshToken)
+            .build();
+    public static PostMemberReqDto postMemberReqDto = PostMemberReqDto.builder()
+            .oauthName("github")
+            .oauthIdentifier("sdfserwvdfereref")
+            .build();
+
+    public static CreateMemberAccessTokenResDto createMemberAccessTokenResDto = CreateMemberAccessTokenResDto.builder()
+            .accessToken(AuthFixture.accessToken)
+            .build();
 }
