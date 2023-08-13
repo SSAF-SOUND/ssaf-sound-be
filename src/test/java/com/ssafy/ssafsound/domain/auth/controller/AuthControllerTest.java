@@ -51,7 +51,7 @@ class AuthControllerTest extends ControllerTest {
                 .then().log().all()
                 .assertThat()
                 .apply(document("oauth/login",
-                        getEnvelopPattern()
+                        getEnvelopPatternWithData()
                                 .and(fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("액세스 토큰"))
                                 .and(fieldWithPath("data.refreshToken").type(JsonFieldType.STRING).description("리프레시 토큰"))
                 ))
@@ -66,7 +66,7 @@ class AuthControllerTest extends ControllerTest {
                 .cookie(REFRESH_TOKEN)
                 .when().delete("/auth/logout")
                 .then().log().all()
-                .apply(document("oauth/logout/ExistCookie"))
+                .apply(document("oauth/logout/ExistCookie", getEnvelopPatternWithNoContent()))
                 .expect(status().isOk());
     }
 
@@ -76,7 +76,7 @@ class AuthControllerTest extends ControllerTest {
         restDocs
                 .when().delete("/auth/logout")
                 .then().log().all()
-                .apply(document("oauth/logout/notExistCookie"))
+                .apply(document("oauth/logout/notExistCookie", getEnvelopPatternWithNoContent()))
                 .expect(status().isOk());
     }
 
@@ -100,7 +100,7 @@ class AuthControllerTest extends ControllerTest {
                 .then().log().all()
                 .assertThat()
                 .apply(document("oauth/reissue",
-                        getEnvelopPattern()
+                        getEnvelopPatternWithData()
                                 .and(fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("액세스 토큰"))))
                 .expect(status().isOk());
     }

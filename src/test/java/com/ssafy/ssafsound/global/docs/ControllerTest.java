@@ -119,10 +119,16 @@ public class ControllerTest {
     protected static final Cookie ACCESS_TOKEN = new Cookie.Builder("accessToken", "accessTokenValue").build();
     protected static final Cookie REFRESH_TOKEN = new Cookie.Builder("refreshToken", "refreshTokenValue").build();
 
-    private final ResponseFieldsSnippet envelopPattern = responseFields(
+    private final ResponseFieldsSnippet envelopPatternWithData = responseFields(
             fieldWithPath("code").type(JsonFieldType.STRING).description("응답 코드"),
             fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
             fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"));
+
+
+    private final ResponseFieldsSnippet envelopPatternWithNoContent = responseFields(
+            fieldWithPath("code").type(JsonFieldType.STRING).description("응답 코드"),
+            fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+            fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터").optional());
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
@@ -159,7 +165,11 @@ public class ControllerTest {
         return accessTokenPatternOptional;
     }
 
-    protected ResponseFieldsSnippet getEnvelopPattern() {
-        return envelopPattern;
+    protected ResponseFieldsSnippet getEnvelopPatternWithData() {
+        return envelopPatternWithData;
+    }
+
+    protected ResponseFieldsSnippet getEnvelopPatternWithNoContent() {
+        return envelopPatternWithNoContent;
     }
 }
