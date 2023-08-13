@@ -1,16 +1,11 @@
 package com.ssafy.ssafsound.domain.auth.controller;
 
 import com.ssafy.ssafsound.domain.auth.fixture.AuthFixture;
-import com.ssafy.ssafsound.domain.auth.service.AuthService;
-import com.ssafy.ssafsound.domain.auth.service.CookieProvider;
-import com.ssafy.ssafsound.domain.member.service.MemberService;
 import com.ssafy.ssafsound.global.docs.ControllerTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
@@ -25,13 +20,6 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class AuthControllerTest extends ControllerTest {
-
-    @MockBean
-    MemberService memberService;
-    @SpyBean
-    CookieProvider cookieProvider;
-    @MockBean
-    AuthService authService;
 
     @DisplayName("oauth 로그인 요청 시, Redirect 를 제공한다.")
     @ParameterizedTest
