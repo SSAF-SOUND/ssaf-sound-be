@@ -68,20 +68,24 @@ public class AuthService {
     }
 
     @Transactional(readOnly = true)
-    public Long validateRefreshToken(String refreshToken) {
+    public MemberToken getMemberTokenByRefreshToken(String refreshToken) {
         Long memberId = jwtTokenProvider.getMemberIdByRefreshToken(refreshToken);
-        MemberToken memberToken = memberTokenRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_TOKEN_NOT_FOUND));
-        if(isNotEqualRefreshToken(refreshToken, memberToken.getRefreshToken())) throw new AuthException(AuthErrorInfo.AUTH_TOKEN_INVALID);
-        return memberId;
+        MemberToken memberToken = memberTokenRepository
+                .findById(memberId).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_TOKEN_NOT_FOUND));
+
+        if(isNotEqualRefreshToken(refreshToken, memberToken.getRefreshToken())) {
+            throw new AuthException(AuthErrorInfo.AUTH_TOKEN_INVALID);
+        }
+        return memberToken;
     }
 
     @Transactional
-    public CreateMemberAccessTokenResDto reissueAccessToken(Long memberId) {
-        MemberToken memberToken = memberTokenRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_TOKEN_NOT_FOUND));
+    public CreateMemberAccessTokenResDto reissueAccessToken(MemberToken memberToken) {
         Member member = memberToken.getMember();
         String accessToken = jwtTokenProvider.createAccessToken(AuthenticatedMember.from(member));
+
         memberToken.changeAccessTokenByRefreshToken(accessToken);
-        memberTokenRepository.save(memberToken);
+
         return CreateMemberAccessTokenResDto.of(accessToken);
     }
 
