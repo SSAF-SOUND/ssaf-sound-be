@@ -6,11 +6,15 @@ import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListElementResDto;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListReqDto;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListResDto;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchResDto;
+import com.ssafy.ssafsound.domain.lunch.dto.PostLunchPollResDto;
 import com.ssafy.ssafsound.domain.meta.domain.Campus;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import static com.ssafy.ssafsound.global.util.fixture.MemberFixture.MEMBER_SHERYL;
+import static com.ssafy.ssafsound.global.util.fixture.MemberFixture.MEMBER_WALTER;
 
 public class LunchFixture {
 
@@ -74,29 +78,30 @@ public class LunchFixture {
             List.of(GET_LUNCH_LIST_ELEMENT_RES_DTO1,
                     GET_LUNCH_LIST_ELEMENT_RES_DTO2,
                     GET_LUNCH_LIST_ELEMENT_RES_DTO3
-            ), 2L);
+            ), 1L);
 
     public static final GetLunchResDto GET_LUNCH_RES_DTO = GetLunchResDto.of(LUNCH_FIXTURE1);
 
     public static final LunchPoll LUNCH_POLL_FIXTURE1 = LunchPoll.builder()
             .id(1L)
-            .lunch(LUNCH_FIXTURE1)
+            .lunch(LUNCH_FIXTURE2)
             .member(MEMBER_WALTER)
             .polledAt(LOCAL_DATE_FIXTURE)
             .build();
 
-    public static final LunchPoll LUNCH_POLL_FIXTURE1 = LunchPoll.builder()
-            .id(1L)
+    public static final LunchPoll LUNCH_POLL_FIXTURE2 = LunchPoll.builder()
+            .id(2L)
             .lunch(LUNCH_FIXTURE1)
+            .member(MEMBER_SHERYL)
+            .polledAt(LOCAL_DATE_FIXTURE)
+            .build();
+
+    public static final LunchPoll LUNCH_POLL_FIXTURE3 = LunchPoll.builder()
+            .id(3L)
+            .lunch(LUNCH_FIXTURE4)
             .member(MEMBER_WALTER)
             .polledAt(LOCAL_DATE_FIXTURE)
             .build();
 
-    public static final LunchPoll LUNCH_POLL_FIXTURE1 = LunchPoll.builder()
-            .id(1L)
-            .lunch(LUNCH_FIXTURE1)
-            .member(MEMBER_WALTER)
-            .polledAt(LOCAL_DATE_FIXTURE)
-            .build();
-
+    public static final PostLunchPollResDto POST_LUNCH_POLL_RES_DTO = PostLunchPollResDto.of(4327L);
 }
