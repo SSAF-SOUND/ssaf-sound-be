@@ -110,7 +110,7 @@ public class LunchControllerTest extends ControllerTest {
                 .then().log().all()
                 .assertThat()
                 .statusCode(HttpStatus.OK.value())
-                .apply(document("lunch/poll",
+                .apply(document("lunch/poll/revert",
                         requestCookieAccessTokenMandatory(),
                         pathParameters(
                                 parameterWithName("lunchId").description("점심 메뉴 아이디")

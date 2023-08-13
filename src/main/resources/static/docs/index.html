@@ -780,8 +780,8 @@ Host: api.ssafsound.com
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
-Set-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/; Max-Age=2629744; Expires=Wed, 13 Sep 2023 02:40:25 GMT; Secure; HttpOnly
-Set-Cookie: refreshToken=syJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IsdfserwetweSflKxwRJeSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/; Max-Age=2629744; Expires=Wed, 13 Sep 2023 02:40:25 GMT; Secure; HttpOnly
+Set-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/; Max-Age=2629744; Expires=Wed, 13 Sep 2023 02:44:44 GMT; Secure; HttpOnly
+Set-Cookie: refreshToken=syJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IsdfserwetweSflKxwRJeSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/; Max-Age=2629744; Expires=Wed, 13 Sep 2023 02:44:44 GMT; Secure; HttpOnly
 Content-Type: application/json
 Content-Length: 415
 
@@ -1397,33 +1397,113 @@ Content-Length: 86
 <h3 id="_점심_투표_취소하기"><a class="link" href="#_점심_투표_취소하기">6.4. 점심 투표 취소하기</a></h3>
 <div class="sect3">
 <h4 id="_점심_투표_취소하기_http_request"><a class="link" href="#_점심_투표_취소하기_http_request">6.4.1. HTTP request</a></h4>
-<div class="paragraph">
-<p>Snippet http-request not found for operation::lunch/poll/revert</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /lunch/poll/revert/2 HTTP/1.1
+Host: api.ssafsound.com
+Cookie: accessToken=accessTokenValue</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_점심_투표_취소하기_cookie"><a class="link" href="#_점심_투표_취소하기_cookie">6.4.2. Cookie</a></h4>
-<div class="paragraph">
-<p>Snippet cookie not found for operation::lunch/poll/revert</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Cookie</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">accessToken</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">액세스 토큰 필수</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect3">
 <h4 id="_점심_투표_취소하기_path_parameters"><a class="link" href="#_점심_투표_취소하기_path_parameters">6.4.3. Path parameters</a></h4>
-<div class="paragraph">
-<p>Snippet path-parameters not found for operation::lunch/poll/revert</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /lunch/poll/revert/{lunchId}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lunchId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">점심 메뉴 아이디</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect3">
 <h4 id="_점심_투표_취소하기_http_response"><a class="link" href="#_점심_투표_취소하기_http_response">6.4.4. HTTP response</a></h4>
-<div class="paragraph">
-<p>Snippet http-response not found for operation::lunch/poll/revert</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 86
+
+{
+  "code" : "200",
+  "message" : "success",
+  "data" : {
+    "pollCount" : 4327
+  }
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_점심_투표_취소하기_response_fields"><a class="link" href="#_점심_투표_취소하기_response_fields">6.4.5. Response fields</a></h4>
-<div class="paragraph">
-<p>Snippet response-fields not found for operation::lunch/poll/revert</p>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.pollCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">메뉴 투표수</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
