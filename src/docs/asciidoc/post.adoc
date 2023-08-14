@@ -1,0 +1,6 @@
+== 익명 게시판
+
+=== 게시글 목록 조회
+operation::post/find-posts[snippets='http-request,http-response,response-fields']
+
+=== 게시글 상세 보기
