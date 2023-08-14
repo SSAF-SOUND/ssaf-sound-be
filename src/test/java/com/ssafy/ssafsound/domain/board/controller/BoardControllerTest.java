@@ -1,52 +1,38 @@
 package com.ssafy.ssafsound.domain.board.controller;
 
-import com.ssafy.ssafsound.domain.board.dto.GetBoardResDto;
 import com.ssafy.ssafsound.global.docs.ControllerTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
 
-import static org.mockito.ArgumentMatchers.any;
+import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.requestCookieAccessTokenOptional;
+import static com.ssafy.ssafsound.global.util.fixture.BoardFixture.GET_BOARD_RES_DTO1;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class BoardControllerTest extends ControllerTest {
     @Test
     @DisplayName("게시판 목록 조회 데이터 반환")
     public void findBoards() {
-//        doReturn(GetBoardResDto.of)
-//                .when(boardService)
-//                .findBoards();
+        doReturn(GET_BOARD_RES_DTO1)
+                .when(boardService)
+                .findBoards();
 
-        restDocs
+        restDocs.cookie(ACCESS_TOKEN)
                 .when().get("/boards")
                 .then().log().all()
-                .apply(document("board/find-boards"))
-                .statusCode(HttpStatus.OK.value());
-
-//        mockMvc.perform(get("/boards")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                )
-//                .andExpect(status().isOk())
-//                .andDo(
-//                        restDocs.document(
-//                                responseFields(
-//                                        fieldWithPath("code").description("응답 코드"),
-//                                        fieldWithPath("message").description("응답 메시지"),
-//                                        fieldWithPath("data").description("응답 데이터"),
-//                                        fieldWithPath("data.boards").description("게시판 목록 데이터")
-//                                ).andWithPrefix("data.boards[].",
-//                                        fieldWithPath("boardId").description("게시판의 id"),
-//                                        fieldWithPath("title").description("게시판 이름"),
-//                                        fieldWithPath("imageUrl").description("게시판 이미지"),
-//                                        fieldWithPath("description").description("게시판 설명")
-//                                )
-//                        )
-//                );
+                .statusCode(HttpStatus.OK.value())
+                .apply(document("board/find-boards",
+                        requestCookieAccessTokenOptional(),
+                        getEnvelopPatternWithData().andWithPrefix("data.",
+                                fieldWithPath("boards").type(JsonFieldType.ARRAY).description("게시판 목록")
+                        ).andWithPrefix("data.boards[].",
+                                fieldWithPath("boardId").type(JsonFieldType.NUMBER).description("게시판 목록의 ID"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시판 목록의 제목, 자유 게시판 | 취업 게시판 | 맛집 게시판 | 질문 게시판 | 싸피 예비생 게시판"),
+                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("게시판 배너 이미지"),
+                                fieldWithPath("description").type(JsonFieldType.STRING).description("게시판의 특성을 설명해주는 설명문")
+                        )));
     }
 }
