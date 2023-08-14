@@ -47,6 +47,7 @@ public class LunchControllerTest extends ControllerTest {
                                 fieldWithPath("polledAt").type(JsonFieldType.NUMBER).description("점심 메뉴 목록에서 인증된 사용자의 투표 선택지 인덱스. 미인증 혹은 투표하지 않았을 경우 -1"),
                                 fieldWithPath("menus").type(JsonFieldType.ARRAY).description("점심 메뉴 목록")
                         ).andWithPrefix("data.menus[].",
+                                fieldWithPath("lunchId").type(JsonFieldType.NUMBER).description("점심 메뉴 아이디"),
                                 fieldWithPath("mainMenu").type(JsonFieldType.STRING).description("메인 메뉴명"),
                                 fieldWithPath("imagePath").type(JsonFieldType.STRING).description("메인 메뉴 이미지 주소"),
                                 fieldWithPath("pollCount").type(JsonFieldType.NUMBER).description("메뉴 투표수"))));
