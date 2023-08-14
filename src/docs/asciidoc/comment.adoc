@@ -1,0 +1,4 @@
+== 댓글
+
+=== 댓글 목록 조회
+operation::comment-controller-test/find-comments[snippets='http-request,http-response,response-fields']
