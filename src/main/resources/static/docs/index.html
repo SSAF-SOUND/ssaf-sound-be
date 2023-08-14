@@ -780,8 +780,8 @@ Host: api.ssafsound.com
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
-Set-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/; Max-Age=2629744; Expires=Wed, 13 Sep 2023 02:44:44 GMT; Secure; HttpOnly
-Set-Cookie: refreshToken=syJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IsdfserwetweSflKxwRJeSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/; Max-Age=2629744; Expires=Wed, 13 Sep 2023 02:44:44 GMT; Secure; HttpOnly
+Set-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/; Max-Age=2629744; Expires=Wed, 13 Sep 2023 20:32:42 GMT; Secure; HttpOnly
+Set-Cookie: refreshToken=syJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IsdfserwetweSflKxwRJeSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/; Max-Age=2629744; Expires=Wed, 13 Sep 2023 20:32:42 GMT; Secure; HttpOnly
 Content-Type: application/json
 Content-Length: 415
 
@@ -1065,7 +1065,7 @@ Cookie: accessToken=accessTokenValue</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 448
+Content-Length: 511
 
 {
   "code" : "200",
@@ -1074,14 +1074,17 @@ Content-Length: 448
     "totalPollCount" : 68,
     "polledAt" : 1,
     "menus" : [ {
+      "lunchId" : 1,
       "mainMenu" : "메인메뉴1",
       "imagePath" : "www.sample1.png",
       "pollCount" : 29
     }, {
+      "lunchId" : 2,
       "mainMenu" : "메인메뉴2",
       "imagePath" : "www.sample2.png",
       "pollCount" : 22
     }, {
+      "lunchId" : 3,
       "mainMenu" : "메인메뉴3",
       "imagePath" : "www.sample3.png",
       "pollCount" : 17
@@ -1136,6 +1139,11 @@ Content-Length: 448
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.menus</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">점심 메뉴 목록</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.menus[].lunchId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">점심 메뉴 아이디</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.menus[].mainMenu</code></p></td>
@@ -1512,7 +1520,7 @@ Content-Length: 86
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-08-13 18:48:22 +0900
+Last updated 2023-08-14 18:57:04 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
