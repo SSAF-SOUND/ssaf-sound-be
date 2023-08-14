@@ -1,0 +1,13 @@
+== 점심
+
+=== 점심 목록 조회
+operation::lunch/list[snippets='http-request,cookie,request-parameters,http-response,response-fields']
+
+=== 점심 상세 조회
+operation::lunch/detail[snippets='http-request,cookie,path-parameters,http-response,response-fields']
+
+=== 점심 투표하기
+operation::lunch/poll[snippets='http-request,cookie,path-parameters,http-response,response-fields']
+
+=== 점심 투표 취소하기
+operation::lunch/poll/revert[snippets='http-request,cookie,path-parameters,http-response,response-fields']

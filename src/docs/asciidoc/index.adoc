@@ -65,3 +65,4 @@ use of HTTP status codes.
 include::board.adoc[]
 include::metadata.adoc[]
 include::auth.adoc[]
+include::lunch.adoc[]

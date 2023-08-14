@@ -4,6 +4,7 @@ import com.ssafy.ssafsound.domain.auth.controller.AuthController;
 import com.ssafy.ssafsound.domain.auth.service.AuthService;
 import com.ssafy.ssafsound.domain.auth.service.CookieProvider;
 import com.ssafy.ssafsound.domain.auth.service.token.JwtTokenProvider;
+import com.ssafy.ssafsound.domain.auth.validator.AuthenticationArgumentResolver;
 import com.ssafy.ssafsound.domain.board.controller.BoardController;
 import com.ssafy.ssafsound.domain.board.service.BoardService;
 import com.ssafy.ssafsound.domain.comment.controller.CommentController;
@@ -50,7 +51,6 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-
 
 @WebMvcTest({
         AuthController.class,
@@ -116,6 +116,9 @@ public class ControllerTest {
     @MockBean
     protected AuthInterceptor authInterceptor;
 
+    @MockBean
+    protected AuthenticationArgumentResolver authenticationArgumentResolver;
+
     protected static final Cookie ACCESS_TOKEN = new Cookie.Builder("accessToken", "accessTokenValue").build();
     protected static final Cookie REFRESH_TOKEN = new Cookie.Builder("refreshToken", "refreshTokenValue").build();
 
@@ -149,20 +152,6 @@ public class ControllerTest {
         doReturn(true)
                 .when(authInterceptor)
                 .preHandle(any(), any(), any());
-    }
-
-    protected static final RequestHeadersSnippet accessTokenPattern = requestHeaders(
-            headerWithName("Cookie").description("액세스 토큰"));
-
-    protected static final RequestHeadersSnippet accessTokenPatternOptional = requestHeaders(
-            headerWithName("Cookie").description("액세스 토큰").optional());
-
-    protected RequestHeadersSnippet getAccessTokenPattern() {
-        return accessTokenPattern;
-    }
-
-    protected RequestHeadersSnippet getAccessTokenOptionalPattern() {
-        return accessTokenPatternOptional;
     }
 
     protected ResponseFieldsSnippet getEnvelopPatternWithData() {
