@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.domain.post.dto;
 
 import com.ssafy.ssafsound.global.validator.CheckImageInfo;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@Builder
 public class PostPostWriteReqDto {
     @NotBlank
     @Size(min = 2, max = 100)
