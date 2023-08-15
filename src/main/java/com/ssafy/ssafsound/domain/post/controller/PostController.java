@@ -77,11 +77,11 @@ public class PostController {
                 .build();
     }
 
-    @PutMapping("/{postId}")
-    public EnvelopeResponse<Long> updatePost(@Valid @RequestBody PostPutUpdateReqDto postPutUpdateReqDto,
+    @PatchMapping("/{postId}")
+    public EnvelopeResponse<PostIdElement> updatePost(@Valid @RequestBody PostPatchUpdateReqDto postPatchUpdateReqDto,
                                              @PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
-        return EnvelopeResponse.<Long>builder()
-                .data(postService.updatePost(postId, loginMember.getMemberId(), postPutUpdateReqDto))
+        return EnvelopeResponse.<PostIdElement>builder()
+                .data(postService.updatePost(postId, loginMember.getMemberId(), postPatchUpdateReqDto))
                 .build();
     }
 
