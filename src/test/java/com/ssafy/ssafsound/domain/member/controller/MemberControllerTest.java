@@ -13,7 +13,7 @@ import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.r
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class MemberControllerTest extends ControllerTest {
@@ -132,6 +132,13 @@ class MemberControllerTest extends ControllerTest {
                 .assertThat()
                 .apply(document("members/put-information",
                         requestCookieAccessTokenMandatory(),
+                        requestFields(
+                                fieldWithPath("nickname").description("닉네임"),
+                                fieldWithPath("ssafyMember").description("싸피인 여부"),
+                                fieldWithPath("isMajor").description("전공자 여부"),
+                                fieldWithPath("semester").description("싸피 기수").optional(),
+                                fieldWithPath("campus").description("캠퍼스 이름").optional()
+                        ),
                         getEnvelopPatternWithData()
                                 .and(fieldWithPath("data.memberId").type(JsonFieldType.NUMBER)
                                         .description("멤버 ID"))
@@ -171,6 +178,13 @@ class MemberControllerTest extends ControllerTest {
                 .assertThat()
                 .apply(document("members/put-ssafy-information",
                         requestCookieAccessTokenMandatory(),
+                        requestFields(
+                                fieldWithPath("nickname").description("닉네임"),
+                                fieldWithPath("ssafyMember").description("싸피인 여부"),
+                                fieldWithPath("isMajor").description("전공자 여부"),
+                                fieldWithPath("semester").description("싸피 기수"),
+                                fieldWithPath("campus").description("캠퍼스 이름")
+                        ),
                         getEnvelopPatternWithData()
                                 .and(fieldWithPath("data.memberId").type(JsonFieldType.NUMBER)
                                         .description("멤버 ID"))

@@ -10,7 +10,7 @@ operation::members/general-information/[snippets='cookie,http-request,http-respo
 operation::members/ssafy-information/[snippets='cookie,http-request,http-response,response-fields']
 
 === 회원가입 시 일반 멤버 정보 입력
-operation::members/put-information/[snippets='cookie,http-request,request-body,http-response,response-fields']
+operation::members/put-information/[snippets='cookie,http-request,request-body,request-fields,http-response,response-fields']
 
 === 회원가입 시 싸피 멤버 정보 입력
-operation::members/put-ssafy-information/[snippets='cookie,http-request,request-body,http-response,response-fields']
+operation::members/put-ssafy-information/[snippets='cookie,http-request,request-body,request-fields,http-response,response-fields']
