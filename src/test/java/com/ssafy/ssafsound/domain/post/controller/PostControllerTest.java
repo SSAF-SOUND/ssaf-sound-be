@@ -56,6 +56,45 @@ class PostControllerTest extends ControllerTest {
     }
 
     @Test
+    @DisplayName("게시글 검색(제목 + 내용을 기준으로 검색)")
+    void searchPosts() {
+        doReturn(GET_POST_RES_DTO4)
+                .when(postService)
+                .searchPosts(any());
+
+        restDocs.cookie(ACCESS_TOKEN)
+                .when().get("/posts/search?boardId={boardId}&keyword={searchText}&cursor={cursor}&size={pageSize}", 1L, "안녕하세요", -1, 10)
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .apply(document("post/search-posts",
+                                requestCookieAccessTokenNeedless(),
+                                requestParameters(
+                                        parameterWithName("boardId").description("검색하려는 게시판 고유 ID"),
+                                        parameterWithName("keyword").description("검색하려는 게시글의 검색어, 최소 2글자"),
+                                        parameterWithName("cursor").description("cursor값은 다음 페이지를 가져올 마지막 페이지 번호를 의미함, 초기 cursor는 -1, 이후 cursor값은 응답 데이터로 제공되는 cursor값을 사용."),
+                                        parameterWithName("size").description("cursor를 기준으로 다음에 불러올 페이지의 size를 의미, 최소 size는 10")
+                                ),
+                                getEnvelopPatternWithData().andWithPrefix("data.",
+                                        fieldWithPath("posts").type(JsonFieldType.ARRAY).description("게시글 목록"),
+                                        fieldWithPath("cursor").type(JsonFieldType.NUMBER).description("다음에 요청할 cursor값, 응답되는 cursor값이 null이면 다음 페이지는 없음을 의미").optional()
+                                ).andWithPrefix("data.posts[].",
+                                        fieldWithPath("boardId").type(JsonFieldType.NUMBER).description("게시글이 작성된 게시판 종류의 ID"),
+                                        fieldWithPath("boardTitle").type(JsonFieldType.STRING).description("게시글이 작성된 게시판의 종류, 자유 게시판 | 취업 게시판 | 맛집 게시판 | 질문 게시판 | 싸피 예비생 게시판"),
+                                        fieldWithPath("postId").type(JsonFieldType.NUMBER).description("게시글의 고유 ID"),
+                                        fieldWithPath("title").type(JsonFieldType.STRING).description("게시글의 제목"),
+                                        fieldWithPath("content").type(JsonFieldType.STRING).description("게시글의 내용"),
+                                        fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("게시글의 좋아요 개수"),
+                                        fieldWithPath("commentCount").type(JsonFieldType.NUMBER).description("게시글의 댓글 개수"),
+                                        fieldWithPath("createdAt").type(JsonFieldType.STRING).description("게시글의 작성일").optional(),
+                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("게시글 작성자의 닉네임"),
+                                        fieldWithPath("anonymity").type(JsonFieldType.BOOLEAN).description("게시글 작성자의 익명 여부인지 나타내는 필드"),
+                                        fieldWithPath("thumbnail").type(JsonFieldType.STRING).description("게시판의 썸네일, 게시글의 사진이 여러개가 있을 때 첫 번째 사진이 해당 게시글의 썸네일이 됨.").optional()
+                                )
+                        )
+                );
+    }
+
+    @Test
     @DisplayName("게시글 상세보기 조회(익명X)")
     void findPost_Anonymity_False() {
         doReturn(GET_POST_DETAIL_RES_DTO1)
@@ -337,24 +376,19 @@ class PostControllerTest extends ControllerTest {
     }
 
     @Test
-    void findMyPosts() {
-    }
-
-    @Test
-    @DisplayName("게시글 검색(제목 + 내용을 기준으로 검색)")
-    void searchPosts() {
-        doReturn(GET_POST_RES_DTO4)
+    @DisplayName("Hot 게시글 검색(제목 + 내용을 기준으로 검색)")
+    void searchHotPosts() {
+        doReturn(GET_POST_HOT_RES_DTO2)
                 .when(postService)
-                .searchPosts(any());
+                .searchHotPosts(any());
 
         restDocs.cookie(ACCESS_TOKEN)
-                .when().get("/posts/search?boardId={boardId}&keyword={keyword}&cursor={cursor}&size={pageSize}", 1L, "안녕하세요", -1, 10)
+                .when().get("/posts/hot/search?&keyword={searchText}&cursor={cursor}&size={pageSize}", "취업", -1, 10)
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .apply(document("post/search-posts",
+                .apply(document("post/search-hot-posts",
                                 requestCookieAccessTokenNeedless(),
                                 requestParameters(
-                                        parameterWithName("boardId").description("검색하려는 게시판 고유 ID"),
                                         parameterWithName("keyword").description("검색하려는 게시글의 검색어, 최소 2글자"),
                                         parameterWithName("cursor").description("cursor값은 다음 페이지를 가져올 마지막 페이지 번호를 의미함, 초기 cursor는 -1, 이후 cursor값은 응답 데이터로 제공되는 cursor값을 사용."),
                                         parameterWithName("size").description("cursor를 기준으로 다음에 불러올 페이지의 size를 의미, 최소 size는 10")
@@ -380,6 +414,6 @@ class PostControllerTest extends ControllerTest {
     }
 
     @Test
-    void searchHotPosts() {
+    void findMyPosts() {
     }
 }
