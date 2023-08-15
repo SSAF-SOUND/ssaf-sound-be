@@ -14,3 +14,6 @@ operation::members/put-information/[snippets='cookie,http-request,request-body,r
 
 === 회원가입 시 싸피 멤버 정보 입력
 operation::members/put-ssafy-information/[snippets='cookie,http-request,request-body,request-fields,http-response,response-fields']
+
+=== 나의 포트폴리오 조회
+operation::members/get-portfolio/[snippets='cookie,http-request,http-response,response-fields']

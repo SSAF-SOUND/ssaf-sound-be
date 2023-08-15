@@ -209,4 +209,36 @@ class MemberControllerTest extends ControllerTest {
                                                 .description("전공 트랙(인증상태가 UNCERTIFIED라면 NULL)"))))
                 .expect(status().isOk());
     }
+
+    @DisplayName("나의 포트폴리오 조회에 성공한다.")
+    @Test
+    void getMyPortfolio() {
+
+        given(memberService.getMyPortfolio(any()))
+                .willReturn(MemberFixture.MY_PORTFOLIO);
+
+        restDocs
+                .cookie(ACCESS_TOKEN)
+                .when().get("/members/portfolio")
+                .then().log().all()
+                .assertThat()
+                .apply(document("members/get-portfolio",
+                        requestCookieAccessTokenMandatory(),
+                        getEnvelopPatternWithData()
+                                .andWithPrefix("data.portfolioElement.",
+                                        fieldWithPath("selfIntroduction").type(JsonFieldType.STRING)
+                                                .description("자기 소개 글"),
+                                        fieldWithPath("skills").type(JsonFieldType.ARRAY)
+                                                .description("나의 기술 스택들"),
+                                        fieldWithPath("memberLinks")
+                                                .type(JsonFieldType.ARRAY)
+                                                .description("나의 소개 링크들"),
+                                        fieldWithPath("memberLinks[].linkName")
+                                                .type(JsonFieldType.STRING)
+                                                .description("링크 이름"),
+                                        fieldWithPath("memberLinks[].path")
+                                                .type(JsonFieldType.STRING)
+                                                .description("링크 경로"))))
+                .expect(status().isOk());
+    }
 }
