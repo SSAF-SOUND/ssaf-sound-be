@@ -40,4 +40,22 @@ public class MemberFixture {
             .major(true)
             .publicProfile(true)
             .build();
+
+    public static final Member MEMBER_TIM = Member.builder()
+            .id(100L)
+            .semester(9)
+            .oauthIdentifier("oauth")
+            .nickname("TIM")
+            .accountState(AccountState.NORMAL)
+            .certificationState(AuthenticationStatus.CERTIFIED)
+            .campus(new MetaData(Campus.SEOUL))
+            .oauthType(OAuthType.GITHUB)
+            .role(memberRole)
+            .majorTrack(new MetaData(MajorTrack.JAVA))
+            .ssafyMember(true)
+            .certificationInquiryCount(1)
+            .certificationTryTime(LocalDateTime.now())
+            .major(true)
+            .publicProfile(true)
+            .build();
 }

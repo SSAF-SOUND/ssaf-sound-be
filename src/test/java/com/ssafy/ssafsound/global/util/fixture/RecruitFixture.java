@@ -70,7 +70,7 @@ public class RecruitFixture {
             .skill(new MetaData(Skill.REACT))
             .build();
 
-    private static final RecruitLimitation RECRUIT_1_BE_LIMIT_3 = RecruitLimitation.builder()
+    public static final RecruitLimitation RECRUIT_1_BE_LIMIT_3 = RecruitLimitation.builder()
             .id(1L)
             .currentNumber(0)
             .limitation(3)
@@ -78,7 +78,7 @@ public class RecruitFixture {
             .type(new MetaData(RecruitType.BACK_END))
             .build();
 
-    private static final RecruitLimitation RECRUIT_1_FE_LIMIT_3 = RecruitLimitation.builder()
+    public static final RecruitLimitation RECRUIT_1_FE_LIMIT_3 = RecruitLimitation.builder()
             .id(2L)
             .currentNumber(0)
             .limitation(3)
