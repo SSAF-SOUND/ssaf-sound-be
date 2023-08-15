@@ -1,10 +1,7 @@
 package com.ssafy.ssafsound.global.util.fixture;
 
 import com.ssafy.ssafsound.domain.post.domain.Post;
-import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
-import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
-import com.ssafy.ssafsound.domain.post.dto.PostPostWriteReqDto;
-import com.ssafy.ssafsound.domain.post.dto.PostIdElement;
+import com.ssafy.ssafsound.domain.post.dto.*;
 
 import java.util.List;
 
@@ -45,6 +42,13 @@ public class PostFixture {
             .title("안녕하세요 첫 글이네요")
             .content("싸피도 드디어 익명 커뮤니티가 생기다니..")
             .anonymity(true)
+            .images(List.of())
+            .build();
+
+    public static final PostPatchUpdateReqDto POST_PATCH_UPDATE_REQ_DTO1 = PostPatchUpdateReqDto.builder()
+            .title("수정한 게시글의 제목")
+            .content("수정한 게시글의 내용입니다.")
+            .anonymity(false)
             .images(List.of())
             .build();
 

@@ -66,7 +66,7 @@ class PostControllerTest extends ControllerTest {
                 .when().get("/posts/{postId}", 1L)
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .apply(document("post/find-post",
+                .apply(document("post/find-post-anonymity-false",
                                 requestCookieAccessTokenOptional(),
                                 pathParameters(
                                         parameterWithName("postId").description("조회할 게시글의 고유 ID")
@@ -119,7 +119,7 @@ class PostControllerTest extends ControllerTest {
                 .when().get("/posts/{postId}", 2L)
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .apply(document("post/find-post",
+                .apply(document("post/find-post-anonymity-true",
                                 requestCookieAccessTokenOptional(),
                                 pathParameters(
                                         parameterWithName("postId").description("조회할 게시글의 고유 ID")
@@ -163,6 +163,35 @@ class PostControllerTest extends ControllerTest {
 
     @Test
     void likePost() {
+        doReturn(POST_ID_ELEMENT)
+                .when(postService)
+                .writePost(any(), any(), any());
+
+        restDocs.cookie(ACCESS_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(POST_POST_WRITE_REQ_DTO1)
+                .when().post("/posts?boardId={boardId}", 1L)
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .apply(document("post/write-post",
+                                requestCookieAccessTokenMandatory(),
+                                requestParameters(
+                                        parameterWithName("boardId").description("게시글을 작성할 게시판의 고유 ID")
+                                ),
+                                requestFields(
+                                        fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목"),
+                                        fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용"),
+                                        fieldWithPath("anonymity").type(JsonFieldType.BOOLEAN).description("게시글 작성자의 익명 여부를 나타내는 필드"),
+                                        fieldWithPath("images").type(JsonFieldType.ARRAY).description("게시글 사진 목록")
+                                ).andWithPrefix("images.[]",
+                                        fieldWithPath("imagePath").type(JsonFieldType.STRING).description("s3에 저장된 경로를 의미하는 필드, s3에 저장된 데이터를 삭제할 때 사용").optional(),
+                                        fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("s3에 저장된 이미지를 CDN URL 주소로 가져오기 위한 필드, 해당 URL에 접근만 해도 이미지에 접근할 수 있는 경로를 의미").optional()
+                                ),
+                                getEnvelopPatternWithData().andWithPrefix("data.",
+                                        fieldWithPath("postId").type(JsonFieldType.NUMBER).description("작성한 게시글 ID")
+                                )
+                        )
+                );
     }
 
     @Test
@@ -228,6 +257,35 @@ class PostControllerTest extends ControllerTest {
 
     @Test
     void updatePost() {
+        doReturn(POST_ID_ELEMENT)
+                .when(postService)
+                .updatePost(any(), any(), any());
+
+        restDocs.cookie(ACCESS_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(POST_PATCH_UPDATE_REQ_DTO1)
+                .when().patch("/posts/{postId}", 1L)
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .apply(document("post/update-post",
+                                requestCookieAccessTokenMandatory(),
+                                pathParameters(
+                                        parameterWithName("postId").description("수정할 게시글의 고유 ID")
+                                ),
+                                requestFields(
+                                        fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목"),
+                                        fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용"),
+                                        fieldWithPath("anonymity").type(JsonFieldType.BOOLEAN).description("게시글 작성자의 익명 여부를 나타내는 필드"),
+                                        fieldWithPath("images").type(JsonFieldType.ARRAY).description("게시글 사진 목록")
+                                ).andWithPrefix("images.[]",
+                                        fieldWithPath("imagePath").type(JsonFieldType.STRING).description("s3에 저장된 경로를 의미하는 필드, s3에 저장된 데이터를 삭제할 때 사용").optional(),
+                                        fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("s3에 저장된 이미지를 CDN URL 주소로 가져오기 위한 필드, 해당 URL에 접근만 해도 이미지에 접근할 수 있는 경로를 의미").optional()
+                                ),
+                                getEnvelopPatternWithData().andWithPrefix("data.",
+                                        fieldWithPath("postId").type(JsonFieldType.NUMBER).description("수젖ㅇ한 게시글 ID")
+                                )
+                        )
+                );
     }
 
     @Test
