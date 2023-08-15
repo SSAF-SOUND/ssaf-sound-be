@@ -7,8 +7,11 @@ import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 
 import java.time.LocalDateTime;
 
-public class MemberFixture {
+import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
+import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.domain.MemberRole;
 
+public class MemberFixture {
     private static final MemberRole memberRole = MemberRole.builder().id(1).roleType("user").build();
 
     public static final Member MEMBER_WALTER = Member.builder()
@@ -57,5 +60,17 @@ public class MemberFixture {
             .certificationTryTime(LocalDateTime.now())
             .major(true)
             .publicProfile(true)
+            .build();
+
+    public static final Member MEMBER_YONG = Member.builder()
+            .id(3L)
+            .semester(9)
+            .nickname("yong")
+            .certificationState(AuthenticationStatus.CERTIFIED)
+            .role(memberRole)
+            .campus(new MetaData(Campus.SEOUL))
+            .majorTrack(new MetaData(MajorTrack.JAVA))
+            .ssafyMember(true)
+            .major(true)
             .build();
 }
