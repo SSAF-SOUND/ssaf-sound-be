@@ -2,7 +2,7 @@ package com.ssafy.ssafsound.domain.meta.converter;
 
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.exception.MetaDataIntegrityException;
-import com.ssafy.ssafsound.domain.meta.fixture.TestMetaEnum;
+import com.ssafy.ssafsound.global.util.fixture.TestMetaEnum;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
