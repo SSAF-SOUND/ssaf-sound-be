@@ -1,4 +1,4 @@
-package com.ssafy.ssafsound.domain.meta.fixture;
+package com.ssafy.ssafsound.global.util.fixture;
 
 import com.ssafy.ssafsound.domain.meta.domain.*;
 
