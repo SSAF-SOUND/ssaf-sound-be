@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.global.util.fixture;
 
+import com.ssafy.ssafsound.domain.member.dto.GetMemberResDto;
 import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MajorTrack;
@@ -35,6 +36,9 @@ public class MemberFixture {
 
     public static final SSAFYInfo SSAFY_INFO = SSAFYInfo
             .of(9, "서울", "CERTIFIED", new MetaData(MajorTrack.JAVA));
+
+    public static final GetMemberResDto SSAFY_MEMBER_RESPONSE_DTO = new GetMemberResDto(
+            1L, "user", "paul", true, true, SSAFY_INFO);
 
     public static final Member MEMBER_WALTER = Member.builder()
             .id(1L)
