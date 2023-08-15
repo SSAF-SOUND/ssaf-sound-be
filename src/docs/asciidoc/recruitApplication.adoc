@@ -1,0 +1,34 @@
+== 리크루트 참여 신청
+
+=== 리크루트 참여 신청
+operation::recruitApplication/application[snippets='http-request,cookie,path-parameters,request-fields,http-response,response-fields']
+
+
+=== 리크루트 등록자 참여 신청 수락
+operation::recruitApplication/application-approve[snippets='http-request,cookie,path-parameters,http-response,response-fields']
+
+
+=== 리크루트 신청자 참여 확정
+operation::recruitApplication/application-join[snippets='http-request,cookie,path-parameters,http-response,response-fields']
+
+
+=== 리크루트 참여 신청 거절
+operation::recruitApplication/application-reject[snippets='http-request,cookie,path-parameters,http-response,response-fields']
+
+
+=== 리크루트 신청자 참여 신청 취소
+operation::recruitApplication/application-cancel[snippets='http-request,cookie,path-parameters,http-response,response-fields']
+
+
+=== 리크루트 참여자 목록 조회
+operation::recruitApplication/joinMembers[snippets='http-request,path-parameters,http-response,response-fields']
+
+=== 등록자 리크루트 참여신청 목록 조회"
+operation::recruitApplication/register-applications[snippets='http-request,cookie,request-parameters,http-response,response-fields']
+
+=== 등록자 리크루트 참여신청 좋아요"
+operation::recruitApplication/register-like[snippets='http-request,cookie,path-parameters,http-response,response-fields']
+
+
+=== 등록자 리크루트 참여신청 상세 조회
+operation::recruitApplication/detail[snippets='http-request,cookie,path-parameters,http-response,response-fields']
