@@ -5,6 +5,7 @@ import com.ssafy.ssafsound.global.util.fixture.RecruitApplicationFixture;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
@@ -15,7 +16,6 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class RecruitApplicationControllerTest extends ControllerTest {
 
@@ -28,6 +28,8 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                 .body(RecruitApplicationFixture.POST_RECRUIT_APPLICATION_REQ_DTO)
                 .when().post("/recruits/{recruitId}/application", 1)
                 .then().log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
                 .apply(document("recruitApplication/application",
                         requestCookieAccessTokenMandatory(),
                         pathParameters(
@@ -38,8 +40,7 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                                 fieldWithPath("contents[]").type(JsonFieldType.ARRAY).description("리크루트 등록자 질문에 대한 사용자 답변, [1개 필수]")
                         ),
                         getEnvelopPatternWithNoContent())
-                )
-                .expect(status().isOk());
+                );
     }
 
     @DisplayName("리크루트 등록자 참여 신청 수락")
@@ -49,14 +50,15 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                 .cookie(ACCESS_TOKEN)
                 .when().patch("/recruit-applications/{recruitApplicationId}/approve", 1)
                 .then().log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
                 .apply(document("recruitApplication/application-approve",
                         requestCookieAccessTokenMandatory(),
                         pathParameters(
                                 parameterWithName("recruitApplicationId").description("리크루트 참여신청 PK")
                         ),
                         getEnvelopPatternWithNoContent())
-                )
-                .expect(status().isOk());
+                );
     }
 
     @DisplayName("리크루트 신청자 참여 확정")
@@ -66,14 +68,15 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                 .cookie(ACCESS_TOKEN)
                 .when().patch("/recruit-applications/{recruitApplicationId}/join", 1)
                 .then().log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
                 .apply(document("recruitApplication/application-join",
                         requestCookieAccessTokenMandatory(),
                         pathParameters(
                                 parameterWithName("recruitApplicationId").description("리크루트 참여신청 PK")
                         ),
                         getEnvelopPatternWithNoContent())
-                )
-                .expect(status().isOk());
+                );
     }
 
     @DisplayName("리크루트 참여 신청 거절")
@@ -83,14 +86,15 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                 .cookie(ACCESS_TOKEN)
                 .when().patch("/recruit-applications/{recruitApplicationId}/reject", 1)
                 .then().log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
                 .apply(document("recruitApplication/application-reject",
                         requestCookieAccessTokenMandatory(),
                         pathParameters(
                                 parameterWithName("recruitApplicationId").description("리크루트 참여신청 PK")
                         ),
                         getEnvelopPatternWithNoContent())
-                )
-                .expect(status().isOk());
+                );
     }
 
     @DisplayName("리크루트 신청자 참여 신청 취소")
@@ -100,14 +104,15 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                 .cookie(ACCESS_TOKEN)
                 .when().patch("/recruit-applications/{recruitApplicationId}/cancel", 1)
                 .then().log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
                 .apply(document("recruitApplication/application-cancel",
                         requestCookieAccessTokenMandatory(),
                         pathParameters(
                                 parameterWithName("recruitApplicationId").description("리크루트 참여신청 PK")
                         ),
                         getEnvelopPatternWithNoContent())
-                )
-                .expect(status().isOk());
+                );
     }
 
     @DisplayName("리크루트 참여자 목록 조회")
@@ -120,6 +125,8 @@ public class RecruitApplicationControllerTest extends ControllerTest {
         restDocs
                 .when().get("/recruits/{recruitId}/members", 1)
                 .then().log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
                 .apply(document("recruitApplication/joinMembers",
                         pathParameters(
                                 parameterWithName("recruitId").description("리크루트 PK")
@@ -138,8 +145,7 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                                         fieldWithPath("majorTrack").type(JsonFieldType.STRING).description("전공 트랙 Embedded | Mobile | Python | Java")
                                 )
                         )
-                )
-                .expect(status().isOk());
+                );
     }
 
     @DisplayName("등록자 리크루트 참여신청 목록 조회")
@@ -153,6 +159,8 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                 .cookie(ACCESS_TOKEN)
                 .when().get("/recruit-applications?recruitId=1")
                 .then().log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
                 .apply(document("recruitApplication/register-applications",
                         requestCookieAccessTokenMandatory(),
                         requestParameters(
@@ -175,8 +183,7 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                                 fieldWithPath("majorTrack").type(JsonFieldType.STRING).description("전공 트랙 Embedded | Mobile | Python | Java")
                         )
                         )
-                )
-                .expect(status().isOk());
+                );
     }
 
     @DisplayName("등록자 리크루트 참여신청 좋아요")
@@ -186,14 +193,15 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                 .cookie(ACCESS_TOKEN)
                 .when().post("/recruit-applications/{recruitApplicationId}/like", 1)
                 .then().log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
                 .apply(document("recruitApplication/register-like",
                         requestCookieAccessTokenMandatory(),
                         pathParameters(
                                 parameterWithName("recruitApplicationId").description("리크루트 참여 신청 PK")
                         ),
                         getEnvelopPatternWithNoContent())
-                )
-                .expect(status().isOk());
+                );
     }
 
     @DisplayName("등록자 리크루트 참여신청 상세 조회")
@@ -207,6 +215,8 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                 .cookie(ACCESS_TOKEN)
                 .when().get("/recruit-applications/{recruitApplicationId}", 1)
                 .then().log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
                 .apply(document("recruitApplication/detail",
                         requestCookieAccessTokenMandatory(),
                         pathParameters(
@@ -228,7 +238,6 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                                 fieldWithPath("certificationState").type(JsonFieldType.STRING).description("참여자 ssafy 인증 여부 UNCERTIFIED | CERTIFIED"),
                                 fieldWithPath("majorTrack").type(JsonFieldType.STRING).description("전공 트랙 Embedded | Mobile | Python | Java"))
                         )
-                )
-                .expect(status().isOk());
+                );
     }
 }
