@@ -479,6 +479,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_점심_투표_취소하기">6.4. 점심 투표 취소하기</a></li>
 </ul>
 </li>
+<li><a href="#_이미지_업로드">7. 이미지 업로드</a>
+<ul class="sectlevel2">
+<li><a href="#_이미지_업로드_url_요청">7.1. 이미지 업로드 URL 요청</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -1023,8 +1028,8 @@ Host: api.ssafsound.com
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
-Set-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/; Max-Age=2629744; Expires=Thu, 14 Sep 2023 17:11:01 GMT; Secure; HttpOnly
-Set-Cookie: refreshToken=syJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IsdfserwetweSflKxwRJeSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/; Max-Age=2629744; Expires=Thu, 14 Sep 2023 17:11:01 GMT; Secure; HttpOnly
+Set-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/; Max-Age=2629744; Expires=Thu, 14 Sep 2023 20:25:54 GMT; Secure; HttpOnly
+Set-Cookie: refreshToken=syJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IsdfserwetweSflKxwRJeSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/; Max-Age=2629744; Expires=Thu, 14 Sep 2023 20:25:54 GMT; Secure; HttpOnly
 Content-Type: application/json
 Content-Length: 415
 
@@ -1759,11 +1764,119 @@ Content-Length: 86
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_이미지_업로드"><a class="link" href="#_이미지_업로드">7. 이미지 업로드</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_이미지_업로드_url_요청"><a class="link" href="#_이미지_업로드_url_요청">7.1. 이미지 업로드 URL 요청</a></h3>
+<div class="sect3">
+<h4 id="_이미지_업로드_url_요청_http_request"><a class="link" href="#_이미지_업로드_url_요청_http_request">7.1.1. HTTP request</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /store/image HTTP/1.1
+Host: api.ssafsound.com
+Cookie: accessToken=accessTokenValue</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_이미지_업로드_url_요청_cookie"><a class="link" href="#_이미지_업로드_url_요청_cookie">7.1.2. Cookie</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Cookie</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">accessToken</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">액세스 토큰 필수</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_이미지_업로드_url_요청_http_response"><a class="link" href="#_이미지_업로드_url_요청_http_response">7.1.3. HTTP response</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 663
+
+{
+  "code" : "200",
+  "message" : "success",
+  "data" : {
+    "imagePath" : "post/3931df90-e81c-47a0-8364-909a7cea7ac9",
+    "imageUrl" : "https://d39eiex97d56il.cloudfront.net/post/3931df90-e81c-47a0-8364-909a7cea7ac9",
+    "preSignedUrl" : "https://ssaf-sound-file-server-s3-bucket.s3.ap-northeast-2.amazonaws.com/post/3931df90-e81c-47a0-8364-909a7cea7ac9?x-amz-acl=public-read-write&amp;X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Date=20230815T055051Z&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Expires=299&amp;X-Amz-Credential=AKIAQ7OX65EXW5BZE2UI%2F20230815%2Fap-northeast-2%2Fs3%2Faws4_request&amp;X-Amz-Signature=686b867c619ca2bf4ac43336f942e8cdb760ee52483fcbc0ecec906668018fd8"
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_이미지_업로드_url_요청_response_fields"><a class="link" href="#_이미지_업로드_url_요청_response_fields">7.1.4. Response fields</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.imagePath</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">스토리지 내 이미지 경로</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.imageUrl</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이미지를 조회할 수 있는 url</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.preSignedUrl</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이미지를 저장할 수 있는 url</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-08-14 18:57:04 +0900
+Last updated 2023-08-15 15:51:06 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

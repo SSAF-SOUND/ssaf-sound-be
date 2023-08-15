@@ -26,7 +26,7 @@ public class StorageControllerTest extends ControllerTest {
                 .getPreSignedUrl(any());
 
         restDocs.cookie(ACCESS_TOKEN)
-                .when().get("/store/image")
+                .when().post("/store/image")
                 .then().log().all()
                 .assertThat()
                 .statusCode(HttpStatus.OK.value())

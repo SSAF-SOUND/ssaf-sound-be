@@ -6,7 +6,7 @@ import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import com.ssafy.ssafsound.infra.storage.dto.GetStorageUploadResDto;
 import com.ssafy.ssafsound.infra.storage.service.AwsS3StorageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,7 +17,7 @@ public class StorageController {
 
     private final AwsS3StorageService awsS3StorageService;
 
-    @GetMapping("/image")
+    @PostMapping("/image")
     public EnvelopeResponse<GetStorageUploadResDto> getPreSignedUrl(
             @Authentication AuthenticatedMember member) {
 
