@@ -60,4 +60,9 @@ public class PostFixture {
             .likeCount(10)
             .liked(true)
             .build();
+
+    public static final PostPostScrapResDto POST_POST_SCRAP_RES_DTO = PostPostScrapResDto.builder()
+            .scrapCount(9)
+            .scraped(false)
+            .build();
 }

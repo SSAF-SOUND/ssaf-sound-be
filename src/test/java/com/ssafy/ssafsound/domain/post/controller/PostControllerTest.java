@@ -162,6 +162,7 @@ class PostControllerTest extends ControllerTest {
     }
 
     @Test
+    @DisplayName("게시글 좋아요(등록, 취소가능)")
     void likePost() {
         doReturn(POST_POST_LIKE_RES_DTO)
                 .when(postService)
@@ -185,7 +186,27 @@ class PostControllerTest extends ControllerTest {
     }
 
     @Test
+    @DisplayName("게시글 스크랩(등록, 취소가능)")
     void scrapPost() {
+        doReturn(POST_POST_SCRAP_RES_DTO)
+                .when(postService)
+                .scrapPost(any(), any());
+
+        restDocs.cookie(ACCESS_TOKEN)
+                .when().post("/posts/{postId}/scrap", 1L)
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .apply(document("post/scrap-post",
+                                requestCookieAccessTokenMandatory(),
+                                pathParameters(
+                                        parameterWithName("postId").description("스크랩을 누를 게시글 고유 ID")
+                                ),
+                                getEnvelopPatternWithData().andWithPrefix("data.",
+                                        fieldWithPath("scrapCount").type(JsonFieldType.NUMBER).description("스크랩을 클릭 한 후 현재 게시글의 스크랩 개수"),
+                                        fieldWithPath("scraped").type(JsonFieldType.BOOLEAN).description("해당 게시글의 스크랩을 눌렀는지 여부, true면 스크랩 등록, false면 스크랩 취소")
+                                )
+                        )
+                );
     }
 
     @Test
