@@ -271,7 +271,7 @@ class PostControllerTest extends ControllerTest {
                                         fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용"),
                                         fieldWithPath("anonymity").type(JsonFieldType.BOOLEAN).description("게시글 작성자의 익명 여부를 나타내는 필드"),
                                         fieldWithPath("images").type(JsonFieldType.ARRAY).description("게시글 사진 목록")
-                                ).andWithPrefix("images.[]",
+                                ).andWithPrefix("images[].",
                                         fieldWithPath("imagePath").type(JsonFieldType.STRING).description("s3에 저장된 경로를 의미하는 필드, s3에 저장된 데이터를 삭제할 때 사용").optional(),
                                         fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("s3에 저장된 이미지를 CDN URL 주소로 가져오기 위한 필드, 해당 URL에 접근만 해도 이미지에 접근할 수 있는 경로를 의미").optional()
                                 ),
@@ -327,7 +327,7 @@ class PostControllerTest extends ControllerTest {
                                         fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용"),
                                         fieldWithPath("anonymity").type(JsonFieldType.BOOLEAN).description("게시글 작성자의 익명 여부를 나타내는 필드"),
                                         fieldWithPath("images").type(JsonFieldType.ARRAY).description("게시글 사진 목록")
-                                ).andWithPrefix("images.[]",
+                                ).andWithPrefix("images[].",
                                         fieldWithPath("imagePath").type(JsonFieldType.STRING).description("s3에 저장된 경로를 의미하는 필드, s3에 저장된 데이터를 삭제할 때 사용").optional(),
                                         fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("s3에 저장된 이미지를 CDN URL 주소로 가져오기 위한 필드, 해당 URL에 접근만 해도 이미지에 접근할 수 있는 경로를 의미").optional()
                                 ),
@@ -424,7 +424,7 @@ class PostControllerTest extends ControllerTest {
                 .when().get("/posts/my?cursor={cursor}&size={pageSize}", -1, 10)
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .apply(document("post/find-posts",
+                .apply(document("post/find-my-posts",
                                 requestCookieAccessTokenNeedless(),
                                 requestParameters(
                                         parameterWithName("cursor").description("cursor값은 다음 페이지를 가져올 마지막 페이지 번호를 의미함, 초기 cursor는 -1, 이후 cursor값은 응답 데이터로 제공되는 cursor값을 사용."),
