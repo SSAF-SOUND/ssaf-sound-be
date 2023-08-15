@@ -5,9 +5,15 @@ import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
 import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RecruitApplicationElement {
     @JsonProperty
     private Long recruitApplicationId;
@@ -17,9 +23,6 @@ public class RecruitApplicationElement {
 
     @JsonProperty
     private MatchStatus matchStatus;
-
-    @JsonProperty
-    private MetaData type;
 
     @JsonProperty
     private Long memberId;
@@ -42,7 +45,7 @@ public class RecruitApplicationElement {
     @JsonProperty
     private Boolean isLike;
 
-    public RecruitApplicationElement(Long recruitApplicationId, MetaData recruitType, MatchStatus matchStatus, MetaData type,
+    public RecruitApplicationElement(Long recruitApplicationId, MetaData recruitType, MatchStatus matchStatus,
                                      Long memberId, String nickname,
                                      Integer semester, Boolean isMajor, MetaData campus,
                                      AuthenticationStatus certificationState, MetaData majorTrack,
@@ -51,7 +54,6 @@ public class RecruitApplicationElement {
         this.recruitApplicationId = recruitApplicationId;
         this.recruitType = recruitType.getName();
         this.matchStatus = matchStatus;
-        this.type = type;
         this.memberId = memberId;
         this.nickname = nickname;
         this.isMajor = isMajor;
