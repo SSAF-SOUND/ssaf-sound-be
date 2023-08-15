@@ -13,7 +13,7 @@ import com.ssafy.ssafsound.domain.meta.domain.UploadDirectory;
 import com.ssafy.ssafsound.domain.post.domain.PostImage;
 import com.ssafy.ssafsound.infra.exception.InfraErrorInfo;
 import com.ssafy.ssafsound.infra.exception.InfraException;
-import com.ssafy.ssafsound.infra.storage.dto.PostStoreImageResDto;
+import com.ssafy.ssafsound.infra.storage.dto.GetStorageUploadResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,7 +42,7 @@ public class AwsS3StorageService {
 
     private static final String uploadDir = UploadDirectory.POST.getName();
 
-    public PostStoreImageResDto getPreSignedUrl(Long memberId) {
+    public GetStorageUploadResDto getPreSignedUrl(Long memberId) {
 
         memberRepository.findById(memberId)
             .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
@@ -53,7 +53,7 @@ public class AwsS3StorageService {
             GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePreSignedUrlRequest(
                 bucket, fileName);
 
-            return PostStoreImageResDto.builder()
+            return GetStorageUploadResDto.builder()
                 .imagePath(fileName)
                 .imageUrl(makeCDNFileUrl(fileName))
                 .preSignedUrl(amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString())
