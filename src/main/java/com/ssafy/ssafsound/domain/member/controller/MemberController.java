@@ -66,6 +66,13 @@ public class MemberController {
                 .build();
     }
 
+    @GetMapping("/{memberId}/public-profile")
+    public EnvelopeResponse<GetMemberPublicProfileResDto> getOtherMemberProfilePublic(@PathVariable Long memberId) {
+        return EnvelopeResponse.<GetMemberPublicProfileResDto>builder()
+                .data(memberService.getMemberPublicProfileByMemberId(memberId))
+                .build();
+    }
+
     @PutMapping
     public EnvelopeResponse<GetMemberResDto> registerMemberInformation(
             @Authentication AuthenticatedMember authenticatedMember,
