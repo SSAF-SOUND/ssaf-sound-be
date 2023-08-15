@@ -1,0 +1,29 @@
+== 리크루트
+
+
+=== 리크루트 등록
+operation::recruit/saveRecruit[snippets='http-request,request-fields,cookie,http-response,response-fields']
+
+
+=== 리크루트 스크랩 토글
+operation::recruit/toggleRecruitScrap[snippets='http-request,cookie,path-parameters,http-response,response-fields']
+
+
+=== 리크루트 완료
+operation::recruit/expiredRecruit[snippets='http-request,cookie,path-parameters,http-response,response-fields']
+
+
+=== 리크루트 상세 조회
+operation::recruit/detail[snippets='http-request,path-parameters,http-response,response-fields']
+
+
+=== 리크루트 업데이트
+operation::recruit/updateRecruit[snippets='http-request,cookie,path-parameters,request-fields,http-response,response-fields']
+
+
+=== 리크루트 삭제
+operation::recruit/deleteRecruit[snippets='http-request,cookie,path-parameters,http-response,response-fields']
+
+
+=== 리크루트 목록 조회
+operation::recruit/recruits[snippets='http-request,request-parameters,http-response,response-fields']

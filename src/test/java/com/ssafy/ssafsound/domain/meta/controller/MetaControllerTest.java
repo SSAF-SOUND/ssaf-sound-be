@@ -1,7 +1,7 @@
 package com.ssafy.ssafsound.domain.meta.controller;
 
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
-import com.ssafy.ssafsound.domain.meta.fixture.ProductionMetaDataFixture;
+import com.ssafy.ssafsound.global.util.fixture.ProductionMetaDataFixture;
 import com.ssafy.ssafsound.global.docs.ControllerTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

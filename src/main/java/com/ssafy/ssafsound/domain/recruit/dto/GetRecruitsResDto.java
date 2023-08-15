@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class GetRecruitsResDto {
     private List<RecruitElement> recruits;
     private Long nextCursor;
-    private boolean isLast;
+    private Boolean isLast;
 
     @JsonIgnore
     public List<Long> getRecruitsId() {
