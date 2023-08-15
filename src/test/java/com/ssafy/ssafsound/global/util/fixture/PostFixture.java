@@ -3,6 +3,8 @@ package com.ssafy.ssafsound.global.util.fixture;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
+import com.ssafy.ssafsound.domain.post.dto.PostPostWriteReqDto;
+import com.ssafy.ssafsound.domain.post.dto.PostIdElement;
 
 import java.util.List;
 
@@ -11,30 +13,42 @@ import static com.ssafy.ssafsound.global.util.fixture.MemberFixture.*;
 
 public class PostFixture {
 
-    public static final Integer PAGE_SIZE1 = 10;
-
     public static final Post POST_FIXTURE1 = Post.builder()
             .id(1L)
             .title("싸탈하고 싶다.")
             .content("싸탈하고 싶은 밤이네요")
-            .anonymity(true)
+            .anonymity(false)
             .board(BOARD_FIXTURE1)
-            .member(MEMBER_WALTER)
+            .member(MEMBER_KIM)
             .build();
 
     public static final Post POST_FIXTURE2 = Post.builder()
             .id(2L)
             .title("삼성 B형을 봤는데")
             .content("결과가 암울해")
-            .anonymity(false)
+            .anonymity(true)
             .board(BOARD_FIXTURE1)
             .member(MEMBER_YONG)
             .build();
 
     public static final GetPostResDto GET_POST_RES_DTO1 = GetPostResDto.of(
             List.of(POST_FIXTURE1,
-                    POST_FIXTURE2), PAGE_SIZE1);
+                    POST_FIXTURE2), 10);
 
     public static final GetPostDetailResDto GET_POST_DETAIL_RES_DTO1 = GetPostDetailResDto.of(
-            POST_FIXTURE2, null);
+            POST_FIXTURE1, null);
+
+    public static final GetPostDetailResDto GET_POST_DETAIL_RES_DTO2 = GetPostDetailResDto.of(
+            POST_FIXTURE2, MEMBER_YONG);
+
+    public static final PostPostWriteReqDto POST_POST_WRITE_REQ_DTO1 = PostPostWriteReqDto.builder()
+            .title("안녕하세요 첫 글이네요")
+            .content("싸피도 드디어 익명 커뮤니티가 생기다니..")
+            .anonymity(true)
+            .images(List.of())
+            .build();
+
+    public static final PostIdElement POST_ID_ELEMENT = PostIdElement.builder()
+            .postId(1L)
+            .build();
 }
