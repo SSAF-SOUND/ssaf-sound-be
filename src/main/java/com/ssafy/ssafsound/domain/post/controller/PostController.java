@@ -63,16 +63,16 @@ public class PostController {
     }
 
     @PostMapping
-    public EnvelopeResponse<Long> writePost(@Valid @RequestBody PostPostWriteReqDto postPostWriteReqDto,
-                                            @RequestParam Long boardId, @Authentication AuthenticatedMember loginMember) {
-        return EnvelopeResponse.<Long>builder()
+    public EnvelopeResponse<PostIdElement> writePost(@Valid @RequestBody PostPostWriteReqDto postPostWriteReqDto,
+                                                     @RequestParam Long boardId, @Authentication AuthenticatedMember loginMember) {
+        return EnvelopeResponse.<PostIdElement>builder()
                 .data(postService.writePost(boardId, loginMember.getMemberId(), postPostWriteReqDto))
                 .build();
     }
 
     @DeleteMapping("/{postId}")
-    public EnvelopeResponse<Long> deletePost(@PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
-        return EnvelopeResponse.<Long>builder()
+    public EnvelopeResponse<PostIdElement> deletePost(@PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
+        return EnvelopeResponse.<PostIdElement>builder()
                 .data(postService.deletePost(postId, loginMember.getMemberId()))
                 .build();
     }

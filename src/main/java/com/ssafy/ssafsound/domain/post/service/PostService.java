@@ -184,7 +184,7 @@ public class PostService {
     }
 
     @Transactional
-    public Long writePost(Long boardId, Long loginMemberId, PostPostWriteReqDto postPostWriteReqDto) {
+    public PostIdElement writePost(Long boardId, Long loginMemberId, PostPostWriteReqDto postPostWriteReqDto) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorInfo.NO_BOARD));
 
@@ -212,11 +212,11 @@ public class PostService {
                 postImageRepository.save(postImage);
             }
         }
-        return post.getId();
+        return new PostIdElement(post.getId());
     }
 
     @Transactional
-    public Long deletePost(Long postId, Long loginMemberId) {
+    public PostIdElement deletePost(Long postId, Long loginMemberId) {
         Post post = postRepository.findByIdWithMember(postId)
                 .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
@@ -230,7 +230,7 @@ public class PostService {
         deleteAllPostImages(post.getImages());
         postRepository.delete(post);
         hotPostRepository.findByPostId(postId).ifPresent(hotPostRepository::delete);
-        return postId;
+        return new PostIdElement(postId);
     }
 
     private void deleteAllPostImages(List<PostImage> images) {
