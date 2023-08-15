@@ -15,8 +15,35 @@ operation::members/put-information/[snippets='cookie,http-request,request-body,r
 === 회원가입 시 싸피 멤버 정보 입력
 operation::members/put-ssafy-information/[snippets='cookie,http-request,request-body,request-fields,http-response,response-fields']
 
+=== 싸피생 인증
+operation::members/ssafy-certification/[snippets='cookie,http-request,request-fields,http-response,response-fields']
+
 === 나의 포트폴리오 조회
 operation::members/get-portfolio/[snippets='cookie,http-request,http-response,response-fields']
 
 === 다른 멤버 포트폴리오 조회
 operation::members/get-other-portfolio/[snippets='cookie,http-request,path-parameters,http-response,response-fields']
+
+=== 멤버 포트폴리오 수정
+operation::members/put-member-portfolio/[snippets='cookie,http-request,request-fields,http-response,response-fields']
+
+=== 멤버의 기본 정보 조회
+operation::members/get-default-information/[snippets='cookie,http-request,path-parameters,http-response,response-fields']
+
+=== 멤버의 기본 정보 수정
+operation::members/change-default-information/[snippets='cookie,http-request,request-fields,http-response,response-fields']
+
+=== 나의 프로필 공개 여부 조회
+operation::members/get-public/[snippets='cookie,http-request,http-response,response-fields']
+
+=== 다른 멤버의 프로필 공개 여부 조회
+operation::members/get-other-public/[snippets='cookie,http-request,path-parameters,http-response,response-fields']
+
+=== 프로필 공개 여부 수정
+operation::members/change-public-profile/[snippets='cookie,http-request,request-fields,http-response,response-fields']
+
+=== 닉네임 중복 검사
+operation::members/check-nickname/[snippets='cookie,http-request,request-fields,http-response,response-fields']
+
+=== 닉네임 변경
+operation::members/change-nickname/[snippets='cookie,http-request,request-fields,http-response,response-fields']

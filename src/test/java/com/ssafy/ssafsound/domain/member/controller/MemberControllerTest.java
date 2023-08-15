@@ -13,6 +13,7 @@ import org.springframework.restdocs.payload.RequestFieldsSnippet;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 
 import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.requestCookieAccessTokenMandatory;
+import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.requestCookieAccessTokenNeedless;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -52,18 +53,24 @@ class MemberControllerTest extends ControllerTest {
         );
     }
 
-    public ResponseFieldsSnippet getSSAFYMemberSnippet() {
+    public ResponseFieldsSnippet getMemberSnippet() {
         return getEnvelopPatternWithData()
-                .and(fieldWithPath("data.memberId").type(JsonFieldType.NUMBER)
-                        .description("멤버 ID"))
-                .and(fieldWithPath("data.memberRole").type(JsonFieldType.STRING)
-                        .description("멤버 권한"))
-                .and(fieldWithPath("data.nickname").type(JsonFieldType.STRING)
-                        .description("닉네임"))
-                .and(fieldWithPath("data.ssafyMember").type(JsonFieldType.BOOLEAN)
-                        .description("싸피인 여부"))
-                .and(fieldWithPath("data.isMajor").type(JsonFieldType.BOOLEAN)
-                        .description("전공자 여부"));
+                .and(fieldWithPath("data.memberId").type(JsonFieldType.NUMBER).description("멤버 ID"))
+                .and(fieldWithPath("data.memberRole").type(JsonFieldType.STRING).description("멤버 권한"))
+                .and(fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("닉네임").optional())
+                .and(fieldWithPath("data.ssafyMember").type(JsonFieldType.BOOLEAN).description("싸피인 여부").optional())
+                .and(fieldWithPath("data.isMajor").type(JsonFieldType.BOOLEAN).description("전공자 여부").optional())
+                .and(fieldWithPath("data.ssafyInfo").type(JsonFieldType.OBJECT)
+                        .description("싸피인 정보").optional())
+                .andWithPrefix("data.ssafyInfo.",
+                        fieldWithPath("semester").type(JsonFieldType.NUMBER)
+                                .description("싸피 기수 정보").optional(),
+                        fieldWithPath("campus").type(JsonFieldType.STRING)
+                                .description("캠퍼스 이름").optional(),
+                        fieldWithPath("certificationState").type(JsonFieldType.STRING)
+                                .description("싸피생 인증상태(CERTIFIED/UNCERTIFIED)").optional(),
+                        fieldWithPath("majorTrack").type(JsonFieldType.STRING)
+                                .description("전공 트랙(인증상태가 UNCERTIFIED라면 NULL)").optional());
     }
 
     @DisplayName("회원가입 후 처음으로 멤버 본인정보 요청 시, 조회에 성공한다.")
@@ -134,18 +141,7 @@ class MemberControllerTest extends ControllerTest {
                 .assertThat()
                 .apply(document("members/ssafy-information",
                         requestCookieAccessTokenMandatory(),
-                        getSSAFYMemberSnippet()
-                                .and(fieldWithPath("data.ssafyInfo").type(JsonFieldType.OBJECT)
-                                        .description("싸피인 정보"))
-                                .andWithPrefix("data.ssafyInfo.",
-                                        fieldWithPath("semester").type(JsonFieldType.NUMBER)
-                                                .description("싸피 기수 정보"),
-                                        fieldWithPath("campus").type(JsonFieldType.STRING)
-                                                .description("캠퍼스 이름"),
-                                        fieldWithPath("certificationState").type(JsonFieldType.STRING)
-                                                .description("싸피생 인증상태(CERTIFIED/UNCERTIFIED)"),
-                                        fieldWithPath("majorTrack").type(JsonFieldType.STRING)
-                                                .description("전공 트랙(인증상태가 UNCERTIFIED라면 NULL)"))))
+                        getMemberSnippet()))
                 .expect(status().isOk());
     }
 
@@ -171,9 +167,7 @@ class MemberControllerTest extends ControllerTest {
                 .apply(document("members/put-information",
                         requestCookieAccessTokenMandatory(),
                         requestSSAFYSnippet(),
-                        getSSAFYMemberSnippet()
-                                .and(fieldWithPath("data.ssafyInfo").type(JsonFieldType.NULL)
-                                        .description("싸피인 정보"))))
+                        getMemberSnippet()))
                 .expect(status().isOk());
     }
 
@@ -201,18 +195,35 @@ class MemberControllerTest extends ControllerTest {
                 .apply(document("members/put-ssafy-information",
                         requestCookieAccessTokenMandatory(),
                         requestSSAFYSnippet(),
-                        getSSAFYMemberSnippet()
-                                .and(fieldWithPath("data.ssafyInfo").type(JsonFieldType.OBJECT)
-                                        .description("싸피인 정보"))
-                                .andWithPrefix("data.ssafyInfo.",
-                                        fieldWithPath("semester").type(JsonFieldType.NUMBER)
-                                                .description("싸피 기수 정보"),
-                                        fieldWithPath("campus").type(JsonFieldType.STRING)
-                                                .description("캠퍼스 이름"),
-                                        fieldWithPath("certificationState").type(JsonFieldType.STRING)
-                                                .description("싸피생 인증상태(CERTIFIED/UNCERTIFIED)"),
-                                        fieldWithPath("majorTrack").type(JsonFieldType.NULL)
-                                                .description("전공 트랙(인증상태가 UNCERTIFIED라면 NULL)"))))
+                        getMemberSnippet()))
+                .expect(status().isOk());
+    }
+
+    @DisplayName("싸피생 인증에 대해서 성공한다.")
+    @Test
+    void certificationSSAFY() {
+
+        given(memberService.certifySSAFYInformation(any(), any()))
+                .willReturn(MemberFixture.POST_CERTIFICATION_INFO_RESPONSE);
+
+        restDocs
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .cookie(ACCESS_TOKEN)
+                .body(MemberFixture.POST_CERTIFICATION_INFO_REQUEST)
+                .when().post("/members/ssafy-certification")
+                .then().log().all()
+                .assertThat()
+                .apply(document("members/ssafy-certification",
+                        requestCookieAccessTokenMandatory(),
+                        requestFields(
+                                fieldWithPath("majorTrack").description("전공트랙"),
+                                fieldWithPath("semester").description("기수"),
+                                fieldWithPath("answer").description("기수에 따른 출제 문제에 대한 정답")),
+                        getEnvelopPatternWithData()
+                                .and(fieldWithPath("data.possible").type(JsonFieldType.BOOLEAN)
+                                        .description("인증 상태 여부"))
+                                .and(fieldWithPath("data.certificationInquiryCount").type(JsonFieldType.NUMBER)
+                                        .description("인증 시도 횟수"))))
                 .expect(status().isOk());
     }
 
@@ -231,6 +242,206 @@ class MemberControllerTest extends ControllerTest {
                 .apply(document("members/get-portfolio",
                         requestCookieAccessTokenMandatory(),
                         getPortfolioSnippet()))
+                .expect(status().isOk());
+    }
+
+    @DisplayName("다른 멤버의 포트폴리오 가져오기에 성공한다.")
+    @Test
+    void getOtherPortfolio() {
+
+        given(memberService.getMemberPortfolioById(any()))
+                .willReturn(MemberFixture.MY_PORTFOLIO);
+
+        restDocs
+                .when().get("members/{memberId}/portfolio", 99)
+                .then().log().all()
+                .assertThat()
+                .apply(document("members/get-other-portfolio",
+                        CookieDescriptionSnippet.requestCookieAccessTokenNeedless(),
+                        pathParameters(parameterWithName("memberId")
+                                .description("멤버 Id")),
+                        getPortfolioSnippet()))
+                .expect(status().isOk());
+    }
+
+    @DisplayName("포트폴리오 수정에 성공한다.")
+    @Test
+    void putMemberPortfolio() {
+        restDocs
+                .cookie(ACCESS_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(MemberFixture.PUT_MEMBER_PORTFOLIO_REQUEST)
+                .when().put("members/portfolio")
+                .then().log().all()
+                .assertThat()
+                .apply(document("members/put-member-portfolio",
+                        requestCookieAccessTokenMandatory(),
+                        requestFields(
+                                fieldWithPath("selfIntroduction").description("자기소개"),
+                                fieldWithPath("skills[]").description("기술 스택들").optional(),
+                                fieldWithPath("memberLinks[]").description("소개 링크들").optional(),
+                                fieldWithPath("memberLinks[].linkName").description("링크 이름"),
+                                fieldWithPath("memberLinks[].path").description("링크 경로")),
+                        getEnvelopPatternWithNoContent()))
+                .expect(status().isOk());
+    }
+
+    @DisplayName("멤버의 기본 정보 조회에 성공한다.")
+    @Test
+    void getMemberDefaultInformation() {
+
+        given(memberService.getMemberDefaultInfoByMemberId(any()))
+                .willReturn(MemberFixture.GET_MEMBER_DEFAULT_INFO);
+
+        restDocs
+                .when().get("members/{memberId}/default-information", 99)
+                .then().log().all()
+                .assertThat()
+                .apply(document("members/get-default-information",
+                        CookieDescriptionSnippet.requestCookieAccessTokenNeedless(),
+                        pathParameters(parameterWithName("memberId").description("멤버 Id")),
+                        getEnvelopPatternWithData()
+                                .and(fieldWithPath("data.nickname").type(JsonFieldType.STRING).description("닉네임").optional())
+                                .and(fieldWithPath("data.ssafyMember").type(JsonFieldType.BOOLEAN).description("싸피인 여부").optional())
+                                .and(fieldWithPath("data.isMajor").type(JsonFieldType.BOOLEAN).description("전공자 여부").optional())
+                                .and(fieldWithPath("data.ssafyInfo").type(JsonFieldType.OBJECT)
+                                        .description("싸피인 정보").optional())
+                                .andWithPrefix("data.ssafyInfo.",
+                                        fieldWithPath("semester").type(JsonFieldType.NUMBER)
+                                                .description("싸피 기수 정보").optional(),
+                                        fieldWithPath("campus").type(JsonFieldType.STRING)
+                                                .description("캠퍼스 이름").optional(),
+                                        fieldWithPath("certificationState").type(JsonFieldType.STRING)
+                                                .description("싸피생 인증상태(CERTIFIED/UNCERTIFIED)").optional(),
+                                        fieldWithPath("majorTrack").type(JsonFieldType.STRING)
+                                                .description("전공 트랙(인증상태가 UNCERTIFIED라면 NULL)").optional())
+                ))
+                .expect(status().isOk());
+    }
+
+    @DisplayName("멤버의 기본 정보 수정에 대해 성공한다.")
+    @Test
+    void patchMemberDefaultInformation() {
+        restDocs
+                .cookie(ACCESS_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(MemberFixture.PATCH_MEMBER_DEFAULT_INFO_REQUEST)
+                .when().patch("members/default-information")
+                .then().log().all()
+                .assertThat()
+                .apply(document("members/change-default-information",
+                        requestCookieAccessTokenMandatory(),
+                        requestFields(
+                                fieldWithPath("ssafyMember").description("싸피인 여부"),
+                                fieldWithPath("semester").description("기수").optional(),
+                                fieldWithPath("campus").description("캠퍼스").optional()),
+                        getEnvelopPatternWithNoContent()))
+                .expect(status().isOk());
+    }
+
+    @DisplayName("나의 프로필 공개 여부 조회에 성공한다.")
+    @Test
+    void getStatusOfPublicProfile() {
+
+        given(memberService.getMemberPublicProfileByMemberId(any()))
+                .willReturn(MemberFixture.GET_MEMBER_PUBLIC_PROFILE);
+
+        restDocs
+                .cookie(ACCESS_TOKEN)
+                .when().get("members/public-profile")
+                .then().log().all()
+                .assertThat()
+                .apply(document("members/get-public",
+                        requestCookieAccessTokenMandatory(),
+                        getEnvelopPatternWithData()
+                                .and(fieldWithPath("data.isPublic").type(JsonFieldType.BOOLEAN)
+                                        .description("프로필 공개 여부").optional())))
+                .expect(status().isOk());
+
+    }
+
+    @DisplayName("다른 멤버의 프로필 공개 여부 조회에 성공한다.")
+    @Test
+    void getOtherStatusOfPublicProfile() {
+
+        given(memberService.getMemberPublicProfileByMemberId(any()))
+                .willReturn(MemberFixture.GET_MEMBER_PUBLIC_PROFILE);
+
+        restDocs
+                .cookie(ACCESS_TOKEN)
+                .when().get("members/{memberId}/public-profile", 99)
+                .then().log().all()
+                .assertThat()
+                .apply(document("members/get-other-public",
+                        requestCookieAccessTokenNeedless(),
+                        pathParameters(parameterWithName("memberId").description("멤버 Id")),
+                        getEnvelopPatternWithData()
+                                .and(fieldWithPath("data.isPublic").type(JsonFieldType.BOOLEAN)
+                                        .description("프로필 공개 여부"))))
+                .expect(status().isOk());
+
+    }
+
+    @DisplayName("프로필 공개여부 수정에 성공합니다.")
+    @Test
+    void changePublicProfile() {
+
+        restDocs
+                .cookie(ACCESS_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(MemberFixture.PATCH_MEMBER_PUBLIC_PROFILE_REQUEST)
+                .when().patch("members/public-profile")
+                .then().log().all()
+                .assertThat()
+                .apply(document("members/change-public-profile",
+                        requestCookieAccessTokenMandatory(),
+                        requestFields(
+                                fieldWithPath("isPublic").description("프로필 공개 여부 수정")),
+                        getEnvelopPatternWithNoContent()))
+                .expect(status().isOk());
+    }
+
+    @DisplayName("닉네임 중복 여부를 검사한다.")
+    @Test
+    void checkNicknamePossible() {
+
+        given(memberService.checkNicknamePossible(any()))
+                .willReturn(MemberFixture.POST_NICKNAME_RESPONSE);
+
+        restDocs
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(MemberFixture.POST_NICKNAME_REQUEST)
+                .when().post("members/nickname")
+                .then().log().all()
+                .assertThat()
+                .apply(document("members/check-nickname",
+                        requestCookieAccessTokenNeedless(),
+                        requestFields(
+                                fieldWithPath("nickname").description("닉네임")),
+                        getEnvelopPatternWithData()
+                                .and(fieldWithPath("data.possible").type(JsonFieldType.BOOLEAN)
+                                        .description("닉네임 사용 가능 여부"))))
+                .expect(status().isOk());
+
+    }
+
+
+    @DisplayName("닉네임 변경에 성공한다.")
+    @Test
+    void changeNickname() {
+
+        restDocs
+                .cookie(ACCESS_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(MemberFixture.POST_NICKNAME_REQUEST)
+                .when().patch("members/nickname")
+                .then().log().all()
+                .assertThat()
+                .apply(document("members/change-nickname",
+                        requestCookieAccessTokenMandatory(),
+                        requestFields(
+                                fieldWithPath("nickname").description("닉네임")),
+                        getEnvelopPatternWithNoContent()))
                 .expect(status().isOk());
     }
 }
