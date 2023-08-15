@@ -62,7 +62,7 @@ public class PostFixture {
             .likeCount(5)
             .commentCount(14)
             .createdAt(LocalDateTime.now())
-            .nickname("이용준")
+            .nickname("익명")
             .anonymity(true)
             .thumbnail("썸네일 URL")
             .build();
@@ -104,8 +104,36 @@ public class PostFixture {
             .likeCount(202)
             .commentCount(54)
             .createdAt(LocalDateTime.now())
-            .nickname("이용준")
+            .nickname("익명")
             .anonymity(true)
+            .thumbnail("썸네일 URL")
+            .build();
+
+    public static final GetPostMyElement GET_POST_MY_ELEMENT1 = GetPostMyElement.builder()
+            .boardId(1L)
+            .boardTitle("자유 게시판")
+            .postId(6L)
+            .title("안녕하세요 반갑습니다.")
+            .content("SSAFY 9기 합격했습니다!!")
+            .likeCount(3)
+            .commentCount(2)
+            .createdAt(LocalDateTime.now())
+            .nickname("이용준")
+            .anonymity(false)
+            .thumbnail("썸네일 URL")
+            .build();
+
+    public static final GetPostMyElement GET_POST_MY_ELEMENT2 = GetPostMyElement.builder()
+            .boardId(2L)
+            .boardTitle("취업 게시판")
+            .postId(7L)
+            .title("취업을 하기 위한 꿀팁")
+            .content("열심히 SSAFY 9기를 수료하시면 취업에 성공하실겁니다.")
+            .likeCount(102)
+            .commentCount(33)
+            .createdAt(LocalDateTime.now())
+            .nickname("이용준")
+            .anonymity(false)
             .thumbnail("썸네일 URL")
             .build();
 
@@ -136,6 +164,12 @@ public class PostFixture {
 
     public static final GetPostHotResDto GET_POST_HOT_RES_DTO2 = GetPostHotResDto.builder()
             .posts(List.of(GET_POST_HOT_ELEMENT1))
+            .cursor(null)
+            .build();
+
+    public static final GetPostMyResDto GET_POST_MY_RES_DTO1 = GetPostMyResDto.builder()
+            .posts(List.of(GET_POST_MY_ELEMENT1,
+                    GET_POST_MY_ELEMENT2))
             .cursor(null)
             .build();
 
