@@ -17,3 +17,6 @@ operation::members/put-ssafy-information/[snippets='cookie,http-request,request-
 
 === 나의 포트폴리오 조회
 operation::members/get-portfolio/[snippets='cookie,http-request,http-response,response-fields']
+
+=== 다른 멤버 포트폴리오 조회
+operation::members/get-other-portfolio/[snippets='cookie,http-request,path-parameters,http-response,response-fields']

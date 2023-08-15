@@ -3,20 +3,68 @@ package com.ssafy.ssafsound.domain.member.controller;
 import com.ssafy.ssafsound.domain.member.dto.GetMemberResDto;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberInfoReqDto;
 import com.ssafy.ssafsound.global.docs.ControllerTest;
+import com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet;
 import com.ssafy.ssafsound.global.util.fixture.MemberFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.restdocs.payload.RequestFieldsSnippet;
+import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 
 import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.requestCookieAccessTokenMandatory;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class MemberControllerTest extends ControllerTest {
+
+    public ResponseFieldsSnippet getPortfolioSnippet() {
+        return getEnvelopPatternWithData()
+                .andWithPrefix("data.portfolioElement.",
+                        fieldWithPath("selfIntroduction").type(JsonFieldType.STRING)
+                                .description("멤버 소개 글"),
+                        fieldWithPath("skills").type(JsonFieldType.ARRAY)
+                                .description("멤버 기술 스택들"),
+                        fieldWithPath("memberLinks")
+                                .type(JsonFieldType.ARRAY)
+                                .description("멤버 소개 링크들"),
+                        fieldWithPath("memberLinks[].linkName")
+                                .type(JsonFieldType.STRING)
+                                .description("멤버의 소개 링크 이름"),
+                        fieldWithPath("memberLinks[].path")
+                                .type(JsonFieldType.STRING)
+                                .description("멤버의 소개 링크 경로"));
+    }
+
+    public RequestFieldsSnippet requestSSAFYSnippet() {
+        return requestFields(
+                fieldWithPath("nickname").description("닉네임"),
+                fieldWithPath("ssafyMember").description("싸피인 여부"),
+                fieldWithPath("isMajor").description("전공자 여부"),
+                fieldWithPath("semester").description("싸피 기수"),
+                fieldWithPath("campus").description("캠퍼스 이름")
+        );
+    }
+
+    public ResponseFieldsSnippet getSSAFYMemberSnippet() {
+        return getEnvelopPatternWithData()
+                .and(fieldWithPath("data.memberId").type(JsonFieldType.NUMBER)
+                        .description("멤버 ID"))
+                .and(fieldWithPath("data.memberRole").type(JsonFieldType.STRING)
+                        .description("멤버 권한"))
+                .and(fieldWithPath("data.nickname").type(JsonFieldType.STRING)
+                        .description("닉네임"))
+                .and(fieldWithPath("data.ssafyMember").type(JsonFieldType.BOOLEAN)
+                        .description("싸피인 여부"))
+                .and(fieldWithPath("data.isMajor").type(JsonFieldType.BOOLEAN)
+                        .description("전공자 여부"));
+    }
 
     @DisplayName("회원가입 후 처음으로 멤버 본인정보 요청 시, 조회에 성공한다.")
     @Test
@@ -64,9 +112,9 @@ class MemberControllerTest extends ControllerTest {
                                 .and(fieldWithPath("data.nickname").type(JsonFieldType.STRING)
                                         .description("닉네임"))
                                 .and(fieldWithPath("data.ssafyMember").type(JsonFieldType.BOOLEAN)
-                                        .description("싸피인 여부 FALSE"))
+                                        .description("싸피인 여부"))
                                 .and(fieldWithPath("data.isMajor").type(JsonFieldType.BOOLEAN)
-                                        .description("전공자 여부 TRUE OR FALSE"))
+                                        .description("전공자 여부"))
                                 .and(fieldWithPath("data.ssafyInfo").type(JsonFieldType.NULL)
                                         .description("싸피인 정보 NULL"))))
                 .expect(status().isOk());
@@ -86,17 +134,7 @@ class MemberControllerTest extends ControllerTest {
                 .assertThat()
                 .apply(document("members/ssafy-information",
                         requestCookieAccessTokenMandatory(),
-                        getEnvelopPatternWithData()
-                                .and(fieldWithPath("data.memberId").type(JsonFieldType.NUMBER)
-                                        .description("멤버 ID"))
-                                .and(fieldWithPath("data.memberRole").type(JsonFieldType.STRING)
-                                        .description("멤버 권한"))
-                                .and(fieldWithPath("data.nickname").type(JsonFieldType.STRING)
-                                        .description("닉네임"))
-                                .and(fieldWithPath("data.ssafyMember").type(JsonFieldType.BOOLEAN)
-                                        .description("싸피인 여부 FALSE"))
-                                .and(fieldWithPath("data.isMajor").type(JsonFieldType.BOOLEAN)
-                                        .description("전공자 여부 TRUE OR FALSE"))
+                        getSSAFYMemberSnippet()
                                 .and(fieldWithPath("data.ssafyInfo").type(JsonFieldType.OBJECT)
                                         .description("싸피인 정보"))
                                 .andWithPrefix("data.ssafyInfo.",
@@ -132,26 +170,10 @@ class MemberControllerTest extends ControllerTest {
                 .assertThat()
                 .apply(document("members/put-information",
                         requestCookieAccessTokenMandatory(),
-                        requestFields(
-                                fieldWithPath("nickname").description("닉네임"),
-                                fieldWithPath("ssafyMember").description("싸피인 여부"),
-                                fieldWithPath("isMajor").description("전공자 여부"),
-                                fieldWithPath("semester").description("싸피 기수").optional(),
-                                fieldWithPath("campus").description("캠퍼스 이름").optional()
-                        ),
-                        getEnvelopPatternWithData()
-                                .and(fieldWithPath("data.memberId").type(JsonFieldType.NUMBER)
-                                        .description("멤버 ID"))
-                                .and(fieldWithPath("data.memberRole").type(JsonFieldType.STRING)
-                                        .description("멤버 권한"))
-                                .and(fieldWithPath("data.nickname").type(JsonFieldType.STRING)
-                                        .description("닉네임"))
-                                .and(fieldWithPath("data.ssafyMember").type(JsonFieldType.BOOLEAN)
-                                        .description("싸피인 여부 FALSE"))
-                                .and(fieldWithPath("data.isMajor").type(JsonFieldType.BOOLEAN)
-                                        .description("전공자 여부 TRUE OR FALSE"))
+                        requestSSAFYSnippet(),
+                        getSSAFYMemberSnippet()
                                 .and(fieldWithPath("data.ssafyInfo").type(JsonFieldType.NULL)
-                                        .description("싸피인 정보 NULL"))))
+                                        .description("싸피인 정보"))))
                 .expect(status().isOk());
     }
 
@@ -178,24 +200,8 @@ class MemberControllerTest extends ControllerTest {
                 .assertThat()
                 .apply(document("members/put-ssafy-information",
                         requestCookieAccessTokenMandatory(),
-                        requestFields(
-                                fieldWithPath("nickname").description("닉네임"),
-                                fieldWithPath("ssafyMember").description("싸피인 여부"),
-                                fieldWithPath("isMajor").description("전공자 여부"),
-                                fieldWithPath("semester").description("싸피 기수"),
-                                fieldWithPath("campus").description("캠퍼스 이름")
-                        ),
-                        getEnvelopPatternWithData()
-                                .and(fieldWithPath("data.memberId").type(JsonFieldType.NUMBER)
-                                        .description("멤버 ID"))
-                                .and(fieldWithPath("data.memberRole").type(JsonFieldType.STRING)
-                                        .description("멤버 권한"))
-                                .and(fieldWithPath("data.nickname").type(JsonFieldType.STRING)
-                                        .description("닉네임"))
-                                .and(fieldWithPath("data.ssafyMember").type(JsonFieldType.BOOLEAN)
-                                        .description("싸피인 여부 FALSE"))
-                                .and(fieldWithPath("data.isMajor").type(JsonFieldType.BOOLEAN)
-                                        .description("전공자 여부 TRUE OR FALSE"))
+                        requestSSAFYSnippet(),
+                        getSSAFYMemberSnippet()
                                 .and(fieldWithPath("data.ssafyInfo").type(JsonFieldType.OBJECT)
                                         .description("싸피인 정보"))
                                 .andWithPrefix("data.ssafyInfo.",
@@ -224,21 +230,7 @@ class MemberControllerTest extends ControllerTest {
                 .assertThat()
                 .apply(document("members/get-portfolio",
                         requestCookieAccessTokenMandatory(),
-                        getEnvelopPatternWithData()
-                                .andWithPrefix("data.portfolioElement.",
-                                        fieldWithPath("selfIntroduction").type(JsonFieldType.STRING)
-                                                .description("자기 소개 글"),
-                                        fieldWithPath("skills").type(JsonFieldType.ARRAY)
-                                                .description("나의 기술 스택들"),
-                                        fieldWithPath("memberLinks")
-                                                .type(JsonFieldType.ARRAY)
-                                                .description("나의 소개 링크들"),
-                                        fieldWithPath("memberLinks[].linkName")
-                                                .type(JsonFieldType.STRING)
-                                                .description("링크 이름"),
-                                        fieldWithPath("memberLinks[].path")
-                                                .type(JsonFieldType.STRING)
-                                                .description("링크 경로"))))
+                        getPortfolioSnippet()))
                 .expect(status().isOk());
     }
 }
