@@ -1,6 +1,6 @@
 package com.ssafy.ssafsound.domain.meta.service;
 
-import com.ssafy.ssafsound.domain.meta.fixture.TestMetaEnum;
+import com.ssafy.ssafsound.global.util.fixture.TestMetaEnum;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
