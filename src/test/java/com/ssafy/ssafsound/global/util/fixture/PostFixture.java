@@ -3,6 +3,7 @@ package com.ssafy.ssafsound.global.util.fixture;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.dto.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.ssafy.ssafsound.global.util.fixture.BoardFixture.BOARD_FIXTURE1;
@@ -38,12 +39,100 @@ public class PostFixture {
             .member(MEMBER_YONG)
             .build();
 
+    public static final GetPostElement GET_POST_ELEMENT1 = GetPostElement.builder()
+            .boardId(1L)
+            .boardTitle("자유 게시판")
+            .postId(4L)
+            .title("싸피 어떤가요??")
+            .content("저도 싸피에서 교육들으면 개발실력 엄청 오르겠죠?")
+            .likeCount(11)
+            .commentCount(29)
+            .createdAt(LocalDateTime.now())
+            .nickname("이용준")
+            .anonymity(false)
+            .thumbnail("썸네일 URL")
+            .build();
+
+    public static final GetPostElement GET_POST_ELEMENT2 = GetPostElement.builder()
+            .boardId(1L)
+            .boardTitle("자유 게시판")
+            .postId(5L)
+            .title("삼성 B형 시험을 준비하려면 뭘 해야할까요?")
+            .content("역시 B형 특강을 열심히 듣는게 맞나요?")
+            .likeCount(5)
+            .commentCount(14)
+            .createdAt(LocalDateTime.now())
+            .nickname("이용준")
+            .anonymity(true)
+            .thumbnail("썸네일 URL")
+            .build();
+
+    public static final GetPostElement GET_POST_ELEMENT3 = GetPostElement.builder()
+            .boardId(1L)
+            .boardTitle("자유 게시판")
+            .postId(6L)
+            .title("안녕하세요 반갑습니다.")
+            .content("SSAFY 9기 합격했습니다!!")
+            .likeCount(3)
+            .commentCount(2)
+            .createdAt(LocalDateTime.now())
+            .nickname("이용준")
+            .anonymity(false)
+            .thumbnail("썸네일 URL")
+            .build();
+
+    public static final GetPostHotElement GET_POST_HOT_ELEMENT1 = GetPostHotElement.builder()
+            .boardId(2L)
+            .boardTitle("취업 게시판")
+            .postId(7L)
+            .title("취업을 하기 위한 꿀팁")
+            .content("열심히 SSAFY 9기를 수료하시면 취업에 성공하실겁니다.")
+            .likeCount(102)
+            .commentCount(33)
+            .createdAt(LocalDateTime.now())
+            .nickname("이용준")
+            .anonymity(false)
+            .thumbnail("썸네일 URL")
+            .build();
+
+    public static final GetPostHotElement GET_POST_HOT_ELEMENT2 = GetPostHotElement.builder()
+            .boardId(1L)
+            .boardTitle("자유 게시판")
+            .postId(7L)
+            .title("Hot 게시글에 가는 방법")
+            .content("은 실력입니다.")
+            .likeCount(202)
+            .commentCount(54)
+            .createdAt(LocalDateTime.now())
+            .nickname("이용준")
+            .anonymity(true)
+            .thumbnail("썸네일 URL")
+            .build();
+
+
     public static final GetPostResDto GET_POST_RES_DTO1 = GetPostResDto.of(
             List.of(POST_FIXTURE1,
                     POST_FIXTURE2), 10);
 
     public static final GetPostResDto GET_POST_RES_DTO2 = GetPostResDto.of(
             List.of(POST_FIXTURE3), 10);
+
+    public static final GetPostResDto GET_POST_RES_DTO3 = GetPostResDto.builder()
+            .posts(List.of(GET_POST_ELEMENT1,
+                    GET_POST_ELEMENT2))
+            .cursor(null)
+            .build();
+
+    public static final GetPostResDto GET_POST_RES_DTO4 = GetPostResDto.builder()
+            .posts(List.of(GET_POST_ELEMENT3))
+            .cursor(null)
+            .build();
+
+    public static final GetPostHotResDto GET_POST_HOT_RES_DTO1 = GetPostHotResDto.builder()
+            .posts(List.of(GET_POST_HOT_ELEMENT1,
+                    GET_POST_HOT_ELEMENT2))
+            .cursor(null)
+            .build();
 
 
     public static final GetPostDetailResDto GET_POST_DETAIL_RES_DTO1 = GetPostDetailResDto.of(
