@@ -1,15 +1,13 @@
 package com.ssafy.ssafsound.global.util.fixture;
 
-import com.ssafy.ssafsound.domain.board.dto.GetBoardResDto;
 import com.ssafy.ssafsound.domain.post.domain.Post;
-import com.ssafy.ssafsound.domain.post.domain.PostLike;
+import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
 
 import java.util.List;
 
 import static com.ssafy.ssafsound.global.util.fixture.BoardFixture.BOARD_FIXTURE1;
-import static com.ssafy.ssafsound.global.util.fixture.MemberFixture.MEMBER_SHERYL;
-import static com.ssafy.ssafsound.global.util.fixture.MemberFixture.MEMBER_WALTER;
+import static com.ssafy.ssafsound.global.util.fixture.MemberFixture.*;
 
 public class PostFixture {
 
@@ -30,10 +28,13 @@ public class PostFixture {
             .content("결과가 암울해")
             .anonymity(false)
             .board(BOARD_FIXTURE1)
-            .member(MEMBER_SHERYL)
+            .member(MEMBER_YONG)
             .build();
 
     public static final GetPostResDto GET_POST_RES_DTO1 = GetPostResDto.of(
             List.of(POST_FIXTURE1,
                     POST_FIXTURE2), PAGE_SIZE1);
+
+    public static final GetPostDetailResDto GET_POST_DETAIL_RES_DTO1 = GetPostDetailResDto.of(
+            POST_FIXTURE2, null);
 }
