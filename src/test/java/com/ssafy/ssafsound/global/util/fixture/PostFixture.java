@@ -134,6 +134,11 @@ public class PostFixture {
             .cursor(null)
             .build();
 
+    public static final GetPostHotResDto GET_POST_HOT_RES_DTO2 = GetPostHotResDto.builder()
+            .posts(List.of(GET_POST_HOT_ELEMENT1))
+            .cursor(null)
+            .build();
+
 
     public static final GetPostDetailResDto GET_POST_DETAIL_RES_DTO1 = GetPostDetailResDto.of(
             POST_FIXTURE1, null);
