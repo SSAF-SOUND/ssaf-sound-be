@@ -1,8 +1,10 @@
 package com.ssafy.ssafsound.domain.post.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class PostPostLikeResDto {
     private final Integer likeCount;
     private final Boolean liked;
