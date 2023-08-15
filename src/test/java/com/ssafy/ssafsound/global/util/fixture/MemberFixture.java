@@ -26,19 +26,17 @@ public class MemberFixture {
             .major(true)
             .build();
 
-    public static final Member SSAFY_MEMBER = Member.builder()
-            .id(1L)
-            .role(memberRole)
-            .nickname("paul")
-            .ssafyMember(true)
-            .major(false)
-            .build();
-
-    public static final SSAFYInfo SSAFY_INFO = SSAFYInfo
+    public static final SSAFYInfo CERTIFIED_SSAFY_INFO = SSAFYInfo
             .of(9, "서울", "CERTIFIED", new MetaData(MajorTrack.JAVA));
 
-    public static final GetMemberResDto SSAFY_MEMBER_RESPONSE_DTO = new GetMemberResDto(
-            1L, "user", "paul", true, true, SSAFY_INFO);
+    public static final SSAFYInfo UNCERTIFIED_SSAFY_INFO = SSAFYInfo
+            .of(9, "서울", "UNCERTIFIED", null);
+
+    public static final GetMemberResDto CERTIFIED_SSAFY_MEMBER = new GetMemberResDto(
+            1L, "user", "paul", true, true, CERTIFIED_SSAFY_INFO);
+
+    public static final GetMemberResDto UNCERTIFIED_SSAFY_MEMBER = new GetMemberResDto(
+            1L, "user", "james", true, true, UNCERTIFIED_SSAFY_INFO);
 
     public static final Member MEMBER_WALTER = Member.builder()
             .id(1L)
