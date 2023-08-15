@@ -163,32 +163,22 @@ class PostControllerTest extends ControllerTest {
 
     @Test
     void likePost() {
-        doReturn(POST_ID_ELEMENT)
+        doReturn(POST_POST_LIKE_RES_DTO)
                 .when(postService)
-                .writePost(any(), any(), any());
+                .likePost(any(), any());
 
         restDocs.cookie(ACCESS_TOKEN)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(POST_POST_WRITE_REQ_DTO1)
-                .when().post("/posts?boardId={boardId}", 1L)
+                .when().post("/posts/{postId}/like", 1L)
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .apply(document("post/write-post",
+                .apply(document("post/like-post",
                                 requestCookieAccessTokenMandatory(),
-                                requestParameters(
-                                        parameterWithName("boardId").description("게시글을 작성할 게시판의 고유 ID")
-                                ),
-                                requestFields(
-                                        fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목"),
-                                        fieldWithPath("content").type(JsonFieldType.STRING).description("게시글 내용"),
-                                        fieldWithPath("anonymity").type(JsonFieldType.BOOLEAN).description("게시글 작성자의 익명 여부를 나타내는 필드"),
-                                        fieldWithPath("images").type(JsonFieldType.ARRAY).description("게시글 사진 목록")
-                                ).andWithPrefix("images.[]",
-                                        fieldWithPath("imagePath").type(JsonFieldType.STRING).description("s3에 저장된 경로를 의미하는 필드, s3에 저장된 데이터를 삭제할 때 사용").optional(),
-                                        fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("s3에 저장된 이미지를 CDN URL 주소로 가져오기 위한 필드, 해당 URL에 접근만 해도 이미지에 접근할 수 있는 경로를 의미").optional()
+                                pathParameters(
+                                        parameterWithName("postId").description("좋아요를 누를 게시글 고유 ID")
                                 ),
                                 getEnvelopPatternWithData().andWithPrefix("data.",
-                                        fieldWithPath("postId").type(JsonFieldType.NUMBER).description("작성한 게시글 ID")
+                                        fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("좋아요를 클릭 한 후 현재 게시글의 좋아요 개수"),
+                                        fieldWithPath("liked").type(JsonFieldType.BOOLEAN).description("해당 게시글의 좋아요를 눌렀는지 여부, true면 좋아요 등록, false면 좋아요 취소")
                                 )
                         )
                 );

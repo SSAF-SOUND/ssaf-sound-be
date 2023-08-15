@@ -55,4 +55,9 @@ public class PostFixture {
     public static final PostIdElement POST_ID_ELEMENT = PostIdElement.builder()
             .postId(1L)
             .build();
+
+    public static final PostPostLikeResDto POST_POST_LIKE_RES_DTO = PostPostLikeResDto.builder()
+            .likeCount(10)
+            .liked(true)
+            .build();
 }
