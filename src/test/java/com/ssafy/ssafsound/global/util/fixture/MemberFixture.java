@@ -1,9 +1,6 @@
 package com.ssafy.ssafsound.global.util.fixture;
 
-import com.ssafy.ssafsound.domain.member.dto.GetMemberPortfolioResDto;
-import com.ssafy.ssafsound.domain.member.dto.GetMemberResDto;
-import com.ssafy.ssafsound.domain.member.dto.PortfolioElement;
-import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
+import com.ssafy.ssafsound.domain.member.dto.*;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MajorTrack;
 import com.ssafy.ssafsound.domain.meta.domain.Campus;
@@ -11,7 +8,9 @@ import com.ssafy.ssafsound.domain.member.domain.*;
 import com.ssafy.ssafsound.domain.meta.domain.Skill;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class MemberFixture {
@@ -80,6 +79,20 @@ public class MemberFixture {
         }
     };
 
+    public static List<PutMemberLink> putMemberLinks = new ArrayList<>(){
+        {
+            add(PutMemberLink.builder().linkName("velog").path("http://test-link1").build());
+            add(PutMemberLink.builder().linkName("t-story").path("http://test-link2").build());
+        }
+    };
+
+    public static List<String> skills = new ArrayList<>(){
+        {
+            add("Java");
+            add("Spring");
+        }
+    };
+
     public static Set<MemberSkill> memberSkills = new HashSet<>(){
         {
             add(MemberSkill.builder().member(MEMBER_JAMES).skill(new MetaData(Skill.JAVA)).build());
@@ -114,6 +127,53 @@ public class MemberFixture {
     public static final GetMemberPortfolioResDto MY_PORTFOLIO = GetMemberPortfolioResDto
             .builder()
             .portfolioElement(PortfolioElement.of(MEMBER_JAMES, memberProfile))
+            .build();
+
+    public static final GetMemberDefaultInfoResDto GET_MEMBER_DEFAULT_INFO = GetMemberDefaultInfoResDto
+            .builder()
+            .nickname(MEMBER_JAMES.getNickname())
+            .ssafyMember(MEMBER_JAMES.getSsafyMember())
+            .isMajor(MEMBER_JAMES.getMajor())
+            .ssafyInfo(CERTIFIED_SSAFY_INFO)
+            .build();
+
+    public static final PatchMemberDefaultInfoReqDto PATCH_MEMBER_DEFAULT_INFO_REQUEST = new PatchMemberDefaultInfoReqDto(false, null, null);
+
+    public static final PatchMemberPublicProfileReqDto PATCH_MEMBER_PUBLIC_PROFILE_REQUEST = new PatchMemberPublicProfileReqDto(false);
+
+    public static final GetMemberPublicProfileResDto GET_MEMBER_PUBLIC_PROFILE = GetMemberPublicProfileResDto
+            .builder()
+            .isPublic(true)
+            .build();
+
+    public static final PostNicknameReqDto POST_NICKNAME_REQUEST = PostNicknameReqDto
+            .builder()
+            .nickname("james")
+            .build();
+
+    public static final PostNicknameResDto POST_NICKNAME_RESPONSE = PostNicknameResDto
+            .builder()
+            .possible(true)
+            .build();
+
+    public static final PostCertificationInfoResDto POST_CERTIFICATION_INFO_RESPONSE = PostCertificationInfoResDto
+            .builder()
+            .possible(true)
+            .certificationInquiryCount(3)
+            .build();
+
+    public static final PostCertificationInfoReqDto POST_CERTIFICATION_INFO_REQUEST = PostCertificationInfoReqDto
+            .builder()
+            .majorTrack("Java")
+            .semester(9)
+            .answer("great")
+            .build();
+
+    public static final PutMemberPortfolioReqDto PUT_MEMBER_PORTFOLIO_REQUEST = PutMemberPortfolioReqDto
+            .builder()
+            .selfIntroduction("안녕하세요 자기소개합니다.")
+            .skills(skills)
+            .memberLinks(putMemberLinks)
             .build();
 
     public static final Member MEMBER_TIM = Member.builder()
