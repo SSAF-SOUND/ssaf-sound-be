@@ -1,4 +1,7 @@
 == 멤버
 
 === 소셜 로그인 후 멤버를 조회 했을때, 나갈 수 있기 때문에 ssafyMember가 null 이라면 회원가입을 진행해야 합니다.
-operation::members/information/[snippets='cookie,http-request,http-response,response-body,response-fields']
+operation::members/information/[snippets='cookie,http-request,http-response,response-fields']
+
+=== 일반 멤버 정보 조회
+operation::members/general-information/[snippets='cookie,http-request,http-response,response-fields']

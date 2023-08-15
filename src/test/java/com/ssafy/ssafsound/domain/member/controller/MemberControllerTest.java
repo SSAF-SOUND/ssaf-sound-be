@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class MemberControllerTest extends ControllerTest {
 
-    @DisplayName("회원가입 후 처음 멤버 정보 요청 시, 조회에 성공한다.")
+    @DisplayName("회원가입 후 처음으로 멤버 본인정보 요청 시, 조회에 성공한다.")
     @Test
     void getMemberInformationByFirstTry() {
 
@@ -38,7 +38,35 @@ class MemberControllerTest extends ControllerTest {
                                 .and(fieldWithPath("data.isMajor").type(JsonFieldType.NULL).description("전공자 여부"))
                                 .and(fieldWithPath("data.ssafyInfo").type(JsonFieldType.NULL).description("싸피인 여부"))))
                 .expect(status().isOk());
+    }
 
+    @DisplayName("일반멤버 본인정보 요청 시, 조회에 성공한다.")
+    @Test
+    void getGeneralMemberInformation() {
 
+        given(memberService.getMemberInformation(any()))
+                .willReturn(GetMemberResDto.fromGeneralUser(MemberFixture.GENERAL_MEMBER));
+
+        restDocs
+                .cookie(ACCESS_TOKEN)
+                .when().get("/members")
+                .then().log().all()
+                .assertThat()
+                .apply(document("members/general-information",
+                        requestCookieAccessTokenMandatory(),
+                        getEnvelopPatternWithData()
+                                .and(fieldWithPath("data.memberId").type(JsonFieldType.NUMBER)
+                                        .description("멤버 ID"))
+                                .and(fieldWithPath("data.memberRole").type(JsonFieldType.STRING)
+                                        .description("멤버 권한"))
+                                .and(fieldWithPath("data.nickname").type(JsonFieldType.STRING)
+                                        .description("닉네임"))
+                                .and(fieldWithPath("data.ssafyMember").type(JsonFieldType.BOOLEAN)
+                                        .description("싸피인 여부 FALSE"))
+                                .and(fieldWithPath("data.isMajor").type(JsonFieldType.BOOLEAN)
+                                        .description("전공자 여부 TRUE OR FALSE"))
+                                .and(fieldWithPath("data.ssafyInfo").type(JsonFieldType.NULL)
+                                        .description("싸피인 여부 NULL"))))
+                .expect(status().isOk());
     }
 }
