@@ -1,0 +1,4 @@
+== 이미지 업로드
+
+=== 이미지 업로드 URL 요청
+operation::storage/upload[snippets='http-request,cookie,http-response,response-fields']

@@ -21,6 +21,12 @@ public class LunchFixture {
     public static final String DATE_FIXTURE = "2023-08-12";
     public static final LocalDate LOCAL_DATE_FIXTURE = LocalDate.parse(DATE_FIXTURE);
 
+    public static final String LUNCH_IMAGE_FIXTURE1 = "http://samsungwelstory.com/data/manager/recipe/E110/20230814/s20230727144547.png";
+    public static final String LUNCH_IMAGE_FIXTURE2 = "http://samsungwelstory.com/data/manager/recipe/E110/20230814/s20230802100210.png";
+    public static final String LUNCH_IMAGE_FIXTURE3 = "http://samsungwelstory.com/data/manager/recipe/E110/20230811/s20220325094317.jpg";
+    public static final String LUNCH_IMAGE_FIXTURE4 = "http://samsungwelstory.com/data/manager/recipe/E21F/20230814/s20230814164703.jpg";
+
+
     public static final GetLunchListReqDto GET_LUNCH_LIST_REQ_DTO = GetLunchListReqDto.builder()
             .date(LocalDate.parse("2023-08-12"))
             .campus("서울")
@@ -34,7 +40,7 @@ public class LunchFixture {
             .mainMenu("메인메뉴" + 1)
             .extraMenu("메뉴1, 메뉴2, 메뉴3")
             .sumKcal("1,544 kcal")
-            .imagePath("www.sample" + 1 + ".png")
+            .imagePath(LUNCH_IMAGE_FIXTURE1)
             .build();
 
     public static final Lunch LUNCH_FIXTURE2 = Lunch.builder()
@@ -45,7 +51,7 @@ public class LunchFixture {
             .mainMenu("메인메뉴" + 2)
             .extraMenu("메뉴1, 메뉴2, 메뉴3")
             .sumKcal("1,994 kcal")
-            .imagePath("www.sample" + 2 + ".png")
+            .imagePath(LUNCH_IMAGE_FIXTURE2)
             .build();
 
     public static final Lunch LUNCH_FIXTURE3 = Lunch.builder()
@@ -56,18 +62,18 @@ public class LunchFixture {
             .mainMenu("메인메뉴" + 3)
             .extraMenu("메뉴1, 메뉴2, 메뉴3")
             .sumKcal("2,012 kcal")
-            .imagePath("www.sample" + 3 + ".png")
+            .imagePath(LUNCH_IMAGE_FIXTURE3)
             .build();
 
     public static final Lunch LUNCH_FIXTURE4 = Lunch.builder()
             .id(4L)
-            .campus(new MetaData(Campus.BUSAN))
+            .campus(new MetaData(Campus.GUMI))
             .createdAt(LocalDate.parse("2023-08-12"))
-            .course("A코스")
-            .mainMenu("메인메뉴" + 1)
-            .extraMenu("메뉴1, 메뉴2, 메뉴3")
-            .sumKcal("2,012 kcal")
-            .imagePath("www.sample" + 4 + ".png")
+            .course("저녁B코너")
+            .mainMenu("부대찌개")
+            .extraMenu("부대찌개,꽈리돈육조림,봉어묵볶음,해초무생채")
+            .sumKcal("524")
+            .imagePath(LUNCH_IMAGE_FIXTURE4)
             .build();
 
     public static final GetLunchListElementResDto GET_LUNCH_LIST_ELEMENT_RES_DTO1 = GetLunchListElementResDto.of(LUNCH_FIXTURE1, 29L);
