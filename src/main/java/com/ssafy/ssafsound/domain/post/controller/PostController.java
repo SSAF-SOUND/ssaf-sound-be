@@ -63,25 +63,25 @@ public class PostController {
     }
 
     @PostMapping
-    public EnvelopeResponse<Long> writePost(@Valid @RequestBody PostPostWriteReqDto postPostWriteReqDto,
-                                            @RequestParam Long boardId, @Authentication AuthenticatedMember loginMember) {
-        return EnvelopeResponse.<Long>builder()
+    public EnvelopeResponse<PostIdElement> writePost(@Valid @RequestBody PostPostWriteReqDto postPostWriteReqDto,
+                                                     @RequestParam Long boardId, @Authentication AuthenticatedMember loginMember) {
+        return EnvelopeResponse.<PostIdElement>builder()
                 .data(postService.writePost(boardId, loginMember.getMemberId(), postPostWriteReqDto))
                 .build();
     }
 
     @DeleteMapping("/{postId}")
-    public EnvelopeResponse<Long> deletePost(@PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
-        return EnvelopeResponse.<Long>builder()
+    public EnvelopeResponse<PostIdElement> deletePost(@PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
+        return EnvelopeResponse.<PostIdElement>builder()
                 .data(postService.deletePost(postId, loginMember.getMemberId()))
                 .build();
     }
 
-    @PutMapping("/{postId}")
-    public EnvelopeResponse<Long> updatePost(@Valid @RequestBody PostPutUpdateReqDto postPutUpdateReqDto,
+    @PatchMapping("/{postId}")
+    public EnvelopeResponse<PostIdElement> updatePost(@Valid @RequestBody PostPatchUpdateReqDto postPatchUpdateReqDto,
                                              @PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
-        return EnvelopeResponse.<Long>builder()
-                .data(postService.updatePost(postId, loginMember.getMemberId(), postPutUpdateReqDto))
+        return EnvelopeResponse.<PostIdElement>builder()
+                .data(postService.updatePost(postId, loginMember.getMemberId(), postPatchUpdateReqDto))
                 .build();
     }
 

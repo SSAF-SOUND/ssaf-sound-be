@@ -184,7 +184,7 @@ public class PostService {
     }
 
     @Transactional
-    public Long writePost(Long boardId, Long loginMemberId, PostPostWriteReqDto postPostWriteReqDto) {
+    public PostIdElement writePost(Long boardId, Long loginMemberId, PostPostWriteReqDto postPostWriteReqDto) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorInfo.NO_BOARD));
 
@@ -212,11 +212,11 @@ public class PostService {
                 postImageRepository.save(postImage);
             }
         }
-        return post.getId();
+        return new PostIdElement(post.getId());
     }
 
     @Transactional
-    public Long deletePost(Long postId, Long loginMemberId) {
+    public PostIdElement deletePost(Long postId, Long loginMemberId) {
         Post post = postRepository.findByIdWithMember(postId)
                 .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
@@ -230,7 +230,7 @@ public class PostService {
         deleteAllPostImages(post.getImages());
         postRepository.delete(post);
         hotPostRepository.findByPostId(postId).ifPresent(hotPostRepository::delete);
-        return postId;
+        return new PostIdElement(postId);
     }
 
     private void deleteAllPostImages(List<PostImage> images) {
@@ -246,7 +246,7 @@ public class PostService {
     }
 
     @Transactional
-    public Long updatePost(Long postId, Long loginMemberId, PostPutUpdateReqDto postPutUpdateReqDto) {
+    public PostIdElement updatePost(Long postId, Long loginMemberId, PostPatchUpdateReqDto postPatchUpdateReqDto) {
         Post post = postRepository.findWithMemberAndPostImageFetchById(postId)
                 .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
@@ -257,10 +257,10 @@ public class PostService {
             throw new PostException(PostErrorInfo.UNAUTHORIZED_UPDATE_POST);
         }
 
-        post.updatePost(postPutUpdateReqDto.getTitle(), postPutUpdateReqDto.getContent(), postPutUpdateReqDto.isAnonymity());
+        post.updatePost(postPatchUpdateReqDto.getTitle(), postPatchUpdateReqDto.getContent(), postPatchUpdateReqDto.isAnonymity());
         postImageRepository.deleteAllInBatch(post.getImages());
 
-        List<ImageInfo> images = postPutUpdateReqDto.getImages();
+        List<ImageInfo> images = postPatchUpdateReqDto.getImages();
         if (images.size() > 0) {
             for (ImageInfo image : images) {
                 PostImage postImage = PostImage.builder()
@@ -271,7 +271,7 @@ public class PostService {
                 postImageRepository.save(postImage);
             }
         }
-        return post.getId();
+        return new PostIdElement(post.getId());
     }
 
 
