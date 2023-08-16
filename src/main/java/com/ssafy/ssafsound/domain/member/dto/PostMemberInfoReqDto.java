@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.member.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.ssafsound.domain.member.validator.Semester;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,14 +23,15 @@ public class PostMemberInfoReqDto {
     @NotNull
     private Boolean ssafyMember;
 
-    @Semester
-    private Integer semester;
-
     @NotNull
     private Boolean isMajor;
 
+    @Semester
+    private Integer semester;
+
     private String campus;
 
+    @JsonIgnore
     public boolean isNotSemesterPresent() {
         return this.semester == null;
     }

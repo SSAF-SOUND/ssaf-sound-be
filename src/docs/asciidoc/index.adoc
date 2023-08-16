@@ -65,6 +65,7 @@ use of HTTP status codes.
 include::board.adoc[]
 include::metadata.adoc[]
 include::auth.adoc[]
+include::member.adoc[]
 include::lunch.adoc[]
 include::recruit.adoc[]
 include::recruitApplication.adoc[]

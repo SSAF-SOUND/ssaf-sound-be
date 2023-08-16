@@ -255,7 +255,13 @@ public class MemberService {
     }
     
     private boolean isValidCertification(PostCertificationInfoReqDto postCertificationInfoReqDto) {
-        MetaData information = metaDataConsumer.getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer().toLowerCase());
+        MetaData information = metaDataConsumer.getMetaData(
+                MetaDataType.CERTIFICATION.name(),
+                postCertificationInfoReqDto.getAnswer().toLowerCase());
+
+        if (postCertificationInfoReqDto.getSemester() == null) {
+            return false;
+        }
         return information.getId() == postCertificationInfoReqDto.getSemester();
     }
     
