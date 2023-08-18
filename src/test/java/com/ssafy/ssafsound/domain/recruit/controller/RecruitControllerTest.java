@@ -5,6 +5,7 @@ import com.ssafy.ssafsound.global.util.fixture.RecruitFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
@@ -30,6 +31,8 @@ public class RecruitControllerTest extends ControllerTest {
                 .body(RecruitFixture.RECRUIT_POST_REQ_DTO)
                 .when().post("/recruits")
                 .then().log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
                 .apply(document("recruit/saveRecruit",
                         requestCookieAccessTokenMandatory(),
                         requestFields(
@@ -45,8 +48,7 @@ public class RecruitControllerTest extends ControllerTest {
                                 fieldWithPath("limitations[].limit").type(JsonFieldType.NUMBER).description("인원 제한 1명이상 10명 이하")
                         ),
                         getEnvelopPatternWithNoContent())
-                )
-                .expect(status().isOk());
+                );
     }
 
     @DisplayName("리크루트 스크랩 토글")
@@ -60,6 +62,8 @@ public class RecruitControllerTest extends ControllerTest {
                 .cookie(ACCESS_TOKEN)
                 .when().post("/recruits/{recruitId}/scrap", 1L)
                 .then().log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
                 .apply(document("recruit/toggleRecruitScrap",
                         requestCookieAccessTokenMandatory(),
                         pathParameters(
@@ -68,8 +72,7 @@ public class RecruitControllerTest extends ControllerTest {
                         getEnvelopPatternWithData().andWithPrefix("data.",
                                 fieldWithPath("scrapCount").type(JsonFieldType.NUMBER).description("전체 스크랩 갯수"))
                         )
-                )
-                .expect(status().isOk());
+                );
     }
 
     @DisplayName("리크루트 모집 완료 처리")
@@ -79,13 +82,14 @@ public class RecruitControllerTest extends ControllerTest {
                 .cookie(ACCESS_TOKEN)
                 .when().post("/recruits/{recruitId}/expired", 1L)
                 .then().log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
                 .apply(document("recruit/expiredRecruit",
                         requestCookieAccessTokenMandatory(),
                         pathParameters(
                                 parameterWithName("recruitId").description("리크루트 아이디")
                         ),
-                        getEnvelopPatternWithNoContent()))
-                .expect(status().isOk());
+                        getEnvelopPatternWithNoContent()));
     }
 
     @DisplayName("리크루트 상세 조회")
@@ -98,6 +102,8 @@ public class RecruitControllerTest extends ControllerTest {
         restDocs
                 .when().get("/recruits/{recruitId}", 1)
                 .then().log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
                 .apply(document("recruit/detail",
                         pathParameters(
                             parameterWithName("recruitId").description("리크루트 아이디")
@@ -126,8 +132,7 @@ public class RecruitControllerTest extends ControllerTest {
                                 fieldWithPath("ssafyInfo.majorTrack").type(JsonFieldType.STRING).description("리크루트 등록자 전공 트랙 Embedded | Mobile | Python | Java"),
                                 fieldWithPath("scrapCount").type(JsonFieldType.NUMBER).description("리쿠르트 스크랩 갯수")
                         ))
-                )
-                .expect(status().isOk());
+                );
     }
 
     @DisplayName("리크루트 업데이트")
@@ -139,6 +144,8 @@ public class RecruitControllerTest extends ControllerTest {
                 .body(RecruitFixture.RECRUIT_1_PATCH_REQ_DTO)
                 .when().patch("/recruits/{recruitId}", 1L)
                 .then().log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
                 .apply(document("recruit/updateRecruit",
                         requestCookieAccessTokenMandatory(),
                         pathParameters(
@@ -155,8 +162,7 @@ public class RecruitControllerTest extends ControllerTest {
                                 fieldWithPath("limitations[].recruitType").type(JsonFieldType.STRING).description("리크루트 모집파트, 메타데이터-리크루트 목록 조회 참고"),
                                 fieldWithPath("limitations[].limit").type(JsonFieldType.NUMBER).description("인원 제한 1명이상 10명 이하")
                         ),
-                        getEnvelopPatternWithNoContent()))
-                .expect(status().isOk());
+                        getEnvelopPatternWithNoContent()));
     }
 
     @DisplayName("리크루트 삭제")
@@ -166,13 +172,14 @@ public class RecruitControllerTest extends ControllerTest {
                 .cookie(ACCESS_TOKEN)
                 .when().delete("/recruits/{recruitId}", 1L)
                 .then().log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
                 .apply(document("recruit/deleteRecruit",
                         requestCookieAccessTokenMandatory(),
                         pathParameters(
                                 parameterWithName("recruitId").description("리크루트 아이디")
                         ),
-                        getEnvelopPatternWithNoContent()))
-                .expect(status().isOk());
+                        getEnvelopPatternWithNoContent()));
     }
 
     @DisplayName("리크루트 목록 조회")
@@ -186,6 +193,8 @@ public class RecruitControllerTest extends ControllerTest {
                 .cookie(ACCESS_TOKEN)
                 .when().get("/recruits?size=20&category=project&keyword=사이드&isFinished=false&recruitTypes=백엔드&recruitTypes=프론트엔드&skills=Spring&skills=React")
                 .then().log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
                 .apply(document("recruit/recruits",
                         requestParameters(
                                 parameterWithName("cursor").optional().description("다음 조회 커서 default(초기화면)에서는 미포함"),
@@ -217,7 +226,6 @@ public class RecruitControllerTest extends ControllerTest {
                                 fieldWithPath("major").type(JsonFieldType.BOOLEAN).description("리크루트 참여자 전공 여부")
                             )
                         )
-                )
-                .expect(status().isOk());
+                );
     }
 }
