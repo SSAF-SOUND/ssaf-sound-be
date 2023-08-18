@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class PostStoreImageResDto {
+public class GetStorageUploadResDto {
 
     private String imagePath;
 

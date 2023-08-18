@@ -3,7 +3,7 @@ package com.ssafy.ssafsound.infra.storage.controller;
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.validator.Authentication;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
-import com.ssafy.ssafsound.infra.storage.dto.PostStoreImageResDto;
+import com.ssafy.ssafsound.infra.storage.dto.GetStorageUploadResDto;
 import com.ssafy.ssafsound.infra.storage.service.AwsS3StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,11 +18,11 @@ public class StorageController {
     private final AwsS3StorageService awsS3StorageService;
 
     @PostMapping("/image")
-    public EnvelopeResponse<PostStoreImageResDto> getPreSignedUrl(
-        @Authentication AuthenticatedMember member) {
+    public EnvelopeResponse<GetStorageUploadResDto> getPreSignedUrl(
+            @Authentication AuthenticatedMember member) {
 
-        return EnvelopeResponse.<PostStoreImageResDto>builder()
-            .data(awsS3StorageService.getPreSignedUrl(member.getMemberId()))
-            .build();
+        return EnvelopeResponse.<GetStorageUploadResDto>builder()
+                .data(awsS3StorageService.getPreSignedUrl(member.getMemberId()))
+                .build();
     }
 }

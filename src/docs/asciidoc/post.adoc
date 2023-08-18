@@ -1,0 +1,37 @@
+== 익명 게시판
+
+=== 게시글 목록 조회
+operation::post/find-posts[snippets='http-request,http-response,request-parameters,response-fields']
+
+=== 게시글 상세 보기(실명)
+operation::post/find-post-anonymity-false[snippets='http-request,http-response,path-parameters,response-fields']
+
+=== 게시글 상세 보기(익명)
+operation::post/find-post-anonymity-true[snippets='http-request,http-response,path-parameters,response-fields']
+
+=== 게시글 검색
+operation::post/search-posts[snippets='http-request,http-response,request-parameters,response-fields']
+
+=== 게시글 작성
+operation::post/write-post[snippets='http-request,http-response,request-parameters,request-fields,response-fields']
+
+=== 게시글 수정
+operation::post/update-post[snippets='http-request,http-response,path-parameters,request-fields,response-fields']
+
+=== 게시글 삭제
+operation::post/delete-post[snippets='http-request,http-response,path-parameters,response-fields']
+
+=== 게시글 좋아요
+operation::post/like-post[snippets='http-request,http-response,path-parameters,response-fields']
+
+=== 게시글 스크랩
+operation::post/scrap-post[snippets='http-request,http-response,path-parameters,response-fields']
+
+=== Hot 게시글 목록 조회
+operation::post/find-hot-posts[snippets='http-request,http-response,request-parameters,response-fields']
+
+=== Hot 게시글 검색
+operation::post/search-hot-posts[snippets='http-request,http-response,request-parameters,response-fields']
+
+=== 나의 게시글 목록 조회
+operation::post/find-my-posts[snippets='http-request,http-response,request-parameters,response-fields']
