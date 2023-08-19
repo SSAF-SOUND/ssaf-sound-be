@@ -7,6 +7,7 @@ import com.ssafy.ssafsound.domain.member.service.MemberService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 
 @RestController
@@ -127,6 +128,16 @@ public class MemberController {
             @Valid @RequestBody PatchMemberPublicProfileReqDto patchMemberPublicProfileReqDto) {
 
         memberService.patchMemberPublicProfile(authenticatedMember.getMemberId(), patchMemberPublicProfileReqDto);
+        return EnvelopeResponse.<Void>builder()
+                .build();
+    }
+
+    @PatchMapping("/major")
+    public EnvelopeResponse<Void> patchMemberIsMajor(
+            @Authentication AuthenticatedMember authenticatedMember,
+            @Valid @RequestBody PatchMemberMajorReqDto patchMemberMajorReqDto) {
+
+        memberService.changeMemberMajor(authenticatedMember.getMemberId(), patchMemberMajorReqDto);
         return EnvelopeResponse.<Void>builder()
                 .build();
     }
