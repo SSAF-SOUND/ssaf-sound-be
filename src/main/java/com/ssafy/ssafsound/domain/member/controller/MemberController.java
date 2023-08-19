@@ -102,42 +102,42 @@ public class MemberController {
     }
 
     @PutMapping("/portfolio")
-    public EnvelopeResponse registerMemberPortfolio(
+    public EnvelopeResponse<Void> registerMemberPortfolio(
             @Authentication AuthenticatedMember authenticatedMember,
             @Valid @RequestBody PutMemberPortfolioReqDto putMemberPortfolioReqDto) {
         memberService.registerMemberPortfolio(
                 authenticatedMember.getMemberId(),
                 putMemberPortfolioReqDto);
-        return EnvelopeResponse.builder()
+        return EnvelopeResponse.<Void>builder()
                 .build();
     }
 
     @PatchMapping("/default-information")
-    public EnvelopeResponse patchMemberDefaultInformation(
+    public EnvelopeResponse<Void> patchMemberDefaultInformation(
             @Authentication AuthenticatedMember authenticatedMember,
             @Valid @RequestBody PatchMemberDefaultInfoReqDto patchMemberDefaultInfoReqDto) {
         memberService.patchMemberDefaultInfo(authenticatedMember.getMemberId(), patchMemberDefaultInfoReqDto);
-        return EnvelopeResponse.builder()
+        return EnvelopeResponse.<Void>builder()
                 .build();
     }
 
     @PatchMapping("/public-profile")
-    public EnvelopeResponse patchMemberPublicProfile(
+    public EnvelopeResponse<Void> patchMemberPublicProfile(
             @Authentication AuthenticatedMember authenticatedMember,
             @Valid @RequestBody PatchMemberPublicProfileReqDto patchMemberPublicProfileReqDto) {
 
         memberService.patchMemberPublicProfile(authenticatedMember.getMemberId(), patchMemberPublicProfileReqDto);
-        return EnvelopeResponse.builder()
+        return EnvelopeResponse.<Void>builder()
                 .build();
     }
 
     @PatchMapping("/nickname")
-    public EnvelopeResponse changeMemberNickname(
+    public EnvelopeResponse<Void> changeMemberNickname(
             @Authentication AuthenticatedMember authenticatedMember,
             @Valid @RequestBody PatchMemberNicknameReqDto patchMemberNicknameReqDto) {
 
         memberService.changeMemberNickname(authenticatedMember.getMemberId(), patchMemberNicknameReqDto);
-        return EnvelopeResponse.builder()
+        return EnvelopeResponse.<Void>builder()
                 .build();
     }
 }
