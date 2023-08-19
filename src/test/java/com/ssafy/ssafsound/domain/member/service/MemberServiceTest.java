@@ -8,6 +8,8 @@ import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.*;
 import com.ssafy.ssafsound.domain.meta.domain.*;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
+import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
+import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -537,5 +540,41 @@ class MemberServiceTest {
 
         //verify
         verify(memberRepository, times(1)).findById(member.getId());
+    }
+
+    @Test
+    @DisplayName("멤버 전공자 트랙을 수정하는데 성공합니다.")
+    void Given_Member_WhenChangeMajorTrack_Then_Success() {
+        //given
+        PatchMemberMajorTrackReqDto patchMemberMajorTrackReqDto = PatchMemberMajorTrackReqDto
+                .builder()
+                .majorTrack("Embedded")
+                .build();
+        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+        given(metaDataConsumer.getMetaData(eq(MetaDataType.MAJOR_TRACK.name()), eq("Embedded")))
+                .willReturn(new MetaData(MajorTrack.EMBEDDED));
+
+        memberService.changeMemberMajorTrack(member.getId(), patchMemberMajorTrackReqDto.getMajorTrack());
+
+        verify(memberRepository, times(1)).findById(member.getId());
+        verify(metaDataConsumer, times(1))
+                .getMetaData(eq(MetaDataType.MAJOR_TRACK.name()), eq("Embedded"));
+    }
+
+    @Test
+    @DisplayName("잘못된 전공자 트랙 정보를 입력했을때 클라이언트 측 예외가 발생합니다.")
+    void Given_Member_WhenChangeMajorTrack_Then_Fail() {
+        //given
+        PatchMemberMajorTrackReqDto patchMemberMajorTrackReqDto = PatchMemberMajorTrackReqDto
+                .builder()
+                .majorTrack("Embed")
+                .build();
+        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+        given(metaDataConsumer.getMetaData(eq(MetaDataType.MAJOR_TRACK.name()), eq("Embed")))
+                .willThrow(new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> memberService.changeMemberMajorTrack(member.getId(), patchMemberMajorTrackReqDto.getMajorTrack()));
     }
 }
