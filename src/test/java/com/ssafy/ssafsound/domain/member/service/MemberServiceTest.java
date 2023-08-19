@@ -522,4 +522,20 @@ class MemberServiceTest {
         //verify
         verify(memberRepository, times(1)).findById(member.getId());
     }
+
+    @Test
+    @DisplayName("멤버는 전공자 여부를 수정하는데 성공한다.")
+    void Given_Member_WhenChangeMajor_Then_Success() {
+        //given
+        PatchMemberMajorReqDto patchMemberMajorReqDto = PatchMemberMajorReqDto
+                .builder()
+                .isMajor(false)
+                .build();
+        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+
+        memberService.changeMemberMajor(member.getId(), patchMemberMajorReqDto);
+
+        //verify
+        verify(memberRepository, times(1)).findById(member.getId());
+    }
 }
