@@ -142,6 +142,18 @@ public class MemberController {
                 .build();
     }
 
+    @PatchMapping("/major-track")
+    public EnvelopeResponse<Void> patchMemberMajorTrack(
+            @Authentication AuthenticatedMember authenticatedMember,
+            @Valid @RequestBody PatchMemberMajorTrackReqDto patchMemberMajorTrackReqDto) {
+
+        memberService.changeMemberMajorTrack(
+                authenticatedMember.getMemberId(),
+                patchMemberMajorTrackReqDto.getMajorTrack());
+        return EnvelopeResponse.<Void>builder()
+                .build();
+    }
+
     @PatchMapping("/nickname")
     public EnvelopeResponse<Void> changeMemberNickname(
             @Authentication AuthenticatedMember authenticatedMember,
