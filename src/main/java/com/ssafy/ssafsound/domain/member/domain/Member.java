@@ -183,4 +183,8 @@ public class Member extends BaseTimeEntity {
     public void changeNickname(String nickname) {
         this.nickname = nickname;
     }
+
+    public void changeMajorStatus(Boolean isMajor) {
+        this.major = isMajor;
+    }
 }

@@ -153,6 +153,15 @@ public class MemberService {
         member.changeNickname(patchMemberNicknameReqDto.getNickname());
     }
 
+    @Transactional
+    public void changeMemberMajor(
+            Long memberId,
+            PatchMemberMajorReqDto patchMemberMajorReqDto) {
+        Member member = getMemberByMemberIdOrThrowException(memberId);
+
+        member.changeMajorStatus(patchMemberMajorReqDto.getIsMajor());
+    }
+
     @Transactional(readOnly = true)
     public GetMemberPortfolioResDto getMyPortfolio(Long memberId) {
         Member member = memberRepository.findWithMemberLinksAndMemberSkills(memberId)
