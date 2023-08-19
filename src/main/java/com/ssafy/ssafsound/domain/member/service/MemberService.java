@@ -167,6 +167,9 @@ public class MemberService {
     public void changeMemberMajorTrack(Long memberId, String majorTrack) {
         Member member = getMemberByMemberIdOrThrowException(memberId);
 
+        if(!member.getSsafyMember()) {
+            throw new MemberException(MemberErrorInfo.MEMBER_NOT_SSAFY);
+        }
         member.setMajorTrack(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TRACK.name(), majorTrack));
     }
 
