@@ -75,6 +75,10 @@ public class MemberFixture {
             .publicProfile(true)
             .build();
 
+    public static final PatchMemberMajorReqDto PATCH_IS_MAJOR_REQUEST = PatchMemberMajorReqDto.builder()
+            .isMajor(false)
+            .build();
+
     public static Set<MemberLink> memberLinks = new HashSet<>(){
         {
             add(MemberLink.builder().member(MEMBER_JAMES).linkName("velog").path("http://test-link1").build());
