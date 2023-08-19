@@ -55,7 +55,7 @@ class MemberServiceTest {
     @Captor
     ArgumentCaptor<MemberToken> memberTokenArgumentCaptor;
     PostMemberReqDto postMemberReqDto;
-    Member member;
+    Member member, ssafyMember, notSSAFYMember;
     MemberRole memberRole;
     PostMemberInfoReqDto generalMemberInfoReqDto;
     PostMemberInfoReqDto SSAFYMemberInfoReqDto;
@@ -79,6 +79,19 @@ class MemberServiceTest {
                 .oauthIdentifier(postMemberReqDto.getOauthIdentifier())
                 .id(1L)
                 .role(memberRole)
+                .build();
+
+        ssafyMember = Member.builder()
+                .oauthType(OAuthType.valueOf(postMemberReqDto.getOauthName().toUpperCase()))
+                .oauthIdentifier(postMemberReqDto.getOauthIdentifier())
+                .id(2L)
+                .role(memberRole)
+                .ssafyMember(true)
+                .build();
+        notSSAFYMember = Member.builder()
+                .id(3L)
+                .role(memberRole)
+                .ssafyMember(false)
                 .build();
 
         generalMemberInfoReqDto = PostMemberInfoReqDto.builder()
@@ -550,13 +563,13 @@ class MemberServiceTest {
                 .builder()
                 .majorTrack("Embedded")
                 .build();
-        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+        given(memberRepository.findById(ssafyMember.getId())).willReturn(Optional.of(ssafyMember));
         given(metaDataConsumer.getMetaData(eq(MetaDataType.MAJOR_TRACK.name()), eq("Embedded")))
                 .willReturn(new MetaData(MajorTrack.EMBEDDED));
 
-        memberService.changeMemberMajorTrack(member.getId(), patchMemberMajorTrackReqDto.getMajorTrack());
+        memberService.changeMemberMajorTrack(ssafyMember.getId(), patchMemberMajorTrackReqDto.getMajorTrack());
 
-        verify(memberRepository, times(1)).findById(member.getId());
+        verify(memberRepository, times(1)).findById(ssafyMember.getId());
         verify(metaDataConsumer, times(1))
                 .getMetaData(eq(MetaDataType.MAJOR_TRACK.name()), eq("Embedded"));
     }
@@ -569,12 +582,27 @@ class MemberServiceTest {
                 .builder()
                 .majorTrack("Embed")
                 .build();
-        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+        given(memberRepository.findById(ssafyMember.getId())).willReturn(Optional.of(ssafyMember));
         given(metaDataConsumer.getMetaData(eq(MetaDataType.MAJOR_TRACK.name()), eq("Embed")))
                 .willThrow(new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
 
         assertThrows(ResourceNotFoundException.class,
-                () -> memberService.changeMemberMajorTrack(member.getId(), patchMemberMajorTrackReqDto.getMajorTrack()));
+                () -> memberService.changeMemberMajorTrack(ssafyMember.getId(), patchMemberMajorTrackReqDto.getMajorTrack()));
+    }
+
+    @Test
+    @DisplayName("싸피생이 아닌 멤버가 전공 트랙 정보를 수정하려고 할 때 예외가 발생합니다.")
+    void Given_NotSSAFYMember_WhenChangeMajorTrack_Then_Fail() {
+        //given
+        PatchMemberMajorTrackReqDto patchMemberMajorTrackReqDto = PatchMemberMajorTrackReqDto
+                .builder()
+                .majorTrack("Embedded")
+                .build();
+        given(memberRepository.findById(notSSAFYMember.getId())).willReturn(Optional.of(notSSAFYMember));
+
+        assertThrows(MemberException.class,
+                () -> memberService
+                        .changeMemberMajorTrack(notSSAFYMember.getId(), patchMemberMajorTrackReqDto.getMajorTrack()));
     }
 }
