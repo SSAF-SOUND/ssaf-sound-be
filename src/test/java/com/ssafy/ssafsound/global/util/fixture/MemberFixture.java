@@ -212,4 +212,8 @@ public class MemberFixture {
             .ssafyMember(true)
             .major(true)
             .build();
+
+    public static final PatchMemberMajorTrackReqDto PATCH_MEMBER_MAJOR_TRACK = PatchMemberMajorTrackReqDto.builder()
+            .majorTrack("Embedded")
+            .build();
 }
