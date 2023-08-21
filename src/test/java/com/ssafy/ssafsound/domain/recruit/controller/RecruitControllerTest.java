@@ -11,6 +11,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 
 import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.requestCookieAccessTokenMandatory;
 
+import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.requestCookieAccessTokenOptional;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
@@ -96,7 +97,7 @@ public class RecruitControllerTest extends ControllerTest {
     void getRecruitDetail() {
         doReturn(RecruitFixture.RECRUIT_1_DETAIL_RES_DTO)
                 .when(recruitService)
-                .getRecruitDetail(any());
+                .getRecruitDetail(any(), any());
 
         restDocs
                 .when().get("/recruits/{recruitId}", 1)
@@ -104,6 +105,7 @@ public class RecruitControllerTest extends ControllerTest {
                 .assertThat()
                 .statusCode(HttpStatus.OK.value())
                 .apply(document("recruit/detail",
+                        requestCookieAccessTokenOptional(),
                         pathParameters(
                             parameterWithName("recruitId").description("리크루트 아이디")
                         ),
@@ -131,6 +133,8 @@ public class RecruitControllerTest extends ControllerTest {
                                 fieldWithPath("author.ssafyInfo.majorTrack").type(JsonFieldType.STRING).description("리크루트 등록자 전공 트랙 Embedded | Mobile | Python | Java"),
                                 fieldWithPath("author.memberRole").type(JsonFieldType.STRING).description("사용자 권한"),
                                 fieldWithPath("author.ssafyMember").type(JsonFieldType.BOOLEAN).description("싸피 멤버 여부"),
+                                fieldWithPath("questions").type(JsonFieldType.ARRAY).description("리쿠르트 질문"),
+                                fieldWithPath("scraped").type(JsonFieldType.BOOLEAN).description("조회자 리크루트 스크랩 여부"),
                                 fieldWithPath("scrapCount").type(JsonFieldType.NUMBER).description("리쿠르트 스크랩 갯수")
                         ))
                 );

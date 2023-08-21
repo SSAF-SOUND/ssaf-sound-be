@@ -11,4 +11,6 @@ public interface RecruitScrapRepository extends JpaRepository<RecruitScrap, Long
     Optional<RecruitScrap> findByRecruitIdAndMemberId(Long recruitId, Long memberId);
 
     Long countByRecruitId(Long recruitId);
+
+    Boolean existsByRecruitIdAndMemberId(Long recruitId, Long memberId);
 }

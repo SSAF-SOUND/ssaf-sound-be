@@ -67,12 +67,13 @@ public class RecruitService {
     }
 
     @Transactional
-    public GetRecruitDetailResDto getRecruitDetail(Long recruitId) {
+    public GetRecruitDetailResDto getRecruitDetail(Long recruitId, Long memberId) {
         Recruit recruit = recruitRepository.findByIdUsingFetchJoinRegisterAndRecruitLimitation(recruitId)
                 .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
         long scrapCount = recruitScrapRepository.countByRecruitId(recruitId);
+        Boolean scraped = recruitScrapRepository.existsByRecruitIdAndMemberId(recruitId, memberId);
         recruit.increaseView();
-        return GetRecruitDetailResDto.of(recruit, scrapCount);
+        return GetRecruitDetailResDto.of(recruit, scrapCount, scraped);
     }
 
     @Transactional

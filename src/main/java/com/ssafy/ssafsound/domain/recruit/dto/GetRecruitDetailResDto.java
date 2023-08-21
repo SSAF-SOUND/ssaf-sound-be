@@ -3,6 +3,7 @@ package com.ssafy.ssafsound.domain.recruit.dto;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
+import com.ssafy.ssafsound.domain.recruit.domain.RecruitQuestion;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import lombok.Builder;
@@ -26,11 +27,13 @@ public class GetRecruitDetailResDto {
     private String recruitEnd;
     private List<RecruitSkillElement> skills;
     private List<GetRecruitLimitDetail> limits;
+    private List<String> questions;
 
     private AuthorElement author;
     private long scrapCount;
+    private Boolean scraped;
 
-    public static GetRecruitDetailResDto of(Recruit recruit, long scrapCount) {
+    public static GetRecruitDetailResDto of(Recruit recruit, long scrapCount, Boolean scraped) {
 
         if(recruit.getDeletedRecruit()) throw new RecruitException(RecruitErrorInfo.IS_DELETED);
 
@@ -46,6 +49,7 @@ public class GetRecruitDetailResDto {
         String registerRecruitType = recruit.getRegisterRecruitType().getName();
         // 등록자의 모집 타입도 조회 api에서는 인원에 포함되어야한다.
         addRegisterRecruitType(limits, registerRecruitType);
+        List<String> questions = recruit.getQuestions().stream().map(RecruitQuestion::getContent).collect(Collectors.toList());
 
         return GetRecruitDetailResDto.builder()
                 .recruitId(recruit.getId())
@@ -57,9 +61,11 @@ public class GetRecruitDetailResDto {
                 .finishedRecruit(recruit.getFinishedRecruit())
                 .skills(skills)
                 .limits(limits)
+                .questions(questions)
                 .view(recruit.getView())
                 .author(new AuthorElement(register, false))
                 .scrapCount(scrapCount)
+                .scraped(scraped)
                 .build();
     }
 
