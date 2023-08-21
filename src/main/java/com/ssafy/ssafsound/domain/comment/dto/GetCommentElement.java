@@ -42,7 +42,7 @@ public class GetCommentElement {
                 .liked(isLiked(comment, loginMember))
                 .mine(isMine(comment, loginMember))
                 .deletedComment(comment.getDeletedComment())
-                .author(AuthorElement.from(comment))
+                .author(new AuthorElement(comment.getMember(), comment.getAnonymity(), comment.getCommentNumber().getNumber()))
                 .replies(new ArrayList<>())
                 .build();
     }

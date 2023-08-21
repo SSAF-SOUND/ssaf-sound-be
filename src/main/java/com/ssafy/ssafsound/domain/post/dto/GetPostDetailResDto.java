@@ -15,7 +15,7 @@ public class GetPostDetailResDto {
     public static GetPostDetailResDto of(Post post, Member loginMember) {
         return GetPostDetailResDto.builder()
                 .post(GetPostDetailElement.of(post, loginMember))
-                .author(AuthorElement.from(post))
+                .author(new AuthorElement(post.getMember(), post.getAnonymity()))
                 .build();
     }
 }
