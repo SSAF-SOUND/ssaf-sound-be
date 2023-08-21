@@ -107,8 +107,10 @@ public class RecruitFixture {
             .recruitEnd(RECRUIT_1.getEndDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
             .skills(RECRUIT_1_SKILL_DTO)
             .limits(RECRUIT_1_LIMIT_DETAIL)
+            .questions(List.of(RECRUIT_QUESTION))
             .author(new AuthorElement(MemberFixture.MEMBER_KIM, false))
             .scrapCount(1L)
+            .scraped(true)
             .build();
 
     private static final List<RecruitLimitElement> RECRUIT_1_UPDATE_LIMIT = List.of(

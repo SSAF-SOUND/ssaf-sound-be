@@ -272,7 +272,7 @@ class RecruitServiceTest {
     @DisplayName("등록자의 리크루트 타입이 인원제한에 포함되지 않은 리크루트 상세 조회")
     @Test
     void Given_NotIncludeRegisterRecruitTypeRecruitId_When_GetRecruitDetail_Then_Success() {
-        GetRecruitDetailResDto dto = recruitService.getRecruitDetail(2L);
+        GetRecruitDetailResDto dto = recruitService.getRecruitDetail(2L, 2L);
         String registerRecruitType = savedRecruit.getRegisterRecruitType().getName();
 
         assertAll(
@@ -292,7 +292,7 @@ class RecruitServiceTest {
     @Test
     void Given_RecruitId_When_GetRecruitDetail_Then_Success() {
         savedRecruit.setRegisterRecruitType(new MetaData(RecruitType.DESIGN));
-        GetRecruitDetailResDto dto = recruitService.getRecruitDetail(2L);
+        GetRecruitDetailResDto dto = recruitService.getRecruitDetail(2L, 2L);
 
         assertAll(
                 ()->assertEquals(1L, dto.getView()),
@@ -304,14 +304,14 @@ class RecruitServiceTest {
     @DisplayName("존재하지 않는 리크루트에 대한 상세 조회 실패")
     @Test
     void Given_NotExistRecruitId_When_GetRecruitDetail_Then_Fail() {
-        assertThrows(ResourceNotFoundException.class, ()->recruitService.getRecruitDetail(1L));
+        assertThrows(ResourceNotFoundException.class, ()->recruitService.getRecruitDetail(1L, 2L));
     }
 
     @DisplayName("삭제된 리크루트 상세 조회시 null값 return")
     @Test
     void Given_DeletedRecruitId_When_GetRecruitDetail_Then_Fail() {
         savedRecruit.delete();
-        assertThrows(RecruitException.class, ()->recruitService.getRecruitDetail(2L));
+        assertThrows(RecruitException.class, ()->recruitService.getRecruitDetail(2L, 2L));
     }
 
     @DisplayName("리크루트 삭제")
