@@ -6,6 +6,7 @@ import com.ssafy.ssafsound.domain.member.dto.*;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.*;
+import com.ssafy.ssafsound.domain.meta.domain.MajorTrack;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
@@ -151,6 +152,25 @@ public class MemberService {
             throw new MemberException(MemberErrorInfo.MEMBER_NICKNAME_DUPLICATION);
         }
         member.changeNickname(patchMemberNicknameReqDto.getNickname());
+    }
+
+    @Transactional
+    public void changeMemberMajor(
+            Long memberId,
+            PatchMemberMajorReqDto patchMemberMajorReqDto) {
+        Member member = getMemberByMemberIdOrThrowException(memberId);
+
+        member.changeMajorStatus(patchMemberMajorReqDto.getIsMajor());
+    }
+
+    @Transactional
+    public void changeMemberMajorTrack(Long memberId, String majorTrack) {
+        Member member = getMemberByMemberIdOrThrowException(memberId);
+
+        if(!member.getSsafyMember()) {
+            throw new MemberException(MemberErrorInfo.MEMBER_NOT_SSAFY);
+        }
+        member.setMajorTrack(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TRACK.name(), majorTrack));
     }
 
     @Transactional(readOnly = true)

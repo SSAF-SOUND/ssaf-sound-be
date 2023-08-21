@@ -7,6 +7,7 @@ import com.ssafy.ssafsound.domain.member.service.MemberService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 
 @RestController
@@ -102,42 +103,64 @@ public class MemberController {
     }
 
     @PutMapping("/portfolio")
-    public EnvelopeResponse registerMemberPortfolio(
+    public EnvelopeResponse<Void> registerMemberPortfolio(
             @Authentication AuthenticatedMember authenticatedMember,
             @Valid @RequestBody PutMemberPortfolioReqDto putMemberPortfolioReqDto) {
         memberService.registerMemberPortfolio(
                 authenticatedMember.getMemberId(),
                 putMemberPortfolioReqDto);
-        return EnvelopeResponse.builder()
+        return EnvelopeResponse.<Void>builder()
                 .build();
     }
 
     @PatchMapping("/default-information")
-    public EnvelopeResponse patchMemberDefaultInformation(
+    public EnvelopeResponse<Void> patchMemberDefaultInformation(
             @Authentication AuthenticatedMember authenticatedMember,
             @Valid @RequestBody PatchMemberDefaultInfoReqDto patchMemberDefaultInfoReqDto) {
         memberService.patchMemberDefaultInfo(authenticatedMember.getMemberId(), patchMemberDefaultInfoReqDto);
-        return EnvelopeResponse.builder()
+        return EnvelopeResponse.<Void>builder()
                 .build();
     }
 
     @PatchMapping("/public-profile")
-    public EnvelopeResponse patchMemberPublicProfile(
+    public EnvelopeResponse<Void> patchMemberPublicProfile(
             @Authentication AuthenticatedMember authenticatedMember,
             @Valid @RequestBody PatchMemberPublicProfileReqDto patchMemberPublicProfileReqDto) {
 
         memberService.patchMemberPublicProfile(authenticatedMember.getMemberId(), patchMemberPublicProfileReqDto);
-        return EnvelopeResponse.builder()
+        return EnvelopeResponse.<Void>builder()
+                .build();
+    }
+
+    @PatchMapping("/major")
+    public EnvelopeResponse<Void> patchMemberIsMajor(
+            @Authentication AuthenticatedMember authenticatedMember,
+            @Valid @RequestBody PatchMemberMajorReqDto patchMemberMajorReqDto) {
+
+        memberService.changeMemberMajor(authenticatedMember.getMemberId(), patchMemberMajorReqDto);
+        return EnvelopeResponse.<Void>builder()
+                .build();
+    }
+
+    @PatchMapping("/major-track")
+    public EnvelopeResponse<Void> patchMemberMajorTrack(
+            @Authentication AuthenticatedMember authenticatedMember,
+            @Valid @RequestBody PatchMemberMajorTrackReqDto patchMemberMajorTrackReqDto) {
+
+        memberService.changeMemberMajorTrack(
+                authenticatedMember.getMemberId(),
+                patchMemberMajorTrackReqDto.getMajorTrack());
+        return EnvelopeResponse.<Void>builder()
                 .build();
     }
 
     @PatchMapping("/nickname")
-    public EnvelopeResponse changeMemberNickname(
+    public EnvelopeResponse<Void> changeMemberNickname(
             @Authentication AuthenticatedMember authenticatedMember,
             @Valid @RequestBody PatchMemberNicknameReqDto patchMemberNicknameReqDto) {
 
         memberService.changeMemberNickname(authenticatedMember.getMemberId(), patchMemberNicknameReqDto);
-        return EnvelopeResponse.builder()
+        return EnvelopeResponse.<Void>builder()
                 .build();
     }
 }

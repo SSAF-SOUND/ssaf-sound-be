@@ -47,3 +47,9 @@ operation::members/check-nickname/[snippets='cookie,http-request,request-fields,
 
 === 닉네임 변경
 operation::members/change-nickname/[snippets='cookie,http-request,request-fields,http-response,response-fields']
+
+=== 멤버의 전공자 여부 수정
+operation::members/change-isMajor/[snippets='cookie,http-request,request-fields,http-response,response-fields']
+
+=== 멤버의 전공트랙 수정
+operation::members/change-majorTrack/[snippets='cookie,http-request,request-fields,http-response,response-fields']

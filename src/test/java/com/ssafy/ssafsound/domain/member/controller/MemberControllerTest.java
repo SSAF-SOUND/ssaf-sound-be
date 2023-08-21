@@ -444,4 +444,43 @@ class MemberControllerTest extends ControllerTest {
                         getEnvelopPatternWithNoContent()))
                 .expect(status().isOk());
     }
+
+    @DisplayName("전공자 여부에 대한 변경에 성공한다.")
+    @Test
+    void changeMemberMajor() {
+
+        restDocs
+                .cookie(ACCESS_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(MemberFixture.PATCH_IS_MAJOR_REQUEST)
+                .when().patch("members/major")
+                .then().log().all()
+                .assertThat()
+                .apply(document("members/change-isMajor",
+                        requestCookieAccessTokenMandatory(),
+                        requestFields(
+                                fieldWithPath("isMajor").description("전공자유무")),
+                        getEnvelopPatternWithNoContent()))
+                .expect(status().isOk());
+    }
+
+    @DisplayName("전공트랙에 대한 변경에 성공한다.")
+    @Test
+    void changeMemberMajorTrack() {
+
+        restDocs
+                .cookie(ACCESS_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(MemberFixture.PATCH_MEMBER_MAJOR_TRACK)
+                .when().patch("members/major-track")
+                .then().log().all()
+                .assertThat()
+                .apply(document("members/change-majorTrack",
+                        requestCookieAccessTokenMandatory(),
+                        requestFields(
+                                fieldWithPath("majorTrack")
+                                        .description("전공트랙(\"Embedded\" , \"Python\" , \"Java\" , \"Mobile\")")),
+                        getEnvelopPatternWithNoContent()))
+                .expect(status().isOk());
+    }
 }
