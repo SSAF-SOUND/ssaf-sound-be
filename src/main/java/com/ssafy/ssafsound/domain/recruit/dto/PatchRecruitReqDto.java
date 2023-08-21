@@ -43,5 +43,6 @@ public class PatchRecruitReqDto {
     private List<String> skills;
 
     @CheckRecruitLimitElement
+    @Builder.Default
     private List<RecruitLimitElement> limitations = new ArrayList<>();
 }
