@@ -1,6 +1,6 @@
 package com.ssafy.ssafsound.global.util.fixture;
 
-import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
+import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.RecruitType;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
@@ -29,13 +29,11 @@ public class RecruitApplicationFixture {
     }
 
     public static final RecruitApplicationElement APPLICATION1_ELEMENT = RecruitApplicationElement.builder()
+            .recruitId(1L)
             .recruitApplicationId(1L)
             .recruitType(RecruitType.FRONT_END.getName())
             .matchStatus(MatchStatus.WAITING_REGISTER_APPROVE)
-            .memberId(MemberFixture.MEMBER_TIM.getId())
-            .nickname(MemberFixture.MEMBER_TIM.getNickname())
-            .isMajor(MemberFixture.MEMBER_TIM.getMajor())
-            .ssafyInfo(SSAFYInfo.from(MemberFixture.MEMBER_TIM))
+            .author(new AuthorElement(MemberFixture.MEMBER_TIM, false))
             .question(RecruitFixture.RECRUIT_1.getQuestions().get(0).getContent())
             .reply("취업 준비를 위해서 신청하게되었습니다.")
             .isLike(false)
