@@ -38,9 +38,9 @@ public class RecruitController {
     }
 
     @GetMapping("/{recruitId}")
-    public EnvelopeResponse<GetRecruitDetailResDto> getRecruitDetail(@PathVariable Long recruitId) {
+    public EnvelopeResponse<GetRecruitDetailResDto> getRecruitDetail(@PathVariable Long recruitId, @Authentication AuthenticatedMember memberInfo) {
         return EnvelopeResponse.<GetRecruitDetailResDto>builder()
-                .data(recruitService.getRecruitDetail(recruitId))
+                .data(recruitService.getRecruitDetail(recruitId, memberInfo.getMemberId()))
                 .build();
     }
 
