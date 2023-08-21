@@ -14,7 +14,6 @@ import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.r
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -130,6 +129,8 @@ public class RecruitControllerTest extends ControllerTest {
                                 fieldWithPath("author.ssafyInfo.campus").type(JsonFieldType.STRING).description("리크루트 등록자 소속 캠퍼스, 메타데이터-캠퍼스 목록 조회 참고"),
                                 fieldWithPath("author.ssafyInfo.certificationState").type(JsonFieldType.STRING).description("리크루트 등록자 SSAFY 인증 여부"),
                                 fieldWithPath("author.ssafyInfo.majorTrack").type(JsonFieldType.STRING).description("리크루트 등록자 전공 트랙 Embedded | Mobile | Python | Java"),
+                                fieldWithPath("author.memberRole").type(JsonFieldType.STRING).description("사용자 권한"),
+                                fieldWithPath("author.ssafyMember").type(JsonFieldType.BOOLEAN).description("싸피 멤버 여부"),
                                 fieldWithPath("scrapCount").type(JsonFieldType.NUMBER).description("리쿠르트 스크랩 갯수")
                         ))
                 );
