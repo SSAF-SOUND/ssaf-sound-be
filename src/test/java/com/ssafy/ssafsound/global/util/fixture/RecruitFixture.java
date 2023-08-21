@@ -1,6 +1,6 @@
 package com.ssafy.ssafsound.global.util.fixture;
 
-import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
+import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.RecruitType;
 import com.ssafy.ssafsound.domain.meta.domain.Skill;
@@ -107,10 +107,7 @@ public class RecruitFixture {
             .recruitEnd(RECRUIT_1.getEndDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
             .skills(RECRUIT_1_SKILL_DTO)
             .limits(RECRUIT_1_LIMIT_DETAIL)
-            .memberId(MemberFixture.MEMBER_KIM.getId())
-            .nickname(MemberFixture.MEMBER_KIM.getNickname())
-            .isMajor(MemberFixture.MEMBER_KIM.getMajor())
-            .ssafyInfo(SSAFYInfo.from(MemberFixture.MEMBER_KIM))
+            .author(new AuthorElement(MemberFixture.MEMBER_KIM, false))
             .scrapCount(1L)
             .build();
 
