@@ -496,9 +496,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_점심">7. 점심</a>
 <ul class="sectlevel2">
 <li><a href="#_점심_목록_조회">7.1. 점심 목록 조회</a></li>
-<li><a href="#_점심_상세_조회">7.2. 점심 상세 조회</a></li>
-<li><a href="#_점심_투표하기">7.3. 점심 투표하기</a></li>
-<li><a href="#_점심_투표_취소하기">7.4. 점심 투표 취소하기</a></li>
+<li><a href="#_점심_투표하기">7.2. 점심 투표하기</a></li>
+<li><a href="#_점심_투표_취소하기">7.3. 점심 투표 취소하기</a></li>
 </ul>
 </li>
 <li><a href="#_리크루트">8. 리크루트</a>
@@ -1162,8 +1161,8 @@ Host: api.ssafsound.com
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
-Set-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/; Max-Age=2629744; Expires=Wed, 20 Sep 2023 21:11:59 GMT; Secure; HttpOnly
-Set-Cookie: refreshToken=syJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IsdfserwetweSflKxwRJeSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/; Max-Age=2629744; Expires=Wed, 20 Sep 2023 21:11:59 GMT; Secure; HttpOnly
+Set-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/; Max-Age=2629744; Expires=Wed, 20 Sep 2023 21:46:17 GMT; Secure; HttpOnly
+Set-Cookie: refreshToken=syJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IsdfserwetweSflKxwRJeSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/; Max-Age=2629744; Expires=Wed, 20 Sep 2023 21:46:17 GMT; Secure; HttpOnly
 Content-Type: application/json
 Content-Length: 415
 
@@ -2383,7 +2382,7 @@ Content-Length: 380
   "data" : {
     "portfolioElement" : {
       "selfIntroduction" : "안녕하세요! 반가워요.",
-      "skills" : [ "Java", "Android" ],
+      "skills" : [ "Android", "Java" ],
       "memberLinks" : [ {
         "linkName" : "velog",
         "path" : "http://test-link1"
@@ -2525,7 +2524,7 @@ Content-Length: 380
   "data" : {
     "portfolioElement" : {
       "selfIntroduction" : "안녕하세요! 반가워요.",
-      "skills" : [ "Java", "Android" ],
+      "skills" : [ "Android", "Java" ],
       "memberLinks" : [ {
         "linkName" : "velog",
         "path" : "http://test-link1"
@@ -3994,9 +3993,9 @@ Content-Length: 949
 </div>
 </div>
 <div class="sect2">
-<h3 id="_점심_상세_조회"><a class="link" href="#_점심_상세_조회">7.2. 점심 상세 조회</a></h3>
+<h3 id="_점심_투표하기"><a class="link" href="#_점심_투표하기">7.2. 점심 투표하기</a></h3>
 <div class="sect3">
-<h4 id="_점심_상세_조회_http_request"><a class="link" href="#_점심_상세_조회_http_request">7.2.1. HTTP request</a></h4>
+<h4 id="_점심_투표하기_http_request"><a class="link" href="#_점심_투표하기_http_request">7.2.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /lunch/poll/2 HTTP/1.1
@@ -4006,7 +4005,7 @@ Cookie: accessToken=accessTokenValue</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_점심_상세_조회_cookie"><a class="link" href="#_점심_상세_조회_cookie">7.2.2. Cookie</a></h4>
+<h4 id="_점심_투표하기_cookie"><a class="link" href="#_점심_투표하기_cookie">7.2.2. Cookie</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -4027,7 +4026,7 @@ Cookie: accessToken=accessTokenValue</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_점심_상세_조회_path_parameters"><a class="link" href="#_점심_상세_조회_path_parameters">7.2.3. Path parameters</a></h4>
+<h4 id="_점심_투표하기_path_parameters"><a class="link" href="#_점심_투표하기_path_parameters">7.2.3. Path parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. /lunch/poll/{lunchId}</caption>
 <colgroup>
@@ -4049,7 +4048,7 @@ Cookie: accessToken=accessTokenValue</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_점심_상세_조회_http_response"><a class="link" href="#_점심_상세_조회_http_response">7.2.4. HTTP response</a></h4>
+<h4 id="_점심_투표하기_http_response"><a class="link" href="#_점심_투표하기_http_response">7.2.4. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -4067,7 +4066,7 @@ Content-Length: 86
 </div>
 </div>
 <div class="sect3">
-<h4 id="_점심_상세_조회_response_fields"><a class="link" href="#_점심_상세_조회_response_fields">7.2.5. Response fields</a></h4>
+<h4 id="_점심_투표하기_response_fields"><a class="link" href="#_점심_투표하기_response_fields">7.2.5. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -4107,9 +4106,9 @@ Content-Length: 86
 </div>
 </div>
 <div class="sect2">
-<h3 id="_점심_투표_취소하기"><a class="link" href="#_점심_투표_취소하기">7.4. 점심 투표 취소하기</a></h3>
+<h3 id="_점심_투표_취소하기"><a class="link" href="#_점심_투표_취소하기">7.3. 점심 투표 취소하기</a></h3>
 <div class="sect3">
-<h4 id="_점심_투표_취소하기_http_request"><a class="link" href="#_점심_투표_취소하기_http_request">7.4.1. HTTP request</a></h4>
+<h4 id="_점심_투표_취소하기_http_request"><a class="link" href="#_점심_투표_취소하기_http_request">7.3.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /lunch/poll/revert/2 HTTP/1.1
@@ -4119,7 +4118,7 @@ Cookie: accessToken=accessTokenValue</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_점심_투표_취소하기_cookie"><a class="link" href="#_점심_투표_취소하기_cookie">7.4.2. Cookie</a></h4>
+<h4 id="_점심_투표_취소하기_cookie"><a class="link" href="#_점심_투표_취소하기_cookie">7.3.2. Cookie</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -4140,7 +4139,7 @@ Cookie: accessToken=accessTokenValue</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_점심_투표_취소하기_path_parameters"><a class="link" href="#_점심_투표_취소하기_path_parameters">7.4.3. Path parameters</a></h4>
+<h4 id="_점심_투표_취소하기_path_parameters"><a class="link" href="#_점심_투표_취소하기_path_parameters">7.3.3. Path parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. /lunch/poll/revert/{lunchId}</caption>
 <colgroup>
@@ -4162,7 +4161,7 @@ Cookie: accessToken=accessTokenValue</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_점심_투표_취소하기_http_response"><a class="link" href="#_점심_투표_취소하기_http_response">7.4.4. HTTP response</a></h4>
+<h4 id="_점심_투표_취소하기_http_response"><a class="link" href="#_점심_투표_취소하기_http_response">7.3.4. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -4180,7 +4179,7 @@ Content-Length: 86
 </div>
 </div>
 <div class="sect3">
-<h4 id="_점심_투표_취소하기_response_fields"><a class="link" href="#_점심_투표_취소하기_response_fields">7.4.5. Response fields</a></h4>
+<h4 id="_점심_투표_취소하기_response_fields"><a class="link" href="#_점심_투표_취소하기_response_fields">7.3.5. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -4214,1139 +4213,6 @@ Content-Length: 86
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.pollCount</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">메뉴 투표수</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_리크루트"><a class="link" href="#_리크루트">8. 리크루트</a></h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_리크루트_등록"><a class="link" href="#_리크루트_등록">8.1. 리크루트 등록</a></h3>
-<div class="sect3">
-<h4 id="_리크루트_등록_http_request"><a class="link" href="#_리크루트_등록_http_request">8.1.1. HTTP request</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /recruits HTTP/1.1
-Content-Type: application/json
-Content-Type: application/json
-Content-Length: 1238
-Host: api.ssafsound.com
-Cookie: accessToken=accessTokenValue
-
-{
-  "category" : "PROJECT",
-  "recruitEnd" : "2023-08-28",
-  "title" : "[사이드 프로젝트] 공모전 레퍼런스 웹 플랫폼 개발 프로젝트 팀원을 모집합니다.",
-  "content" : "&lt;p&gt;[프로젝트 소개]&lt;/p&gt;\n저희 프로젝트는 대학생들의 공모전 경험에 있어 누구나 참고할 레퍼런스를 제공받고, 또 자발적으로 공유할 수 있는 환경을 구축하고자 시작하게 되었습니다! 저희 프로젝트는 아래와 같은 특징을 가지고 있습니다.\n현재 PM 1명, 프론트엔드 개발자 2명, 백엔드 개발자 1명이 있으며, 디자인의 경우 PM이 1차 MVP의 UI/UX를 제작했습니다.\n",
-  "contactURI" : "https://open.kakao.com/o/sA8Kb83b",
-  "registerRecruitType" : "백엔드",
-  "skills" : [ "Spring", "React", "IOS", "Vue", "Java", "JavaScript", "TypeScript", "Nodejs", "Nextjs", "Nuxtjs", "XD", "Swift", "Figma", "Svelte", "Android", "Flutter", "Django", "기타" ],
-  "questions" : [ "프로젝트에 참여하고자 하는 동기가 무엇인가요?" ],
-  "limitations" : [ {
-    "recruitType" : "백엔드",
-    "limit" : 3
-  }, {
-    "recruitType" : "프론트엔드",
-    "limit" : 3
-  }, {
-    "recruitType" : "앱",
-    "limit" : 3
-  } ]
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_리크루트_등록_request_fields"><a class="link" href="#_리크루트_등록_request_fields">8.1.2. Request fields</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>category</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">PROJECT | STUDY</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>recruitEnd</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">yyyy-MM-dd 모집 종료 일자, 당일 날짜 이후의 값으로만 설정 가능</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 모집글 제목, 글자 수 제한 50자</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>content</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 본문, 글자 수 제한 3000자, html 포함 4000자</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contactURI</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 작성자와 연락 가능한 오픈톡 링크</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>registerRecruitType</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 작성자가 선택한 자신의 역할군, 메타데이터-리크루트 목록 조회 참고</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>skills[]</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트와 연관된 기술 스택, 메타데이터-스킬 목록 조회 참고</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>questions[]</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 참석자에게 할 질문, 1개만 등록 가능</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>limitations[].recruitType</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 모집파트, 메타데이터-리크루트 목록 조회 참고</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>limitations[].limit</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">인원 제한 1명이상 10명 이하</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_리크루트_등록_cookie"><a class="link" href="#_리크루트_등록_cookie">8.1.3. Cookie</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Cookie</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">accessToken</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">액세스 토큰 필수</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_리크루트_등록_http_response"><a class="link" href="#_리크루트_등록_http_response">8.1.4. HTTP response</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
-Content-Type: application/json
-Content-Length: 62
-
-{
-  "code" : "200",
-  "message" : "success",
-  "data" : null
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_리크루트_등록_response_fields"><a class="link" href="#_리크루트_등록_response_fields">8.1.5. Response fields</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_점심_투표하기"><a class="link" href="#_점심_투표하기">7.3. 점심 투표하기</a></h3>
-<div class="sect3">
-<h4 id="_점심_투표하기_http_request"><a class="link" href="#_점심_투표하기_http_request">7.3.1. HTTP request</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /recruits/1/scrap HTTP/1.1
-Host: api.ssafsound.com
-Cookie: accessToken=accessTokenValue</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_점심_투표하기_cookie"><a class="link" href="#_점심_투표하기_cookie">7.3.2. Cookie</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Cookie</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">accessToken</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">액세스 토큰 필수</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_점심_투표하기_path_parameters"><a class="link" href="#_점심_투표하기_path_parameters">7.3.3. Path parameters</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /recruits/{recruitId}/scrap</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>recruitId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 아이디</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_점심_투표하기_http_response"><a class="link" href="#_점심_투표하기_http_response">7.3.4. HTTP response</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
-Content-Type: application/json
-Content-Length: 84
-
-{
-  "code" : "200",
-  "message" : "success",
-  "data" : {
-    "scrapCount" : 1
-  }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_점심_투표하기_response_fields"><a class="link" href="#_점심_투표하기_response_fields">7.3.5. Response fields</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.scrapCount</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">전체 스크랩 갯수</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_점심_투표_취소하기"><a class="link" href="#_점심_투표_취소하기">7.4. 점심 투표 취소하기</a></h3>
-<div class="sect3">
-<h4 id="_점심_투표_취소하기_http_request"><a class="link" href="#_점심_투표_취소하기_http_request">7.4.1. HTTP request</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /recruits/1/expired HTTP/1.1
-Host: api.ssafsound.com
-Cookie: accessToken=accessTokenValue</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_점심_투표_취소하기_cookie"><a class="link" href="#_점심_투표_취소하기_cookie">7.4.2. Cookie</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Cookie</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">accessToken</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">액세스 토큰 필수</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_점심_투표_취소하기_path_parameters"><a class="link" href="#_점심_투표_취소하기_path_parameters">7.4.3. Path parameters</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /recruits/{recruitId}/expired</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>recruitId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 아이디</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_점심_투표_취소하기_http_response"><a class="link" href="#_점심_투표_취소하기_http_response">7.4.4. HTTP response</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
-Content-Type: application/json
-Content-Length: 62
-
-{
-  "code" : "200",
-  "message" : "success",
-  "data" : null
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_리크루트_완료_response_fields"><a class="link" href="#_리크루트_완료_response_fields">8.3.5. Response fields</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_리크루트_상세_조회"><a class="link" href="#_리크루트_상세_조회">8.4. 리크루트 상세 조회</a></h3>
-<div class="sect3">
-<h4 id="_리크루트_상세_조회_http_request"><a class="link" href="#_리크루트_상세_조회_http_request">8.4.1. HTTP request</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /recruits/1 HTTP/1.1
-Host: api.ssafsound.com</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_리크루트_상세_조회_path_parameters"><a class="link" href="#_리크루트_상세_조회_path_parameters">8.4.2. Path parameters</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /recruits/{recruitId}</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>recruitId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 아이디</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_리크루트_상세_조회_http_response"><a class="link" href="#_리크루트_상세_조회_http_response">8.4.3. HTTP response</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
-Content-Type: application/json
-Content-Length: 1437
-
-{
-  "code" : "200",
-  "message" : "success",
-  "data" : {
-    "recruitId" : 1,
-    "title" : "[사이드 프로젝트] 공모전 레퍼런스 웹 플랫폼 개발 프로젝트 팀원을 모집합니다.",
-    "content" : "&lt;p&gt;[프로젝트 소개]&lt;/p&gt;\n저희 프로젝트는 대학생들의 공모전 경험에 있어 누구나 참고할 레퍼런스를 제공받고, 또 자발적으로 공유할 수 있는 환경을 구축하고자 시작하게 되었습니다! 저희 프로젝트는 아래와 같은 특징을 가지고 있습니다.\n현재 PM 1명, 프론트엔드 개발자 2명, 백엔드 개발자 1명이 있으며, 디자인의 경우 PM이 1차 MVP의 UI/UX를 제작했습니다.\n",
-    "contactURI" : "https://open.kakao.com/o/sA8Kb83b",
-    "view" : 1,
-    "finishedRecruit" : false,
-    "recruitStart" : "2023-08-21",
-    "recruitEnd" : "2023-08-28",
-    "skills" : [ {
-      "skillId" : 1,
-      "name" : "Spring"
-    }, {
-      "skillId" : 2,
-      "name" : "React"
-    } ],
-    "limits" : [ {
-      "recruitType" : "백엔드",
-      "limit" : 3,
-      "currentNumber" : 1
-    }, {
-      "recruitType" : "프론트엔드",
-      "limit" : 3,
-      "currentNumber" : 0
-    } ],
-    "memberId" : 99,
-    "nickname" : "KIM",
-    "isMajor" : true,
-    "ssafyInfo" : {
-      "semester" : 9,
-      "campus" : "서울",
-      "certificationState" : "CERTIFIED",
-      "majorTrack" : "Java"
-    },
-    "scrapCount" : 1
-  }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_점심_투표_취소하기_response_fields"><a class="link" href="#_점심_투표_취소하기_response_fields">7.4.5. Response fields</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.recruitId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 id</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.title</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 모집글 제목, 글자 수 제한 50자</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.content</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 본문, 글자 수 제한 3000자, html 포함 4000자</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.contactURI</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 작성자와 연락 가능한 오픈톡 링크</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.view</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 상세 조회 수</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.finishedRecruit</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 종료 여부</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.recruitStart</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">yyyy-MM-dd 모집 시작 일자</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.recruitEnd</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">yyyy-MM-dd 모집 종료 일자</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.skills[].skillId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">스킬 id (미사용)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.skills[].name</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">스킬명,  메타데이터-스킬 목록 조회 참고</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.limits[].recruitType</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 모집 타입, 메타데이터-리크루트 목록 조회 참고</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.limits[].limit</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 모집제한 인원</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.limits[].currentNumber</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 모집인원</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.memberId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 등록자 PK</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.nickname</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 등록자 닉네임</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.isMajor</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 등록자 전공자 여부</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.ssafyInfo</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">싸피 정보 여부, null 또는 object</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.ssafyInfo.semester</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 등록자 SSAFY 기수 1이상 10이하</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.ssafyInfo.campus</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 등록자 소속 캠퍼스, 메타데이터-캠퍼스 목록 조회 참고</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.ssafyInfo.certificationState</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 등록자 SSAFY 인증 여부</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.ssafyInfo.majorTrack</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 등록자 전공 트랙 Embedded | Mobile | Python | Java</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.scrapCount</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리쿠르트 스크랩 갯수</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_리크루트_업데이트"><a class="link" href="#_리크루트_업데이트">8.5. 리크루트 업데이트</a></h3>
-<div class="sect3">
-<h4 id="_리크루트_업데이트_http_request"><a class="link" href="#_리크루트_업데이트_http_request">8.5.1. HTTP request</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /recruits/1 HTTP/1.1
-Content-Type: application/json
-Content-Type: application/json
-Content-Length: 396
-Host: api.ssafsound.com
-Cookie: accessToken=accessTokenValue
-
-{
-  "category" : "PROJECT",
-  "registerRecruitType" : "백엔드",
-  "recruitEnd" : "2025-12-01",
-  "title" : "제목 수정",
-  "content" : "&lt;p&gt;컨텐츠 수정입니다. &lt;/p&gt;",
-  "contactURI" : "github.com",
-  "skills" : [ "React", "Spring", "Svelte" ],
-  "limitations" : [ {
-    "recruitType" : "백엔드",
-    "limit" : 5
-  }, {
-    "recruitType" : "프론트엔드",
-    "limit" : 5
-  } ]
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_리크루트_업데이트_cookie"><a class="link" href="#_리크루트_업데이트_cookie">8.5.2. Cookie</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Cookie</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">accessToken</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">액세스 토큰 필수</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_리크루트_업데이트_path_parameters"><a class="link" href="#_리크루트_업데이트_path_parameters">8.5.3. Path parameters</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /recruits/{recruitId}</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>recruitId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 아이디</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_리크루트_업데이트_request_fields"><a class="link" href="#_리크루트_업데이트_request_fields">8.5.4. Request fields</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>category</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 카테고리 : PROJECT | STUDY</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>registerRecruitType</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 등록자 리크루트 모집 타입, 메타데이터-리크루트 목록 조회 참고</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>recruitEnd</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">yyyy-MM-dd 모집 종료 일자, 당일 날짜 이후의 값으로만 설정 가능</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 모집글 제목, 글자 수 제한 50자</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>content</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 본문, 글자 수 제한 3000자, html 포함 4000자</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>contactURI</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 작성자와 연락 가능한 오픈톡 링크</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>skills[]</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트와 연관된 기술 스택, 메타데이터-스킬 목록 조회 참고</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>limitations[].recruitType</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 모집파트, 메타데이터-리크루트 목록 조회 참고</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>limitations[].limit</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">인원 제한 1명이상 10명 이하</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_리크루트_업데이트_http_response"><a class="link" href="#_리크루트_업데이트_http_response">8.5.5. HTTP response</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
-Content-Type: application/json
-Content-Length: 62
-
-{
-  "code" : "200",
-  "message" : "success",
-  "data" : null
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_리크루트_업데이트_response_fields"><a class="link" href="#_리크루트_업데이트_response_fields">8.5.6. Response fields</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_리크루트_삭제"><a class="link" href="#_리크루트_삭제">8.6. 리크루트 삭제</a></h3>
-<div class="sect3">
-<h4 id="_리크루트_삭제_http_request"><a class="link" href="#_리크루트_삭제_http_request">8.6.1. HTTP request</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /recruits/1 HTTP/1.1
-Host: api.ssafsound.com
-Cookie: accessToken=accessTokenValue</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_리크루트_삭제_cookie"><a class="link" href="#_리크루트_삭제_cookie">8.6.2. Cookie</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Cookie</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">accessToken</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">액세스 토큰 필수</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_리크루트_삭제_path_parameters"><a class="link" href="#_리크루트_삭제_path_parameters">8.6.3. Path parameters</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /recruits/{recruitId}</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>recruitId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 아이디</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_리크루트_삭제_http_response"><a class="link" href="#_리크루트_삭제_http_response">8.6.4. HTTP response</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
-Content-Type: application/json
-Content-Length: 62
-
-{
-  "code" : "200",
-  "message" : "success",
-  "data" : null
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_리크루트_삭제_response_fields"><a class="link" href="#_리크루트_삭제_response_fields">8.6.5. Response fields</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_리크루트_목록_조회_2"><a class="link" href="#_리크루트_목록_조회_2">8.7. 리크루트 목록 조회</a></h3>
-<div class="sect3">
-<h4 id="_리크루트_목록_조회_2_http_request"><a class="link" href="#_리크루트_목록_조회_2_http_request">8.7.1. HTTP request</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /recruits?size=20&amp;category=project&amp;keyword=%EC%82%AC%EC%9D%B4%EB%93%9C&amp;isFinished=false&amp;recruitTypes=%EB%B0%B1%EC%97%94%EB%93%9C&amp;recruitTypes=%ED%94%84%EB%A1%A0%ED%8A%B8%EC%97%94%EB%93%9C&amp;skills=Spring&amp;skills=React HTTP/1.1
-Host: api.ssafsound.com
-Cookie: accessToken=accessTokenValue</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_리크루트_목록_조회_2_request_parameters"><a class="link" href="#_리크루트_목록_조회_2_request_parameters">8.7.2. Request parameters</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cursor</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">다음 조회 커서 default(초기화면)에서는 미포함</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">페이징 사이즈</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>category</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">카테고리 project|study</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>keyword</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 게시글 제목 검색 키워드</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isFinished</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 종료 여부</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>recruitTypes</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 모집파트, 메타데이터-리크루트 목록 조회 참고</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>skills</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트와 연관된 기술 스택, 메타데이터-스킬 목록 조회 참고</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_리크루트_목록_조회_2_http_response"><a class="link" href="#_리크루트_목록_조회_2_http_response">8.7.3. HTTP response</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
-Content-Type: application/json
-Content-Length: 838
-
-{
-  "code" : "200",
-  "message" : "success",
-  "data" : {
-    "recruits" : [ {
-      "recruitId" : 1,
-      "title" : "[사이드 프로젝트] 공모전 레퍼런스 웹 플랫폼 개발 프로젝트 팀원을 모집합니다.",
-      "finishedRecruit" : false,
-      "recruitEnd" : "2023-08-28",
-      "content" : "&lt;p&gt;[프로젝트 소개]&lt;/p&gt;\n저희 ",
-      "skills" : [ {
-        "skillId" : 1,
-        "name" : "Spring"
-      }, {
-        "skillId" : 2,
-        "name" : "React"
-      } ],
-      "participants" : [ {
-        "recruitType" : "백엔드",
-        "limit" : 4,
-        "members" : [ {
-          "nickname" : "KIM",
-          "major" : true
-        } ]
-      }, {
-        "recruitType" : "프론트엔드",
-        "limit" : 3,
-        "members" : [ ]
-      } ]
-    } ],
-    "nextCursor" : 1,
-    "isLast" : true
-  }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_리크루트_목록_조회_2_response_fields"><a class="link" href="#_리크루트_목록_조회_2_response_fields">8.7.4. Response fields</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.nextCursor</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">다음 조회할 커서 번호</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.isLast</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">마지막 페이지 여부</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.recruits[].recruitId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 id</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.recruits[].title</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 모집글 제목, 글자 수 제한 50자</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.recruits[].content</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 본문 요약본 최대 50자</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.recruits[].recruitEnd</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">yyyy-MM-dd 모집 종료 일자</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.recruits[].finishedRecruit</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 종료 여부</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.recruits[].participants[].members[]</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 참여 멤버</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.recruits[].skills[].skillId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">스킬 id 미사용</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.recruits[].skills[].name</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트와 연관된 기술 스택명, 메타데이터-스킬 목록 조회 참고</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.recruits[].participants[].recruitType</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 모집파트, 메타데이터-리크루트 목록 조회 참고</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.recruits[].participants[].limit</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 모집 인원 제한 1명이상 10명 이하</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.recruits[].participants[].members[].nickname</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 참여자 닉네임</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.recruits[].participants[].members[].major</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 참여자 전공 여부</p></td>
 </tr>
 </tbody>
 </table>
@@ -5792,7 +4658,7 @@ Host: api.ssafsound.com</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 1437
+Content-Length: 1535
 
 {
   "code" : "200",
@@ -5822,14 +4688,18 @@ Content-Length: 1437
       "limit" : 3,
       "currentNumber" : 0
     } ],
-    "memberId" : 99,
-    "nickname" : "KIM",
-    "isMajor" : true,
-    "ssafyInfo" : {
-      "semester" : 9,
-      "campus" : "서울",
-      "certificationState" : "CERTIFIED",
-      "majorTrack" : "Java"
+    "author" : {
+      "memberId" : 99,
+      "nickname" : "KIM",
+      "memberRole" : "user",
+      "ssafyMember" : true,
+      "isMajor" : true,
+      "ssafyInfo" : {
+        "semester" : 9,
+        "campus" : "서울",
+        "certificationState" : "CERTIFIED",
+        "majorTrack" : "Java"
+      }
     },
     "scrapCount" : 1
   }
@@ -5934,44 +4804,54 @@ Content-Length: 1437
 <td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 모집인원</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.memberId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.author.memberId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 등록자 PK</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.nickname</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.author.nickname</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 등록자 닉네임</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.isMajor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.author.isMajor</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 등록자 전공자 여부</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.ssafyInfo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.author.ssafyInfo</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">싸피 정보 여부, null 또는 object</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.ssafyInfo.semester</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.author.ssafyInfo.semester</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 등록자 SSAFY 기수 1이상 10이하</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.ssafyInfo.campus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.author.ssafyInfo.campus</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 등록자 소속 캠퍼스, 메타데이터-캠퍼스 목록 조회 참고</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.ssafyInfo.certificationState</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.author.ssafyInfo.certificationState</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 등록자 SSAFY 인증 여부</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.ssafyInfo.majorTrack</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.author.ssafyInfo.majorTrack</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">리크루트 등록자 전공 트랙 Embedded | Mobile | Python | Java</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.author.memberRole</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">사용자 권한</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.author.ssafyMember</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">싸피 멤버 여부</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.scrapCount</code></p></td>
@@ -8460,7 +7340,7 @@ Content-Length: 663
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-08-19 14:27:27 +0900
+Last updated 2023-08-21 19:13:47 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
