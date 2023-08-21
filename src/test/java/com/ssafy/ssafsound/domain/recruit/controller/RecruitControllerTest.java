@@ -14,7 +14,6 @@ import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.r
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -122,14 +121,16 @@ public class RecruitControllerTest extends ControllerTest {
                                 fieldWithPath("limits[].recruitType").type(JsonFieldType.STRING).description("리크루트 모집 타입, 메타데이터-리크루트 목록 조회 참고"),
                                 fieldWithPath("limits[].limit").type(JsonFieldType.NUMBER).description("리크루트 모집제한 인원"),
                                 fieldWithPath("limits[].currentNumber").type(JsonFieldType.NUMBER).description("리크루트 모집인원"),
-                                fieldWithPath("memberId").type(JsonFieldType.NUMBER).description("리크루트 등록자 PK"),
-                                fieldWithPath("nickname").type(JsonFieldType.STRING).description("리크루트 등록자 닉네임"),
-                                fieldWithPath("isMajor").type(JsonFieldType.BOOLEAN).description("리크루트 등록자 전공자 여부"),
-                                fieldWithPath("ssafyInfo").type(JsonFieldType.OBJECT).optional().description("싸피 정보 여부, null 또는 object"),
-                                fieldWithPath("ssafyInfo.semester").type(JsonFieldType.NUMBER).description("리크루트 등록자 SSAFY 기수 1이상 10이하"),
-                                fieldWithPath("ssafyInfo.campus").type(JsonFieldType.STRING).description("리크루트 등록자 소속 캠퍼스, 메타데이터-캠퍼스 목록 조회 참고"),
-                                fieldWithPath("ssafyInfo.certificationState").type(JsonFieldType.STRING).description("리크루트 등록자 SSAFY 인증 여부"),
-                                fieldWithPath("ssafyInfo.majorTrack").type(JsonFieldType.STRING).description("리크루트 등록자 전공 트랙 Embedded | Mobile | Python | Java"),
+                                fieldWithPath("author.memberId").type(JsonFieldType.NUMBER).description("리크루트 등록자 PK"),
+                                fieldWithPath("author.nickname").type(JsonFieldType.STRING).description("리크루트 등록자 닉네임"),
+                                fieldWithPath("author.isMajor").type(JsonFieldType.BOOLEAN).description("리크루트 등록자 전공자 여부"),
+                                fieldWithPath("author.ssafyInfo").type(JsonFieldType.OBJECT).optional().description("싸피 정보 여부, null 또는 object"),
+                                fieldWithPath("author.ssafyInfo.semester").type(JsonFieldType.NUMBER).description("리크루트 등록자 SSAFY 기수 1이상 10이하"),
+                                fieldWithPath("author.ssafyInfo.campus").type(JsonFieldType.STRING).description("리크루트 등록자 소속 캠퍼스, 메타데이터-캠퍼스 목록 조회 참고"),
+                                fieldWithPath("author.ssafyInfo.certificationState").type(JsonFieldType.STRING).description("리크루트 등록자 SSAFY 인증 여부"),
+                                fieldWithPath("author.ssafyInfo.majorTrack").type(JsonFieldType.STRING).description("리크루트 등록자 전공 트랙 Embedded | Mobile | Python | Java"),
+                                fieldWithPath("author.memberRole").type(JsonFieldType.STRING).description("사용자 권한"),
+                                fieldWithPath("author.ssafyMember").type(JsonFieldType.BOOLEAN).description("싸피 멤버 여부"),
                                 fieldWithPath("scrapCount").type(JsonFieldType.NUMBER).description("리쿠르트 스크랩 갯수")
                         ))
                 );

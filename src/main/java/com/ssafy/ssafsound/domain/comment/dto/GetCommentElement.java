@@ -3,6 +3,8 @@ package com.ssafy.ssafsound.domain.comment.dto;
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.comment.domain.Comment;
 import com.ssafy.ssafsound.domain.comment.domain.CommentLike;
+import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
+
 import lombok.Builder;
 import lombok.Getter;
 
@@ -40,7 +42,7 @@ public class GetCommentElement {
                 .liked(isLiked(comment, loginMember))
                 .mine(isMine(comment, loginMember))
                 .deletedComment(comment.getDeletedComment())
-                .author(AuthorElement.from(comment))
+                .author(new AuthorElement(comment.getMember(), comment.getAnonymity(), comment.getCommentNumber().getNumber()))
                 .replies(new ArrayList<>())
                 .build();
     }

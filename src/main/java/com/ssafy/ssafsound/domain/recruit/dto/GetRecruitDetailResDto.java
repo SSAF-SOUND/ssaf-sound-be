@@ -1,7 +1,7 @@
 package com.ssafy.ssafsound.domain.recruit.dto;
 
 import com.ssafy.ssafsound.domain.member.domain.Member;
-import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
+import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
@@ -26,10 +26,8 @@ public class GetRecruitDetailResDto {
     private String recruitEnd;
     private List<RecruitSkillElement> skills;
     private List<GetRecruitLimitDetail> limits;
-    private long memberId;
-    private String nickname;
-    private Boolean isMajor;
-    private SSAFYInfo ssafyInfo;
+
+    private AuthorElement author;
     private long scrapCount;
 
     public static GetRecruitDetailResDto of(Recruit recruit, long scrapCount) {
@@ -49,26 +47,18 @@ public class GetRecruitDetailResDto {
         // 등록자의 모집 타입도 조회 api에서는 인원에 포함되어야한다.
         addRegisterRecruitType(limits, registerRecruitType);
 
-        SSAFYInfo ssafyInfo = null;
-        if(register.getSsafyMember()) {
-            ssafyInfo = SSAFYInfo.from(register);
-        }
-
         return GetRecruitDetailResDto.builder()
                 .recruitId(recruit.getId())
                 .title(recruit.getTitle())
                 .content(recruit.getContent())
                 .contactURI(recruit.getContactURI())
-                .memberId(register.getId())
-                .nickname(register.getNickname())
                 .recruitStart(recruit.getStartDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .recruitEnd(recruit.getEndDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .finishedRecruit(recruit.getFinishedRecruit())
                 .skills(skills)
                 .limits(limits)
                 .view(recruit.getView())
-                .isMajor(register.getMajor())
-                .ssafyInfo(ssafyInfo)
+                .author(new AuthorElement(register, false))
                 .scrapCount(scrapCount)
                 .build();
     }

@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.post.dto;
 
+import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import lombok.Builder;
@@ -14,7 +15,7 @@ public class GetPostDetailResDto {
     public static GetPostDetailResDto of(Post post, Member loginMember) {
         return GetPostDetailResDto.builder()
                 .post(GetPostDetailElement.of(post, loginMember))
-                .author(AuthorElement.from(post))
+                .author(new AuthorElement(post.getMember(), post.getAnonymity()))
                 .build();
     }
 }

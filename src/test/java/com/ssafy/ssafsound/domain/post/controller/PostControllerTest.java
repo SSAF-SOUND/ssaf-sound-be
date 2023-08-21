@@ -132,6 +132,7 @@ class PostControllerTest extends ControllerTest {
                                 ).andWithPrefix("data.post.images[].",
                                         fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("게시글의 이미지 URL, S3에 저장된 CDN 주소.").optional()
                                 ).andWithPrefix("data.author.",
+                                        fieldWithPath("memberId").type(JsonFieldType.NUMBER).description("게시글 작성자의 PK"),
                                         fieldWithPath("nickname").type(JsonFieldType.STRING).description("게시글 작성자의 닉네임"),
                                         fieldWithPath("memberRole").type(JsonFieldType.STRING).description("게시글 작성자의 사용자 권한").optional(),
                                         fieldWithPath("ssafyMember").type(JsonFieldType.BOOLEAN).description("게시글 작성자가 SSAFY 유저인지 나타내는 필드 값").optional(),
@@ -185,6 +186,7 @@ class PostControllerTest extends ControllerTest {
                                 ).andWithPrefix("data.post.images[].",
                                         fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("게시글의 이미지 URL, S3에 저장된 CDN 주소.").optional()
                                 ).andWithPrefix("data.author.",
+                                        fieldWithPath("memberId").type(JsonFieldType.NUMBER).description("게시글 작성자의 PK"),
                                         fieldWithPath("nickname").type(JsonFieldType.STRING).description("게시글 작성자의 닉네임"),
                                         fieldWithPath("memberRole").type(JsonFieldType.STRING).description("게시글 작성자의 사용자 권한").optional(),
                                         fieldWithPath("ssafyMember").type(JsonFieldType.BOOLEAN).description("게시글 작성자가 SSAFY 유저인지 나타내는 필드 값").optional(),
