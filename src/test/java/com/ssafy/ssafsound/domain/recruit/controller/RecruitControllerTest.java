@@ -11,6 +11,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 
 import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.requestCookieAccessTokenMandatory;
 
+import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.requestCookieAccessTokenOptional;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
@@ -104,6 +105,7 @@ public class RecruitControllerTest extends ControllerTest {
                 .assertThat()
                 .statusCode(HttpStatus.OK.value())
                 .apply(document("recruit/detail",
+                        requestCookieAccessTokenOptional(),
                         pathParameters(
                             parameterWithName("recruitId").description("리크루트 아이디")
                         ),
