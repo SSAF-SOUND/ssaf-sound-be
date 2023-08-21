@@ -1,8 +1,7 @@
-package com.ssafy.ssafsound.domain.comment.dto;
+package com.ssafy.ssafsound.domain.member.dto;
 
 import com.ssafy.ssafsound.domain.comment.domain.Comment;
 import com.ssafy.ssafsound.domain.member.domain.Member;
-import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 
 import lombok.Getter;

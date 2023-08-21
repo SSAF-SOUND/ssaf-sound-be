@@ -3,6 +3,8 @@ package com.ssafy.ssafsound.domain.comment.dto;
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.comment.domain.Comment;
 import com.ssafy.ssafsound.domain.comment.domain.CommentLike;
+import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
+
 import lombok.Builder;
 import lombok.Getter;
 

@@ -1,6 +1,6 @@
 package com.ssafy.ssafsound.domain.post.dto;
 
-import com.ssafy.ssafsound.domain.comment.dto.AuthorElement;
+import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import lombok.Builder;
