@@ -11,6 +11,10 @@ public class GetLunchListElementResDto {
 
     private String mainMenu;
 
+    private String extraMenu;
+
+    private String sumKcal;
+
     private String imagePath;
 
     private Long pollCount;
@@ -19,6 +23,8 @@ public class GetLunchListElementResDto {
         return GetLunchListElementResDto.builder()
                 .lunchId(lunch.getId())
                 .mainMenu(lunch.getMainMenu())
+                .extraMenu(lunch.getExtraMenu())
+                .sumKcal(lunch.getSumKcal())
                 .imagePath(lunch.getImagePath())
                 .pollCount(pollCount)
                 .build();
