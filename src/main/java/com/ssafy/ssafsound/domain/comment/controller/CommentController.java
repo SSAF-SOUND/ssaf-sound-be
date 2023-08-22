@@ -2,11 +2,9 @@ package com.ssafy.ssafsound.domain.comment.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.validator.Authentication;
-import com.ssafy.ssafsound.domain.comment.dto.GetCommentResDto;
-import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReplyReqDto;
-import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReqDto;
-import com.ssafy.ssafsound.domain.comment.dto.PutCommentUpdateReqDto;
+import com.ssafy.ssafsound.domain.comment.dto.*;
 import com.ssafy.ssafsound.domain.comment.service.CommentService;
+import com.ssafy.ssafsound.domain.post.dto.PostCommonLikeResDto;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +20,10 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping
-    public EnvelopeResponse<Long> writeComment(@RequestParam Long postId,
-                                               @Valid @RequestBody PostCommentWriteReqDto postCommentWriteReqDto,
-                                               @Authentication AuthenticatedMember loginMember) {
-        return EnvelopeResponse.<Long>builder()
+    public EnvelopeResponse<CommentIdElement> writeComment(@RequestParam Long postId,
+                                                           @Valid @RequestBody PostCommentWriteReqDto postCommentWriteReqDto,
+                                                           @Authentication AuthenticatedMember loginMember) {
+        return EnvelopeResponse.<CommentIdElement>builder()
                 .data(commentService.writeComment(postId, loginMember.getMemberId(), postCommentWriteReqDto))
                 .build();
     }
@@ -39,33 +37,33 @@ public class CommentController {
     }
 
     @PutMapping("/{commentId}")
-    public EnvelopeResponse<Long> updateComment(@PathVariable Long commentId,
-                                                @Valid @RequestBody PutCommentUpdateReqDto putCommentUpdateReqDto,
-                                                @Authentication AuthenticatedMember loginMember) {
-        return EnvelopeResponse.<Long>builder()
+    public EnvelopeResponse<CommentIdElement> updateComment(@PathVariable Long commentId,
+                                                            @Valid @RequestBody PutCommentUpdateReqDto putCommentUpdateReqDto,
+                                                            @Authentication AuthenticatedMember loginMember) {
+        return EnvelopeResponse.<CommentIdElement>builder()
                 .data(commentService.updateComment(commentId, loginMember.getMemberId(), putCommentUpdateReqDto))
                 .build();
     }
 
     @PostMapping("/reply")
-    public EnvelopeResponse<Long> writeCommentReply(@RequestParam Long commentId, @RequestParam Long postId,
-                                                    @Valid @RequestBody PostCommentWriteReplyReqDto postCommentWriteReplyReqDto,
-                                                    @Authentication AuthenticatedMember loginMember) {
-        return EnvelopeResponse.<Long>builder()
+    public EnvelopeResponse<CommentIdElement> writeCommentReply(@RequestParam Long commentId, @RequestParam Long postId,
+                                                                @Valid @RequestBody PostCommentWriteReplyReqDto postCommentWriteReplyReqDto,
+                                                                @Authentication AuthenticatedMember loginMember) {
+        return EnvelopeResponse.<CommentIdElement>builder()
                 .data(commentService.writeCommentReply(postId, commentId, loginMember.getMemberId(), postCommentWriteReplyReqDto))
                 .build();
     }
 
     @PostMapping("/{commentId}/like")
-    public EnvelopeResponse<Long> likeComment(@PathVariable Long commentId, @Authentication AuthenticatedMember loginMember) {
-        return EnvelopeResponse.<Long>builder()
+    public EnvelopeResponse<PostCommonLikeResDto> likeComment(@PathVariable Long commentId, @Authentication AuthenticatedMember loginMember) {
+        return EnvelopeResponse.<PostCommonLikeResDto>builder()
                 .data(commentService.likeComment(commentId, loginMember.getMemberId()))
                 .build();
     }
 
     @DeleteMapping("/{commentId}")
-    public EnvelopeResponse<Long> deleteComment(@PathVariable Long commentId, @Authentication AuthenticatedMember loginMember) {
-        return EnvelopeResponse.<Long>builder()
+    public EnvelopeResponse<CommentIdElement> deleteComment(@PathVariable Long commentId, @Authentication AuthenticatedMember loginMember) {
+        return EnvelopeResponse.<CommentIdElement>builder()
                 .data(commentService.deleteComment(commentId, loginMember.getMemberId()))
                 .build();
     }

@@ -38,9 +38,9 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/like")
-    public EnvelopeResponse<PostPostLikeResDto> likePost(@PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
+    public EnvelopeResponse<PostCommonLikeResDto> likePost(@PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
 
-        return EnvelopeResponse.<PostPostLikeResDto>builder()
+        return EnvelopeResponse.<PostCommonLikeResDto>builder()
                 .data(postService.likePost(postId, loginMember.getMemberId()))
                 .build();
     }

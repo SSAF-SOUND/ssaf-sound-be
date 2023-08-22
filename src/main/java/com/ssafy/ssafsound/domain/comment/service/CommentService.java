@@ -4,10 +4,7 @@ import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.comment.domain.Comment;
 import com.ssafy.ssafsound.domain.comment.domain.CommentLike;
 import com.ssafy.ssafsound.domain.comment.domain.CommentNumber;
-import com.ssafy.ssafsound.domain.comment.dto.GetCommentResDto;
-import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReplyReqDto;
-import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReqDto;
-import com.ssafy.ssafsound.domain.comment.dto.PutCommentUpdateReqDto;
+import com.ssafy.ssafsound.domain.comment.dto.*;
 import com.ssafy.ssafsound.domain.comment.exception.CommentErrorInfo;
 import com.ssafy.ssafsound.domain.comment.exception.CommentException;
 import com.ssafy.ssafsound.domain.comment.repository.CommentLikeRepository;
@@ -17,6 +14,7 @@ import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
+import com.ssafy.ssafsound.domain.post.dto.PostCommonLikeResDto;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
 import com.ssafy.ssafsound.domain.post.exception.PostException;
 import com.ssafy.ssafsound.domain.post.repository.PostRepository;
@@ -39,7 +37,7 @@ public class CommentService {
 
 
     @Transactional
-    public Long writeComment(Long postId, Long loginMemberId, PostCommentWriteReqDto postCommentWriteReqDto) {
+    public CommentIdElement writeComment(Long postId, Long loginMemberId, PostCommentWriteReqDto postCommentWriteReqDto) {
         if (!postRepository.existsById(postId)) {
             throw new PostException(PostErrorInfo.NOT_FOUND_POST);
         }
@@ -73,7 +71,7 @@ public class CommentService {
         comment = commentRepository.save(comment);
         comment.setCommentGroup(comment);
 
-        return comment.getId();
+        return new CommentIdElement(comment.getId());
     }
 
     @Transactional(readOnly = true)
@@ -86,7 +84,7 @@ public class CommentService {
         return GetCommentResDto.of(comments, loginMember);
     }
     @Transactional
-    public Long updateComment(Long commentId, Long loginMemberId, PutCommentUpdateReqDto putCommentUpdateReqDto) {
+    public CommentIdElement updateComment(Long commentId, Long loginMemberId, PutCommentUpdateReqDto putCommentUpdateReqDto) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT));
 
@@ -98,11 +96,11 @@ public class CommentService {
         }
 
         comment.updateComment(putCommentUpdateReqDto.getContent(), putCommentUpdateReqDto.getAnonymity());
-        return comment.getId();
+        return new CommentIdElement(comment.getId());
     }
 
     @Transactional
-    public Long writeCommentReply(Long postId, Long commentId, Long loginMemberId, PostCommentWriteReplyReqDto postCommentWriteReplyReqDto) {
+    public CommentIdElement writeCommentReply(Long postId, Long commentId, Long loginMemberId, PostCommentWriteReplyReqDto postCommentWriteReplyReqDto) {
         if (!postRepository.existsById(postId)) {
             throw new PostException(PostErrorInfo.NOT_FOUND_POST);
         }
@@ -138,11 +136,11 @@ public class CommentService {
                 .build();
 
         comment = commentRepository.save(comment);
-        return comment.getId();
+        return new CommentIdElement(comment.getId());
     }
 
     @Transactional
-    public Long likeComment(Long commentId, Long loginMemberId) {
+    public PostCommonLikeResDto likeComment(Long commentId, Long loginMemberId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT));
 
@@ -152,32 +150,34 @@ public class CommentService {
         CommentLike commentLike = commentLikeRepository.findByCommentIdAndMemberId(commentId, loginMember.getId())
                 .orElse(null);
 
-        return toggleLike(comment, loginMember, commentLike);
+        Integer likeCount = commentLikeRepository.countByCommentId(commentId);
+
+        return toggleCommentLike(likeCount, comment, loginMember, commentLike);
     }
 
-    private Long toggleLike(Comment comment, Member loginMember, CommentLike commentLike) {
+    private PostCommonLikeResDto toggleCommentLike(Integer likeCount, Comment comment, Member loginMember, CommentLike commentLike) {
         if (commentLike != null) {
-            return deleteCommentLike(commentLike);
+            deleteCommentLike(commentLike);
+            return new PostCommonLikeResDto(likeCount - 1, false);
         }
-        return saveCommentLike(comment, loginMember);
+        saveCommentLike(comment, loginMember);
+        return new PostCommonLikeResDto(likeCount + 1, true);
     }
 
-    private Long saveCommentLike(Comment comment, Member loginMember) {
+    private void saveCommentLike(Comment comment, Member loginMember) {
         CommentLike commentLike = CommentLike.builder()
                 .member(loginMember)
                 .comment(comment)
                 .build();
         commentLikeRepository.save(commentLike);
-        return commentLike.getId();
     }
 
-    private Long deleteCommentLike(CommentLike commentLike) {
+    private void deleteCommentLike(CommentLike commentLike) {
         commentLikeRepository.delete(commentLike);
-        return commentLike.getId();
     }
 
     @Transactional
-    public Long deleteComment(Long commentId, Long loginMemberId) {
+    public CommentIdElement deleteComment(Long commentId, Long loginMemberId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT));
 
@@ -189,6 +189,6 @@ public class CommentService {
         }
 
         commentRepository.delete(comment);
-        return comment.getId();
+        return new CommentIdElement(comment.getId());
     }
 }
