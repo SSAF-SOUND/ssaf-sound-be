@@ -48,8 +48,8 @@ class MemberControllerTest extends ControllerTest {
                 fieldWithPath("nickname").description("닉네임"),
                 fieldWithPath("ssafyMember").description("싸피인 여부"),
                 fieldWithPath("isMajor").description("전공자 여부"),
-                fieldWithPath("semester").description("싸피 기수"),
-                fieldWithPath("campus").description("캠퍼스 이름")
+                fieldWithPath("semester").optional().description("싸피 기수"),
+                fieldWithPath("campus").optional().description("캠퍼스 이름")
         );
     }
 
@@ -333,8 +333,8 @@ class MemberControllerTest extends ControllerTest {
                         requestCookieAccessTokenMandatory(),
                         requestFields(
                                 fieldWithPath("ssafyMember").description("싸피인 여부"),
-                                fieldWithPath("semester").description("기수").optional(),
-                                fieldWithPath("campus").description("캠퍼스").optional()),
+                                fieldWithPath("semester").optional().description("기수"),
+                                fieldWithPath("campus").optional().description("캠퍼스")),
                         getEnvelopPatternWithNoContent()))
                 .expect(status().isOk());
     }
