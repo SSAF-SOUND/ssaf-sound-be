@@ -10,6 +10,7 @@ import com.ssafy.ssafsound.domain.recruitcomment.domain.RecruitComment;
 import com.ssafy.ssafsound.domain.recruitcomment.domain.RecruitCommentLike;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.GetRecruitCommentsResDto;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PatchRecruitCommentReqDto;
+import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitCommentLikeResDto;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitCommentReqDto;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitCommentResDto;
 import com.ssafy.ssafsound.domain.recruitcomment.repository.RecruitCommentLikeRepository;
@@ -70,10 +71,13 @@ public class RecruitCommentService {
     }
 
     @Transactional
-    public boolean toggleRecruitCommentLike(Long recruitCommentId, Long memberId) {
+    public PostRecruitCommentLikeResDto toggleRecruitCommentLike(Long recruitCommentId, Long memberId) {
         RecruitCommentLike recruitCommentLike = recruitCommentLikeRepository
                 .findByRecruitCommentIdAndMemberId(recruitCommentId, memberId).orElse(null);
-        return isPreExistRecruitCommentLike(recruitCommentId, memberId, recruitCommentLike);
+
+        int likeCount = recruitCommentLikeRepository.countById(recruitCommentId);
+        boolean liked = isPreExistRecruitCommentLike(recruitCommentId, memberId, recruitCommentLike);
+        return new PostRecruitCommentLikeResDto(likeCount, liked);
     }
 
     @Transactional(readOnly = true)

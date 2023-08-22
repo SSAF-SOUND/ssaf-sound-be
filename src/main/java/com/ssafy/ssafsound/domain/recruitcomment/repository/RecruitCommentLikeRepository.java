@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface RecruitCommentLikeRepository extends JpaRepository<RecruitCommentLike, Long> {
     Optional<RecruitCommentLike> findByRecruitCommentIdAndMemberId(Long recruitCommentId, Long memberId);
+
+    int countById(Long recruitCommentLikeId);
 }
