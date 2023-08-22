@@ -261,14 +261,14 @@ class RecruitCommentServiceTest {
     @Test
     void Given_MemberIdAndRecruitCommentId_When_TryToggleRecruitCommentLike_Then_InsertRecruitCommentLike() {
         Long recruitCommentId = 2L, memberId = 1L;
-        assertFalse(recruitCommentService.toggleRecruitCommentLike(recruitCommentId, memberId));
+        assertFalse(recruitCommentService.toggleRecruitCommentLike(recruitCommentId, memberId).getLiked());
     }
 
     @DisplayName("리크루트 QNA 좋아요 등록취소 테스트")
     @Test
     void Given_MemberIdAndRecruitCommentId_When_TryToggleRecruitCommentLike_Then_DeleteRecruitLike() {
         Long recruitCommentId = 1L, memberId = 1L;
-        assertTrue(recruitCommentService.toggleRecruitCommentLike(recruitCommentId, memberId));
+        assertTrue(recruitCommentService.toggleRecruitCommentLike(recruitCommentId, memberId).getLiked());
     }
 
     @DisplayName("리크루트 QNA 리스트 조회")

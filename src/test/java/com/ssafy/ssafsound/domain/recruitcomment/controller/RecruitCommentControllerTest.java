@@ -97,6 +97,10 @@ public class RecruitCommentControllerTest extends ControllerTest {
     @DisplayName("리크루트 덧글 좋아요")
     @Test
     void toggleRecruitCommentLike() {
+        doReturn(RecruitCommentFixture.POST_RECRUIT_COMMENT_LIKE_RES_DTO)
+            .when(recruitCommentService)
+                .toggleRecruitCommentLike(any(), any());
+
         restDocs
                 .cookie(ACCESS_TOKEN)
                 .when().post("/recruit-comments/{recruitCommentId}/like", 1)
@@ -108,7 +112,10 @@ public class RecruitCommentControllerTest extends ControllerTest {
                         pathParameters(
                                 parameterWithName("recruitCommentId").description("리크루트 덧글 PK")
                         ),
-                        getEnvelopPatternWithNoContent())
+                        getEnvelopPatternWithData().andWithPrefix("data.",
+                            fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("리크루트 좋아요 갯수"),
+                            fieldWithPath("liked").type(JsonFieldType.BOOLEAN).description("리크루트 좋아요 여부")
+                        ))
                 );
     }
 

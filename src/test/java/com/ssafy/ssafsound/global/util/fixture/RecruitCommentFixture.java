@@ -3,6 +3,7 @@ package com.ssafy.ssafsound.global.util.fixture;
 import com.ssafy.ssafsound.domain.recruitcomment.domain.RecruitComment;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.GetRecruitCommentsResDto;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PatchRecruitCommentReqDto;
+import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitCommentLikeResDto;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitCommentReqDto;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitCommentResDto;
 
@@ -26,6 +27,8 @@ public class RecruitCommentFixture {
             .recruit(RecruitFixture.RECRUIT_1)
             .member(MemberFixture.MEMBER_TIM)
             .build();
+
+    public static final PostRecruitCommentLikeResDto POST_RECRUIT_COMMENT_LIKE_RES_DTO = new PostRecruitCommentLikeResDto(1, true);
 
     static {
         RECRUIT_COMMENT_1.setCommentGroup(RECRUIT_COMMENT_1);
