@@ -4,7 +4,6 @@ import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.validator.Authentication;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListReqDto;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListResDto;
-import com.ssafy.ssafsound.domain.lunch.dto.GetLunchResDto;
 import com.ssafy.ssafsound.domain.lunch.dto.PostLunchPollResDto;
 import com.ssafy.ssafsound.domain.lunch.service.LunchPollService;
 import com.ssafy.ssafsound.domain.lunch.service.LunchService;
@@ -26,14 +25,6 @@ public class LunchController {
 
     private final LunchService lunchService;
     private final LunchPollService lunchPollService;
-
-    @GetMapping("/{lunchId}")
-    public EnvelopeResponse<GetLunchResDto> getLunchByLunchId(@PathVariable @NumberFormat Long lunchId) {
-
-        return EnvelopeResponse.<GetLunchResDto>builder()
-                .data(lunchService.findLunchDetail(lunchId))
-                .build();
-    }
 
     @GetMapping
     public EnvelopeResponse<GetLunchListResDto> getLunchesByCampusAndDate(@Authentication AuthenticatedMember member, @Valid GetLunchListReqDto getLunchListReqDto) {

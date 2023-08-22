@@ -5,7 +5,6 @@ import com.ssafy.ssafsound.domain.lunch.domain.LunchPoll;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListElementResDto;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListReqDto;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListResDto;
-import com.ssafy.ssafsound.domain.lunch.dto.GetLunchResDto;
 import com.ssafy.ssafsound.domain.lunch.dto.PostLunchPollResDto;
 import com.ssafy.ssafsound.domain.meta.domain.Campus;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
@@ -85,8 +84,6 @@ public class LunchFixture {
                     GET_LUNCH_LIST_ELEMENT_RES_DTO2,
                     GET_LUNCH_LIST_ELEMENT_RES_DTO3
             ), 1L);
-
-    public static final GetLunchResDto GET_LUNCH_RES_DTO = GetLunchResDto.of(LUNCH_FIXTURE1);
 
     public static final LunchPoll LUNCH_POLL_FIXTURE1 = LunchPoll.builder()
             .id(1L)

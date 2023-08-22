@@ -8,10 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.requestCookieAccessTokenMandatory;
-import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.requestCookieAccessTokenNeedless;
 import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.requestCookieAccessTokenOptional;
 import static com.ssafy.ssafsound.global.util.fixture.LunchFixture.GET_LUNCH_LIST_RES_DTO;
-import static com.ssafy.ssafsound.global.util.fixture.LunchFixture.GET_LUNCH_RES_DTO;
 import static com.ssafy.ssafsound.global.util.fixture.LunchFixture.POST_LUNCH_POLL_RES_DTO;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -49,33 +47,10 @@ public class LunchControllerTest extends ControllerTest {
                         ).andWithPrefix("data.menus[].",
                                 fieldWithPath("lunchId").type(JsonFieldType.NUMBER).description("점심 메뉴 아이디"),
                                 fieldWithPath("mainMenu").type(JsonFieldType.STRING).description("메인 메뉴명"),
+                                fieldWithPath("extraMenu").type(JsonFieldType.STRING).description("전체 메뉴 | 서브 메뉴"),
+                                fieldWithPath("sumKcal").type(JsonFieldType.STRING).description("총 칼로리"),
                                 fieldWithPath("imagePath").type(JsonFieldType.STRING).description("메인 메뉴 이미지 주소"),
                                 fieldWithPath("pollCount").type(JsonFieldType.NUMBER).description("메뉴 투표수"))));
-    }
-
-    @Test
-    @DisplayName("점심 메뉴 상세 조회")
-    public void getLunchByLunchId() {
-
-        Long sampleLunchId = 1L;
-
-        doReturn(GET_LUNCH_RES_DTO)
-                .when(lunchService)
-                .findLunchDetail(any());
-
-        restDocs.when().get("/lunch/{lunchId}", sampleLunchId)
-                .then().log().all()
-                .assertThat()
-                .statusCode(HttpStatus.OK.value())
-                .apply(document("lunch/detail",
-                        requestCookieAccessTokenNeedless(),
-                        pathParameters(
-                                parameterWithName("lunchId").description("점심 메뉴 아이디")
-                        ),
-                        getEnvelopPatternWithData().andWithPrefix("data.",
-                                fieldWithPath("mainMenu").type(JsonFieldType.STRING).description("메인 메뉴명"),
-                                fieldWithPath("extraMenu").type(JsonFieldType.STRING).description("전체 메뉴명"),
-                                fieldWithPath("sumKcal").type(JsonFieldType.STRING).description("총 칼로리"))));
     }
 
     @Test

@@ -76,12 +76,4 @@ public class LunchService {
                 .map(lunch -> GetLunchListElementResDto.of(lunch, (long)lunch.getLunchPolls().size()))
                 .collect(Collectors.toList()), polledAt);
     }
-
-    @Transactional(readOnly = true)
-    public GetLunchResDto findLunchDetail(Long lunchId) {
-
-        return GetLunchResDto.of(lunchRepository.findById(lunchId)
-                .orElseThrow(()->new LunchException(LunchErrorInfo.INVALID_LUNCH_ID)));
-    }
-
 }

@@ -5,7 +5,6 @@ import com.ssafy.ssafsound.domain.lunch.domain.LunchPoll;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListElementResDto;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListReqDto;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListResDto;
-import com.ssafy.ssafsound.domain.lunch.dto.GetLunchResDto;
 import com.ssafy.ssafsound.domain.lunch.exception.LunchErrorInfo;
 import com.ssafy.ssafsound.domain.lunch.exception.LunchException;
 import com.ssafy.ssafsound.domain.lunch.repository.LunchPollRepository;
@@ -36,9 +35,13 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class LunchServiceTest {
@@ -117,46 +120,46 @@ class LunchServiceTest {
     @CsvSource({"1, 서울, 2023-07-10, 0", "2, 서울, 2023-07-10, -1", "null, 서울, 2023-07-10, -1"})
     @DisplayName("멤버아이디, 캠퍼스, 날짜로 점심 메뉴 목록을 조회한다.")
     void Given_DateAndCampus_When_FindLunches_Then_Succeed(
-        @ConvertWith(NullableConverter.class) Long memberId, String inputCampus,
-        LocalDate inputDate,
-        Long outputPolledAt) {
+            @ConvertWith(NullableConverter.class) Long memberId, String inputCampus,
+            LocalDate inputDate,
+            Long outputPolledAt) {
 
         // given
         given(clock.instant()).willReturn(Instant.parse(testLocalDateTime));
         given(clock.getZone()).willReturn(ZoneId.of("Asia/Seoul"));
 
         given(metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), inputCampus))
-            .willReturn(new MetaData(Campus.SEOUL));
+                .willReturn(new MetaData(Campus.SEOUL));
 
         given(lunchRepository.findAllByCampusAndDate(
-            metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), inputCampus), inputDate))
-            .willReturn(Optional.of(Arrays.asList(lunch2, lunch1)));
+                metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), inputCampus), inputDate))
+                .willReturn(Optional.of(Arrays.asList(lunch2, lunch1)));
 
         GetLunchListReqDto getLunchListReqDto = GetLunchListReqDto.builder()
-            .campus(inputCampus)
-            .date(inputDate)
-            .build();
+                .campus(inputCampus)
+                .date(inputDate)
+                .build();
 
         // when
         GetLunchListResDto result = lunchService.findLunches(memberId, getLunchListReqDto);
 
         // then
         assertAll(
-            () -> assertThat(result.getMenus().get(0))
-                .usingRecursiveComparison()
-                .isEqualTo(GetLunchListElementResDto.of(lunch2, 1L)),
-            () -> assertThat(result.getMenus().get(1))
-                .usingRecursiveComparison()
-                .isEqualTo(GetLunchListElementResDto.of(lunch1, 0L)),
-            () -> assertThat(result.getPolledAt()).isEqualTo(outputPolledAt)
+                () -> assertThat(result.getMenus().get(0))
+                        .usingRecursiveComparison()
+                        .isEqualTo(GetLunchListElementResDto.of(lunch2, 1L)),
+                () -> assertThat(result.getMenus().get(1))
+                        .usingRecursiveComparison()
+                        .isEqualTo(GetLunchListElementResDto.of(lunch1, 0L)),
+                () -> assertThat(result.getPolledAt()).isEqualTo(outputPolledAt)
         );
 
         verify(clock).instant();
         verify(clock).getZone();
         verify(metaDataConsumer, times(2))
-            .getMetaData(MetaDataType.CAMPUS.name(), inputCampus);
+                .getMetaData(MetaDataType.CAMPUS.name(), inputCampus);
         verify(lunchRepository).findAllByCampusAndDate(
-            metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), inputCampus), inputDate);
+                metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), inputCampus), inputDate);
 
     }
 
@@ -180,46 +183,11 @@ class LunchServiceTest {
         // when
         // then
         LunchException exception = assertThrows(LunchException.class,
-            () -> lunchService.findLunches(memberId, getLunchListReqDto));
+                () -> lunchService.findLunches(memberId, getLunchListReqDto));
         assertEquals(LunchErrorInfo.INVALID_DATE, exception.getInfo());
 
         verify(clock).instant();
         verify(clock).getZone();
     }
 
-    // 점심 메뉴 상세 조회 테스트
-    @ParameterizedTest
-    @CsvSource({"1, mainMenu1","2, mainMenu2"})
-    @DisplayName("점심 아이디로 점심 상세 정보를 조회한다.")
-    void Given_ValidLunch_When_FindLunchDetail_Then_Succeed(Long lunchId, String outputMainMenu){
-
-        // given
-        lenient().when(lunchRepository.findById(1L)).thenReturn(Optional.of(lunch1));
-
-        lenient().when(lunchRepository.findById(2L)).thenReturn(Optional.of(lunch2));
-
-        // when
-        GetLunchResDto getLunchResDto = lunchService.findLunchDetail(lunchId);
-
-        // then
-        assertThat(getLunchResDto.getMainMenu()).isEqualTo(outputMainMenu);
-    }
-
-    @Test
-    @DisplayName("유효하지 않은 점심 아이디의 점심 메뉴 상세 조회 요청 시 예외를 던진다.")
-    void Given_InValidDateLunch_When_FindLunchDetail_Then_ThrowException(){
-
-        // given
-        Long lunchId = 3L;
-
-        given(lunchRepository.findById(3L)).willReturn(Optional.empty());
-
-        // when
-        // then
-        LunchException exception = assertThrows(LunchException.class,
-            () -> lunchService.findLunchDetail(lunchId));
-        assertEquals(LunchErrorInfo.INVALID_LUNCH_ID, exception.getInfo());
-
-        verify(lunchRepository).findById(3L);
-    }
 }
