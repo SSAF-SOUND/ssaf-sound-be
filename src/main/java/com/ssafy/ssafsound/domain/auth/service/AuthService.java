@@ -26,7 +26,10 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberTokenRepository memberTokenRepository;
 
-    public AuthService(OauthProviderFactory oauthProviderFactory, JwtTokenProvider jwtTokenProvider, MemberTokenRepository memberTokenRepository) {
+    public AuthService(
+            OauthProviderFactory oauthProviderFactory,
+            JwtTokenProvider jwtTokenProvider,
+            MemberTokenRepository memberTokenRepository) {
         this.oauthProviderFactory = oauthProviderFactory;
         this.jwtTokenProvider = jwtTokenProvider;
         this.memberTokenRepository = memberTokenRepository;
