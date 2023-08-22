@@ -77,7 +77,14 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public EnvelopeResponse RuntimeExceptionHandler(RuntimeException e) {
-        e.printStackTrace();
+        StackTraceElement[] stackTraceElements = e.getStackTrace();
+
+        if (stackTraceElements.length > 0) {
+            StackTraceElement stackTraceElement = stackTraceElements[0];
+            String className = stackTraceElement.getClassName();
+            String methodName = stackTraceElement.getMethodName();
+            log.error("Exception occurred in class name: {} method name: {} message: {}", className, methodName, e.getMessage());
+        }
 
         return EnvelopeResponse.builder()
                 .code(GlobalErrorInfo.INTERNAL_SERVER_ERROR.getCode())
