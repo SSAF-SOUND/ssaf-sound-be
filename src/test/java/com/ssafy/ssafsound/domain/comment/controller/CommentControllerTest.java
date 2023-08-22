@@ -10,8 +10,6 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.requestCookieAccessTokenMandatory;
 import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.requestCookieAccessTokenOptional;
 import static com.ssafy.ssafsound.global.util.fixture.CommentFixture.*;
-import static com.ssafy.ssafsound.global.util.fixture.PostFixture.POST_ID_ELEMENT;
-import static com.ssafy.ssafsound.global.util.fixture.PostFixture.POST_PATCH_UPDATE_REQ_DTO1;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;

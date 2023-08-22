@@ -4,16 +4,16 @@
 operation::comment/find-comments[snippets='http-request,http-response,request-parameters,response-fields']
 
 === 댓글 쓰기
-operation::comment/write-comment[snippets='http-request,http-response,request-parameters,request-fields,response-fields']
+operation::comment/write-comment[snippets='http-request,http-response,cookie,request-parameters,request-fields,response-fields']
 
 === 대댓글 쓰기
-operation::comment/write-comment-reply[snippets='http-request,http-response,request-parameters,request-fields,response-fields']
+operation::comment/write-comment-reply[snippets='http-request,http-response,cookie,request-parameters,request-fields,response-fields']
 
 === 댓글 수정
-operation::comment/update-comment[snippets='http-request,http-response,path-parameters,request-fields,response-fields']
+operation::comment/update-comment[snippets='http-request,http-response,cookie,path-parameters,request-fields,response-fields']
 
 === 댓글 삭제
-operation::comment/delete-comment[snippets='http-request,http-response,path-parameters,response-fields']
+operation::comment/delete-comment[snippets='http-request,http-response,cookie,path-parameters,response-fields']
 
 === 댓글 좋아요
-operation::comment/like-comment[snippets='http-request,http-response,path-parameters,response-fields']
+operation::comment/like-comment[snippets='http-request,http-response,cookie,path-parameters,response-fields']
