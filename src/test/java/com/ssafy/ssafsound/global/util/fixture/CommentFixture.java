@@ -1,10 +1,9 @@
 package com.ssafy.ssafsound.global.util.fixture;
 
-import com.ssafy.ssafsound.domain.comment.dto.AuthorElement;
 import com.ssafy.ssafsound.domain.comment.dto.GetCommentElement;
 import com.ssafy.ssafsound.domain.comment.dto.GetCommentReplyElement;
 import com.ssafy.ssafsound.domain.comment.dto.GetCommentResDto;
-import com.ssafy.ssafsound.domain.meta.domain.MetaData;
+import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,6 +13,7 @@ import static com.ssafy.ssafsound.global.util.fixture.MemberFixture.*;
 public class CommentFixture {
 
     public static final AuthorElement AUTHOR_ELEMENT_COMMENT1 = AuthorElement.builder()
+            .memberId(1L)
             .nickname("김싸피")
             .memberRole("user")
             .ssafyMember(true)
@@ -22,6 +22,7 @@ public class CommentFixture {
             .build();
 
     public static final AuthorElement AUTHOR_ELEMENT_COMMENT2 = AuthorElement.builder()
+            .memberId(2L)
             .nickname("박싸피")
             .memberRole("user")
             .ssafyMember(false)
