@@ -15,10 +15,10 @@ if [ -z $CURRENT_PID ]
 then
   echo "> Nothing to end."
 else
-  echo "> kill -9 $CURRENT_PID"
+  echo "> kill -15 $CURRENT_PID"
   kill -15 $CURRENT_PID
   sleep 5
 fi
 
 echo "> $JAR_PATH deploy"
-nohup java -jar $JAR_PATH --spring.profiles.active=local > /dev/null 2> /dev/null < /dev/null &
+nohup java -jar $JAR_PATH --spring.profiles.active=dev > /dev/null 2> /dev/null < /dev/null &
