@@ -1,46 +1,49 @@
 package com.ssafy.ssafsound.domain.recruitcomment.dto;
 
 import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
 import com.ssafy.ssafsound.domain.recruitcomment.domain.RecruitComment;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Builder
 public class RecruitCommentElement {
-    private Long recruitCommentId;
+    private Long commentId;
     private String content;
     private Long commentGroup;
-    private List<RecruitCommentElement> children;
+    private int likeCount;
+    private Boolean liked;
+    private Boolean mine;
+    private LocalDateTime createdAt;
     private Boolean deletedComment;
+    private Boolean modified;
+    private AuthorElement author;
+    private List<RecruitCommentElement> replies;
 
-    private Long memberId;
-    private String nickname;
-    private Boolean ssafyMember;
-    private Boolean isMajor;
-    private String majorTrack;
-
-    public static RecruitCommentElement from(RecruitComment comment) {
+    public static RecruitCommentElement of(RecruitComment comment, int likedCount, Boolean liked, Boolean mine) {
         Member register = comment.getMember();
 
         return RecruitCommentElement.builder()
-                .recruitCommentId(comment.getId())
+                .commentId(comment.getId())
                 .content(!comment.getDeletedComment() ? comment.getContent() : "")
                 .commentGroup(comment.getCommentGroup().getId())
-                .children(new ArrayList<>())
+                .likeCount(likedCount)
+                .liked(liked)
+                .mine(mine)
+                .replies(new ArrayList<>())
                 .deletedComment(comment.getDeletedComment())
-                .memberId(register.getId())
-                .nickname(register.getNickname())
-                .ssafyMember(register.getSsafyMember())
-                .isMajor(register.getMajor())
-                .majorTrack(register.getMajorTrack().getName())
+                .createdAt(comment.getCreatedAt())
+                .modified(comment.getModifiedAt() != null)
+                .author(new AuthorElement(register, false))
                 .build();
     }
 
     public void addChild(RecruitCommentElement child) {
-        this.children.add(child);
+        this.replies.add(child);
     }
 }
