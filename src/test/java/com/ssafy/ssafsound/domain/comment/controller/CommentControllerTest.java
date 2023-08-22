@@ -4,14 +4,18 @@ import com.ssafy.ssafsound.global.docs.ControllerTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.requestCookieAccessTokenMandatory;
-import static com.ssafy.ssafsound.global.util.fixture.CommentFixture.GET_COMMENT_RES_DTO1;
+import static com.ssafy.ssafsound.global.util.fixture.CommentFixture.*;
+import static com.ssafy.ssafsound.global.util.fixture.PostFixture.POST_ID_ELEMENT;
+import static com.ssafy.ssafsound.global.util.fixture.PostFixture.POST_POST_WRITE_REQ_DTO1;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 
@@ -90,16 +94,42 @@ class CommentControllerTest extends ControllerTest {
     @Test
     @DisplayName("댓글 쓰기")
     void writeComment() {
+        doReturn(COMMENT_ID_ELEMENT)
+                .when(commentService)
+                .writeComment(any(), any(), any());
+
+        restDocs.cookie(ACCESS_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(POST_COMMENT_WRITE_REQ_DTO1)
+                .when().post("/comments?postId={postId}", 1L)
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .apply(document("comment/write-comment",
+                                requestCookieAccessTokenMandatory(),
+                                requestParameters(
+                                        parameterWithName("postId").description("댓글을 작성할 게시글의 고유 ID")
+                                ),
+                                requestFields(
+                                        fieldWithPath("content").type(JsonFieldType.STRING).description("댓글 내용"),
+                                        fieldWithPath("anonymity").type(JsonFieldType.BOOLEAN).description("댓글 작성자의 익명 여부를 나타내는 필드")
+                                ),
+                                getEnvelopPatternWithData().andWithPrefix("data.",
+                                        fieldWithPath("commentId").type(JsonFieldType.NUMBER).description("작성한 댓글 ID")
+                                )
+                        )
+                );
     }
+
+    @Test
+    @DisplayName("대댓글 쓰기")
+    void writeCommentReply() {
+        
+    }
+
 
     @Test
     void updateComment() {
     }
-
-    @Test
-    void writeCommentReply() {
-    }
-
     @Test
     void likeComment() {
     }

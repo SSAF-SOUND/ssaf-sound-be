@@ -47,7 +47,7 @@ public class CommentController {
 
     @PostMapping("/reply")
     public EnvelopeResponse<CommentIdElement> writeCommentReply(@RequestParam Long commentId, @RequestParam Long postId,
-                                                                @Valid @RequestBody PostCommentWriteReplyReqDto postCommentWriteReplyReqDto,
+                                                                @Valid @RequestBody PostCommentWriteReqDto postCommentWriteReplyReqDto,
                                                                 @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<CommentIdElement>builder()
                 .data(commentService.writeCommentReply(postId, commentId, loginMember.getMemberId(), postCommentWriteReplyReqDto))
