@@ -36,12 +36,12 @@ public class CommentController {
                 .build();
     }
 
-    @PutMapping("/{commentId}")
+    @PatchMapping("/{commentId}")
     public EnvelopeResponse<CommentIdElement> updateComment(@PathVariable Long commentId,
-                                                            @Valid @RequestBody PutCommentUpdateReqDto putCommentUpdateReqDto,
+                                                            @Valid @RequestBody PatchCommentUpdateReqDto patchCommentUpdateReqDto,
                                                             @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<CommentIdElement>builder()
-                .data(commentService.updateComment(commentId, loginMember.getMemberId(), putCommentUpdateReqDto))
+                .data(commentService.updateComment(commentId, loginMember.getMemberId(), patchCommentUpdateReqDto))
                 .build();
     }
 

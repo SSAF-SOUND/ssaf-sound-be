@@ -84,7 +84,7 @@ public class CommentService {
         return GetCommentResDto.of(comments, loginMember);
     }
     @Transactional
-    public CommentIdElement updateComment(Long commentId, Long loginMemberId, PutCommentUpdateReqDto putCommentUpdateReqDto) {
+    public CommentIdElement updateComment(Long commentId, Long loginMemberId, PatchCommentUpdateReqDto patchCommentUpdateReqDto) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT));
 
@@ -95,7 +95,7 @@ public class CommentService {
             throw new CommentException(CommentErrorInfo.UNAUTHORIZED_UPDATE_COMMENT);
         }
 
-        comment.updateComment(putCommentUpdateReqDto.getContent(), putCommentUpdateReqDto.getAnonymity());
+        comment.updateComment(patchCommentUpdateReqDto.getContent(), patchCommentUpdateReqDto.getAnonymity());
         return new CommentIdElement(comment.getId());
     }
 
