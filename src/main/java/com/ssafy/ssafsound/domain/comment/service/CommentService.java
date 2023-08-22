@@ -100,7 +100,7 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentIdElement writeCommentReply(Long postId, Long commentId, Long loginMemberId, PostCommentWriteReplyReqDto postCommentWriteReplyReqDto) {
+    public CommentIdElement writeCommentReply(Long postId, Long commentId, Long loginMemberId, PostCommentWriteReqDto postCommentWriteReplyReqDto) {
         if (!postRepository.existsById(postId)) {
             throw new PostException(PostErrorInfo.NOT_FOUND_POST);
         }

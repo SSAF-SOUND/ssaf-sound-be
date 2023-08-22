@@ -1,10 +1,9 @@
 package com.ssafy.ssafsound.global.util.fixture;
 
-import com.ssafy.ssafsound.domain.comment.dto.GetCommentElement;
-import com.ssafy.ssafsound.domain.comment.dto.GetCommentReplyElement;
-import com.ssafy.ssafsound.domain.comment.dto.GetCommentResDto;
+import com.ssafy.ssafsound.domain.comment.dto.*;
 import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
 
+import javax.ws.rs.GET;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -59,5 +58,14 @@ public class CommentFixture {
 
     public static final GetCommentResDto GET_COMMENT_RES_DTO1 = GetCommentResDto.builder()
             .comments(List.of(GET_COMMENT_ELEMENT1))
+            .build();
+
+    public static final CommentIdElement COMMENT_ID_ELEMENT = CommentIdElement.builder()
+            .commentId(1L)
+            .build();
+
+    public static final PostCommentWriteReqDto POST_COMMENT_WRITE_REQ_DTO1 = PostCommentWriteReqDto.builder()
+            .content("댓글 내용 입니다.")
+            .anonymity(false)
             .build();
 }

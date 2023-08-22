@@ -198,7 +198,7 @@ public class PostFixture {
             .postId(1L)
             .build();
 
-    public static final PostPostLikeResDto POST_POST_LIKE_RES_DTO = PostPostLikeResDto.builder()
+    public static final PostCommonLikeResDto POST_POST_LIKE_RES_DTO = PostCommonLikeResDto.builder()
             .likeCount(10)
             .liked(true)
             .build();
