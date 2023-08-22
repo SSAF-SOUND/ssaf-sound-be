@@ -3,7 +3,6 @@ package com.ssafy.ssafsound.global.util.fixture;
 import com.ssafy.ssafsound.domain.comment.dto.*;
 import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
 
-import javax.ws.rs.GET;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -64,8 +63,13 @@ public class CommentFixture {
             .commentId(1L)
             .build();
 
-    public static final PostCommentWriteReqDto POST_COMMENT_WRITE_REQ_DTO1 = PostCommentWriteReqDto.builder()
+    public static final PostCommentWriteReqDto POST_COMMENT_WRITE_REQ_DTO = PostCommentWriteReqDto.builder()
             .content("댓글 내용 입니다.")
             .anonymity(false)
+            .build();
+
+    public static final PostCommentWriteReqDto POST_COMMENT_REPLY_WRITE_REQ_DTO = PostCommentWriteReqDto.builder()
+            .content("대댓글 내용 입니다.")
+            .anonymity(true)
             .build();
 }
