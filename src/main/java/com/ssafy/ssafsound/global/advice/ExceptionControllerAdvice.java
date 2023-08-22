@@ -1,14 +1,13 @@
 package com.ssafy.ssafsound.global.advice;
 
 
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
 import com.ssafy.ssafsound.domain.board.exception.BoardException;
 import com.ssafy.ssafsound.domain.comment.exception.CommentException;
 import com.ssafy.ssafsound.domain.lunch.exception.LunchException;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
-import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import com.ssafy.ssafsound.domain.post.exception.PostException;
+import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
@@ -51,7 +50,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(LunchException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse LunchExceptionHandler(LunchException e) {
-        log.error(e.getMessage());
+        log.error(e.getInfo().getMessage());
 
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
@@ -89,7 +88,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public EnvelopeResponse ResourceNotFoundExceptionHandler(ResourceNotFoundException e) {
-        log.error(e.getMessage());
+        log.error(e.getInfo().getMessage());
 
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
@@ -122,7 +121,8 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(RecruitException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse RecruitExceptionHandler(RecruitException e) {
-        e.printStackTrace();
+        log.error(e.getInfo().getMessage());
+
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
                 .message(e.getInfo().getMessage())
@@ -132,7 +132,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(BoardException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse BoardExceptionHandler(BoardException e) {
-        log.error(e.getMessage());
+        log.error(e.getInfo().getMessage());
 
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
@@ -143,7 +143,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(PostException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse PostExceptionHandler(PostException e) {
-        log.error(e.getMessage());
+        log.error(e.getInfo().getMessage());
 
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
@@ -165,7 +165,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(CommentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse CommentExceptionHandler(CommentException e) {
-        log.error(e.getMessage());
+        log.error(e.getInfo().getMessage());
 
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
