@@ -1,4 +1,4 @@
 == 게시판
 
 === 게시판 목록 조회
-operation::board/find-boards[snippets='http-request,http-response,response-fields']
+operation::board/find-boards[snippets='http-request,http-response,cookie,response-fields']
