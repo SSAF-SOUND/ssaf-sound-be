@@ -5,11 +5,11 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class PostPostLikeResDto {
+public class PostCommonLikeResDto {
     private final Integer likeCount;
     private final Boolean liked;
 
-    public PostPostLikeResDto(Integer likeCount, Boolean liked) {
+    public PostCommonLikeResDto(Integer likeCount, Boolean liked) {
         this.likeCount = likeCount;
         this.liked = liked;
     }
