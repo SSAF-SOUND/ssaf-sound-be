@@ -8,6 +8,7 @@ import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitParticipantsR
 import com.ssafy.ssafsound.domain.recruitapplication.dto.PostRecruitApplicationReqDto;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement;
 import com.ssafy.ssafsound.domain.recruitapplication.service.RecruitApplicationService;
+import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitApplicationLikeResDto;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -64,10 +65,10 @@ public class RecruitApplicationController {
     }
 
     @PostMapping("/recruit-applications/{recruitApplicationId}/like")
-    public EnvelopeResponse<Void> toggleRecruitApplicationLike(@PathVariable Long recruitApplicationId, @Authentication AuthenticatedMember memberInfo) {
-        recruitApplicationService.toggleRecruitApplicationLike(recruitApplicationId, memberInfo.getMemberId());
-        return EnvelopeResponse.<Void>builder()
-                .build();
+    public EnvelopeResponse<PostRecruitApplicationLikeResDto> toggleRecruitApplicationLike(@PathVariable Long recruitApplicationId, @Authentication AuthenticatedMember memberInfo) {
+        return EnvelopeResponse.<PostRecruitApplicationLikeResDto>builder()
+            .data(recruitApplicationService.toggleRecruitApplicationLike(recruitApplicationId, memberInfo.getMemberId()))
+            .build();
     }
 
     @GetMapping("/recruit-applications/{recruitApplicationId}")

@@ -21,6 +21,7 @@ import com.ssafy.ssafsound.domain.recruitapplication.dto.PostRecruitApplicationR
 import com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement;
 import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicationRepository;
 import com.ssafy.ssafsound.domain.recruitapplication.validator.RecruitApplicationValidator;
+import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitApplicationLikeResDto;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -126,12 +127,14 @@ public class RecruitApplicationService {
     }
 
     @Transactional
-    public void toggleRecruitApplicationLike(Long recruitApplicationId, Long memberId) {
+    public PostRecruitApplicationLikeResDto toggleRecruitApplicationLike(Long recruitApplicationId, Long memberId) {
         RecruitApplication recruitApplication = recruitApplicationRepository.findByIdFetchRecruitWriter(recruitApplicationId)
                 .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
         if(!recruitApplication.getRecruit().getMember().getId().equals(memberId)) throw new RecruitException(RecruitErrorInfo.INVALID_CHANGE_MEMBER_OPERATION);
         recruitApplication.toggleLike();
+
+        return new PostRecruitApplicationLikeResDto(recruitApplication.getIsLike());
     }
 
     @Transactional(readOnly = true)
