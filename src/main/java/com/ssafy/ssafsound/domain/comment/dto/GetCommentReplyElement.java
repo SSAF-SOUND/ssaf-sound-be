@@ -4,17 +4,14 @@ import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.comment.domain.Comment;
 import com.ssafy.ssafsound.domain.comment.domain.CommentLike;
 import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
-
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Builder
-public class GetCommentElement {
+public class GetCommentReplyElement {
     private Long commentId;
     private String content;
     private int likeCount;
@@ -25,13 +22,11 @@ public class GetCommentElement {
     private Boolean mine;
     private Boolean deletedComment;
     private AuthorElement author;
-    private List<GetCommentReplyElement> replies;
 
-
-    public static GetCommentElement of(Comment comment, AuthenticatedMember loginMember) {
+    public static GetCommentReplyElement of(Comment comment, AuthenticatedMember loginMember) {
         Boolean anonymity = comment.getAnonymity();
 
-        return GetCommentElement.builder()
+        return GetCommentReplyElement.builder()
                 .commentId(comment.getId())
                 .content(comment.getDeletedComment() ? "" : comment.getContent())
                 .likeCount(comment.getLikes().size())
@@ -41,8 +36,7 @@ public class GetCommentElement {
                 .liked(isLiked(comment, loginMember))
                 .mine(isMine(comment, loginMember))
                 .deletedComment(comment.getDeletedComment())
-                .author(new AuthorElement(comment.getMember(), comment.getAnonymity(), comment.getCommentNumber().getNumber()))
-                .replies(new ArrayList<>())
+                .author(new AuthorElement(comment.getMember(), anonymity, comment.getCommentNumber().getNumber()))
                 .build();
     }
 
@@ -63,9 +57,5 @@ public class GetCommentElement {
             return false;
 
         return comment.getMember().getId().equals(loginMember.getMemberId());
-    }
-
-    public void addReply(GetCommentReplyElement reply) {
-        this.replies.add(reply);
     }
 }

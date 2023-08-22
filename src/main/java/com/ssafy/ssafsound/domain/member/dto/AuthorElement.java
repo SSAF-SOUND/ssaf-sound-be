@@ -2,9 +2,15 @@ package com.ssafy.ssafsound.domain.member.dto;
 
 import com.ssafy.ssafsound.domain.member.domain.Member;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class AuthorElement {
 
     private Long memberId;

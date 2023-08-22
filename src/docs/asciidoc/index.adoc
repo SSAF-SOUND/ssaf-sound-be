@@ -63,6 +63,8 @@ use of HTTP status codes.
 |===
 
 include::board.adoc[]
+include::post.adoc[]
+include::comment.adoc[]
 include::metadata.adoc[]
 include::auth.adoc[]
 include::member.adoc[]
