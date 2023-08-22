@@ -48,6 +48,7 @@ class CommentControllerTest extends ControllerTest {
                                         fieldWithPath("author").type(JsonFieldType.OBJECT).description("댓글 작성자의 정보"),
                                         fieldWithPath("replies").type(JsonFieldType.ARRAY).description("댓글의 대댓글(대댓글의 최대 Depth는 1)").optional()
                                 ).andWithPrefix("data.comments[].author.",
+                                        fieldWithPath("memberId").type(JsonFieldType.NUMBER).description("댓글 작성자의 고유 ID"),
                                         fieldWithPath("nickname").type(JsonFieldType.STRING).description("댓글 작성자의 닉네임"),
                                         fieldWithPath("memberRole").type(JsonFieldType.STRING).description("댓글 작성자의 사용자 권한").optional(),
                                         fieldWithPath("ssafyMember").type(JsonFieldType.BOOLEAN).description("댓글 작성자가 SSAFY 유저인지 나타내는 필드 값").optional(),
@@ -70,6 +71,7 @@ class CommentControllerTest extends ControllerTest {
                                         fieldWithPath("deletedComment").type(JsonFieldType.BOOLEAN).description("삭제된 대댓글인지 여부"),
                                         fieldWithPath("author").type(JsonFieldType.OBJECT).description("대댓글 작성자의 정보")
                                 ).andWithPrefix("data.comments[].replies[].author.",
+                                        fieldWithPath("memberId").type(JsonFieldType.NUMBER).description("대댓글 작성자의 고유 ID"),
                                         fieldWithPath("nickname").type(JsonFieldType.STRING).description("대댓글 작성자의 닉네임"),
                                         fieldWithPath("memberRole").type(JsonFieldType.STRING).description("대댓글 작성자의 사용자 권한").optional(),
                                         fieldWithPath("ssafyMember").type(JsonFieldType.BOOLEAN).description("대댓글 작성자가 SSAFY 유저인지 나타내는 필드 값").optional(),
