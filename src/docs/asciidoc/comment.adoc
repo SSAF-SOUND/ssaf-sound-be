@@ -1,7 +1,7 @@
 == 게시판 댓글
 
 === 댓글 목록 조회
-operation::comment/find-comments[snippets='http-request,http-response,request-parameters,response-fields']
+operation::comment/find-comments[snippets='http-request,http-response,cookie,request-parameters,response-fields']
 
 === 댓글 쓰기
 operation::comment/write-comment[snippets='http-request,http-response,cookie,request-parameters,request-fields,response-fields']
