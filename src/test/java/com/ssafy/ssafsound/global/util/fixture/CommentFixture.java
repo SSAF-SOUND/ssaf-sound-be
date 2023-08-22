@@ -72,4 +72,9 @@ public class CommentFixture {
             .content("대댓글 내용 입니다.")
             .anonymity(true)
             .build();
+
+    public static final PatchCommentUpdateReqDto PUT_COMMENT_UPDATE_REQ_DTO = PatchCommentUpdateReqDto.builder()
+            .content("수정된 댓글 내용 입니다.")
+            .anonymity(true)
+            .build();
 }

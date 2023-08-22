@@ -10,13 +10,14 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.requestCookieAccessTokenMandatory;
 import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.requestCookieAccessTokenOptional;
 import static com.ssafy.ssafsound.global.util.fixture.CommentFixture.*;
+import static com.ssafy.ssafsound.global.util.fixture.PostFixture.POST_ID_ELEMENT;
+import static com.ssafy.ssafsound.global.util.fixture.PostFixture.POST_PATCH_UPDATE_REQ_DTO1;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 
 class CommentControllerTest extends ControllerTest {
 
@@ -151,14 +152,40 @@ class CommentControllerTest extends ControllerTest {
 
 
     @Test
+    @DisplayName("댓글 수정")
     void updateComment() {
+        doReturn(COMMENT_ID_ELEMENT)
+                .when(commentService)
+                .updateComment(any(), any(), any());
+
+        restDocs.cookie(ACCESS_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(PUT_COMMENT_UPDATE_REQ_DTO)
+                .when().patch("/comments/{commentId}", 1L)
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .apply(document("comment/update-comment",
+                                requestCookieAccessTokenMandatory(),
+                                pathParameters(
+                                        parameterWithName("commentId").description("수정할 댓글의 고유 ID")
+                                ),
+                                requestFields(
+                                        fieldWithPath("content").type(JsonFieldType.STRING).description("댓글 내용"),
+                                        fieldWithPath("anonymity").type(JsonFieldType.BOOLEAN).description("댓글 작성자의 익명 여부를 나타내는 필드")
+                                ),
+                                getEnvelopPatternWithData().andWithPrefix("data.",
+                                        fieldWithPath("commentId").type(JsonFieldType.NUMBER).description("수정한 댓글 ID")
+                                )
+                        )
+                );
+    }
+
+    @Test
+    void deleteComment() {
     }
 
     @Test
     void likeComment() {
     }
 
-    @Test
-    void deleteComment() {
-    }
 }
