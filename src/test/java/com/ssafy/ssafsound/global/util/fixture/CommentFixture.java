@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.global.util.fixture;
 
 import com.ssafy.ssafsound.domain.comment.dto.*;
 import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
+import com.ssafy.ssafsound.domain.post.dto.PostCommonLikeResDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -76,5 +77,10 @@ public class CommentFixture {
     public static final PatchCommentUpdateReqDto PUT_COMMENT_UPDATE_REQ_DTO = PatchCommentUpdateReqDto.builder()
             .content("수정된 댓글 내용 입니다.")
             .anonymity(true)
+            .build();
+
+    public static final PostCommonLikeResDto POST_COMMON_LIKE_RES_DTO = PostCommonLikeResDto.builder()
+            .likeCount(12)
+            .liked(true)
             .build();
 }

@@ -204,7 +204,27 @@ class CommentControllerTest extends ControllerTest {
     }
 
     @Test
+    @DisplayName("댓글 좋아요")
     void likeComment() {
+        doReturn(POST_COMMON_LIKE_RES_DTO)
+                .when(commentService)
+                .likeComment(any(), any());
+
+        restDocs.cookie(ACCESS_TOKEN)
+                .when().post("/comments/{commentId}/like", 1L)
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .apply(document("comment/like-comment",
+                                requestCookieAccessTokenMandatory(),
+                                pathParameters(
+                                        parameterWithName("commentId").description("좋아요할 댓글의 고유 ID")
+                                ),
+                                getEnvelopPatternWithData().andWithPrefix("data.",
+                                        fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("좋아요를 누른 시점의 댓글 좋아요 개수"),
+                                        fieldWithPath("liked").type(JsonFieldType.BOOLEAN).description("내가 좋아요를 눌렀을 때 현재 좋아요 상태(좋아요 등록, 좋아요 취소)")
+                                )
+                        )
+                );
     }
 
 }
