@@ -8,9 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.requestCookieAccessTokenMandatory;
+import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.requestCookieAccessTokenOptional;
 import static com.ssafy.ssafsound.global.util.fixture.CommentFixture.*;
-import static com.ssafy.ssafsound.global.util.fixture.PostFixture.POST_ID_ELEMENT;
-import static com.ssafy.ssafsound.global.util.fixture.PostFixture.POST_POST_WRITE_REQ_DTO1;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -33,7 +32,7 @@ class CommentControllerTest extends ControllerTest {
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
                 .apply(document("comment/write-comment",
-                                requestCookieAccessTokenMandatory(),
+                                requestCookieAccessTokenOptional(),
                                 requestParameters(
                                         parameterWithName("postId").description("댓글을 작성하려는 게시글의 고유 ID")
                                 ),
@@ -100,7 +99,7 @@ class CommentControllerTest extends ControllerTest {
 
         restDocs.cookie(ACCESS_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(POST_COMMENT_WRITE_REQ_DTO1)
+                .body(POST_COMMENT_WRITE_REQ_DTO)
                 .when().post("/comments?postId={postId}", 1L)
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
@@ -123,13 +122,38 @@ class CommentControllerTest extends ControllerTest {
     @Test
     @DisplayName("대댓글 쓰기")
     void writeCommentReply() {
-        
+        doReturn(COMMENT_ID_ELEMENT)
+                .when(commentService)
+                .writeCommentReply(any(), any(), any(), any());
+
+        restDocs.cookie(ACCESS_TOKEN)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(POST_COMMENT_REPLY_WRITE_REQ_DTO)
+                .when().post("/comments/reply?commentId={commentId}&postId={postId}", 1L, 1L)
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .apply(document("comment/write-comment-reply",
+                                requestCookieAccessTokenMandatory(),
+                                requestParameters(
+                                        parameterWithName("commentId").description("대댓글을 작성할 댓글의 고유 ID"),
+                                        parameterWithName("postId").description("대댓글을 작성할 게시글의 고유 ID")
+                                ),
+                                requestFields(
+                                        fieldWithPath("content").type(JsonFieldType.STRING).description("댓글 내용"),
+                                        fieldWithPath("anonymity").type(JsonFieldType.BOOLEAN).description("댓글 작성자의 익명 여부를 나타내는 필드")
+                                ),
+                                getEnvelopPatternWithData().andWithPrefix("data.",
+                                        fieldWithPath("commentId").type(JsonFieldType.NUMBER).description("작성한 대댓글 ID")
+                                )
+                        )
+                );
     }
 
 
     @Test
     void updateComment() {
     }
+
     @Test
     void likeComment() {
     }
