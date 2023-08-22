@@ -17,4 +17,4 @@ operation::recruitComment/like[snippets='http-request,cookie,path-parameters,htt
 
 
 === 리크루트 덧글 목록 조회
-operation::recruitComment/getLists[snippets='http-request,path-parameters,http-response,response-fields']
+operation::recruitComment/getLists[snippets='http-request,cookie,path-parameters,http-response,response-fields']

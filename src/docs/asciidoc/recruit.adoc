@@ -14,7 +14,7 @@ operation::recruit/expiredRecruit[snippets='http-request,cookie,path-parameters,
 
 
 === 리크루트 상세 조회
-operation::recruit/detail[snippets='http-request,path-parameters,http-response,response-fields']
+operation::recruit/detail[snippets='http-request,cookie,path-parameters,http-response,response-fields']
 
 
 === 리크루트 업데이트
