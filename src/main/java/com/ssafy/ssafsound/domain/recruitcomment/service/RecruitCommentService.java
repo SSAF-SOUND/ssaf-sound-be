@@ -3,6 +3,7 @@ package com.ssafy.ssafsound.domain.recruitcomment.service;
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
+import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
@@ -21,7 +22,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -81,9 +84,22 @@ public class RecruitCommentService {
     }
 
     @Transactional(readOnly = true)
-    public GetRecruitCommentsResDto getRecruitComments(Long recruitId) {
+    public GetRecruitCommentsResDto getRecruitComments(Long recruitId, Long memberId) {
+        Recruit recruit = recruitRepository.findById(recruitId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
         List<RecruitComment> recruitComments = recruitCommentRepository.findByRecruitIdFetchJoinMemberAndReplies(recruitId);
-        return GetRecruitCommentsResDto.from(recruitComments);
+        Map<Long, Integer> likedCountMap = new HashMap<>();
+        Map<Long, Boolean> memberLikedMap = new HashMap<>();
+
+        recruitComments.forEach(recruitComment->{
+            Long recruitCommentId = recruitComment.getId();
+            likedCountMap.put(recruitCommentId, recruitCommentLikeRepository.countById(recruitCommentId));
+        });
+
+        if(memberId != null) {
+            List<RecruitCommentLike> recruitCommentLikes = recruitCommentLikeRepository.findByRecruitCommentRecruitAndMemberIdFetchRecruitComment(recruit, memberId);
+            recruitCommentLikes.forEach(recruitCommentLike -> memberLikedMap.put(recruitCommentLike.getRecruitComment().getId(), true));
+        }
+        return GetRecruitCommentsResDto.of(recruitComments, likedCountMap, memberLikedMap, memberId);
     }
 
     private boolean isPreExistRecruitCommentLike(Long recruitCommentId, Long memberId, RecruitCommentLike recruitCommentLike) {

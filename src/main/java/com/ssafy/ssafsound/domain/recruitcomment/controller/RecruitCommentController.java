@@ -50,9 +50,9 @@ public class RecruitCommentController {
     }
 
     @GetMapping("/recruits/{recruitId}/comments")
-    public EnvelopeResponse<GetRecruitCommentsResDto> getRecruitComments(@PathVariable Long recruitId) {
+    public EnvelopeResponse<GetRecruitCommentsResDto> getRecruitComments(@PathVariable Long recruitId, @Authentication AuthenticatedMember memberInfo) {
         return EnvelopeResponse.<GetRecruitCommentsResDto>builder()
-                .data(recruitCommentService.getRecruitComments(recruitId))
+                .data(recruitCommentService.getRecruitComments(recruitId, memberInfo.getMemberId()))
                 .build();
     }
 }
