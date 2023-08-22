@@ -39,7 +39,7 @@ jobs:
 
       # (4) Gradle build (Test 포함)
       - name: Test with Gradle
-        run: ./gradlew --info test
+        run: ./gradlew test
 
       # (5) Test Result Logging
       - name: Publish Test Results
