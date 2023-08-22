@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.global.util.fixture;
 
 import com.ssafy.ssafsound.domain.comment.dto.AuthorElement;
 import com.ssafy.ssafsound.domain.comment.dto.GetCommentElement;
+import com.ssafy.ssafsound.domain.comment.dto.GetCommentReplyElement;
 import com.ssafy.ssafsound.domain.comment.dto.GetCommentResDto;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 
@@ -25,10 +26,10 @@ public class CommentFixture {
             .memberRole("user")
             .ssafyMember(false)
             .isMajor(false)
-            .ssafyInfo(UNCERTIFIED_SSAFY_INFO)
+            .ssafyInfo(null)
             .build();
 
-    public static final GetCommentElement GET_COMMENT_REPLY_ELEMENT1 = GetCommentElement.builder()
+    public static final GetCommentReplyElement GET_COMMENT_REPLY_ELEMENT1 = GetCommentReplyElement.builder()
             .commentId(1L)
             .content("안녕하세요")
             .likeCount(10)
@@ -39,7 +40,6 @@ public class CommentFixture {
             .mine(false)
             .deletedComment(false)
             .author(AUTHOR_ELEMENT_COMMENT1)
-            .replies(List.of())
             .build();
 
     public static final GetCommentElement GET_COMMENT_ELEMENT1 = GetCommentElement.builder()
