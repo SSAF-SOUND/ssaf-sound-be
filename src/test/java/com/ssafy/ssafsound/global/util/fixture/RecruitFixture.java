@@ -35,7 +35,7 @@ public class RecruitFixture {
             List.of(RECRUIT_QUESTION), List.of(RecruitLimitFixture.BACKEND_LIMIT_3, RecruitLimitFixture.FRONTEND_LIMIT_3, RecruitLimitFixture.APP_LIMIT_3)
     );
 
-    public static final PostRecruitScrapCountResDto RECRUIT_SCRAP_RES_DTO = new PostRecruitScrapCountResDto(1L);
+    public static final PostRecruitScrapCountResDto RECRUIT_SCRAP_RES_DTO = new PostRecruitScrapCountResDto(1L, true);
 
     public static final Recruit RECRUIT_1 = Recruit.builder()
             .id(1L)

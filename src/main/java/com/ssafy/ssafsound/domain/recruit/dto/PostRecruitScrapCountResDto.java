@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PostRecruitScrapCountResDto {
     private Long scrapCount;
+    private boolean scraped;
 }

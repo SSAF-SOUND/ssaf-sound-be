@@ -22,6 +22,10 @@ public class RecruitApplicationControllerTest extends ControllerTest {
     @DisplayName("리크루트 참여 신청")
     @Test
     void saveRecruitApplication() {
+        doReturn(RecruitApplicationFixture.WAITING_STATUS_APPLICATION)
+            .when(recruitApplicationService)
+            .saveRecruitApplication(any(), any(), any());
+
         restDocs
                 .cookie(ACCESS_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -39,13 +43,20 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                                 fieldWithPath("recruitType").type(JsonFieldType.STRING).description("리크루트 작성자가 선택한 자신의 역할군, 메타데이터-리크루트 목록 조회 참고"),
                                 fieldWithPath("contents[]").type(JsonFieldType.ARRAY).description("리크루트 등록자 질문에 대한 사용자 답변, [1개 필수]")
                         ),
-                        getEnvelopPatternWithNoContent())
+                        getEnvelopPatternWithData().andWithPrefix("data.",
+                            fieldWithPath("recruitApplicationId").type(JsonFieldType.NUMBER).description("리크루트 참여 신청 PK"),
+                            fieldWithPath("matchStatus").type(JsonFieldType.STRING).description("리크루트 참여 신청 매칭 상태 WAITING_REGISTER_APPROVE (등록자 수락 대기상태) | WAITING_APPLICANT (신청자 수락 대기상태) | DONE (매칭성공) | REJECT (매칭거절) | CANCEL (매칭 취소)")
+                        ))
                 );
     }
 
     @DisplayName("리크루트 등록자 참여 신청 수락")
     @Test
     void approveRecruitApplicationByRegister() {
+        doReturn(RecruitApplicationFixture.APPROVE_STATUS_APPLICATION)
+            .when(recruitApplicationService)
+            .approveRecruitApplicationByRegister(any(), any(), any());
+
         restDocs
                 .cookie(ACCESS_TOKEN)
                 .when().patch("/recruit-applications/{recruitApplicationId}/approve", 1)
@@ -57,13 +68,20 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                         pathParameters(
                                 parameterWithName("recruitApplicationId").description("리크루트 참여신청 PK")
                         ),
-                        getEnvelopPatternWithNoContent())
+                        getEnvelopPatternWithData().andWithPrefix("data.",
+                            fieldWithPath("recruitApplicationId").type(JsonFieldType.NUMBER).description("리크루트 참여 신청 PK"),
+                            fieldWithPath("matchStatus").type(JsonFieldType.STRING).description("리크루트 참여 신청 매칭 상태 WAITING_REGISTER_APPROVE (등록자 수락 대기상태) | WAITING_APPLICANT (신청자 수락 대기상태) | DONE (매칭성공) | REJECT (매칭거절) | CANCEL (매칭 취소)")
+                        ))
                 );
     }
 
     @DisplayName("리크루트 신청자 참여 확정")
     @Test
     void joinRecruitApplication() {
+        doReturn(RecruitApplicationFixture.DONE_STATUS_APPLICATION)
+            .when(recruitApplicationService)
+            .joinRecruitApplication(any(), any(), any());
+
         restDocs
                 .cookie(ACCESS_TOKEN)
                 .when().patch("/recruit-applications/{recruitApplicationId}/join", 1)
@@ -75,13 +93,20 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                         pathParameters(
                                 parameterWithName("recruitApplicationId").description("리크루트 참여신청 PK")
                         ),
-                        getEnvelopPatternWithNoContent())
+                        getEnvelopPatternWithData().andWithPrefix("data.",
+                            fieldWithPath("recruitApplicationId").type(JsonFieldType.NUMBER).description("리크루트 참여 신청 PK"),
+                            fieldWithPath("matchStatus").type(JsonFieldType.STRING).description("리크루트 참여 신청 매칭 상태 WAITING_REGISTER_APPROVE (등록자 수락 대기상태) | WAITING_APPLICANT (신청자 수락 대기상태) | DONE (매칭성공) | REJECT (매칭거절) | CANCEL (매칭 취소)")
+                        ))
                 );
     }
 
     @DisplayName("리크루트 참여 신청 거절")
     @Test
     void rejectRecruitApplication() {
+        doReturn(RecruitApplicationFixture.REJECT_STATUS_APPLICATION)
+            .when(recruitApplicationService)
+            .rejectRecruitApplication(any(), any(), any());
+
         restDocs
                 .cookie(ACCESS_TOKEN)
                 .when().patch("/recruit-applications/{recruitApplicationId}/reject", 1)
@@ -93,13 +118,20 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                         pathParameters(
                                 parameterWithName("recruitApplicationId").description("리크루트 참여신청 PK")
                         ),
-                        getEnvelopPatternWithNoContent())
+                        getEnvelopPatternWithData().andWithPrefix("data.",
+                            fieldWithPath("recruitApplicationId").type(JsonFieldType.NUMBER).description("리크루트 참여 신청 PK"),
+                            fieldWithPath("matchStatus").type(JsonFieldType.STRING).description("리크루트 참여 신청 매칭 상태 WAITING_REGISTER_APPROVE (등록자 수락 대기상태) | WAITING_APPLICANT (신청자 수락 대기상태) | DONE (매칭성공) | REJECT (매칭거절) | CANCEL (매칭 취소)")
+                        ))
                 );
     }
 
     @DisplayName("리크루트 신청자 참여 신청 취소")
     @Test
     void cancelRecruitApplicationByParticipant() {
+        doReturn(RecruitApplicationFixture.CANCEL_STATUS_APPLICATION)
+            .when(recruitApplicationService)
+            .cancelRecruitApplicationByParticipant(any(), any(), any());
+
         restDocs
                 .cookie(ACCESS_TOKEN)
                 .when().patch("/recruit-applications/{recruitApplicationId}/cancel", 1)
@@ -111,7 +143,10 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                         pathParameters(
                                 parameterWithName("recruitApplicationId").description("리크루트 참여신청 PK")
                         ),
-                        getEnvelopPatternWithNoContent())
+                        getEnvelopPatternWithData().andWithPrefix("data.",
+                            fieldWithPath("recruitApplicationId").type(JsonFieldType.NUMBER).description("리크루트 참여 신청 PK"),
+                            fieldWithPath("matchStatus").type(JsonFieldType.STRING).description("리크루트 참여 신청 매칭 상태 WAITING_REGISTER_APPROVE (등록자 수락 대기상태) | WAITING_APPLICANT (신청자 수락 대기상태) | DONE (매칭성공) | REJECT (매칭거절) | CANCEL (매칭 취소)")
+                        ))
                 );
     }
 
@@ -192,6 +227,10 @@ public class RecruitApplicationControllerTest extends ControllerTest {
     @DisplayName("등록자 리크루트 참여신청 좋아요")
     @Test
     void toggleRecruitApplicationLike() {
+        doReturn(RecruitApplicationFixture.POST_RECRUIT_APPLICATION_LIKE_RES_DTO)
+            .when(recruitApplicationService)
+            .toggleRecruitApplicationLike(any(), any());
+
         restDocs
                 .cookie(ACCESS_TOKEN)
                 .when().post("/recruit-applications/{recruitApplicationId}/like", 1)
@@ -203,7 +242,9 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                         pathParameters(
                                 parameterWithName("recruitApplicationId").description("리크루트 참여 신청 PK")
                         ),
-                        getEnvelopPatternWithNoContent())
+                        getEnvelopPatternWithData().andWithPrefix("data.",
+                            fieldWithPath("liked").type(JsonFieldType.BOOLEAN).description("리크루트 참여신청 좋아요 여부")
+                        ))
                 );
     }
 

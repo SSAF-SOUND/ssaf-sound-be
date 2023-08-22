@@ -3,7 +3,9 @@ package com.ssafy.ssafsound.domain.recruitcomment.service;
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
 import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.domain.MemberRole;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
+import com.ssafy.ssafsound.domain.meta.domain.Campus;
 import com.ssafy.ssafsound.domain.meta.domain.MajorTrack;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
@@ -63,19 +65,25 @@ class RecruitCommentServiceTest {
     Member member1 = Member.builder()
             .id(1L)
             .nickname("khs")
+            .semester(9)
+            .campus(new MetaData(Campus.SEOUL))
             .ssafyMember(true)
             .certificationState(AuthenticationStatus.CERTIFIED)
             .major(true)
             .majorTrack(new MetaData(MajorTrack.JAVA))
+            .role(new MemberRole(1, "user"))
             .build();
 
     Member member2 = Member.builder()
             .id(2L)
             .nickname("kds")
+            .semester(9)
+            .campus(new MetaData(Campus.SEOUL))
             .ssafyMember(true)
             .certificationState(AuthenticationStatus.CERTIFIED)
             .major(true)
             .majorTrack(new MetaData(MajorTrack.JAVA))
+            .role(new MemberRole(1, "user"))
             .build();
 
     Recruit recruit = Recruit.builder()
@@ -142,6 +150,7 @@ class RecruitCommentServiceTest {
         lenient().when(memberRepository.findById(2L)).thenReturn(Optional.ofNullable(member2));
         lenient().when(memberRepository.findById(3L)).thenThrow(new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
+        lenient().when(recruitRepository.findById(1L)).thenReturn(Optional.ofNullable(recruit));
         lenient().when(recruitRepository.getReferenceById(1L)).thenReturn(recruit);
         lenient().when(recruitRepository.getReferenceById(2L)).thenThrow(new DataIntegrityViolationException(""));
 
@@ -261,25 +270,25 @@ class RecruitCommentServiceTest {
     @Test
     void Given_MemberIdAndRecruitCommentId_When_TryToggleRecruitCommentLike_Then_InsertRecruitCommentLike() {
         Long recruitCommentId = 2L, memberId = 1L;
-        assertFalse(recruitCommentService.toggleRecruitCommentLike(recruitCommentId, memberId));
+        assertFalse(recruitCommentService.toggleRecruitCommentLike(recruitCommentId, memberId).getLiked());
     }
 
     @DisplayName("리크루트 QNA 좋아요 등록취소 테스트")
     @Test
     void Given_MemberIdAndRecruitCommentId_When_TryToggleRecruitCommentLike_Then_DeleteRecruitLike() {
         Long recruitCommentId = 1L, memberId = 1L;
-        assertTrue(recruitCommentService.toggleRecruitCommentLike(recruitCommentId, memberId));
+        assertTrue(recruitCommentService.toggleRecruitCommentLike(recruitCommentId, memberId).getLiked());
     }
 
     @DisplayName("리크루트 QNA 리스트 조회")
     @Test
     void Given_RecruitComments_When_TryGetRecruitComments_Then_Success() {
-        GetRecruitCommentsResDto recruitComments = recruitCommentService.getRecruitComments(1L);
+        GetRecruitCommentsResDto recruitComments = recruitCommentService.getRecruitComments(1L, 2L);
 
         assertAll(
                 ()->assertEquals(2, recruitComments.getRecruitComments().size()),
                 ()-> recruitComments.getRecruitComments()
-                        .forEach(recruitCommentElement -> assertEquals(1, recruitCommentElement.getChildren().size()))
+                        .forEach(recruitCommentElement -> assertEquals(1, recruitCommentElement.getReplies().size()))
         );
     }
 }

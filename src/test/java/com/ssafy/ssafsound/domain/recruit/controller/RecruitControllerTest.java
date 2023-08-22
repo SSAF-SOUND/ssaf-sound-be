@@ -70,7 +70,10 @@ public class RecruitControllerTest extends ControllerTest {
                                 parameterWithName("recruitId").description("리크루트 아이디")
                         ),
                         getEnvelopPatternWithData().andWithPrefix("data.",
-                                fieldWithPath("scrapCount").type(JsonFieldType.NUMBER).description("전체 스크랩 갯수"))
+                                fieldWithPath("scrapCount").type(JsonFieldType.NUMBER).description("전체 스크랩 갯수"),
+                                fieldWithPath("scraped").type(JsonFieldType.BOOLEAN).description("스크랩 여부")
+                            )
+
                         )
                 );
     }

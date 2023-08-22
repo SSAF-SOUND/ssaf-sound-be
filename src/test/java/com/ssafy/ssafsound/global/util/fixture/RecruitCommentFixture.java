@@ -1,12 +1,18 @@
 package com.ssafy.ssafsound.global.util.fixture;
 
+import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.recruitcomment.domain.RecruitComment;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.GetRecruitCommentsResDto;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PatchRecruitCommentReqDto;
+import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitCommentLikeResDto;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitCommentReqDto;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitCommentResDto;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RecruitCommentFixture {
 
@@ -27,9 +33,17 @@ public class RecruitCommentFixture {
             .member(MemberFixture.MEMBER_TIM)
             .build();
 
+    public static final PostRecruitCommentLikeResDto POST_RECRUIT_COMMENT_LIKE_RES_DTO = new PostRecruitCommentLikeResDto(1, true);
+
+    private static Map<Long, Integer> likedCountMap = new HashMap<>();
+
+    private static Map<Long, Boolean> memberLikedMap = new HashMap<>();
+
     static {
+        ReflectionTestUtils.setField(RECRUIT_COMMENT_1, BaseTimeEntity.class,"createdAt", LocalDateTime.now(), LocalDateTime.class);
         RECRUIT_COMMENT_1.setCommentGroup(RECRUIT_COMMENT_1);
+        likedCountMap.put(1L, 0);
     }
 
-    public static GetRecruitCommentsResDto GET_RECRUIT_RES_DTO = GetRecruitCommentsResDto.from(List.of(RECRUIT_COMMENT_1));
+    public static GetRecruitCommentsResDto GET_RECRUIT_RES_DTO = GetRecruitCommentsResDto.of(List.of(RECRUIT_COMMENT_1), likedCountMap, memberLikedMap, 2L);
 }

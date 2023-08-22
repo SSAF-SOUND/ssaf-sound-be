@@ -3,12 +3,14 @@ package com.ssafy.ssafsound.global.util.fixture;
 import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.RecruitType;
+import com.ssafy.ssafsound.domain.recruit.dto.PatchRecruitApplicationStatusResDto;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitApplicationsResDto;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitParticipantsResDto;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.PostRecruitApplicationReqDto;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement;
+import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitApplicationLikeResDto;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +19,7 @@ public class RecruitApplicationFixture {
     public static final PostRecruitApplicationReqDto POST_RECRUIT_APPLICATION_REQ_DTO
             = new PostRecruitApplicationReqDto(RecruitType.FRONT_END.getName(), List.of("취업 준비를 위해서 신청하게되었습니다."));
 
+    public static final PostRecruitApplicationLikeResDto POST_RECRUIT_APPLICATION_LIKE_RES_DTO = new PostRecruitApplicationLikeResDto(true);
     public static final RecruitApplication getRecruitApplication1_ByMatchStatus(MatchStatus matchStatus, MetaData recruitType, Boolean isLike) {
         return RecruitApplication.builder()
                 .id(1L)
@@ -43,6 +46,16 @@ public class RecruitApplicationFixture {
 
     public static final GetRecruitParticipantsResDto GET_RECRUIT_PARTICIPANTS_RES_DTO = GetRecruitParticipantsResDto
             .of(List.of(getRecruitApplication1_ByMatchStatus(MatchStatus.WAITING_REGISTER_APPROVE, new MetaData(RecruitType.FRONT_END), false)),List.of(RecruitFixture.RECRUIT_1_BE_LIMIT_3, RecruitFixture.RECRUIT_1_FE_LIMIT_3));
+
+    public static final PatchRecruitApplicationStatusResDto WAITING_STATUS_APPLICATION = new PatchRecruitApplicationStatusResDto(1L, MatchStatus.WAITING_REGISTER_APPROVE.name());
+
+    public static final PatchRecruitApplicationStatusResDto APPROVE_STATUS_APPLICATION = new PatchRecruitApplicationStatusResDto(1L, MatchStatus.WAITING_APPLICANT.name());
+
+    public static final PatchRecruitApplicationStatusResDto REJECT_STATUS_APPLICATION = new PatchRecruitApplicationStatusResDto(1L, MatchStatus.REJECT.name());
+
+    public static final PatchRecruitApplicationStatusResDto CANCEL_STATUS_APPLICATION = new PatchRecruitApplicationStatusResDto(1L, MatchStatus.CANCEL.name());
+
+    public static final PatchRecruitApplicationStatusResDto DONE_STATUS_APPLICATION = new PatchRecruitApplicationStatusResDto(1L, MatchStatus.DONE.name());
 
     static {
         GET_RECRUIT_PARTICIPANTS_RES_DTO.addRegisterInfo(RecruitFixture.RECRUIT_1);

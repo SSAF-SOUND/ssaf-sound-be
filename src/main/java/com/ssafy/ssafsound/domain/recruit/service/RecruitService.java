@@ -62,8 +62,8 @@ public class RecruitService {
         RecruitScrap recruitScrap = recruitScrapRepository.findByRecruitIdAndMemberId(recruitId, memberId)
                 .orElse(null);
 
-        isPreExistRecruitScrap(recruitId, memberId, recruitScrap);
-        return new PostRecruitScrapCountResDto(recruitScrapRepository.countByRecruitId(recruitId));
+        boolean scraped = !isPreExistRecruitScrap(recruitId, memberId, recruitScrap);
+        return new PostRecruitScrapCountResDto(recruitScrapRepository.countByRecruitId(recruitId), scraped);
     }
 
     @Transactional

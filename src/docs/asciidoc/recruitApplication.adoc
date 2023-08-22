@@ -23,10 +23,10 @@ operation::recruitApplication/application-cancel[snippets='http-request,cookie,p
 === 리크루트 참여자 목록 조회
 operation::recruitApplication/joinMembers[snippets='http-request,path-parameters,http-response,response-fields']
 
-=== 등록자 리크루트 참여신청 목록 조회"
+=== 등록자 리크루트 참여신청 목록 조회
 operation::recruitApplication/register-applications[snippets='http-request,cookie,request-parameters,http-response,response-fields']
 
-=== 등록자 리크루트 참여신청 좋아요"
+=== 등록자 리크루트 참여신청 좋아요
 operation::recruitApplication/register-like[snippets='http-request,cookie,path-parameters,http-response,response-fields']
 
 
