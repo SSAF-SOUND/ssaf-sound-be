@@ -32,7 +32,7 @@ class CommentControllerTest extends ControllerTest {
                 .when().get("/comments?postId={postId}", 1L)
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .apply(document("comment/write-comment",
+                .apply(document("comment/find-comments",
                                 requestCookieAccessTokenOptional(),
                                 requestParameters(
                                         parameterWithName("postId").description("댓글을 작성하려는 게시글의 고유 ID")
