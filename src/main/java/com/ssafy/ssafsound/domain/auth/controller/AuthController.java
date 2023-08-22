@@ -70,8 +70,17 @@ public class AuthController {
         PostMemberReqDto postMemberReqDto = authService.login(createMemberReqDto);
         AuthenticatedMember authenticatedMember = memberService.createMemberByOauthIdentifier(postMemberReqDto);
         CreateMemberTokensResDto createMemberTokensResDto = authService.createToken(authenticatedMember);
-        memberService.saveTokenByMember(authenticatedMember, createMemberTokensResDto.getAccessToken(), createMemberTokensResDto.getRefreshToken());
-        cookieProvider.setResponseWithCookies(response, createMemberTokensResDto.getAccessToken(), createMemberTokensResDto.getRefreshToken());
+
+        memberService.saveTokenByMember(
+                authenticatedMember,
+                createMemberTokensResDto.getAccessToken(),
+                createMemberTokensResDto.getRefreshToken());
+
+        cookieProvider.setResponseWithCookies(
+                response,
+                createMemberTokensResDto.getAccessToken(),
+                createMemberTokensResDto.getRefreshToken());
+
         return EnvelopeResponse.<CreateMemberTokensResDto>builder()
                 .data(createMemberTokensResDto)
                 .build();
