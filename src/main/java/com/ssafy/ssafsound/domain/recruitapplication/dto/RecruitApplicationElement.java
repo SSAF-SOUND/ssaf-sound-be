@@ -1,8 +1,8 @@
 package com.ssafy.ssafsound.domain.recruitapplication.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
-import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
+import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import lombok.AllArgsConstructor;
@@ -16,6 +16,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RecruitApplicationElement {
     @JsonProperty
+    private Long recruitId;
+
+    @JsonProperty
     private Long recruitApplicationId;
 
     @JsonProperty
@@ -25,16 +28,7 @@ public class RecruitApplicationElement {
     private MatchStatus matchStatus;
 
     @JsonProperty
-    private Long memberId;
-
-    @JsonProperty
-    private String nickname;
-
-    @JsonProperty
-    private Boolean isMajor;
-
-    @JsonProperty
-    private SSAFYInfo ssafyInfo;
+    private AuthorElement author;
 
     @JsonProperty
     private String reply;
@@ -45,19 +39,15 @@ public class RecruitApplicationElement {
     @JsonProperty
     private Boolean isLike;
 
-    public RecruitApplicationElement(Long recruitApplicationId, MetaData recruitType, MatchStatus matchStatus,
-                                     Long memberId, String nickname,
-                                     Integer semester, Boolean isMajor, MetaData campus,
-                                     AuthenticationStatus certificationState, MetaData majorTrack,
+    public RecruitApplicationElement(Long recruitId, Long recruitApplicationId, MetaData recruitType, MatchStatus matchStatus,
+                                     Member member,
                                      String reply, String question, Boolean isLike) {
 
+        this.recruitId = recruitId;
         this.recruitApplicationId = recruitApplicationId;
         this.recruitType = recruitType.getName();
         this.matchStatus = matchStatus;
-        this.memberId = memberId;
-        this.nickname = nickname;
-        this.isMajor = isMajor;
-        this.ssafyInfo = SSAFYInfo.of(semester, campus.getName(), certificationState.name(), majorTrack);
+        this.author = new AuthorElement(member, false);
         this.reply = reply;
         this.question = question;
         this.isLike = isLike;
