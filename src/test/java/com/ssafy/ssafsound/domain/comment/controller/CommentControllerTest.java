@@ -181,7 +181,26 @@ class CommentControllerTest extends ControllerTest {
     }
 
     @Test
+    @DisplayName("댓글 삭제")
     void deleteComment() {
+        doReturn(COMMENT_ID_ELEMENT)
+                .when(commentService)
+                .deleteComment(any(), any());
+
+        restDocs.cookie(ACCESS_TOKEN)
+                .when().delete("/comments/{commentId}", 1L)
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .apply(document("comment/delete-comment",
+                                requestCookieAccessTokenMandatory(),
+                                pathParameters(
+                                        parameterWithName("commentId").description("삭제할 댓글의 고유 ID")
+                                ),
+                                getEnvelopPatternWithData().andWithPrefix("data.",
+                                        fieldWithPath("commentId").type(JsonFieldType.NUMBER).description("삭제한 댓글 ID")
+                                )
+                        )
+                );
     }
 
     @Test
