@@ -9,6 +9,7 @@ import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitApplicationsR
 import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitParticipantsResDto;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.PostRecruitApplicationReqDto;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement;
+import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitApplicationLikeResDto;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +18,7 @@ public class RecruitApplicationFixture {
     public static final PostRecruitApplicationReqDto POST_RECRUIT_APPLICATION_REQ_DTO
             = new PostRecruitApplicationReqDto(RecruitType.FRONT_END.getName(), List.of("취업 준비를 위해서 신청하게되었습니다."));
 
+    public static final PostRecruitApplicationLikeResDto POST_RECRUIT_APPLICATION_LIKE_RES_DTO = new PostRecruitApplicationLikeResDto(true);
     public static final RecruitApplication getRecruitApplication1_ByMatchStatus(MatchStatus matchStatus, MetaData recruitType, Boolean isLike) {
         return RecruitApplication.builder()
                 .id(1L)

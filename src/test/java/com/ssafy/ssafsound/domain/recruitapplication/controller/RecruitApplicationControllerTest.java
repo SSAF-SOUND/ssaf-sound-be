@@ -82,6 +82,7 @@ public class RecruitApplicationControllerTest extends ControllerTest {
     @DisplayName("리크루트 참여 신청 거절")
     @Test
     void rejectRecruitApplication() {
+
         restDocs
                 .cookie(ACCESS_TOKEN)
                 .when().patch("/recruit-applications/{recruitApplicationId}/reject", 1)
@@ -192,6 +193,10 @@ public class RecruitApplicationControllerTest extends ControllerTest {
     @DisplayName("등록자 리크루트 참여신청 좋아요")
     @Test
     void toggleRecruitApplicationLike() {
+        doReturn(RecruitApplicationFixture.POST_RECRUIT_APPLICATION_LIKE_RES_DTO)
+            .when(recruitApplicationService)
+            .toggleRecruitApplicationLike(any(), any());
+
         restDocs
                 .cookie(ACCESS_TOKEN)
                 .when().post("/recruit-applications/{recruitApplicationId}/like", 1)
@@ -203,7 +208,9 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                         pathParameters(
                                 parameterWithName("recruitApplicationId").description("리크루트 참여 신청 PK")
                         ),
-                        getEnvelopPatternWithNoContent())
+                        getEnvelopPatternWithData().andWithPrefix("data.",
+                            fieldWithPath("liked").type(JsonFieldType.BOOLEAN).description("리크루트 참여신청 좋아요 여부")
+                        ))
                 );
     }
 
