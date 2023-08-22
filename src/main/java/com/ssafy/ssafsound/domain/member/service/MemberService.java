@@ -6,7 +6,6 @@ import com.ssafy.ssafsound.domain.member.dto.*;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.*;
-import com.ssafy.ssafsound.domain.meta.domain.MajorTrack;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
@@ -50,23 +49,13 @@ public class MemberService {
 
     @Transactional
     public void saveTokenByMember(AuthenticatedMember authenticatedMember, String accessToken, String refreshToken) {
+        Member member = memberRepository.findById(authenticatedMember.getMemberId())
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
         Optional<MemberToken> memberTokenOptional = memberTokenRepository.findById(authenticatedMember.getMemberId());
-        MemberToken memberToken;
 
-        if (memberTokenOptional.isPresent()) {
-            memberToken = memberTokenOptional.get();
-            memberToken.changeAccessTokenByLogin(accessToken);
-            memberToken.changeRefreshTokenByLogin(refreshToken);
-        } else {
-            Member member = memberRepository.findById(authenticatedMember.getMemberId()).orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
-            memberToken = MemberToken.builder()
-                    .accessToken(accessToken)
-                    .refreshToken(refreshToken)
-                    .member(member)
-                    .build();
-
-            memberTokenRepository.save(memberToken);
-        }
+        memberTokenOptional.ifPresentOrElse(memberToken -> changeMemberTokens(memberToken, accessToken, refreshToken),
+                () -> createMemberToken(member, accessToken, refreshToken));
     }
 
     @Transactional
@@ -300,5 +289,19 @@ public class MemberService {
     private Member getMemberByMemberIdOrThrowException(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+    }
+
+    private void changeMemberTokens(MemberToken memberToken, String accessToken, String refreshToken) {
+        memberToken.changeAccessTokenByLogin(accessToken);
+        memberToken.changeRefreshTokenByLogin(refreshToken);
+    }
+
+    private void createMemberToken(Member member, String accessToken, String refreshToken) {
+        MemberToken memberToken = MemberToken.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .member(member)
+                .build();
+        memberTokenRepository.save(memberToken);
     }
 }
