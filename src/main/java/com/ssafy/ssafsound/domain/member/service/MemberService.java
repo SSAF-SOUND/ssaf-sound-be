@@ -32,7 +32,6 @@ public class MemberService {
     private final MemberLinkRepository memberLinkRepository;
     private final MetaDataConsumer metaDataConsumer;
     private final MemberConstantProvider memberConstantProvider;
-    private final AuthService authService;
 
     @Transactional
     public AuthenticatedMember createMemberByOauthIdentifier(PostMemberReqDto postMemberReqDto) {
@@ -51,7 +50,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void saveTokenByMember(AuthenticatedMember authenticatedMember, String accessToken, String refreshToken) {
+    public Member saveTokenByMember(AuthenticatedMember authenticatedMember, String accessToken, String refreshToken) {
         Member member = memberRepository.findById(authenticatedMember.getMemberId())
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
@@ -60,7 +59,7 @@ public class MemberService {
         memberTokenOptional.ifPresentOrElse(memberToken -> changeMemberTokens(memberToken, accessToken, refreshToken),
                 () -> createMemberToken(member, accessToken, refreshToken));
 
-        authService.saveClientLoginLog(member, ClientUtils.getClientDevice(), ClientUtils.getRemoteAddress());
+        return member;
     }
 
     @Transactional

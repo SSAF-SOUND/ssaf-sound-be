@@ -6,6 +6,8 @@ import com.ssafy.ssafsound.domain.auth.dto.CreateMemberReqDto;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberTokensResDto;
 import com.ssafy.ssafsound.domain.auth.service.AuthService;
 import com.ssafy.ssafsound.domain.auth.service.CookieProvider;
+import com.ssafy.ssafsound.domain.auth.util.ClientUtils;
+import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.domain.MemberToken;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import com.ssafy.ssafsound.domain.member.service.MemberService;
@@ -71,7 +73,7 @@ public class AuthController {
         AuthenticatedMember authenticatedMember = memberService.createMemberByOauthIdentifier(postMemberReqDto);
         CreateMemberTokensResDto createMemberTokensResDto = authService.createToken(authenticatedMember);
 
-        memberService.saveTokenByMember(
+        Member member = memberService.saveTokenByMember(
                 authenticatedMember,
                 createMemberTokensResDto.getAccessToken(),
                 createMemberTokensResDto.getRefreshToken());
@@ -80,6 +82,10 @@ public class AuthController {
                 response,
                 createMemberTokensResDto.getAccessToken(),
                 createMemberTokensResDto.getRefreshToken());
+
+        authService.saveClientLoginLog(member,
+                ClientUtils.getClientDevice(),
+                ClientUtils.getRemoteAddress());
 
         return EnvelopeResponse.<CreateMemberTokensResDto>builder()
                 .data(createMemberTokensResDto)
