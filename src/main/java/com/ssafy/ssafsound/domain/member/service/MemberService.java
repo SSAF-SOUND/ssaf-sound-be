@@ -1,6 +1,8 @@
 package com.ssafy.ssafsound.domain.member.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
+import com.ssafy.ssafsound.domain.auth.service.AuthService;
+import com.ssafy.ssafsound.domain.auth.util.ClientUtils;
 import com.ssafy.ssafsound.domain.member.domain.*;
 import com.ssafy.ssafsound.domain.member.dto.*;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
@@ -30,6 +32,7 @@ public class MemberService {
     private final MemberLinkRepository memberLinkRepository;
     private final MetaDataConsumer metaDataConsumer;
     private final MemberConstantProvider memberConstantProvider;
+    private final AuthService authService;
 
     @Transactional
     public AuthenticatedMember createMemberByOauthIdentifier(PostMemberReqDto postMemberReqDto) {
@@ -56,6 +59,8 @@ public class MemberService {
 
         memberTokenOptional.ifPresentOrElse(memberToken -> changeMemberTokens(memberToken, accessToken, refreshToken),
                 () -> createMemberToken(member, accessToken, refreshToken));
+
+        authService.saveClientLoginLog(member, ClientUtils.getClientDevice(), ClientUtils.getRemoteAddress());
     }
 
     @Transactional

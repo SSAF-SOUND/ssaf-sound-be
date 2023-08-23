@@ -10,10 +10,13 @@ import com.ssafy.ssafsound.domain.auth.service.oauth.OauthProvider;
 import com.ssafy.ssafsound.domain.auth.service.oauth.OauthProviderFactory;
 import com.ssafy.ssafsound.domain.auth.service.token.JwtTokenProvider;
 import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.domain.MemberLoginLog;
 import com.ssafy.ssafsound.domain.member.domain.MemberToken;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
+import com.ssafy.ssafsound.domain.member.repository.MemberLoginLogRepository;
+import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,14 +28,17 @@ public class AuthService {
     private final OauthProviderFactory oauthProviderFactory;
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberTokenRepository memberTokenRepository;
+    private final MemberLoginLogRepository memberLoginLogRepository;
 
     public AuthService(
             OauthProviderFactory oauthProviderFactory,
             JwtTokenProvider jwtTokenProvider,
-            MemberTokenRepository memberTokenRepository) {
+            MemberTokenRepository memberTokenRepository,
+            MemberLoginLogRepository memberLoginLogRepository) {
         this.oauthProviderFactory = oauthProviderFactory;
         this.jwtTokenProvider = jwtTokenProvider;
         this.memberTokenRepository = memberTokenRepository;
+        this.memberLoginLogRepository = memberLoginLogRepository;
     }
 
     public void sendRedirectURL(String oauthName, HttpServletResponse response) {
@@ -90,6 +96,12 @@ public class AuthService {
         memberToken.changeAccessTokenByRefreshToken(accessToken);
 
         return CreateMemberAccessTokenResDto.of(accessToken);
+    }
+
+    @Transactional
+    public void saveClientLoginLog(Member member, String clientDevice, String remoteAddress) {
+        MemberLoginLog memberLoginLog = MemberLoginLog.ofCreateLoginLog(member, clientDevice, remoteAddress);
+        memberLoginLogRepository.save(memberLoginLog);
     }
 
     public boolean isNotEqualRefreshToken(String refreshTokenByCookie, String refreshTokenBySaved) {
