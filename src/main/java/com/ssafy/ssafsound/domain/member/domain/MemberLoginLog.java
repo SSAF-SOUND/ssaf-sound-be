@@ -29,4 +29,7 @@ public class MemberLoginLog {
 
     @Column
     private String remoteAddress;
+
+    @Column
+    private String clientDevice;
 }
