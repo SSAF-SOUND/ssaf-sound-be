@@ -35,3 +35,6 @@ operation::post/search-hot-posts[snippets='http-request,http-response,cookie,req
 
 === 나의 게시글 목록 조회
 operation::post/find-my-posts[snippets='http-request,http-response,cookie,request-parameters,response-fields']
+
+=== 나의 스크랩 게시글 목록 조회
+operation::post/find-my-scrap-posts[snippets='http-request,http-response,cookie,request-parameters,response-fields']

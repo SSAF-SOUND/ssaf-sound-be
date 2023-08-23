@@ -25,7 +25,7 @@ public class HotPostCustomRepositoryImpl implements HotPostCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<HotPost> findWithDetailsFetch(Long cursor, int size) {
+    public List<HotPost> findHotPosts(Long cursor, int size) {
         List<Tuple> tuples = jpaQueryFactory.select(hotPost, post, board, member)
                 .from(hotPost)
                 .innerJoin(hotPost.post, post).fetchJoin()
@@ -33,7 +33,7 @@ public class HotPostCustomRepositoryImpl implements HotPostCustomRepository {
                 .innerJoin(post.member, member).fetchJoin()
                 .where(postIdLtCursor(cursor))
                 .limit(size + 1)
-                .orderBy(post.id.desc())
+                .orderBy(hotPost.id.desc())
                 .fetch();
 
         return tuples.stream()
@@ -42,7 +42,7 @@ public class HotPostCustomRepositoryImpl implements HotPostCustomRepository {
     }
 
     @Override
-    public List<HotPost> findWithDetailsFetchByKeyword(String keyword, Long cursor, int size) {
+    public List<HotPost> findHotPostsByKeyword(String keyword, Long cursor, int size) {
         List<Tuple> tuples = jpaQueryFactory.select(hotPost, post, board, member)
                 .from(hotPost)
                 .innerJoin(hotPost.post, post).fetchJoin()
@@ -50,7 +50,7 @@ public class HotPostCustomRepositoryImpl implements HotPostCustomRepository {
                 .innerJoin(post.member, member).fetchJoin()
                 .where(postIdLtCursor(cursor), containTitleOrContent(keyword))
                 .limit(size + 1)
-                .orderBy(post.id.desc())
+                .orderBy(hotPost.id.desc())
                 .fetch();
 
         return tuples.stream()
