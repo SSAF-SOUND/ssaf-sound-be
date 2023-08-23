@@ -81,7 +81,7 @@ public class PostFixture {
             .thumbnail("썸네일 URL")
             .build();
 
-    public static final GetPostHotElement GET_POST_HOT_ELEMENT1 = GetPostHotElement.builder()
+    public static final GetPostElement GET_POST_HOT_ELEMENT1 = GetPostElement.builder()
             .boardId(2L)
             .boardTitle("취업 게시판")
             .postId(7L)
@@ -95,7 +95,7 @@ public class PostFixture {
             .thumbnail("썸네일 URL")
             .build();
 
-    public static final GetPostHotElement GET_POST_HOT_ELEMENT2 = GetPostHotElement.builder()
+    public static final GetPostElement GET_POST_HOT_ELEMENT2 = GetPostElement.builder()
             .boardId(1L)
             .boardTitle("자유 게시판")
             .postId(7L)
@@ -156,13 +156,13 @@ public class PostFixture {
             .cursor(null)
             .build();
 
-    public static final GetPostHotResDto GET_POST_HOT_RES_DTO1 = GetPostHotResDto.builder()
+    public static final GetPostResDto GET_POST_HOT_RES_DTO1 = GetPostResDto.builder()
             .posts(List.of(GET_POST_HOT_ELEMENT1,
                     GET_POST_HOT_ELEMENT2))
             .cursor(null)
             .build();
 
-    public static final GetPostHotResDto GET_POST_HOT_RES_DTO2 = GetPostHotResDto.builder()
+    public static final GetPostResDto GET_POST_HOT_RES_DTO2 = GetPostResDto.builder()
             .posts(List.of(GET_POST_HOT_ELEMENT1))
             .cursor(null)
             .build();

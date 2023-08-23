@@ -110,7 +110,7 @@ public class PostService {
 
 
     private boolean isSelectedHotPost(Long postId) {
-        return postLikeRepository.countByPostId(postId) >= 1;
+        return postLikeRepository.countByPostId(postId) >= HOT_POST_LIKES_THRESHOLD;
     }
 
     private void saveHotPost(Long postId) {
@@ -276,12 +276,12 @@ public class PostService {
 
 
     @Transactional(readOnly = true)
-    public GetPostHotResDto findHotPosts(GetPostHotReqDto getPostHotReqDto) {
+    public GetPostResDto findHotPosts(GetPostHotReqDto getPostHotReqDto) {
         Long cursor = getPostHotReqDto.getCursor();
         int size = getPostHotReqDto.getSize();
 
         List<HotPost> hotPosts = hotPostRepository.findHotPosts(cursor, size);
-        return GetPostHotResDto.of(hotPosts, size);
+        return GetPostResDto.ofHotPosts(hotPosts, size);
     }
 
     @Transactional(readOnly = true)
@@ -324,12 +324,12 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public GetPostHotResDto searchHotPosts(GetPostHotSearchReqDto getPostHotSearchReqDto) {
+    public GetPostResDto searchHotPosts(GetPostHotSearchReqDto getPostHotSearchReqDto) {
         String keyword = getPostHotSearchReqDto.getKeyword();
         Long cursor = getPostHotSearchReqDto.getCursor();
         int size = getPostHotSearchReqDto.getSize();
 
         List<HotPost> hotPosts = hotPostRepository.findHotPostsByKeyword(keyword.replaceAll(" ", ""), cursor, size);
-        return GetPostHotResDto.of(hotPosts, size);
+        return GetPostResDto.ofHotPosts(hotPosts, size);
     }
 }

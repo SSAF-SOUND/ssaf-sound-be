@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.post.dto;
 
+import com.ssafy.ssafsound.domain.post.domain.HotPost;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.domain.PostScrap;
 import lombok.Builder;
@@ -29,6 +30,22 @@ public class GetPostResDto {
                 .cursor(nextCursor)
                 .build();
 
+    }
+
+    public static GetPostResDto ofHotPosts(List<HotPost> hotPosts, int size) {
+        Long nextCursor = null;
+        int pageSize = hotPosts.size() - 1;
+        if (pageSize >= size) {
+            hotPosts = hotPosts.subList(0, pageSize);
+            nextCursor = hotPosts.get(hotPosts.size() - 1).getId();
+        }
+
+        return GetPostResDto.builder()
+                .posts(hotPosts.stream()
+                        .map(hotPost -> new GetPostElement(hotPost.getPost()))
+                        .collect(Collectors.toList()))
+                .cursor(nextCursor)
+                .build();
     }
 
     public static GetPostResDto ofPostScraps(List<PostScrap> postScraps, int size) {

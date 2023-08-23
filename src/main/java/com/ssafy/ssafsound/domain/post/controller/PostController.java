@@ -86,8 +86,8 @@ public class PostController {
     }
 
     @GetMapping("/hot")
-    public EnvelopeResponse<GetPostHotResDto> findHotPosts(@Valid GetPostHotReqDto getPostHotReqDto) {
-        return EnvelopeResponse.<GetPostHotResDto>builder()
+    public EnvelopeResponse<GetPostResDto> findHotPosts(@Valid GetPostHotReqDto getPostHotReqDto) {
+        return EnvelopeResponse.<GetPostResDto>builder()
                 .data(postService.findHotPosts(getPostHotReqDto))
                 .build();
     }
@@ -114,8 +114,8 @@ public class PostController {
     }
 
     @GetMapping("/hot/search")
-    public EnvelopeResponse<GetPostHotResDto> searchHotPosts(@Valid GetPostHotSearchReqDto getPostHotSearchReqDto) {
-        return EnvelopeResponse.<GetPostHotResDto>builder()
+    public EnvelopeResponse<GetPostResDto> searchHotPosts(@Valid GetPostHotSearchReqDto getPostHotSearchReqDto) {
+        return EnvelopeResponse.<GetPostResDto>builder()
                 .data(postService.searchHotPosts(getPostHotSearchReqDto))
                 .build();
     }
