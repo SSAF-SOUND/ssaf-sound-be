@@ -110,7 +110,7 @@ public class PostService {
 
 
     private boolean isSelectedHotPost(Long postId) {
-        return postLikeRepository.countByPostId(postId) >= HOT_POST_LIKES_THRESHOLD;
+        return postLikeRepository.countByPostId(postId) >= 1;
     }
 
     private void saveHotPost(Long postId) {
@@ -280,7 +280,7 @@ public class PostService {
         Long cursor = getPostHotReqDto.getCursor();
         int size = getPostHotReqDto.getSize();
 
-        List<HotPost> hotPosts = hotPostRepository.findWithDetailsFetch(cursor, size);
+        List<HotPost> hotPosts = hotPostRepository.findHotPosts(cursor, size);
         return GetPostHotResDto.of(hotPosts, size);
     }
 
@@ -329,7 +329,7 @@ public class PostService {
         Long cursor = getPostHotSearchReqDto.getCursor();
         int size = getPostHotSearchReqDto.getSize();
 
-        List<HotPost> hotPosts = hotPostRepository.findWithDetailsFetchByKeyword(keyword.replaceAll(" ", ""), cursor, size);
+        List<HotPost> hotPosts = hotPostRepository.findHotPostsByKeyword(keyword.replaceAll(" ", ""), cursor, size);
         return GetPostHotResDto.of(hotPosts, size);
     }
 }
