@@ -79,7 +79,7 @@ public class PostController {
 
     @PatchMapping("/{postId}")
     public EnvelopeResponse<PostIdElement> updatePost(@Valid @RequestBody PostPatchUpdateReqDto postPatchUpdateReqDto,
-                                             @PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
+                                                      @PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<PostIdElement>builder()
                 .data(postService.updatePost(postId, loginMember.getMemberId(), postPatchUpdateReqDto))
                 .build();
@@ -93,9 +93,16 @@ public class PostController {
     }
 
     @GetMapping("/my")
-    public EnvelopeResponse<GetPostMyResDto> findMyPosts(@Valid GetPostMyReqDto getPostMyReqDto, @Authentication AuthenticatedMember loginMember) {
-        return EnvelopeResponse.<GetPostMyResDto>builder()
+    public EnvelopeResponse<GetPostResDto> findMyPosts(@Valid GetPostMyReqDto getPostMyReqDto, @Authentication AuthenticatedMember loginMember) {
+        return EnvelopeResponse.<GetPostResDto>builder()
                 .data(postService.findMyPosts(getPostMyReqDto, loginMember.getMemberId()))
+                .build();
+    }
+
+    @GetMapping("/my-scrap")
+    public EnvelopeResponse<GetPostResDto> findMyScrapPosts(@Valid GetPostMyReqDto getPostMyScrapReqDto, @Authentication AuthenticatedMember loginMember) {
+        return EnvelopeResponse.<GetPostResDto>builder()
+                .data(postService.findMyScrapPosts(getPostMyScrapReqDto, loginMember.getMemberId()))
                 .build();
     }
 

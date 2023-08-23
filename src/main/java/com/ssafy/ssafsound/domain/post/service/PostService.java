@@ -54,7 +54,7 @@ public class PostService {
         }
 
         List<Post> posts = postRepository.findWithDetailsByBoardId(boardId, cursor, size);
-        return GetPostResDto.of(posts, size);
+        return GetPostResDto.ofPosts(posts, size);
     }
 
     @Transactional(readOnly = true)
@@ -285,7 +285,7 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public GetPostMyResDto findMyPosts(GetPostMyReqDto getPostMyReqDto, Long loginMemberId) {
+    public GetPostResDto findMyPosts(GetPostMyReqDto getPostMyReqDto, Long loginMemberId) {
         Long cursor = getPostMyReqDto.getCursor();
         int size = getPostMyReqDto.getSize();
 
@@ -293,7 +293,19 @@ public class PostService {
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
         List<Post> posts = postRepository.findWithDetailsByMemberId(loginMember.getId(), cursor, size);
-        return GetPostMyResDto.of(posts, size);
+        return GetPostResDto.ofPosts(posts, size);
+    }
+
+    @Transactional(readOnly = true)
+    public GetPostResDto findMyScrapPosts(GetPostMyReqDto getPostMyScrapReqDto, Long loginMemberId) {
+        Long cursor = getPostMyScrapReqDto.getCursor();
+        int size = getPostMyScrapReqDto.getSize();
+
+        Member loginMember = memberRepository.findById(loginMemberId)
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        List<PostScrap> postScraps = postScrapRepository.findMyScrapPosts(loginMember.getId(), cursor, size);
+        return GetPostResDto.ofPostScraps(postScraps, size);
     }
 
     @Transactional(readOnly = true)
@@ -308,7 +320,7 @@ public class PostService {
         }
 
         List<Post> posts = postRepository.findWithDetailsFetchByBoardIdAndKeyword(boardId, keyword.replaceAll(" ", ""), cursor, size);
-        return GetPostResDto.of(posts, size);
+        return GetPostResDto.ofPosts(posts, size);
     }
 
     @Transactional(readOnly = true)
