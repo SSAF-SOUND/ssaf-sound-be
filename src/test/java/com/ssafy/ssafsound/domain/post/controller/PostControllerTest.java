@@ -427,7 +427,7 @@ class PostControllerTest extends ControllerTest {
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
                 .apply(document("post/find-my-posts",
-                                requestCookieAccessTokenNeedless(),
+                                requestCookieAccessTokenMandatory(),
                                 requestParameters(
                                         parameterWithName("cursor").description("cursor값은 다음 페이지를 가져올 마지막 페이지 번호를 의미함, 초기 cursor는 -1, 이후 cursor값은 응답 데이터로 제공되는 cursor값을 사용."),
                                         parameterWithName("size").description("cursor를 기준으로 다음에 불러올 페이지의 size를 의미, 최소 size는 10")
@@ -464,7 +464,7 @@ class PostControllerTest extends ControllerTest {
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
                 .apply(document("post/find-my-scrap-posts",
-                                requestCookieAccessTokenNeedless(),
+                                requestCookieAccessTokenMandatory(),
                                 requestParameters(
                                         parameterWithName("cursor").description("cursor값은 다음 페이지를 가져올 마지막 페이지 번호를 의미함, 초기 cursor는 -1, 이후 cursor값은 응답 데이터로 제공되는 cursor값을 사용."),
                                         parameterWithName("size").description("cursor를 기준으로 다음에 불러올 페이지의 size를 의미, 최소 size는 10")
