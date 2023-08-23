@@ -151,6 +151,8 @@ class MemberControllerTest extends ControllerTest {
 
         given(memberService.registerMemberInformation(any(), any()))
                 .willReturn(GetMemberResDto.fromGeneralUser(MemberFixture.GENERAL_MEMBER));
+        given(semesterValidator.isValid(any(), any())).willReturn(true);
+
         PostMemberInfoReqDto postMemberInfoReqDto = PostMemberInfoReqDto.builder()
                 .nickname("james")
                 .ssafyMember(false)
@@ -177,6 +179,10 @@ class MemberControllerTest extends ControllerTest {
 
         given(memberService.registerMemberInformation(any(), any()))
                 .willReturn(MemberFixture.UNCERTIFIED_SSAFY_MEMBER);
+        given(semesterValidator.isValid(any(), any())).willReturn(true);
+        given(semesterConstantProvider.getMAX_SEMESTER()).willReturn(10);
+        given(semesterConstantProvider.getMIN_SEMESTER()).willReturn(1);
+
         PostMemberInfoReqDto postMemberInfoReqDto = PostMemberInfoReqDto.builder()
                 .nickname("james")
                 .ssafyMember(true)
@@ -205,6 +211,9 @@ class MemberControllerTest extends ControllerTest {
 
         given(memberService.certifySSAFYInformation(any(), any()))
                 .willReturn(MemberFixture.POST_CERTIFICATION_INFO_RESPONSE);
+        given(semesterValidator.isValid(any(), any())).willReturn(true);
+        given(semesterConstantProvider.getMAX_SEMESTER()).willReturn(10);
+        given(semesterConstantProvider.getMIN_SEMESTER()).willReturn(1);
 
         restDocs
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
