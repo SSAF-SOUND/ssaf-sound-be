@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface PostScrapRepository extends JpaRepository<PostScrap, Long> {
+public interface PostScrapRepository extends JpaRepository<PostScrap, Long>, PostScrapCustomRepository{
     Optional<PostScrap> findByPostIdAndMemberId(Long postId, Long memberId);
 
     Integer countByPostId(Long postId);
