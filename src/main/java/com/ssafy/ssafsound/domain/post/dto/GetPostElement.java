@@ -45,26 +45,6 @@ public class GetPostElement {
         this.thumbnail = findThumbnailUrl(post);
     }
 
-//    public static GetPostElement from(Post post) {
-//        String thumbnail = findThumbnailUrl(post);
-//        Boolean anonymity = post.getAnonymity();
-//        Board board = post.getBoard();
-//
-//        return GetPostElement.builder()
-//                .boardId(board.getId())
-//                .boardTitle(board.getTitle())
-//                .postId(post.getId())
-//                .title(post.getTitle())
-//                .content(post.getContent())
-//                .likeCount(post.getLikes().size())
-//                .commentCount(post.getComments().size())
-//                .createdAt(post.getCreatedAt())
-//                .nickname(anonymity ? "익명" : post.getMember().getNickname())
-//                .anonymity(anonymity)
-//                .thumbnail(thumbnail)
-//                .build();
-//    }
-
     private String findThumbnailUrl(Post post) {
         List<PostImage> images = post.getImages();
         if (images.size() >= 1)

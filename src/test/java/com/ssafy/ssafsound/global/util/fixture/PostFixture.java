@@ -173,6 +173,11 @@ public class PostFixture {
             .cursor(null)
             .build();
 
+    public static final GetPostResDto GET_POST_MY_SCRAP_RES_DTO = GetPostResDto.builder()
+            .posts(List.of(GET_POST_ELEMENT2,
+                    GET_POST_ELEMENT1))
+            .cursor(null)
+            .build();
 
     public static final GetPostDetailResDto GET_POST_DETAIL_RES_DTO1 = GetPostDetailResDto.of(
             POST_FIXTURE1, null);
