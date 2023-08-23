@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.domain.post.dto;
 
 import com.ssafy.ssafsound.domain.board.domain.Board;
 import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.domain.PostLike;
 import com.ssafy.ssafsound.domain.post.domain.PostScrap;
@@ -30,6 +31,7 @@ public class GetPostDetailElement {
     private final Boolean liked;
     private final Boolean mine;
     private final List<ImageUrlElement> images;
+    private final AuthorElement author;
 
     public static GetPostDetailElement of(Post post, Member loginMember) {
         Boolean scraped = isScrap(post, loginMember);
@@ -54,6 +56,7 @@ public class GetPostDetailElement {
                 .liked(liked)
                 .mine(mine)
                 .images(images)
+                .author(new AuthorElement(post.getMember(), post.getAnonymity()))
                 .build();
     }
 

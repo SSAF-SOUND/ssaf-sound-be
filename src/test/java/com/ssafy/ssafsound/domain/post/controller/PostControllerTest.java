@@ -111,8 +111,7 @@ class PostControllerTest extends ControllerTest {
                                         parameterWithName("postId").description("조회할 게시글의 고유 ID")
                                 ),
                                 getEnvelopPatternWithData().andWithPrefix("data.",
-                                        fieldWithPath("post").type(JsonFieldType.OBJECT).description("게시글 정보"),
-                                        fieldWithPath("author").type(JsonFieldType.OBJECT).description("게시글 작성자의 정보")
+                                        fieldWithPath("post").type(JsonFieldType.OBJECT).description("게시글 정보")
                                 ).andWithPrefix("data.post.",
                                         fieldWithPath("boardId").type(JsonFieldType.NUMBER).description("게시글이 작성된 게시판 종류의 ID"),
                                         fieldWithPath("boardTitle").type(JsonFieldType.STRING).description("게시글이 작성된 게시판의 종류, 자유 게시판 | 취업 게시판 | 맛집 게시판 | 질문 게시판 | 싸피 예비생 게시판"),
@@ -128,17 +127,18 @@ class PostControllerTest extends ControllerTest {
                                         fieldWithPath("scraped").type(JsonFieldType.BOOLEAN).description("로그인한 사용자라면 자신이 해당 게시글을 스크랩 했는지 여부를 나타내는 필드"),
                                         fieldWithPath("liked").type(JsonFieldType.BOOLEAN).description("로그인한 사용자라면 자신이 해당 게시글을 좋아요 했는지 여부를 나타내는 필드"),
                                         fieldWithPath("mine").type(JsonFieldType.BOOLEAN).description("로그인한 사용자라면 이 게시글이 자신이 작성한 게시글인지 여부를 나타내는 필드"),
-                                        fieldWithPath("images").type(JsonFieldType.ARRAY).description("게시글의 이미지 정보")
+                                        fieldWithPath("images").type(JsonFieldType.ARRAY).description("게시글의 이미지 정보"),
+                                        fieldWithPath("author").type(JsonFieldType.OBJECT).description("게시글 작성자의 정보")
                                 ).andWithPrefix("data.post.images[].",
                                         fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("게시글의 이미지 URL, S3에 저장된 CDN 주소.").optional()
-                                ).andWithPrefix("data.author.",
+                                ).andWithPrefix("data.post.author.",
                                         fieldWithPath("memberId").type(JsonFieldType.NUMBER).description("게시글 작성자의 PK(단, 익명이면 -1)"),
                                         fieldWithPath("nickname").type(JsonFieldType.STRING).description("게시글 작성자의 닉네임"),
                                         fieldWithPath("memberRole").type(JsonFieldType.STRING).description("게시글 작성자의 사용자 권한").optional(),
                                         fieldWithPath("ssafyMember").type(JsonFieldType.BOOLEAN).description("게시글 작성자가 SSAFY 유저인지 나타내는 필드 값").optional(),
                                         fieldWithPath("isMajor").type(JsonFieldType.BOOLEAN).description("게시글 작성자가 전공자인지 여부, true면 전공자, false면 비전공자").optional(),
                                         fieldWithPath("ssafyInfo").type(JsonFieldType.OBJECT).description("게시글 작성자가 선택한 SSAFY 정보 단, SSAFY 인증을 받지 않아도, 해당 필드는 존재하지만 익명이면 null값이 들어감.").optional()
-                                ).andWithPrefix("data.author.ssafyInfo.",
+                                ).andWithPrefix("data.post.author.ssafyInfo.",
                                         fieldWithPath("semester").type(JsonFieldType.NUMBER).description("작성자의 SSAFY 기수를 의미"),
                                         fieldWithPath("campus").type(JsonFieldType.STRING).description("작성자의 SSAFY 캠퍼스를 의미"),
                                         fieldWithPath("certificationState").type(JsonFieldType.STRING).description("작성자의 SSAFY 인증 여부를 의미함, CERTIFIED | UNCERTIFIED"),
@@ -165,8 +165,7 @@ class PostControllerTest extends ControllerTest {
                                         parameterWithName("postId").description("조회할 게시글의 고유 ID")
                                 ),
                                 getEnvelopPatternWithData().andWithPrefix("data.",
-                                        fieldWithPath("post").type(JsonFieldType.OBJECT).description("게시글 정보"),
-                                        fieldWithPath("author").type(JsonFieldType.OBJECT).description("게시글 작성자의 정보")
+                                        fieldWithPath("post").type(JsonFieldType.OBJECT).description("게시글 정보")
                                 ).andWithPrefix("data.post.",
                                         fieldWithPath("boardId").type(JsonFieldType.NUMBER).description("게시글이 작성된 게시판 종류의 ID"),
                                         fieldWithPath("boardTitle").type(JsonFieldType.STRING).description("게시글이 작성된 게시판의 종류, 자유 게시판 | 취업 게시판 | 맛집 게시판 | 질문 게시판 | 싸피 예비생 게시판"),
@@ -182,17 +181,18 @@ class PostControllerTest extends ControllerTest {
                                         fieldWithPath("scraped").type(JsonFieldType.BOOLEAN).description("로그인한 사용자라면 자신이 해당 게시글을 스크랩 했는지 여부를 나타내는 필드"),
                                         fieldWithPath("liked").type(JsonFieldType.BOOLEAN).description("로그인한 사용자라면 자신이 해당 게시글을 좋아요 했는지 여부를 나타내는 필드"),
                                         fieldWithPath("mine").type(JsonFieldType.BOOLEAN).description("로그인한 사용자라면 이 게시글이 자신이 작성한 게시글인지 여부를 나타내는 필드"),
-                                        fieldWithPath("images").type(JsonFieldType.ARRAY).description("게시글의 이미지 정보")
+                                        fieldWithPath("images").type(JsonFieldType.ARRAY).description("게시글의 이미지 정보"),
+                                        fieldWithPath("author").type(JsonFieldType.OBJECT).description("게시글 작성자의 정보")
                                 ).andWithPrefix("data.post.images[].",
                                         fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("게시글의 이미지 URL, S3에 저장된 CDN 주소.").optional()
-                                ).andWithPrefix("data.author.",
+                                ).andWithPrefix("data.post.author.",
                                         fieldWithPath("memberId").type(JsonFieldType.NUMBER).description("게시글 작성자의 PK"),
                                         fieldWithPath("nickname").type(JsonFieldType.STRING).description("게시글 작성자의 닉네임"),
                                         fieldWithPath("memberRole").type(JsonFieldType.STRING).description("게시글 작성자의 사용자 권한").optional(),
                                         fieldWithPath("ssafyMember").type(JsonFieldType.BOOLEAN).description("게시글 작성자가 SSAFY 유저인지 나타내는 필드 값").optional(),
                                         fieldWithPath("isMajor").type(JsonFieldType.BOOLEAN).description("게시글 작성자가 전공자인지 여부, true면 전공자, false면 비전공자").optional(),
                                         fieldWithPath("ssafyInfo").type(JsonFieldType.OBJECT).description("게시글 작성자가 선택한 SSAFY 정보 단, SSAFY 인증을 받지 않아도, 해당 필드는 존재하지만 익명이면 null값이 들어감.").optional()
-                                ).andWithPrefix("data.author.ssafyInfo.",
+                                ).andWithPrefix("data.post.author.ssafyInfo.",
                                         fieldWithPath("semester").type(JsonFieldType.NUMBER).description("작성자의 SSAFY 기수를 의미"),
                                         fieldWithPath("campus").type(JsonFieldType.STRING).description("작성자의 SSAFY 캠퍼스를 의미"),
                                         fieldWithPath("certificationState").type(JsonFieldType.STRING).description("작성자의 SSAFY 인증 여부를 의미함, CERTIFIED | UNCERTIFIED"),
