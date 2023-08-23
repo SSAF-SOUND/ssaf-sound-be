@@ -1,18 +1,21 @@
 package com.ssafy.ssafsound.domain.member.validator;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.ssafy.ssafsound.domain.member.service.SemesterConstantProvider;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 public class SemesterValidator implements ConstraintValidator<Semester, Integer> {
 
-    @Value("${spring.constant.semester.MIN_SEMESTER}")
-    private Integer MIN_SEMESTER;
-    @Value("${spring.constant.semester.MAX_SEMESTER}")
-    private Integer MAX_SEMESTER;
+    private final SemesterConstantProvider semesterConstantProvider;
+
+    public SemesterValidator(SemesterConstantProvider semesterConstantProvider) {
+        this.semesterConstantProvider = semesterConstantProvider;
+    }
+
     @Override
     public boolean isValid(Integer value, ConstraintValidatorContext context) {
         if(value == null) return  true;
-        return value >= MIN_SEMESTER && value <= MAX_SEMESTER;
+        return value >= semesterConstantProvider.getMIN_SEMESTER() && value <= semesterConstantProvider.getMAX_SEMESTER();
     }
 }
