@@ -96,15 +96,10 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# Oauth Config Varable
-src/main/resources/application-oauth.yml
-src/main/resources/application-security.yml
-
-# Local Setting File
+# Properties
 src/main/resources/application-local.yml
-src/main/resources/application-cloud.yml
-src/main/resources/application-scraper.yml
-src/main/resources/application-biz.yml
+src/main/resources/application-dev.yml
+src/main/resources/application-prod.yml
 
-# Mock Data File
+# Init Data SQL
 *.sql
