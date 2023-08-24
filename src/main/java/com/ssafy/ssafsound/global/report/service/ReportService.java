@@ -50,8 +50,9 @@ public class ReportService {
     @Transactional
     public void postReport(Long memberId, PostReportReqDto postReportReqDto) {
 
-        Member reportMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+        Long reportMemberId = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID))
+                .getId();
 
         System.out.println(postReportReqDto.getSourceType());
         System.out.println(postReportReqDto.getReasonId());
@@ -62,11 +63,17 @@ public class ReportService {
         ReportReason reason = reportReasonRepository.findById(postReportReqDto.getReasonId())
             .orElseThrow(() -> new ReportException(ReportErrorInfo.INVALID_REPORT_REASON));
 
+        Long reportedMemberId = getMemberIdFromSourceContent(sourceType, postReportReqDto.getSourceId());
+
+        if (reportMemberId.equals(reportedMemberId)) {
+            throw new ReportException(ReportErrorInfo.UNABLE_SELF_REPORT);
+        }
+
         Report report = Report.builder()
                 .sourceType(sourceType)
                 .sourceId(postReportReqDto.getSourceId())
-                .reportMemberId(reportMember.getId())
-                .reportedMemberId(getMemberIdFromSourceContent(sourceType, postReportReqDto.getSourceId()))
+                .reportMemberId(reportMemberId)
+                .reportedMemberId(reportedMemberId)
                 .reportReason(reason)
                 .build();
 
