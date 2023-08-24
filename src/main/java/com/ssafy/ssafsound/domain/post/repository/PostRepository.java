@@ -21,4 +21,8 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRep
             "LEFT JOIN FETCH p.images " +
             "WHERE p.id = :id")
     Optional<Post> findWithMemberAndPostImageFetchById(@Param("id") Long id);
+
+    @Query(value = "SELECT * FROM post WHERE post_id = :id", nativeQuery = true)
+    Optional<Post> findByIdRegardlessOfDeleted(@Param("id") Long id);
+
 }

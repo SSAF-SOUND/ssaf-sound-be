@@ -77,7 +77,7 @@ public class ReportService {
 
         if (sourceType.getName().equals(SourceType.POST.getName())) {
 
-            return postRepository.findById(sourceId)
+            return postRepository.findByIdRegardlessOfDeleted(sourceId)
                 .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST))
                 .getMember().getId();
         }
