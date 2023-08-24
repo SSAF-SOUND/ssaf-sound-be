@@ -8,7 +8,8 @@ public enum SourceType implements MetaDataProvider {
     MEMBER(5,"member"),
     LUNCH(6,"lunch"),
     BOARD(7,"board"),
-    ALARM(8,"alarm");
+    ALARM(8,"alarm"),
+    RECRUIT_COMMENT(9, "recruit_comment");
 
     private int id;
 
