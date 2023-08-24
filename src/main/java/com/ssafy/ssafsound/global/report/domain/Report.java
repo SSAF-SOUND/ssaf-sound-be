@@ -1,10 +1,12 @@
 package com.ssafy.ssafsound.global.report.domain;
 
 import com.ssafy.ssafsound.domain.BaseTimeEntity;
-import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.meta.converter.SourceTypeConverter;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -17,6 +19,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Report extends BaseTimeEntity {
 
@@ -35,15 +40,14 @@ public class Report extends BaseTimeEntity {
     @JoinColumn(name = "report_reason_id")
     private ReportReason reportReason;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member reportMember;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member reportedMember;
+    @Column
+    private Long reportMemberId;
 
     @Column
-    private Boolean handled;
+    private Long reportedMemberId;
+
+    @Column
+    @Builder.Default
+    private Boolean handled = false;
 
 }

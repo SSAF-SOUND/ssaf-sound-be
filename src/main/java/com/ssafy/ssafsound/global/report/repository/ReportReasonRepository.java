@@ -1,10 +1,9 @@
 package com.ssafy.ssafsound.global.report.repository;
 
-import com.ssafy.ssafsound.global.report.domain.Report;
+import com.ssafy.ssafsound.global.report.domain.ReportReason;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ReportRepository extends JpaRepository<Report, Long> {
-
+public interface ReportReasonRepository extends JpaRepository<ReportReason, Long> {
 }
