@@ -11,6 +11,7 @@ import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
+import com.ssafy.ssafsound.global.report.exception.ReportException;
 import com.ssafy.ssafsound.infra.exception.InfraException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -181,9 +182,21 @@ public class ExceptionControllerAdvice {
                 .build();
     }
 
+    @ExceptionHandler(ReportException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public EnvelopeResponse ReportExceptionHandler(ReportException e) {
+        log.error(e.getMessage());
+
+        return EnvelopeResponse.builder()
+                .code(e.getInfo().getCode())
+                .message(e.getInfo().getMessage())
+                .build();
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse HttpMessageNotReadableException(HttpMessageNotReadableException e) {
+
         log.error(e.getMessage());
 
         return EnvelopeResponse.builder()
