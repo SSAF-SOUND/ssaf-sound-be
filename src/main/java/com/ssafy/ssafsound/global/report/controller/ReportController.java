@@ -4,10 +4,10 @@ import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.validator.Authentication;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import com.ssafy.ssafsound.global.report.dto.PostReportReqDto;
-import com.ssafy.ssafsound.global.report.dto.PostReportResDto;
 import com.ssafy.ssafsound.global.report.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,11 +19,11 @@ public class ReportController {
     private final ReportService reportService;
 
     @PostMapping
-    public EnvelopeResponse<PostReportResDto> postReport(@Authentication AuthenticatedMember member, PostReportReqDto postReportReqDto) {
+    public EnvelopeResponse<Void> postReport(@Authentication AuthenticatedMember member, @RequestBody PostReportReqDto postReportReqDto) {
 
-        return EnvelopeResponse.<PostReportResDto>builder()
-                .data(reportService.postReport(member.getMemberId(), postReportReqDto))
-                .build();
+        reportService.postReport(member.getMemberId(), postReportReqDto);
+
+        return EnvelopeResponse.<Void>builder().build();
     }
 
 }
