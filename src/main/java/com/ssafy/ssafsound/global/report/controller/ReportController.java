@@ -1,5 +1,7 @@
 package com.ssafy.ssafsound.global.report.controller;
 
+import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
+import com.ssafy.ssafsound.domain.auth.validator.Authentication;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import com.ssafy.ssafsound.global.report.dto.PostReportReqDto;
 import com.ssafy.ssafsound.global.report.dto.PostReportResDto;
@@ -17,10 +19,10 @@ public class ReportController {
     private final ReportService reportService;
 
     @PostMapping
-    public EnvelopeResponse<PostReportResDto> postReport(PostReportReqDto postReportReqDto) {
+    public EnvelopeResponse<PostReportResDto> postReport(@Authentication AuthenticatedMember member, PostReportReqDto postReportReqDto) {
 
         return EnvelopeResponse.<PostReportResDto>builder()
-                .data(reportService.postReport())
+                .data(reportService.postReport(member.getMemberId(), postReportReqDto))
                 .build();
     }
 
