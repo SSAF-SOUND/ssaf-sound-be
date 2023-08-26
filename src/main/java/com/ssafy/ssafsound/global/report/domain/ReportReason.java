@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.global.report.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.Column;
@@ -9,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Getter
+@Builder
 @Entity
 public class ReportReason {
 

@@ -7,7 +7,6 @@ import com.ssafy.ssafsound.domain.chat.repository.ChatRoomRepository;
 import com.ssafy.ssafsound.domain.comment.exception.CommentErrorInfo;
 import com.ssafy.ssafsound.domain.comment.exception.CommentException;
 import com.ssafy.ssafsound.domain.comment.repository.CommentRepository;
-import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
@@ -54,14 +53,11 @@ public class ReportService {
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID))
                 .getId();
 
-        System.out.println(postReportReqDto.getSourceType());
-        System.out.println(postReportReqDto.getReasonId());
-
         MetaData sourceType = metaDataConsumer.getMetaData(MetaDataType.SOURCE_TYPE.name(),
-            postReportReqDto.getSourceType());
+                postReportReqDto.getSourceType());
 
         ReportReason reason = reportReasonRepository.findById(postReportReqDto.getReasonId())
-            .orElseThrow(() -> new ReportException(ReportErrorInfo.INVALID_REPORT_REASON));
+                .orElseThrow(() -> new ReportException(ReportErrorInfo.INVALID_REPORT_REASON));
 
         Long reportedMemberId = getMemberIdFromSourceContent(sourceType, postReportReqDto.getSourceId());
 
@@ -85,21 +81,21 @@ public class ReportService {
         if (sourceType.getName().equals(SourceType.POST.getName())) {
 
             return postRepository.findByIdRegardlessOfDeleted(sourceId)
-                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST))
-                .getMember().getId();
+                    .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST))
+                    .getMember().getId();
         }
 
         if (sourceType.getName().equals(SourceType.COMMENT.getName())) {
 
             return commentRepository.findById(sourceId)
-                .orElseThrow(() -> new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT))
-                .getMember().getId();
+                    .orElseThrow(() -> new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT))
+                    .getMember().getId();
         }
 
         if (sourceType.getName().equals(SourceType.CHAT.getName())) {
 
             ChatRoom chatRoom = chatRoomRepository.findById(sourceId)
-                .orElseThrow(() -> new ChatException(ChatErrorInfo.INVALID_CHAT_ROOM_ID));
+                    .orElseThrow(() -> new ChatException(ChatErrorInfo.INVALID_CHAT_ROOM_ID));
 
             // 채팅 기능 추가 후 수정 필요
             Long reportedMemberId = null;
@@ -111,15 +107,15 @@ public class ReportService {
         if (sourceType.getName().equals(SourceType.RECRUIT.getName())) {
 
             return recruitRepository.findById(sourceId)
-                .orElseThrow(()->new RecruitException(RecruitErrorInfo.NOT_FOUND_RECRUIT))
-                .getMember().getId();
+                    .orElseThrow(() -> new RecruitException(RecruitErrorInfo.NOT_FOUND_RECRUIT))
+                    .getMember().getId();
         }
 
         if (sourceType.getName().equals(SourceType.RECRUIT_COMMENT.getName())) {
 
             return recruitCommentRepository.findById(sourceId)
-                .orElseThrow(()->new RecruitException(RecruitErrorInfo.NOT_FOUND_RECRUIT_COMMENT))
-                .getMember().getId();
+                    .orElseThrow(() -> new RecruitException(RecruitErrorInfo.NOT_FOUND_RECRUIT_COMMENT))
+                    .getMember().getId();
         }
 
         throw new RuntimeException();
