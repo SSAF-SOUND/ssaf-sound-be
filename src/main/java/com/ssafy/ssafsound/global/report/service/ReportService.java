@@ -56,6 +56,10 @@ public class ReportService {
         MetaData sourceType = metaDataConsumer.getMetaData(MetaDataType.SOURCE_TYPE.name(),
                 postReportReqDto.getSourceType());
 
+        if (reportRepository.existsBySourceTypeAndSourceIdAndReportMemberId(sourceType, postReportReqDto.getSourceId(), reportMemberId)) {
+            throw new ReportException(ReportErrorInfo.DUPLICATE_REPORT);
+        }
+
         ReportReason reason = reportReasonRepository.findById(postReportReqDto.getReasonId())
                 .orElseThrow(() -> new ReportException(ReportErrorInfo.INVALID_REPORT_REASON));
 
