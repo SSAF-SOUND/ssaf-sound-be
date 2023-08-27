@@ -6,10 +6,7 @@ import com.ssafy.ssafsound.domain.meta.domain.RecruitType;
 import com.ssafy.ssafsound.domain.recruit.dto.PatchRecruitApplicationStatusResDto;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
-import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitApplicationsResDto;
-import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitParticipantsResDto;
-import com.ssafy.ssafsound.domain.recruitapplication.dto.PostRecruitApplicationReqDto;
-import com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement;
+import com.ssafy.ssafsound.domain.recruitapplication.dto.*;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitApplicationLikeResDto;
 
 import java.util.Arrays;
@@ -39,10 +36,12 @@ public class RecruitApplicationFixture {
             .author(new AuthorElement(MemberFixture.MEMBER_TIM, false))
             .question(RecruitFixture.RECRUIT_1.getQuestions().get(0).getContent())
             .reply("취업 준비를 위해서 신청하게되었습니다.")
-            .isLike(false)
+            .liked(false)
             .build();
 
-    public static final GetRecruitApplicationsResDto GET_RECRUIT_APPLICATIONS_RES_DTO = new GetRecruitApplicationsResDto(Arrays.asList(APPLICATION1_ELEMENT));
+    public static final GetRecruitApplicationDetailResDto APPLICATION_DETAIL_RES_DTO = new GetRecruitApplicationDetailResDto(APPLICATION1_ELEMENT);
+
+    public static final GetRecruitApplicationsResDto GET_RECRUIT_APPLICATIONS_RES_DTO = new GetRecruitApplicationsResDto(1L, Arrays.asList(APPLICATION1_ELEMENT));
 
     public static final GetRecruitParticipantsResDto GET_RECRUIT_PARTICIPANTS_RES_DTO = GetRecruitParticipantsResDto
             .of(List.of(getRecruitApplication1_ByMatchStatus(MatchStatus.WAITING_REGISTER_APPROVE, new MetaData(RecruitType.FRONT_END), false)),List.of(RecruitFixture.RECRUIT_1_BE_LIMIT_3, RecruitFixture.RECRUIT_1_FE_LIMIT_3));
