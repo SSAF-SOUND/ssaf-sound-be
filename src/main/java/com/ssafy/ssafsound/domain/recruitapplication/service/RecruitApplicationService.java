@@ -16,10 +16,7 @@ import com.ssafy.ssafsound.domain.recruit.repository.RecruitQuestionReplyReposit
 import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
-import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitApplicationsResDto;
-import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitParticipantsResDto;
-import com.ssafy.ssafsound.domain.recruitapplication.dto.PostRecruitApplicationReqDto;
-import com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement;
+import com.ssafy.ssafsound.domain.recruitapplication.dto.*;
 import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicationRepository;
 import com.ssafy.ssafsound.domain.recruitapplication.validator.RecruitApplicationValidator;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitApplicationLikeResDto;
@@ -125,7 +122,7 @@ public class RecruitApplicationService {
 
     @Transactional(readOnly = true)
     public GetRecruitApplicationsResDto getRecruitApplications(Long recruitId, Long memberId) {
-        return new GetRecruitApplicationsResDto(recruitApplicationRepository.findByRecruitIdAndRegisterMemberIdWithQuestionReply(recruitId, memberId));
+        return new GetRecruitApplicationsResDto(recruitId, recruitApplicationRepository.findByRecruitIdAndRegisterMemberIdWithQuestionReply(recruitId, memberId));
     }
 
     @Transactional
@@ -140,8 +137,8 @@ public class RecruitApplicationService {
     }
 
     @Transactional(readOnly = true)
-    public RecruitApplicationElement getRecruitApplicationByIdAndRegisterId(Long recruitApplicationId, Long registerId) {
-        return recruitApplicationRepository.findByRecruitApplicationIdAndRegisterId(recruitApplicationId, registerId);
+    public GetRecruitApplicationDetailResDto getRecruitApplicationByIdAndRegisterId(Long recruitApplicationId, Long registerId) {
+        return new GetRecruitApplicationDetailResDto(recruitApplicationRepository.findByRecruitApplicationIdAndRegisterId(recruitApplicationId, registerId));
     }
 
     private PatchRecruitApplicationStatusResDto changeRecruitApplicationState(RecruitApplication recruitApplication, Long memberId,
