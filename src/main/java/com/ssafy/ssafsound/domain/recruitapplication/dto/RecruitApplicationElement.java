@@ -15,13 +15,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RecruitApplicationElement {
-    @JsonProperty
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long recruitId;
 
     @JsonProperty
     private Long recruitApplicationId;
 
-    @JsonProperty
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String recruitType;
 
     @JsonProperty
@@ -37,12 +37,11 @@ public class RecruitApplicationElement {
     private String question;
 
     @JsonProperty
-    private Boolean isLike;
+    private Boolean liked;
 
     public RecruitApplicationElement(Long recruitId, Long recruitApplicationId, MetaData recruitType, MatchStatus matchStatus,
                                      Member member,
                                      String reply, String question, Boolean isLike) {
-
         this.recruitId = recruitId;
         this.recruitApplicationId = recruitApplicationId;
         this.recruitType = recruitType.getName();
@@ -50,6 +49,6 @@ public class RecruitApplicationElement {
         this.author = new AuthorElement(member, false);
         this.reply = reply;
         this.question = question;
-        this.isLike = isLike;
+        this.liked = isLike;
     }
 }
