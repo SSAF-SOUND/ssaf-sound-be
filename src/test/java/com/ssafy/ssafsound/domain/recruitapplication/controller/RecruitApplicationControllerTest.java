@@ -201,10 +201,12 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                         requestParameters(
                                 parameterWithName("recruitId").description("리크루트 PK")
                         ),
-                        getEnvelopPatternWithData().andWithPrefix("data.recruitApplications[].",
+                        getEnvelopPatternWithData().andWithPrefix(
+                                "data.",
                                 fieldWithPath("recruitId").type(JsonFieldType.NUMBER).description("리크루트 PK"),
+                                fieldWithPath("category").type(JsonFieldType.STRING).description("PROJECT | STUDY")
+                        ).andWithPrefix("data.recruitApplications.*.[].",
                                 fieldWithPath("recruitApplicationId").type(JsonFieldType.NUMBER).description("리크루트 참여 신청 PK"),
-                                fieldWithPath("recruitType").type(JsonFieldType.STRING).description("리크루트 참여 신청자가 선택한 자신의 역할군, 메타데이터-리크루트 목록 조회 참고"),
                                 fieldWithPath("matchStatus").type(JsonFieldType.STRING).description("매칭 상태 - (WAITING_REGISTER_APPROVE:등록자 수락대기), (WAITING_APPLICANT:신청자 최종 수락 대기), (DONE:매칭 성공), (REJECT:매칭 거절),  (CANCEL:매칭취소)"),
                                 fieldWithPath("author.memberId").type(JsonFieldType.NUMBER).description("참여자 PK"),
                                 fieldWithPath("author.nickname").type(JsonFieldType.STRING).description("참여자 닉네임"),
@@ -213,8 +215,8 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                                 fieldWithPath("author.ssafyMember").type(JsonFieldType.BOOLEAN).description("싸피 인증 여부"),
                                 fieldWithPath("question").type(JsonFieldType.STRING).description("등록자 질문"),
                                 fieldWithPath("reply").type(JsonFieldType.STRING).description("참여자 답변"),
-                                fieldWithPath("isLike").type(JsonFieldType.BOOLEAN).description("등록자 좋아요 여부")
-                        ).andWithPrefix("data.recruitApplications[].author.ssafyInfo.",
+                                fieldWithPath("liked").type(JsonFieldType.BOOLEAN).description("등록자 좋아요 여부")
+                        ).andWithPrefix("data.recruitApplications.*.[].author.ssafyInfo.",
                                 fieldWithPath("semester").type(JsonFieldType.NUMBER).description("참여자 싸피 기수 (1~10)"),
                                 fieldWithPath("campus").type(JsonFieldType.STRING).description("참여자 소속 캠퍼스 메타데이터-캠퍼스 목록 조회 참고"),
                                 fieldWithPath("certificationState").type(JsonFieldType.STRING).description("참여자 ssafy 인증 여부 UNCERTIFIED | CERTIFIED"),
@@ -251,7 +253,7 @@ public class RecruitApplicationControllerTest extends ControllerTest {
     @DisplayName("등록자 리크루트 참여신청 상세 조회")
     @Test
     void getRecruitApplicationByIdAndRegisterId() {
-        doReturn(RecruitApplicationFixture.APPLICATION1_ELEMENT)
+        doReturn(RecruitApplicationFixture.APPLICATION_DETAIL_RES_DTO)
                 .when(recruitApplicationService)
                 .getRecruitApplicationByIdAndRegisterId(any(), any());
 
@@ -278,7 +280,7 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                                 fieldWithPath("author.ssafyMember").type(JsonFieldType.BOOLEAN).description("싸피 인증 여부"),
                                 fieldWithPath("question").type(JsonFieldType.STRING).description("등록자 질문"),
                                 fieldWithPath("reply").type(JsonFieldType.STRING).description("참여자 답변"),
-                                fieldWithPath("isLike").type(JsonFieldType.BOOLEAN).description("등록자 좋아요 여부")
+                                fieldWithPath("liked").type(JsonFieldType.BOOLEAN).description("등록자 좋아요 여부")
                         ).andWithPrefix("data.author.ssafyInfo.",
                                 fieldWithPath("semester").type(JsonFieldType.NUMBER).description("참여자 싸피 기수 (1~10)"),
                                 fieldWithPath("campus").type(JsonFieldType.STRING).description("참여자 소속 캠퍼스 메타데이터-캠퍼스 목록 조회 참고"),

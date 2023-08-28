@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @Builder
 public class GetRecruitDetailResDto {
 
+    private String category;
     private long recruitId;
     private String title;
     private String content;
@@ -52,6 +53,7 @@ public class GetRecruitDetailResDto {
         List<String> questions = recruit.getQuestions().stream().map(RecruitQuestion::getContent).collect(Collectors.toList());
 
         return GetRecruitDetailResDto.builder()
+                .category(recruit.getCategory().name())
                 .recruitId(recruit.getId())
                 .title(recruit.getTitle())
                 .content(recruit.getContent())

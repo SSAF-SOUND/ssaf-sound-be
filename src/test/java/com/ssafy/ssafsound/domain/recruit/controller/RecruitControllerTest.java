@@ -113,6 +113,7 @@ public class RecruitControllerTest extends ControllerTest {
                             parameterWithName("recruitId").description("리크루트 아이디")
                         ),
                         getEnvelopPatternWithData().andWithPrefix("data.",
+                                fieldWithPath("category").type(JsonFieldType.STRING).description("PROJECT | STUDY"),
                                 fieldWithPath("recruitId").type(JsonFieldType.NUMBER).description("리크루트 id"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("리크루트 모집글 제목, 글자 수 제한 50자"),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("리크루트 본문, 글자 수 제한 3000자, html 포함 4000자"),

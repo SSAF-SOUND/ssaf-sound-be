@@ -97,10 +97,12 @@ class RecruitServiceTest {
 
     private Recruit recruit = Recruit.builder()
             .id(1L)
+            .category(Category.PROJECT)
             .build();
 
     private Recruit savedRecruit = Recruit.builder()
             .id(2L)
+            .category(Category.PROJECT)
             .view(0L)
             .member(member)
             .title("제목")

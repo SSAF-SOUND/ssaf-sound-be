@@ -4,10 +4,7 @@ import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.validator.Authentication;
 import com.ssafy.ssafsound.domain.recruit.dto.PatchRecruitApplicationStatusResDto;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
-import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitApplicationsResDto;
-import com.ssafy.ssafsound.domain.recruitapplication.dto.GetRecruitParticipantsResDto;
-import com.ssafy.ssafsound.domain.recruitapplication.dto.PostRecruitApplicationReqDto;
-import com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement;
+import com.ssafy.ssafsound.domain.recruitapplication.dto.*;
 import com.ssafy.ssafsound.domain.recruitapplication.service.RecruitApplicationService;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitApplicationLikeResDto;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
@@ -78,8 +75,8 @@ public class RecruitApplicationController {
     }
 
     @GetMapping("/recruit-applications/{recruitApplicationId}")
-    public EnvelopeResponse<RecruitApplicationElement> getRecruitApplicationByIdAndRegisterId(@PathVariable Long recruitApplicationId, @Authentication AuthenticatedMember authenticatedMember) {
-        return EnvelopeResponse.<RecruitApplicationElement>builder()
+    public EnvelopeResponse<GetRecruitApplicationDetailResDto> getRecruitApplicationByIdAndRegisterId(@PathVariable Long recruitApplicationId, @Authentication AuthenticatedMember authenticatedMember) {
+        return EnvelopeResponse.<GetRecruitApplicationDetailResDto>builder()
                 .data(recruitApplicationService.getRecruitApplicationByIdAndRegisterId(recruitApplicationId, authenticatedMember.getMemberId()))
                 .build();
     }
