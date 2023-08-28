@@ -115,13 +115,10 @@ public class ReportService {
                     .getMember().getId();
         }
 
-        if (sourceType.getName().equals(SourceType.RECRUIT_COMMENT.getName())) {
+        // SourceType.RECRUIT_COMMENT 인 경우
+        return recruitCommentRepository.findById(sourceId)
+                .orElseThrow(() -> new RecruitException(RecruitErrorInfo.NOT_FOUND_RECRUIT_COMMENT))
+                .getMember().getId();
 
-            return recruitCommentRepository.findById(sourceId)
-                    .orElseThrow(() -> new RecruitException(RecruitErrorInfo.NOT_FOUND_RECRUIT_COMMENT))
-                    .getMember().getId();
-        }
-
-        throw new RuntimeException();
     }
 }
