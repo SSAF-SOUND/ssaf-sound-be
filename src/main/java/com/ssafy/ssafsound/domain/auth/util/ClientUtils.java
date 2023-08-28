@@ -4,53 +4,48 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-
-import static java.util.Objects.isNull;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public class ClientUtils {
-    public static String getRemoteAddress() {
-        String remoteAddress = null;
-        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        HttpServletRequest request = sra.getRequest();
 
-        remoteAddress = request.getHeader("X-Forwarded-For");
-        if (isNull(remoteAddress)) {
-            remoteAddress = request.getHeader("Proxy-Client-IP");
-        }
-        if (isNull(remoteAddress)) {
-            remoteAddress = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (isNull(remoteAddress)) {
-            remoteAddress = request.getHeader("HTTP_CLIENT_IP");
-        }
-        if (isNull(remoteAddress)) {
-            remoteAddress = request.getHeader("HTTP_X_FORWARDED_FOR");
-        }
-        if (isNull(remoteAddress)) {
-            remoteAddress = request.getRemoteAddr();
-        }
-        return remoteAddress;
+    private static final List<String> headerNames = Arrays.asList(
+            "X-Forwarded-For",
+            "Proxy-Client-IP",
+            "WL-Proxy-Client-IP",
+            "HTTP_CLIENT_IP",
+            "HTTP_X_FORWARDED_FOR"
+    );
+    public static String getRemoteAddress() {
+        ServletRequestAttributes servletRequestAttributes =
+                (ServletRequestAttributes) RequestContextHolder
+                .currentRequestAttributes();
+        HttpServletRequest request = servletRequestAttributes.getRequest();
+
+        return headerNames.stream()
+                .map(request::getHeader)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(request.getRemoteAddr());
     }
 
     public static String getClientDevice() {
-        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        HttpServletRequest request = sra.getRequest();
-        String agent = request.getHeader("User-Agent");
-        String browser = "ETC";
+        ServletRequestAttributes servletRequestAttributes =
+                (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        HttpServletRequest request = servletRequestAttributes.getRequest();
+        String agentName = request.getHeader("User-Agent");
 
-        if (!isNull(agent)) {
-            if (agent.contains("Safari")) {
-                browser = "Safari";
-            } else if (agent.contains("Chrome")) {
-                browser = "Chrome";
-            } else if (agent.contains("Firefox")) {
-                browser = "Firefox";
-            } else if (agent.contains("iPhone") && agent.contains("Mobile")) {
-                browser = "iPhone";
-            } else if (agent.contains("Android") && agent.contains("Mobile")) {
-                browser = "Android";
-            }
-        }
-        return browser;
+        return Optional.ofNullable(agentName)
+                .map(agent -> {
+                    if (agent.contains("Safari")) return "Safari";
+                    if (agent.contains("Chrome")) return "Chrome";
+                    if (agent.contains("Firefox")) return "Firefox";
+                    if (agent.contains("iPhone") && agent.contains("Mobile")) return "iPhone";
+                    if (agent.contains("Android") && agent.contains("Mobile")) return "Android";
+                    return "ETC";
+                })
+                .orElse("ETC");
     }
 }

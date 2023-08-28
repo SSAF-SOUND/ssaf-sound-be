@@ -13,7 +13,7 @@ public class CookieProvider {
     public Cookie setCookieWithOptions(String name, String value) {
         Cookie cookie = new Cookie(name, value);
         cookie.setHttpOnly(true);
-        cookie.setDomain(".ssafsound.com");
+        cookie.setDomain("ssafsound.com");
         cookie.setMaxAge(2629744);
         cookie.setSecure(true);
         cookie.setPath("/");
