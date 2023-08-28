@@ -19,7 +19,6 @@ import com.ssafy.ssafsound.infra.exception.InfraException;
 import com.ssafy.ssafsound.infra.storage.service.AwsS3StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,8 +28,6 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class PostService {
-    @Value("${spring.constant.post.HOT_POST_LIKES_THRESHOLD}")
-    private Long HOT_POST_LIKES_THRESHOLD;
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
@@ -41,6 +38,7 @@ public class PostService {
     private final PostScrapRepository postScrapRepository;
     private final PostImageRepository postImageRepository;
     private final AwsS3StorageService awsS3StorageService;
+    private final PostConstantProvider postConstantProvider;
 
     @Transactional(readOnly = true)
     public GetPostResDto findPosts(GetPostReqDto getPostReqDto) {
@@ -109,7 +107,7 @@ public class PostService {
 
 
     private boolean isSelectedHotPost(Long postId) {
-        return postLikeRepository.countByPostId(postId) >= HOT_POST_LIKES_THRESHOLD;
+        return postLikeRepository.countByPostId(postId) >= postConstantProvider.getHOT_POST_LIKES_THRESHOLD();
     }
 
     private void saveHotPost(Long postId) {
