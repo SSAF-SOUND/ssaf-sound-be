@@ -53,7 +53,7 @@ public class RecruitApplicationControllerTest extends ControllerTest {
     @DisplayName("리크루트 등록자 참여 신청 수락")
     @Test
     void approveRecruitApplicationByRegister() {
-        doReturn(RecruitApplicationFixture.APPROVE_STATUS_APPLICATION)
+        doReturn(RecruitApplicationFixture.DONE_STATUS_APPLICATION)
             .when(recruitApplicationService)
             .approveRecruitApplicationByRegister(any(), any(), any());
 
@@ -64,31 +64,6 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                 .assertThat()
                 .statusCode(HttpStatus.OK.value())
                 .apply(document("recruitApplication/application-approve",
-                        requestCookieAccessTokenMandatory(),
-                        pathParameters(
-                                parameterWithName("recruitApplicationId").description("리크루트 참여신청 PK")
-                        ),
-                        getEnvelopPatternWithData().andWithPrefix("data.",
-                            fieldWithPath("recruitApplicationId").type(JsonFieldType.NUMBER).description("리크루트 참여 신청 PK"),
-                            fieldWithPath("matchStatus").type(JsonFieldType.STRING).description("리크루트 참여 신청 매칭 상태 WAITING_REGISTER_APPROVE (등록자 수락 대기상태) | WAITING_APPLICANT (신청자 수락 대기상태) | DONE (매칭성공) | REJECT (매칭거절) | CANCEL (매칭 취소)")
-                        ))
-                );
-    }
-
-    @DisplayName("리크루트 신청자 참여 확정")
-    @Test
-    void joinRecruitApplication() {
-        doReturn(RecruitApplicationFixture.DONE_STATUS_APPLICATION)
-            .when(recruitApplicationService)
-            .joinRecruitApplication(any(), any(), any());
-
-        restDocs
-                .cookie(ACCESS_TOKEN)
-                .when().patch("/recruit-applications/{recruitApplicationId}/join", 1)
-                .then().log().all()
-                .assertThat()
-                .statusCode(HttpStatus.OK.value())
-                .apply(document("recruitApplication/application-join",
                         requestCookieAccessTokenMandatory(),
                         pathParameters(
                                 parameterWithName("recruitApplicationId").description("리크루트 참여신청 PK")

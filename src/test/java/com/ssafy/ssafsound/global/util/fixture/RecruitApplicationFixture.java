@@ -48,8 +48,6 @@ public class RecruitApplicationFixture {
 
     public static final PatchRecruitApplicationStatusResDto WAITING_STATUS_APPLICATION = new PatchRecruitApplicationStatusResDto(1L, MatchStatus.WAITING_REGISTER_APPROVE.name());
 
-    public static final PatchRecruitApplicationStatusResDto APPROVE_STATUS_APPLICATION = new PatchRecruitApplicationStatusResDto(1L, MatchStatus.WAITING_APPLICANT.name());
-
     public static final PatchRecruitApplicationStatusResDto REJECT_STATUS_APPLICATION = new PatchRecruitApplicationStatusResDto(1L, MatchStatus.REJECT.name());
 
     public static final PatchRecruitApplicationStatusResDto CANCEL_STATUS_APPLICATION = new PatchRecruitApplicationStatusResDto(1L, MatchStatus.CANCEL.name());
