@@ -28,14 +28,7 @@ public class RecruitApplicationController {
     @PatchMapping("/recruit-applications/{recruitApplicationId}/approve")
     public EnvelopeResponse<PatchRecruitApplicationStatusResDto> approveRecruitApplicationByRegister(@PathVariable Long recruitApplicationId, @Authentication AuthenticatedMember memberInfo) {
         return EnvelopeResponse.<PatchRecruitApplicationStatusResDto>builder()
-            .data(recruitApplicationService.approveRecruitApplicationByRegister(recruitApplicationId, memberInfo.getMemberId(), MatchStatus.WAITING_APPLICANT))
-            .build();
-    }
-
-    @PatchMapping("/recruit-applications/{recruitApplicationId}/join")
-    public EnvelopeResponse<PatchRecruitApplicationStatusResDto> joinRecruitApplication(@PathVariable Long recruitApplicationId, @Authentication AuthenticatedMember memberInfo) {
-        return EnvelopeResponse.<PatchRecruitApplicationStatusResDto>builder()
-            .data(recruitApplicationService.joinRecruitApplication(recruitApplicationId, memberInfo.getMemberId(), MatchStatus.DONE))
+            .data(recruitApplicationService.approveRecruitApplicationByRegister(recruitApplicationId, memberInfo.getMemberId(), MatchStatus.DONE))
             .build();
     }
 
