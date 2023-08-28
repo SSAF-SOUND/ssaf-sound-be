@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.recruitapplication.dto;
 
+import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,12 +12,13 @@ import java.util.Map;
 @Getter
 @NoArgsConstructor
 public class GetRecruitApplicationsResDto {
-
+    private String category;
     private Long recruitId;
     private Map<String, List<RecruitApplicationElement>> recruitApplications;
 
-    public GetRecruitApplicationsResDto(Long recruitId, List<RecruitApplicationElement> recruitApplications) {
-        this.recruitId = recruitId;
+    public GetRecruitApplicationsResDto(Recruit recruit, List<RecruitApplicationElement> recruitApplications) {
+        this.category = recruit.getCategory().name();
+        this.recruitId = recruit.getId();
         this.recruitApplications = new HashMap<>();
         recruitApplications.sort((r1, r2)->{
             if(r1.getLiked().equals(r2.getLiked())) {
