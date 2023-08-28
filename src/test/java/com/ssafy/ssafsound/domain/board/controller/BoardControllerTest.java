@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.restdocs.payload.JsonFieldType;
 
+import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.requestCookieAccessTokenNeedless;
 import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.requestCookieAccessTokenOptional;
 import static com.ssafy.ssafsound.global.util.fixture.BoardFixture.GET_BOARD_RES_DTO1;
 import static org.mockito.Mockito.doReturn;
@@ -25,7 +26,7 @@ class BoardControllerTest extends ControllerTest {
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
                 .apply(document("board/find-boards",
-                        requestCookieAccessTokenOptional(),
+                        requestCookieAccessTokenNeedless(),
                         getEnvelopPatternWithData().andWithPrefix("data.",
                                 fieldWithPath("boards").type(JsonFieldType.ARRAY).description("게시판 목록")
                         ).andWithPrefix("data.boards[].",

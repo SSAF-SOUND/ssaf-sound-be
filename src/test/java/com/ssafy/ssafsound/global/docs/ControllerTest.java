@@ -27,6 +27,8 @@ import com.ssafy.ssafsound.domain.recruitapplication.service.RecruitApplicationS
 import com.ssafy.ssafsound.domain.recruitcomment.controller.RecruitCommentController;
 import com.ssafy.ssafsound.domain.recruitcomment.service.RecruitCommentService;
 import com.ssafy.ssafsound.global.interceptor.AuthInterceptor;
+import com.ssafy.ssafsound.global.report.controller.ReportController;
+import com.ssafy.ssafsound.global.report.service.ReportService;
 import com.ssafy.ssafsound.infra.storage.controller.StorageController;
 import com.ssafy.ssafsound.infra.storage.service.AwsS3StorageService;
 import io.restassured.http.Cookie;
@@ -63,8 +65,9 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
         RecruitController.class,
         RecruitApplicationController.class,
         RecruitCommentController.class,
-        StorageController.class
+        StorageController.class,
         //ChatController.class
+        ReportController.class
 })
 @ExtendWith(RestDocumentationExtension.class)
 public class ControllerTest {
@@ -109,6 +112,9 @@ public class ControllerTest {
 
     @MockBean
     protected AwsS3StorageService awsS3StorageService;
+
+    @MockBean
+    protected ReportService reportService;
 
     @MockBean
     protected JwtTokenProvider jwtTokenProvider;

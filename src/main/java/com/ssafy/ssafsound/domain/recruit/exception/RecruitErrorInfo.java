@@ -13,7 +13,9 @@ public enum RecruitErrorInfo {
     NOT_SAME_LENGTH_RECRUIT_QUESTION_ANSWER("906", "질문에 대한 모든 답변이 필요합니다."),
     IS_ALREADY_FULL("907", "이미 모집 인원이 가득찬 스터디/프로젝트 입니다."),
     IS_DELETED("908", "이미 삭제된 스터디/프로젝트입니다."),
-    NOT_BELOW_PREV_LIMITATIONS("909", "스터디/프로젝트 인원은 감소할 수 없습니다.");
+    NOT_BELOW_PREV_LIMITATIONS("909", "스터디/프로젝트 인원은 감소할 수 없습니다."),
+    NOT_FOUND_RECRUIT("910", "모집글을 찾을 수 없습니다."),
+    NOT_FOUND_RECRUIT_COMMENT("911", "모집글 QNA를 찾을 수 없습니다.");
 
     private final String code;
     private final String message;
