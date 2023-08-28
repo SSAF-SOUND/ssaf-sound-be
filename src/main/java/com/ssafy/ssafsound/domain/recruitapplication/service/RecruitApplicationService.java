@@ -122,7 +122,8 @@ public class RecruitApplicationService {
 
     @Transactional(readOnly = true)
     public GetRecruitApplicationsResDto getRecruitApplications(Long recruitId, Long memberId) {
-        return new GetRecruitApplicationsResDto(recruitId, recruitApplicationRepository.findByRecruitIdAndRegisterMemberIdWithQuestionReply(recruitId, memberId));
+        Recruit recruit = recruitRepository.findById(recruitId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+        return new GetRecruitApplicationsResDto(recruit, recruitApplicationRepository.findByRecruitIdAndRegisterMemberIdWithQuestionReply(recruitId, memberId));
     }
 
     @Transactional
