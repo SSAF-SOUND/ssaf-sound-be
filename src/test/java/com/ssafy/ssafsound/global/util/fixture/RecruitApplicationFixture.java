@@ -41,7 +41,7 @@ public class RecruitApplicationFixture {
 
     public static final GetRecruitApplicationDetailResDto APPLICATION_DETAIL_RES_DTO = new GetRecruitApplicationDetailResDto(APPLICATION1_ELEMENT);
 
-    public static final GetRecruitApplicationsResDto GET_RECRUIT_APPLICATIONS_RES_DTO = new GetRecruitApplicationsResDto(1L, Arrays.asList(APPLICATION1_ELEMENT));
+    public static final GetRecruitApplicationsResDto GET_RECRUIT_APPLICATIONS_RES_DTO = new GetRecruitApplicationsResDto(RecruitFixture.RECRUIT_1, Arrays.asList(APPLICATION1_ELEMENT));
 
     public static final GetRecruitParticipantsResDto GET_RECRUIT_PARTICIPANTS_RES_DTO = GetRecruitParticipantsResDto
             .of(List.of(getRecruitApplication1_ByMatchStatus(MatchStatus.WAITING_REGISTER_APPROVE, new MetaData(RecruitType.FRONT_END), false)),List.of(RecruitFixture.RECRUIT_1_BE_LIMIT_3, RecruitFixture.RECRUIT_1_FE_LIMIT_3));

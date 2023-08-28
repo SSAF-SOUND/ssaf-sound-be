@@ -202,7 +202,9 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                                 parameterWithName("recruitId").description("리크루트 PK")
                         ),
                         getEnvelopPatternWithData().andWithPrefix(
-                                "data.", fieldWithPath("recruitId").type(JsonFieldType.NUMBER).description("리크루트 PK")
+                                "data.",
+                                fieldWithPath("recruitId").type(JsonFieldType.NUMBER).description("리크루트 PK"),
+                                fieldWithPath("category").type(JsonFieldType.STRING).description("PROJECT | STUDY")
                         ).andWithPrefix("data.recruitApplications.*.[].",
                                 fieldWithPath("recruitApplicationId").type(JsonFieldType.NUMBER).description("리크루트 참여 신청 PK"),
                                 fieldWithPath("matchStatus").type(JsonFieldType.STRING).description("매칭 상태 - (WAITING_REGISTER_APPROVE:등록자 수락대기), (WAITING_APPLICANT:신청자 최종 수락 대기), (DONE:매칭 성공), (REJECT:매칭 거절),  (CANCEL:매칭취소)"),

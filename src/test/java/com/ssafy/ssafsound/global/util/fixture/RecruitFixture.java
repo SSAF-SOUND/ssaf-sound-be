@@ -97,6 +97,7 @@ public class RecruitFixture {
     );
 
     public static final GetRecruitDetailResDto RECRUIT_1_DETAIL_RES_DTO = GetRecruitDetailResDto.builder()
+            .category(Category.PROJECT.name())
             .recruitId(RECRUIT_1.getId())
             .title(RECRUIT_1.getTitle())
             .content(RECRUIT_1.getContent())
