@@ -48,8 +48,8 @@ class MemberControllerTest extends ControllerTest {
                 fieldWithPath("nickname").description("닉네임"),
                 fieldWithPath("ssafyMember").description("싸피인 여부"),
                 fieldWithPath("isMajor").description("전공자 여부"),
-                fieldWithPath("semester").description("싸피 기수"),
-                fieldWithPath("campus").description("캠퍼스 이름")
+                fieldWithPath("semester").optional().description("싸피 기수"),
+                fieldWithPath("campus").optional().description("캠퍼스 이름")
         );
     }
 
@@ -151,6 +151,8 @@ class MemberControllerTest extends ControllerTest {
 
         given(memberService.registerMemberInformation(any(), any()))
                 .willReturn(GetMemberResDto.fromGeneralUser(MemberFixture.GENERAL_MEMBER));
+        given(semesterValidator.isValid(any(), any())).willReturn(true);
+
         PostMemberInfoReqDto postMemberInfoReqDto = PostMemberInfoReqDto.builder()
                 .nickname("james")
                 .ssafyMember(false)
@@ -177,6 +179,10 @@ class MemberControllerTest extends ControllerTest {
 
         given(memberService.registerMemberInformation(any(), any()))
                 .willReturn(MemberFixture.UNCERTIFIED_SSAFY_MEMBER);
+        given(semesterValidator.isValid(any(), any())).willReturn(true);
+        given(semesterConstantProvider.getMAX_SEMESTER()).willReturn(10);
+        given(semesterConstantProvider.getMIN_SEMESTER()).willReturn(1);
+
         PostMemberInfoReqDto postMemberInfoReqDto = PostMemberInfoReqDto.builder()
                 .nickname("james")
                 .ssafyMember(true)
@@ -205,6 +211,9 @@ class MemberControllerTest extends ControllerTest {
 
         given(memberService.certifySSAFYInformation(any(), any()))
                 .willReturn(MemberFixture.POST_CERTIFICATION_INFO_RESPONSE);
+        given(semesterValidator.isValid(any(), any())).willReturn(true);
+        given(semesterConstantProvider.getMAX_SEMESTER()).willReturn(10);
+        given(semesterConstantProvider.getMIN_SEMESTER()).willReturn(1);
 
         restDocs
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -333,8 +342,8 @@ class MemberControllerTest extends ControllerTest {
                         requestCookieAccessTokenMandatory(),
                         requestFields(
                                 fieldWithPath("ssafyMember").description("싸피인 여부"),
-                                fieldWithPath("semester").description("기수").optional(),
-                                fieldWithPath("campus").description("캠퍼스").optional()),
+                                fieldWithPath("semester").optional().description("기수"),
+                                fieldWithPath("campus").optional().description("캠퍼스")),
                         getEnvelopPatternWithNoContent()))
                 .expect(status().isOk());
     }

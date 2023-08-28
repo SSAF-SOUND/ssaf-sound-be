@@ -21,11 +21,11 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -205,10 +205,12 @@ class MemberServiceTest {
                 .member(member)
                 .build();
 
+        given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
         given(memberTokenRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(memberToken));
 
         memberService.saveTokenByMember(authenticatedMember, accessToken, refreshToken);
 
+        verify(memberRepository).findById(authenticatedMember.getMemberId());
         verify(memberTokenRepository).findById(authenticatedMember.getMemberId());
     }
 
@@ -218,12 +220,11 @@ class MemberServiceTest {
         String accessToken = jwtTokenProvider.createAccessToken(authenticatedMember);
         String refreshToken = jwtTokenProvider.createRefreshToken(authenticatedMember);
 
-        given(memberTokenRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.empty());
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.empty());
 
-        assertThrows(MemberException.class, () -> memberService.saveTokenByMember(authenticatedMember, accessToken, refreshToken));
+        assertThrows(MemberException.class,
+                () -> memberService.saveTokenByMember(authenticatedMember, accessToken, refreshToken));
 
-        verify(memberTokenRepository).findById(authenticatedMember.getMemberId());
         verify(memberRepository).findById(authenticatedMember.getMemberId());
     }
 

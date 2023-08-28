@@ -4,6 +4,7 @@ import com.ssafy.ssafsound.domain.auth.validator.AuthenticationArgumentResolver;
 import com.ssafy.ssafsound.global.interceptor.AuthInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.List;
@@ -14,10 +15,22 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     private final AuthInterceptor authInterceptor;
     private final AuthenticationArgumentResolver authenticationArgumentResolver;
+    private static final String ALLOWED_METHOD_NAMES = "GET,HEAD,POST,DELETE,TRACE,OPTIONS,PATCH,PUT";
 
     public WebMvcConfig(AuthInterceptor authInterceptor, AuthenticationArgumentResolver authenticationArgumentResolver) {
         this.authInterceptor = authInterceptor;
         this.authenticationArgumentResolver = authenticationArgumentResolver;
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:3001")
+                .allowedOrigins("http://www.ssafsound.com")
+                .allowedOrigins("https://www.ssafsound.com")
+                .allowedMethods(ALLOWED_METHOD_NAMES.split(","))
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 
     @Override

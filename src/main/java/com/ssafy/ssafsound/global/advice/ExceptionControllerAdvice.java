@@ -1,14 +1,13 @@
 package com.ssafy.ssafsound.global.advice;
 
 
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.ssafy.ssafsound.domain.auth.exception.AuthException;
 import com.ssafy.ssafsound.domain.board.exception.BoardException;
 import com.ssafy.ssafsound.domain.comment.exception.CommentException;
 import com.ssafy.ssafsound.domain.lunch.exception.LunchException;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
-import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import com.ssafy.ssafsound.domain.post.exception.PostException;
+import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
@@ -22,6 +21,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.HandlerMethod;
+
+import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 @Slf4j
 @RestControllerAdvice
@@ -31,6 +35,7 @@ public class ExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse MemberExceptionHandler(MemberException e) {
         log.error(e.getInfo().getMessage());
+
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
                 .message(e.getInfo().getMessage())
@@ -51,7 +56,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(LunchException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse LunchExceptionHandler(LunchException e) {
-        log.error(e.getMessage());
+        log.error(e.getInfo().getMessage());
 
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
@@ -77,8 +82,10 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public EnvelopeResponse RuntimeExceptionHandler(RuntimeException e) {
-        e.printStackTrace();
+    public EnvelopeResponse RuntimeExceptionHandler(RuntimeException e,
+                                                    HandlerMethod method,
+                                                    HttpServletRequest request) {
+        exactErrorLog(e, method, request);
 
         return EnvelopeResponse.builder()
                 .code(GlobalErrorInfo.INTERNAL_SERVER_ERROR.getCode())
@@ -89,7 +96,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public EnvelopeResponse ResourceNotFoundExceptionHandler(ResourceNotFoundException e) {
-        log.error(e.getMessage());
+        log.error(e.getInfo().getMessage());
 
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
@@ -122,7 +129,8 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(RecruitException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse RecruitExceptionHandler(RecruitException e) {
-        e.printStackTrace();
+        log.error(e.getInfo().getMessage());
+
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
                 .message(e.getInfo().getMessage())
@@ -132,7 +140,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(BoardException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse BoardExceptionHandler(BoardException e) {
-        log.error(e.getMessage());
+        log.error(e.getInfo().getMessage());
 
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
@@ -143,7 +151,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(PostException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse PostExceptionHandler(PostException e) {
-        log.error(e.getMessage());
+        log.error(e.getInfo().getMessage());
 
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
@@ -165,7 +173,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(CommentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public EnvelopeResponse CommentExceptionHandler(CommentException e) {
-        log.error(e.getMessage());
+        log.error(e.getInfo().getMessage());
 
         return EnvelopeResponse.builder()
                 .code(e.getInfo().getCode())
@@ -182,5 +190,20 @@ public class ExceptionControllerAdvice {
                 .code(GlobalErrorInfo.BAD_REQUEST.getCode())
                 .message(GlobalErrorInfo.BAD_REQUEST.getMessage())
                 .build();
+    }
+
+    private void exactErrorLog(Exception e, HandlerMethod handlerMethod,
+                               HttpServletRequest request) {
+        String errorDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                .format(Calendar.getInstance().getTime());
+        String requestURI = request.getRequestURI();
+        String exceptionName = e.getClass().getSimpleName();
+        String controllerName = handlerMethod.getMethod().getDeclaringClass().getSimpleName();
+        String methodName = handlerMethod.getMethod().getName();
+        String message = e.getMessage();
+        String lineNumber = String.valueOf(e.getStackTrace()[0].getLineNumber());
+        log.error("\n[Time: {} | Class: {} | Method: {} | LineNumber: {} " +
+                "| Path: {} | Exception: {} | Message: {}]\n",
+                errorDate, controllerName, methodName, lineNumber, requestURI, exceptionName, message);
     }
 }

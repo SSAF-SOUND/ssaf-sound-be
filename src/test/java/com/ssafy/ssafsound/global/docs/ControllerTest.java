@@ -14,6 +14,8 @@ import com.ssafy.ssafsound.domain.lunch.service.LunchPollService;
 import com.ssafy.ssafsound.domain.lunch.service.LunchService;
 import com.ssafy.ssafsound.domain.member.controller.MemberController;
 import com.ssafy.ssafsound.domain.member.service.MemberService;
+import com.ssafy.ssafsound.domain.member.service.SemesterConstantProvider;
+import com.ssafy.ssafsound.domain.member.validator.SemesterValidator;
 import com.ssafy.ssafsound.domain.meta.controller.MetaDataController;
 import com.ssafy.ssafsound.domain.meta.service.EnumMetaDataConsumer;
 import com.ssafy.ssafsound.domain.post.controller.PostController;
@@ -116,6 +118,12 @@ public class ControllerTest {
 
     @MockBean
     protected AuthenticationArgumentResolver authenticationArgumentResolver;
+
+    @MockBean
+    protected SemesterValidator semesterValidator;
+
+    @MockBean
+    protected SemesterConstantProvider semesterConstantProvider;
 
     protected static final Cookie ACCESS_TOKEN = new Cookie.Builder("accessToken", "accessTokenValue").build();
     protected static final Cookie REFRESH_TOKEN = new Cookie.Builder("refreshToken", "refreshTokenValue").build();

@@ -29,4 +29,17 @@ public class MemberLoginLog {
 
     @Column
     private String remoteAddress;
+
+    @Column
+    private String clientDevice;
+
+    public static MemberLoginLog ofCreateLoginLog(Member member, String clientDevice,
+                                                  String remoteAddress, LocalDateTime loginTime) {
+        return MemberLoginLog.builder()
+                .member(member)
+                .loginTime(loginTime)
+                .clientDevice(clientDevice)
+                .remoteAddress(remoteAddress)
+                .build();
+    }
 }
