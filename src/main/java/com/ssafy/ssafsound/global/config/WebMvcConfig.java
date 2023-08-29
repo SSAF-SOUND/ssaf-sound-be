@@ -2,7 +2,13 @@ package com.ssafy.ssafsound.global.config;
 
 import com.ssafy.ssafsound.domain.auth.validator.AuthenticationArgumentResolver;
 import com.ssafy.ssafsound.global.interceptor.AuthInterceptor;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -29,9 +35,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedOrigins("http://www.ssafsound.com")
                 .allowedOrigins("https://www.ssafsound.com")
                 .allowedOrigins("https://test.ssafsound.com")
+                .allowedOrigins("https://api.ssafsound.com")
                 .allowedMethods(ALLOWED_METHOD_NAMES.split(","))
                 .allowedHeaders("*")
-                .allowCredentials(true);
+                .allowCredentials(true)
+                .exposedHeaders("*");
     }
 
     @Override
@@ -46,5 +54,24 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(authenticationArgumentResolver);
+    }
+
+    @Bean
+    public FilterRegistrationBean<CorsFilter> corsFilterRegistrationBean() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(false);
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        config.setMaxAge(2629744L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        FilterRegistrationBean<CorsFilter> filterBean =
+            new FilterRegistrationBean<>(new CorsFilter(source));
+        filterBean.setOrder(0);
+
+        return filterBean;
     }
 }

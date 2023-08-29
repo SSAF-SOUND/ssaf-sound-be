@@ -6,6 +6,7 @@ import com.ssafy.ssafsound.domain.auth.service.token.JwtTokenProvider;
 import com.ssafy.ssafsound.domain.auth.validator.AuthorizationExtractor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsUtils;
@@ -26,6 +27,9 @@ public class AuthInterceptor implements HandlerInterceptor {
     private final List<String> excludePathByClientGetRequest = List.of("/", "/auth", "/recruits", "/comments", "/lunch", "/meta", "/members", "/posts");
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        if(HttpMethod.OPTIONS.matches(request.getMethod())) {
+            return true;
+        }
 
         if (CorsUtils.isPreFlightRequest(request)) {
             return true;
