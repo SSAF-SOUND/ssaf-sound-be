@@ -28,6 +28,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedOrigins("http://localhost:3001")
                 .allowedOrigins("http://www.ssafsound.com")
                 .allowedOrigins("https://www.ssafsound.com")
+                .allowedOrigins("https://test.ssafsound.com")
                 .allowedMethods(ALLOWED_METHOD_NAMES.split(","))
                 .allowedHeaders("*")
                 .allowCredentials(true);
