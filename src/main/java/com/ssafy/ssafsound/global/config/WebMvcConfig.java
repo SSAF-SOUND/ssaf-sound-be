@@ -59,8 +59,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Bean
     public FilterRegistrationBean<CorsFilter> corsFilterRegistrationBean() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(false);
-        config.addAllowedOrigin("*");
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("https://www.ssafsound.com");
+        config.addAllowedOrigin("https://test.ssafsound.com");
+        config.addAllowedOrigin("http://www.ssafsound.com");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.setMaxAge(2629744L);

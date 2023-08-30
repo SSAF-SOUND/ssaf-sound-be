@@ -12,10 +12,18 @@ import com.ssafy.ssafsound.domain.member.domain.MemberToken;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import com.ssafy.ssafsound.domain.member.service.MemberService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
-import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
@@ -55,10 +63,10 @@ public class AuthController {
             HttpServletResponse response) {
         MemberToken memberToken = authService.getMemberTokenByRefreshToken(refreshToken);
         CreateMemberAccessTokenResDto createMemberAccessTokenResDto = authService.reissueAccessToken(memberToken);
-        Cookie accessTokenCookie = cookieProvider
+        ResponseCookie accessTokenCookie = cookieProvider
                 .setCookieWithOptions("accessToken", createMemberAccessTokenResDto.getAccessToken());
 
-        response.addCookie(accessTokenCookie);
+        response.setHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
 
         return EnvelopeResponse.<CreateMemberAccessTokenResDto>builder()
                 .data(createMemberAccessTokenResDto)

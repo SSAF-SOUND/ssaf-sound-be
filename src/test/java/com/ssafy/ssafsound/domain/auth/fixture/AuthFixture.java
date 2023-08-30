@@ -6,8 +6,7 @@ import com.ssafy.ssafsound.domain.auth.dto.CreateMemberReqDto;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberTokensResDto;
 import com.ssafy.ssafsound.domain.member.domain.MemberToken;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
-
-import javax.servlet.http.Cookie;
+import org.springframework.http.ResponseCookie;
 
 public class AuthFixture {
 
@@ -19,8 +18,8 @@ public class AuthFixture {
 
     public static final MemberToken memberToken = MemberToken.builder().build();
 
-    public static Cookie getAccessTokenCookie() {
-        return new Cookie("accessToken", accessToken);
+    public static ResponseCookie getAccessTokenCookie() {
+        return ResponseCookie.from("accessToken", accessToken).build();
     }
 
     public static AuthenticatedMember authenticatedMember = AuthenticatedMember
