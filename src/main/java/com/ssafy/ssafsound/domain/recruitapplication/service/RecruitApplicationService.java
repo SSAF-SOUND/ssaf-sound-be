@@ -135,7 +135,7 @@ public class RecruitApplicationService {
     }
 
     private boolean isPrevExistWaitingOrDoneMember(Long recruitId, Long memberId) {
-        RecruitApplication recentRecruitApplication = recruitApplicationRepository.findTopByRecruitIdAndMemberIdOrderByIdDescLimit(recruitId, memberId);
+        RecruitApplication recentRecruitApplication = recruitApplicationRepository.findTopByRecruitIdAndMemberIdOrderByIdDesc(recruitId, memberId);
         if(recentRecruitApplication == null) return false;
 
         boolean prevWaitingMember = recentRecruitApplication.getMatchStatus().equals(MatchStatus.WAITING_REGISTER_APPROVE);
