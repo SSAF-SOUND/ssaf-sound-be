@@ -15,7 +15,8 @@ public enum RecruitErrorInfo {
     IS_DELETED("908", "이미 삭제된 스터디/프로젝트입니다."),
     NOT_BELOW_PREV_LIMITATIONS("909", "스터디/프로젝트 인원은 감소할 수 없습니다."),
     NOT_FOUND_RECRUIT("910", "모집글을 찾을 수 없습니다."),
-    NOT_FOUND_RECRUIT_COMMENT("911", "모집글 QNA를 찾을 수 없습니다.");
+    NOT_FOUND_RECRUIT_COMMENT("911", "모집글 QNA를 찾을 수 없습니다."),
+    PREV_EXIST_MEMBER_APPLICATION("912", "이미 신청한 스터디/프로젝트 입니다.");
 
     private final String code;
     private final String message;

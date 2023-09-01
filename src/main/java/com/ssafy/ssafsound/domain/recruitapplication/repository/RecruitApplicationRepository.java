@@ -44,4 +44,6 @@ public interface RecruitApplicationRepository extends JpaRepository<RecruitAppli
     List<RecruitApplication> findByRecruitIdAndMatchStatus(Long recruitId, MatchStatus matchStatus);
 
     void deleteByTypeNotIn(List<MetaData> recruitTypes);
+
+    RecruitApplication findTopByRecruitIdAndMemberIdOrderByIdDescLimit(Long recruitId, Long memberId);
 }
