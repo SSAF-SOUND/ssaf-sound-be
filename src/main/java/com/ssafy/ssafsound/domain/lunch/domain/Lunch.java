@@ -43,6 +43,9 @@ public class Lunch {
     @Column
     private LocalDate createdAt;
 
+    @Column
+    private Integer pollCount;
+
     @OneToMany(mappedBy = "lunch")
     @Builder.Default
     private List<LunchPoll> lunchPolls = new ArrayList<>();
