@@ -38,6 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
@@ -82,6 +83,7 @@ class LunchServiceTest {
                 .campus(testCampus)
                 .mainMenu("mainMenu1")
                 .createdAt(today)
+                .pollCount(10)
                 .build();
 
         lunch2 = Lunch.builder()
@@ -89,6 +91,7 @@ class LunchServiceTest {
                 .campus(testCampus)
                 .mainMenu("mainMenu2")
                 .createdAt(today)
+                .pollCount(10)
                 .build();
 
         member1 = Member.builder()
@@ -122,7 +125,7 @@ class LunchServiceTest {
     void Given_DateAndCampus_When_FindLunches_Then_Succeed(
             @ConvertWith(NullableConverter.class) Long memberId, String inputCampus,
             LocalDate inputDate,
-            Long outputPolledAt) {
+            Integer outputPolledAt) {
 
         // given
         given(clock.instant()).willReturn(Instant.parse(testLocalDateTime));
@@ -147,10 +150,10 @@ class LunchServiceTest {
         assertAll(
                 () -> assertThat(result.getMenus().get(0))
                         .usingRecursiveComparison()
-                        .isEqualTo(GetLunchListElementResDto.of(lunch2, 1L)),
+                        .isEqualTo(GetLunchListElementResDto.of(lunch2)),
                 () -> assertThat(result.getMenus().get(1))
                         .usingRecursiveComparison()
-                        .isEqualTo(GetLunchListElementResDto.of(lunch1, 0L)),
+                        .isEqualTo(GetLunchListElementResDto.of(lunch1)),
                 () -> assertThat(result.getPolledAt()).isEqualTo(outputPolledAt)
         );
 
@@ -164,8 +167,8 @@ class LunchServiceTest {
     }
 
     @Test
-    @DisplayName("유효하지 않은 날짜로 점심 메뉴 목록 조회시 예외를 던진다.")
-    void Given_InvalidDate_When_FindingAllLunches_Then_ThrowException() {
+    @DisplayName("유효하지 않은 날짜로 점심 메뉴 목록 조회시 빈 배열을 반환한다.")
+    void Given_InvalidDate_When_FindingAllLunches_Then_SucceedWithEmptyList() {
 
         // given
         given(clock.instant()).willReturn(Instant.parse(testLocalDateTime));
@@ -181,10 +184,10 @@ class LunchServiceTest {
                 .build();
 
         // when
+        GetLunchListResDto result = lunchService.findLunches(memberId, getLunchListReqDto);
+
         // then
-        LunchException exception = assertThrows(LunchException.class,
-                () -> lunchService.findLunches(memberId, getLunchListReqDto));
-        assertEquals(LunchErrorInfo.INVALID_DATE, exception.getInfo());
+        assertTrue(result.getMenus().isEmpty());
 
         verify(clock).instant();
         verify(clock).getZone();
