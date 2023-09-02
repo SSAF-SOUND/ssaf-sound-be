@@ -105,7 +105,7 @@ public class RecruitApplicationControllerTest extends ControllerTest {
     void cancelRecruitApplicationByParticipant() {
         doReturn(RecruitApplicationFixture.CANCEL_STATUS_APPLICATION)
             .when(recruitApplicationService)
-            .cancelRecruitApplicationByParticipant(any(), any(), any());
+            .cancelRecruitApplication(any(), any(), any());
 
         restDocs
                 .cookie(ACCESS_TOKEN)

@@ -136,7 +136,7 @@ class RecruitApplicationServiceTest {
                 .thenReturn(java.util.Optional.ofNullable(recruitApplication));
         lenient().when(recruitApplicationRepository.findByIdFetchRecruitWriter(1L))
                 .thenReturn(java.util.Optional.ofNullable(recruitApplication));
-        lenient().when(recruitApplicationRepository.findByIdAndMemberIdFetchRecruitWriter(1L))
+        lenient().when(recruitApplicationRepository.findByIdFetchParticipantAndRecruitWriter(1L))
                 .thenReturn(java.util.Optional.ofNullable(recruitApplication));
         lenient().when(recruitApplicationRepository.findByRecruitIdAndMatchStatusFetchMember(1L, MatchStatus.DONE))
                 .thenReturn(recruitApplications);
@@ -215,7 +215,7 @@ class RecruitApplicationServiceTest {
     @DisplayName("등록자 승인 전, 사용자 리크루트 참여 신청 취소")
     @Test
     void Given_NormalRequest_When_CancelRecruitApplication_Then_Success() {
-        assertDoesNotThrow(()-> recruitApplicationService.cancelRecruitApplicationByParticipant(1L, 2L, MatchStatus.CANCEL));
+        assertDoesNotThrow(()-> recruitApplicationService.cancelRecruitApplication(1L, 2L, MatchStatus.CANCEL));
     }
 
     @DisplayName("등록자 사용자 리크루트 신청 승인")
