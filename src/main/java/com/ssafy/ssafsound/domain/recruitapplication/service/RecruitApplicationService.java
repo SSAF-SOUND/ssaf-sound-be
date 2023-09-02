@@ -80,7 +80,7 @@ public class RecruitApplicationService {
 
     @Transactional
     public PatchRecruitApplicationStatusResDto rejectRecruitApplication(Long recruitApplicationId, Long memberId, MatchStatus status) {
-        RecruitApplication recruitApplication = recruitApplicationRepository.findByIdAndMemberIdFetchRecruitWriter(recruitApplicationId)
+        RecruitApplication recruitApplication = recruitApplicationRepository.findByIdFetchParticipantAndRecruitWriter(recruitApplicationId)
                 .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
         return changeRecruitApplicationState(recruitApplication, memberId, status,
@@ -91,12 +91,18 @@ public class RecruitApplicationService {
     }
 
     @Transactional
-    public PatchRecruitApplicationStatusResDto cancelRecruitApplicationByParticipant(Long recruitApplicationId, Long memberId, MatchStatus status) {
-        RecruitApplication recruitApplication = recruitApplicationRepository.findByIdAndMemberId(recruitApplicationId, memberId)
+    public PatchRecruitApplicationStatusResDto cancelRecruitApplication(Long recruitApplicationId, Long memberId, MatchStatus status) {
+        RecruitApplication recruitApplication = recruitApplicationRepository.findByIdFetchParticipantAndRecruitWriter(recruitApplicationId)
                 .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
         return changeRecruitApplicationState(recruitApplication, memberId, status,
-                (entity, mid)-> recruitApplication.getMatchStatus() != MatchStatus.WAITING_REGISTER_APPROVE
+                (entity, mid)-> {
+                    boolean isNotValidParticipantCancel = (!entity.getMember().getId().equals(memberId)
+                            || (entity.getMatchStatus() != MatchStatus.WAITING_REGISTER_APPROVE));
+                    boolean isNotValidRegisterCancel = (!entity.getRecruit().getMember().getId().equals(memberId) ||
+                            entity.getMatchStatus() != MatchStatus.DONE);
+                    return isNotValidParticipantCancel && isNotValidRegisterCancel;
+                }
         );
     }
 

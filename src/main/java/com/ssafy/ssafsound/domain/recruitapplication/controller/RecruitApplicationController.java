@@ -42,7 +42,7 @@ public class RecruitApplicationController {
     @PatchMapping("/recruit-applications/{recruitApplicationId}/cancel")
     public EnvelopeResponse<PatchRecruitApplicationStatusResDto> cancelRecruitApplicationByParticipant(@PathVariable Long recruitApplicationId, @Authentication AuthenticatedMember memberInfo) {
         return EnvelopeResponse.<PatchRecruitApplicationStatusResDto>builder()
-            .data(recruitApplicationService.cancelRecruitApplicationByParticipant(recruitApplicationId, memberInfo.getMemberId(), MatchStatus.CANCEL))
+            .data(recruitApplicationService.cancelRecruitApplication(recruitApplicationId, memberInfo.getMemberId(), MatchStatus.CANCEL))
             .build();
     }
 
