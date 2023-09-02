@@ -63,4 +63,16 @@ public class Lunch {
     public int hashCode(){
         return Objects.hash(getId());
     }
+
+    public void deleteLunchPoll(LunchPoll lunchPoll) {
+        if (pollCount > 0) {
+            this.lunchPolls.remove(lunchPoll);
+            this.pollCount--;
+        }
+    }
+
+    public void createLunchPoll(LunchPoll lunchPoll) {
+        this.lunchPolls.add(lunchPoll);
+        this.pollCount++;
+    }
 }
