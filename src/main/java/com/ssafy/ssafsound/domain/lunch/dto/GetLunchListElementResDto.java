@@ -17,16 +17,16 @@ public class GetLunchListElementResDto {
 
     private String imagePath;
 
-    private Long pollCount;
+    private Integer pollCount;
 
-    public static GetLunchListElementResDto of(Lunch lunch, Long pollCount){
+    public static GetLunchListElementResDto of(Lunch lunch){
         return GetLunchListElementResDto.builder()
                 .lunchId(lunch.getId())
                 .mainMenu(lunch.getMainMenu())
                 .extraMenu(lunch.getExtraMenu())
                 .sumKcal(lunch.getSumKcal())
                 .imagePath(lunch.getImagePath())
-                .pollCount(pollCount)
+                .pollCount(lunch.getPollCount())
                 .build();
     }
 

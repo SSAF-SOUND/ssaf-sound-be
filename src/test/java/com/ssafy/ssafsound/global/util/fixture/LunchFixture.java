@@ -40,6 +40,7 @@ public class LunchFixture {
             .extraMenu("메뉴1, 메뉴2, 메뉴3")
             .sumKcal("1,544 kcal")
             .imagePath(LUNCH_IMAGE_FIXTURE1)
+            .pollCount(22)
             .build();
 
     public static final Lunch LUNCH_FIXTURE2 = Lunch.builder()
@@ -51,6 +52,7 @@ public class LunchFixture {
             .extraMenu("메뉴1, 메뉴2, 메뉴3")
             .sumKcal("1,994 kcal")
             .imagePath(LUNCH_IMAGE_FIXTURE2)
+            .pollCount(42)
             .build();
 
     public static final Lunch LUNCH_FIXTURE3 = Lunch.builder()
@@ -62,6 +64,7 @@ public class LunchFixture {
             .extraMenu("메뉴1, 메뉴2, 메뉴3")
             .sumKcal("2,012 kcal")
             .imagePath(LUNCH_IMAGE_FIXTURE3)
+            .pollCount(92)
             .build();
 
     public static final Lunch LUNCH_FIXTURE4 = Lunch.builder()
@@ -73,17 +76,18 @@ public class LunchFixture {
             .extraMenu("부대찌개,꽈리돈육조림,봉어묵볶음,해초무생채")
             .sumKcal("524")
             .imagePath(LUNCH_IMAGE_FIXTURE4)
+            .pollCount(37)
             .build();
 
-    public static final GetLunchListElementResDto GET_LUNCH_LIST_ELEMENT_RES_DTO1 = GetLunchListElementResDto.of(LUNCH_FIXTURE1, 29L);
-    public static final GetLunchListElementResDto GET_LUNCH_LIST_ELEMENT_RES_DTO2 = GetLunchListElementResDto.of(LUNCH_FIXTURE2, 22L);
-    public static final GetLunchListElementResDto GET_LUNCH_LIST_ELEMENT_RES_DTO3 = GetLunchListElementResDto.of(LUNCH_FIXTURE3, 17L);
+    public static final GetLunchListElementResDto GET_LUNCH_LIST_ELEMENT_RES_DTO1 = GetLunchListElementResDto.of(LUNCH_FIXTURE1);
+    public static final GetLunchListElementResDto GET_LUNCH_LIST_ELEMENT_RES_DTO2 = GetLunchListElementResDto.of(LUNCH_FIXTURE2);
+    public static final GetLunchListElementResDto GET_LUNCH_LIST_ELEMENT_RES_DTO3 = GetLunchListElementResDto.of(LUNCH_FIXTURE3);
 
     public static final GetLunchListResDto GET_LUNCH_LIST_RES_DTO = GetLunchListResDto.of(
             List.of(GET_LUNCH_LIST_ELEMENT_RES_DTO1,
                     GET_LUNCH_LIST_ELEMENT_RES_DTO2,
                     GET_LUNCH_LIST_ELEMENT_RES_DTO3
-            ), 1L);
+            ), 1);
 
     public static final LunchPoll LUNCH_POLL_FIXTURE1 = LunchPoll.builder()
             .id(1L)
@@ -106,5 +110,5 @@ public class LunchFixture {
             .polledAt(LOCAL_DATE_FIXTURE)
             .build();
 
-    public static final PostLunchPollResDto POST_LUNCH_POLL_RES_DTO = PostLunchPollResDto.of(4327L);
+    public static final PostLunchPollResDto POST_LUNCH_POLL_RES_DTO = PostLunchPollResDto.of(4327);
 }

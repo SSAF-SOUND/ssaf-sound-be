@@ -7,9 +7,9 @@ import lombok.Getter;
 @Builder
 public class PostLunchPollResDto {
 
-    private Long pollCount;
+    private Integer pollCount;
 
-    public static PostLunchPollResDto of(Long pollCount){
+    public static PostLunchPollResDto of(Integer pollCount){
         return PostLunchPollResDto.builder()
                 .pollCount(pollCount)
                 .build();

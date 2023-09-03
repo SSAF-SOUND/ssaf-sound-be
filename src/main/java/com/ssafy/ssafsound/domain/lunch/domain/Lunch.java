@@ -43,6 +43,9 @@ public class Lunch {
     @Column
     private LocalDate createdAt;
 
+    @Column
+    private Integer pollCount;
+
     @OneToMany(mappedBy = "lunch")
     @Builder.Default
     private List<LunchPoll> lunchPolls = new ArrayList<>();
@@ -59,5 +62,17 @@ public class Lunch {
     @Override
     public int hashCode(){
         return Objects.hash(getId());
+    }
+
+    public void deleteLunchPoll(LunchPoll lunchPoll) {
+        if (pollCount > 0) {
+            this.lunchPolls.remove(lunchPoll);
+            this.pollCount--;
+        }
+    }
+
+    public void createLunchPoll(LunchPoll lunchPoll) {
+        this.lunchPolls.add(lunchPoll);
+        this.pollCount++;
     }
 }

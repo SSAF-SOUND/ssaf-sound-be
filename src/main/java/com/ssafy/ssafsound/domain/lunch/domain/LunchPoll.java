@@ -1,7 +1,5 @@
 package com.ssafy.ssafsound.domain.lunch.domain;
 
-import com.ssafy.ssafsound.domain.lunch.exception.LunchErrorInfo;
-import com.ssafy.ssafsound.domain.lunch.exception.LunchException;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,16 +35,16 @@ public class LunchPoll {
     public void setLunch(Lunch lunch){
 
         if (this.lunch != null){
-            this.lunch.getLunchPolls().remove(this);
+            this.lunch.deleteLunchPoll(this);
         }
 
         this.lunch = lunch;
-        lunch.getLunchPolls().add(this);
+        this.lunch.createLunchPoll(this);
     }
 
     public void deleteLunchPoll() {
         if (this.lunch != null) {
-            this.lunch.getLunchPolls().remove(this);
+            this.lunch.deleteLunchPoll(this);
         }
     }
 }

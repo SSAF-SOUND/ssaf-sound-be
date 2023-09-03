@@ -73,7 +73,7 @@ public class LunchPollService {
             lunchPollRepository.save(lunchPoll);
         }
 
-        return PostLunchPollResDto.of((long) lunch.getLunchPolls().size());
+        return PostLunchPollResDto.of(lunch.getPollCount());
     }
 
     @Transactional
@@ -102,6 +102,6 @@ public class LunchPollService {
         lunchPollRepository.delete(lunchPoll);
 
         // 변화한 투표 수 리턴
-        return PostLunchPollResDto.of((long) lunch.getLunchPolls().size());
+        return PostLunchPollResDto.of(lunch.getPollCount());
     }
 }
