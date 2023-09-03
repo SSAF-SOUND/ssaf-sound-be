@@ -50,6 +50,10 @@ public class RecruitApplicationService {
             throw new RecruitException(RecruitErrorInfo.NOT_RECRUITING_TYPE);
         }
 
+        if(isPrevExistWaitingOrDoneMember(recruitId, memberId)) {
+            throw new RecruitException(RecruitErrorInfo.PREV_EXIST_MEMBER_APPLICATION);
+        }
+
         RecruitApplication recruitApplication = postRecruitApplicationReqDto.createRecruitApplicationFromPredefinedMetadata(
                 memberRepository.getReferenceById(memberId),
                 recruit,
@@ -75,36 +79,30 @@ public class RecruitApplicationService {
     }
 
     @Transactional
-    public PatchRecruitApplicationStatusResDto joinRecruitApplication(Long recruitApplicationId, Long memberId, MatchStatus status) {
-        RecruitApplication recruitApplication = recruitApplicationRepository.findByIdAndMemberId(recruitApplicationId, memberId)
-                .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
-
-        RecruitLimitation recruitLimitation = getNotFullRecruitLimitation(recruitApplication.getRecruit(), recruitApplication.getType());
-        recruitLimitation.increaseCurrentNumber();
-        return changeRecruitApplicationState(recruitApplication, memberId, status,
-                (entity, mid)-> !entity.getMatchStatus().equals(MatchStatus.WAITING_APPLICANT));
-    }
-
-    @Transactional
     public PatchRecruitApplicationStatusResDto rejectRecruitApplication(Long recruitApplicationId, Long memberId, MatchStatus status) {
-        RecruitApplication recruitApplication = recruitApplicationRepository.findByIdAndMemberIdFetchRecruitWriter(recruitApplicationId)
+        RecruitApplication recruitApplication = recruitApplicationRepository.findByIdFetchParticipantAndRecruitWriter(recruitApplicationId)
                 .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
         return changeRecruitApplicationState(recruitApplication, memberId, status,
                 (entity, mid)-> {
                     boolean isNotValidRegisterAndState = (!entity.getRecruit().getMember().getId().equals(mid) || !entity.getMatchStatus().equals(MatchStatus.WAITING_REGISTER_APPROVE));
-                    boolean isNotValidParticipantAndStatus = (!entity.getMember().getId().equals(mid) || !entity.getMatchStatus().equals(MatchStatus.WAITING_APPLICANT));
-                    return isNotValidRegisterAndState && isNotValidParticipantAndStatus;
+                    return isNotValidRegisterAndState;
                 });
     }
 
     @Transactional
-    public PatchRecruitApplicationStatusResDto cancelRecruitApplicationByParticipant(Long recruitApplicationId, Long memberId, MatchStatus status) {
-        RecruitApplication recruitApplication = recruitApplicationRepository.findByIdAndMemberId(recruitApplicationId, memberId)
+    public PatchRecruitApplicationStatusResDto cancelRecruitApplication(Long recruitApplicationId, Long memberId, MatchStatus status) {
+        RecruitApplication recruitApplication = recruitApplicationRepository.findByIdFetchParticipantAndRecruitWriter(recruitApplicationId)
                 .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
         return changeRecruitApplicationState(recruitApplication, memberId, status,
-                (entity, mid)-> recruitApplication.getMatchStatus() != MatchStatus.WAITING_REGISTER_APPROVE
+                (entity, mid)-> {
+                    boolean isNotValidParticipantCancel = (!entity.getMember().getId().equals(memberId)
+                            || (entity.getMatchStatus() != MatchStatus.WAITING_REGISTER_APPROVE));
+                    boolean isNotValidRegisterCancel = (!entity.getRecruit().getMember().getId().equals(memberId) ||
+                            entity.getMatchStatus() != MatchStatus.DONE);
+                    return isNotValidParticipantCancel && isNotValidRegisterCancel;
+                }
         );
     }
 
@@ -140,6 +138,15 @@ public class RecruitApplicationService {
     @Transactional(readOnly = true)
     public GetRecruitApplicationDetailResDto getRecruitApplicationByIdAndRegisterId(Long recruitApplicationId, Long registerId) {
         return new GetRecruitApplicationDetailResDto(recruitApplicationRepository.findByRecruitApplicationIdAndRegisterId(recruitApplicationId, registerId));
+    }
+
+    private boolean isPrevExistWaitingOrDoneMember(Long recruitId, Long memberId) {
+        RecruitApplication recentRecruitApplication = recruitApplicationRepository.findTopByRecruitIdAndMemberIdOrderByIdDesc(recruitId, memberId);
+        if(recentRecruitApplication == null) return false;
+
+        boolean prevWaitingMember = recentRecruitApplication.getMatchStatus().equals(MatchStatus.WAITING_REGISTER_APPROVE);
+        boolean prevDoneMember = recentRecruitApplication.getMatchStatus().equals(MatchStatus.DONE);
+        return (prevWaitingMember || prevDoneMember);
     }
 
     private PatchRecruitApplicationStatusResDto changeRecruitApplicationState(RecruitApplication recruitApplication, Long memberId,

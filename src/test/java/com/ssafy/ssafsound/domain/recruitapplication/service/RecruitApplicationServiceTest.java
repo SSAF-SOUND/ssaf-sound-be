@@ -136,7 +136,7 @@ class RecruitApplicationServiceTest {
                 .thenReturn(java.util.Optional.ofNullable(recruitApplication));
         lenient().when(recruitApplicationRepository.findByIdFetchRecruitWriter(1L))
                 .thenReturn(java.util.Optional.ofNullable(recruitApplication));
-        lenient().when(recruitApplicationRepository.findByIdAndMemberIdFetchRecruitWriter(1L))
+        lenient().when(recruitApplicationRepository.findByIdFetchParticipantAndRecruitWriter(1L))
                 .thenReturn(java.util.Optional.ofNullable(recruitApplication));
         lenient().when(recruitApplicationRepository.findByRecruitIdAndMatchStatusFetchMember(1L, MatchStatus.DONE))
                 .thenReturn(recruitApplications);
@@ -215,20 +215,13 @@ class RecruitApplicationServiceTest {
     @DisplayName("등록자 승인 전, 사용자 리크루트 참여 신청 취소")
     @Test
     void Given_NormalRequest_When_CancelRecruitApplication_Then_Success() {
-        assertDoesNotThrow(()-> recruitApplicationService.cancelRecruitApplicationByParticipant(1L, 2L, MatchStatus.CANCEL));
+        assertDoesNotThrow(()-> recruitApplicationService.cancelRecruitApplication(1L, 2L, MatchStatus.CANCEL));
     }
 
-    @DisplayName("등록자 승인 이후 사용자 리크루트 참여 신청 취소 실패")
-    @Test
-    void Given_AfterApproveByRegisterRecruitApplication_When_CancelRecruitApplication_Then_Fail() {
-        recruitApplication.changeStatus(MatchStatus.WAITING_APPLICANT);
-        assertThrows(RecruitException.class, ()->recruitApplicationService.cancelRecruitApplicationByParticipant(1L, 2L, MatchStatus.CANCEL));
-    }
-
-    @DisplayName("등록자 승인 사용자 리크루트 신청 승인")
+    @DisplayName("등록자 사용자 리크루트 신청 승인")
     @Test
     void Given_NormalRequest_When_ApproveRecruitApplicationByRegister_Then_Success() {
-        assertDoesNotThrow(()-> recruitApplicationService.approveRecruitApplicationByRegister(1L, 1L, MatchStatus.WAITING_APPLICANT));
+        assertDoesNotThrow(()-> recruitApplicationService.approveRecruitApplicationByRegister(1L, 1L, MatchStatus.DONE));
     }
 
     @DisplayName("이미 모두 모집된 리크루트글에 대한 등록자 승인 사용자 리크루트 신청 승인")
@@ -241,37 +234,20 @@ class RecruitApplicationServiceTest {
                 .type(new MetaData(RecruitType.DESIGN))
                 .build());
         recruit.setRecruitLimitations(limits);
-        assertThrows(RecruitException.class, ()-> recruitApplicationService.approveRecruitApplicationByRegister(1L, 1L, MatchStatus.WAITING_APPLICANT));
+        assertThrows(RecruitException.class, ()-> recruitApplicationService.approveRecruitApplicationByRegister(1L, 1L, MatchStatus.DONE));
     }
 
     @DisplayName("등록자가 아닌 사용자의 사용자 리크루트 신청 승인 실패")
     @Test
     void Given_NotRegister_When_ApproveRecruitApplicationByRegister_Then_Fail() {
-        assertThrows(RecruitException.class, ()-> recruitApplicationService.approveRecruitApplicationByRegister(1L, 2L, MatchStatus.WAITING_APPLICANT));
+        assertThrows(RecruitException.class, ()-> recruitApplicationService.approveRecruitApplicationByRegister(1L, 2L, MatchStatus.DONE));
     }
 
     @DisplayName("취소된 신청에 대한 등록자 승인 실패")
     @Test
     void Given_CancelRecruitApplication_When_ApproveRecruitApplicationByRegister_Then_Fail() {
         recruitApplication.changeStatus(MatchStatus.CANCEL);
-        assertThrows(RecruitException.class, ()-> recruitApplicationService.approveRecruitApplicationByRegister(1L, 1L, MatchStatus.WAITING_APPLICANT));
-    }
-
-    @DisplayName("사용자 리크루트 신청 최종 참여 승인")
-    @Test
-    void Given_NormalRequest_When_JoinRecruitApplicationByParticipant_Then_Success() {
-        recruitApplication.changeStatus(MatchStatus.WAITING_APPLICANT);
-        recruitApplicationService.joinRecruitApplication(1L, 2L, MatchStatus.DONE);
-        assertEquals(1, limits.get(0).getCurrentNumber());
-    }
-
-    @DisplayName("사용자 리크루트 신청 최종 참여 거절")
-    @Test
-    void Given_NormalRequest_When_RejectRecruitApplicationByParticipant_Then_Success() {
-        recruitApplication.changeStatus(MatchStatus.WAITING_APPLICANT);
-        assertDoesNotThrow(
-                ()->recruitApplicationService.rejectRecruitApplication(1L, 2L, MatchStatus.REJECT)
-        );
+        assertThrows(RecruitException.class, ()-> recruitApplicationService.approveRecruitApplicationByRegister(1L, 1L, MatchStatus.DONE));
     }
 
     @DisplayName("사용자 리크루트 신청 최종 참여 거절 실패")
@@ -293,7 +269,7 @@ class RecruitApplicationServiceTest {
     @DisplayName("등록자 리크루트 신청 거절 실패")
     @Test
     void Given_NotValidStatus_When_RejectRecruitApplicationByRegister_Then_Success() {
-        recruitApplication.changeStatus(MatchStatus.WAITING_APPLICANT);
+        recruitApplication.changeStatus(MatchStatus.DONE);
         assertThrows(RecruitException.class,
                 ()->recruitApplicationService.rejectRecruitApplication(1L, 1L, MatchStatus.REJECT)
         );
