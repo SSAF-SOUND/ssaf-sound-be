@@ -39,7 +39,6 @@ public class PostService {
     private final PostLikeRepository postLikeRepository;
     private final HotPostRepository hotPostRepository;
     private final PostScrapRepository postScrapRepository;
-    private final PostReportRepository postReportRepository;
     private final PostImageRepository postImageRepository;
     private final AwsS3StorageService awsS3StorageService;
 
@@ -157,30 +156,6 @@ public class PostService {
 
     private void deleteScrapIfAlreadyExists(PostScrap postScrap) {
         postScrapRepository.delete(postScrap);
-    }
-
-    @Transactional
-    public Long reportPost(Long postId, Long loginMemberId, PostPostReportReqDto postPostReportReqDto) {
-        String content = postPostReportReqDto.getContent();
-
-        Member loginMember = memberRepository.findById(loginMemberId)
-                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
-
-        if (postReportRepository.existsByPostIdAndMemberId(postId, loginMember.getId())) {
-            throw new PostException(PostErrorInfo.DUPLICATE_REPORT);
-        }
-
-        if (postRepository.existsByIdAndMemberId(postId, loginMember.getId())) {
-            throw new PostException(PostErrorInfo.UNABLE_REPORT_MY_POST);
-        }
-
-        PostReport postReport = PostReport.builder()
-                .post(postRepository.getReferenceById(postId))
-                .member(loginMember)
-                .content(content)
-                .build();
-
-        return postReportRepository.save(postReport).getId();
     }
 
     @Transactional

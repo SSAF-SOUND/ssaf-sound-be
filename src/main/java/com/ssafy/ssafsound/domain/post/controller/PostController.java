@@ -4,7 +4,6 @@ import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.validator.Authentication;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
-import com.ssafy.ssafsound.domain.post.dto.PostPostReportReqDto;
 import com.ssafy.ssafsound.domain.post.dto.PostPostWriteReqDto;
 import com.ssafy.ssafsound.domain.post.dto.*;
 import com.ssafy.ssafsound.domain.post.service.PostService;
@@ -50,15 +49,6 @@ public class PostController {
 
         return EnvelopeResponse.<PostPostScrapResDto>builder()
                 .data(postService.scrapPost(postId, loginMember.getMemberId()))
-                .build();
-    }
-
-    @PostMapping("/{postId}/report")
-    public EnvelopeResponse<Long> reportPost(@PathVariable Long postId,
-                                             @Valid @RequestBody PostPostReportReqDto postPostReportReqDto,
-                                             @Authentication AuthenticatedMember loginMember) {
-        return EnvelopeResponse.<Long>builder()
-                .data(postService.reportPost(postId, loginMember.getMemberId(), postPostReportReqDto))
                 .build();
     }
 

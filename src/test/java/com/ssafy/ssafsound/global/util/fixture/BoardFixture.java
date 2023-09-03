@@ -1,7 +1,6 @@
 package com.ssafy.ssafsound.global.util.fixture;
 
 import com.ssafy.ssafsound.domain.board.domain.Board;
-import com.ssafy.ssafsound.domain.board.dto.GetBoardElement;
 import com.ssafy.ssafsound.domain.board.dto.GetBoardResDto;
 
 import java.util.List;
