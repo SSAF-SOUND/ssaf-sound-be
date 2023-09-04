@@ -64,7 +64,7 @@ public class AuthController {
         MemberToken memberToken = authService.getMemberTokenByRefreshToken(refreshToken);
         CreateMemberAccessTokenResDto createMemberAccessTokenResDto = authService.reissueAccessToken(memberToken);
         ResponseCookie accessTokenCookie = cookieProvider
-                .setCookieWithOptions("accessToken", createMemberAccessTokenResDto.getAccessToken());
+                .setAccessTokenCookie(createMemberAccessTokenResDto.getAccessToken());
 
         response.setHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
 

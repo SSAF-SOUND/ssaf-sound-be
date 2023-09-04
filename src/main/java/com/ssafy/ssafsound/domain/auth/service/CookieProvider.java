@@ -1,5 +1,7 @@
 package com.ssafy.ssafsound.domain.auth.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -12,28 +14,36 @@ import javax.servlet.http.HttpServletResponse;
 @NoArgsConstructor
 public class CookieProvider {
 
-    public ResponseCookie setCookieWithOptions(String name, String value) {
-        ResponseCookie responseCookie = ResponseCookie.from(name, value)
+    public ResponseCookie setRefreshTokenCookie(String value) {
+        return ResponseCookie.from("refreshToken", value)
+            .httpOnly(true)
+            .maxAge(2629744)
+            .secure(true)
+            .path("/auth/reissue")
+            .build();
+    }
+
+    public ResponseCookie setAccessTokenCookie(String value) {
+        return ResponseCookie.from("accessToken", value)
             .httpOnly(true)
             .maxAge(2629744)
             .secure(true)
             .path("/")
-            .sameSite("None")
             .build();
-        return responseCookie;
     }
 
     public void setResponseWithCookies(HttpServletResponse response, String accessToken, String refreshToken) {
-        ResponseCookie accessTokenCookie, refreshTokenCookie;
+        List<String> cookieStrings = new ArrayList<>();
+
         if (accessToken == null && refreshToken == null) {
-            accessTokenCookie = deleteCookie("accessToken", null);
-            refreshTokenCookie = deleteCookie("refreshToken", null);
+            cookieStrings.add(deleteCookie("accessToken", null).toString());
+            cookieStrings.add(deleteCookie("refreshToken", null).toString());
         } else {
-            accessTokenCookie = setCookieWithOptions("accessToken", accessToken);
-            refreshTokenCookie = setCookieWithOptions("refreshToken", refreshToken);
+            cookieStrings.add(setAccessTokenCookie(accessToken).toString());
+            cookieStrings.add(setRefreshTokenCookie(refreshToken).toString());
         }
-        response.setHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
-        response.setHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+
+        response.setHeader(HttpHeaders.SET_COOKIE, String.join("; ", cookieStrings));
     }
 
     public ResponseCookie deleteCookie(String name, String value) {
