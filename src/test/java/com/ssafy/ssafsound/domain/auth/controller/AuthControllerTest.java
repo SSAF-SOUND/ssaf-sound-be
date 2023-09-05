@@ -1,6 +1,6 @@
 package com.ssafy.ssafsound.domain.auth.controller;
 
-import com.ssafy.ssafsound.domain.auth.fixture.AuthFixture;
+import com.ssafy.ssafsound.global.util.fixture.AuthFixture;
 import com.ssafy.ssafsound.global.docs.ControllerTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
