@@ -91,7 +91,7 @@ class AuthControllerTest extends ControllerTest {
                 .willReturn(AuthFixture.createMemberAccessTokenResDto);
 
         given(cookieProvider
-                .setCookieWithOptions("accessToken", AuthFixture.createMemberAccessTokenResDto.getAccessToken()))
+                .setAccessTokenCookie(AuthFixture.createMemberAccessTokenResDto.getAccessToken()))
                 .willReturn(AuthFixture.getAccessTokenCookie());
 
         restDocs
