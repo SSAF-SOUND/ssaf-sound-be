@@ -44,9 +44,6 @@ class PostServiceTest {
     private PostScrapRepository postScrapRepository;
 
     @Mock
-    private PostReportRepository postReportRepository;
-
-    @Mock
     private PostImageRepository postImageRepository;
 
     @Mock
