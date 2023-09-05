@@ -114,8 +114,8 @@ class LunchPollServiceTest {
     @CsvSource({"1, 1, 1, 0", "2, 1, 1, 1"})
     @DisplayName("점심 메뉴에 투표한다.")
     void Given_MemberIdAndLunchId_When_SaveLunchPoll_Then_Succeed(Long memberId, Long lunchId,
-                                                                  Long expectedLunch1PollCount,
-                                                                  Long expectedLunch2PollCount) {
+                                                                  Integer expectedLunch1PollCount,
+                                                                  Integer expectedLunch2PollCount) {
 
         // given
         lenient().when(lunchPollRepository.findByMemberAndPolledAt(member1, today)).thenReturn(lunchPoll);
@@ -127,7 +127,7 @@ class LunchPollServiceTest {
         // then
         assertAll(
                 () -> assertEquals(expectedLunch1PollCount, postLunchPollResDto.getPollCount()),
-                () -> assertEquals(expectedLunch2PollCount, lunch2.getLunchPolls().size())
+                () -> assertEquals(expectedLunch2PollCount, lunch2.getPollCount())
         );
 
     }
