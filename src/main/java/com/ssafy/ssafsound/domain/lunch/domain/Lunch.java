@@ -44,7 +44,8 @@ public class Lunch {
     private LocalDate createdAt;
 
     @Column
-    private Integer pollCount;
+    @Builder.Default
+    private Integer pollCount = 0;
 
     @OneToMany(mappedBy = "lunch")
     @Builder.Default
