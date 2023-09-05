@@ -1,13 +1,10 @@
 package com.ssafy.ssafsound.domain.auth.service;
 
-import java.util.ArrayList;
-import java.util.List;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 @Component
@@ -33,26 +30,22 @@ public class CookieProvider {
     }
 
     public void setResponseWithCookies(HttpServletResponse response, String accessToken, String refreshToken) {
-        List<String> cookieStrings = new ArrayList<>();
 
         if (accessToken == null && refreshToken == null) {
-            cookieStrings.add(deleteCookie("accessToken", null).toString());
-            cookieStrings.add(deleteCookie("refreshToken", null).toString());
+            response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie("accessToken", null).toString());
+            response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie("refreshToken", null).toString());
         } else {
-            cookieStrings.add(setAccessTokenCookie(accessToken).toString());
-            cookieStrings.add(setRefreshTokenCookie(refreshToken).toString());
+            response.addHeader(HttpHeaders.SET_COOKIE, setAccessTokenCookie(accessToken).toString());
+            response.addHeader(HttpHeaders.SET_COOKIE, setRefreshTokenCookie(refreshToken).toString());
         }
-
-        response.setHeader(HttpHeaders.SET_COOKIE, String.join("; ", cookieStrings));
     }
 
     public ResponseCookie deleteCookie(String name, String value) {
-        ResponseCookie cookie = ResponseCookie.from(name, value)
+        return ResponseCookie.from(name, value)
                 .httpOnly(true)
                 .maxAge(0)
                 .secure(true)
                 .path("/")
                 .build();
-        return cookie;
     }
 }
