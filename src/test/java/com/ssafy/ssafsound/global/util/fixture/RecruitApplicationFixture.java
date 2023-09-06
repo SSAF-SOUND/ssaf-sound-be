@@ -16,17 +16,21 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RecruitApplicationFixture {
+
+    private static final MemberFixture memberFixture = new MemberFixture();
+
     public static final PostRecruitApplicationReqDto POST_RECRUIT_APPLICATION_REQ_DTO
             = new PostRecruitApplicationReqDto(RecruitType.FRONT_END.getName(), List.of("취업 준비를 위해서 신청하게되었습니다."));
 
     public static final PostRecruitApplicationLikeResDto POST_RECRUIT_APPLICATION_LIKE_RES_DTO = new PostRecruitApplicationLikeResDto(true);
+
     public static final RecruitApplication getRecruitApplication1_ByMatchStatus(MatchStatus matchStatus, MetaData recruitType, Boolean isLike) {
         RecruitApplication recruitApplication = RecruitApplication.builder()
                 .id(1L)
                 .matchStatus(matchStatus)
                 .recruit(RecruitFixture.RECRUIT_1)
                 .type(recruitType)
-                .member(MemberFixture.MEMBER_TIM)
+                .member(memberFixture.createMember())
                 .isLike(isLike)
                 .build();
 
@@ -40,7 +44,7 @@ public class RecruitApplicationFixture {
             .recruitApplicationId(1L)
             .recruitType(RecruitType.FRONT_END.getName())
             .matchStatus(MatchStatus.PENDING)
-            .author(new AuthorElement(MemberFixture.MEMBER_TIM, false))
+            .author(new AuthorElement(memberFixture.createMember(), false))
             .question(RecruitFixture.RECRUIT_1.getQuestions().get(0).getContent())
             .reply("취업 준비를 위해서 신청하게되었습니다.")
             .liked(false)

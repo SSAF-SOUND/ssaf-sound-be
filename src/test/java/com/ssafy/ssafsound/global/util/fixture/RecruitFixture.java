@@ -18,6 +18,7 @@ import java.util.List;
 
 public class RecruitFixture {
 
+    private static final MemberFixture memberFixture = new MemberFixture();
     private static String CONTACT_URI = "https://open.kakao.com/o/sA8Kb83b";
     private static String RECRUIT_TITLE = "[사이드 프로젝트] 공모전 레퍼런스 웹 플랫폼 개발 프로젝트 팀원을 모집합니다.";
     private static String RECRUIT_CONTENT = "<p>[프로젝트 소개]</p>\n" +
@@ -53,7 +54,7 @@ public class RecruitFixture {
             .finishedRecruit(false)
             .registerRecruitType(new MetaData(RecruitType.BACK_END))
             .contactURI(CONTACT_URI)
-            .member(MemberFixture.MEMBER_KIM)
+            .member(memberFixture.createMember())
             .build();
 
     static {
@@ -116,7 +117,7 @@ public class RecruitFixture {
             .skills(RECRUIT_1_SKILL_DTO)
             .limits(RECRUIT_1_LIMIT_DETAIL)
             .questions(List.of(RECRUIT_QUESTION))
-            .author(new AuthorElement(MemberFixture.MEMBER_KIM, false))
+            .author(new AuthorElement(memberFixture.createMember(), false))
             .scrapCount(1L)
             .scraped(true)
             .matchStatus(MatchStatus.INITIAL.name())
