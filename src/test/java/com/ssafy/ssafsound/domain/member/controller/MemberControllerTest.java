@@ -1,7 +1,6 @@
 package com.ssafy.ssafsound.domain.member.controller;
 
-import com.ssafy.ssafsound.domain.member.dto.GetMemberResDto;
-import com.ssafy.ssafsound.domain.member.dto.PostMemberInfoReqDto;
+import com.ssafy.ssafsound.domain.member.dto.*;
 import com.ssafy.ssafsound.global.docs.ControllerTest;
 import com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet;
 import com.ssafy.ssafsound.global.util.fixture.MemberFixture;
@@ -24,6 +23,8 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class MemberControllerTest extends ControllerTest {
+
+    private final MemberFixture memberFixture = new MemberFixture();
 
     public ResponseFieldsSnippet getPortfolioSnippet() {
         return getEnvelopPatternWithData()
@@ -78,7 +79,7 @@ class MemberControllerTest extends ControllerTest {
     void getMemberInformationByFirstTry() {
 
         given(memberService.getMemberInformation(any()))
-                .willReturn(GetMemberResDto.fromGeneralUser(MemberFixture.INITIALIZER_MEMBER));
+                .willReturn(GetMemberResDto.fromGeneralUser(memberFixture.createInitializerMember()));
 
         restDocs
                 .cookie(ACCESS_TOKEN)
@@ -102,7 +103,7 @@ class MemberControllerTest extends ControllerTest {
     void getGeneralMemberInformation() {
 
         given(memberService.getMemberInformation(any()))
-                .willReturn(GetMemberResDto.fromGeneralUser(MemberFixture.GENERAL_MEMBER));
+                .willReturn(GetMemberResDto.fromGeneralUser(memberFixture.createGeneralMember()));
 
         restDocs
                 .cookie(ACCESS_TOKEN)
@@ -132,7 +133,7 @@ class MemberControllerTest extends ControllerTest {
     void getSSAFYMemberInformation() {
 
         given(memberService.getMemberInformation(any()))
-                .willReturn(MemberFixture.CERTIFIED_SSAFY_MEMBER);
+                .willReturn(memberFixture.createCertifiedSSAFYMember());
 
         restDocs
                 .cookie(ACCESS_TOKEN)
@@ -150,7 +151,7 @@ class MemberControllerTest extends ControllerTest {
     void putMemberInformation() {
 
         given(memberService.registerMemberInformation(any(), any()))
-                .willReturn(GetMemberResDto.fromGeneralUser(MemberFixture.GENERAL_MEMBER));
+                .willReturn(GetMemberResDto.fromGeneralUser(memberFixture.createGeneralMember()));
         given(semesterValidator.isValid(any(), any())).willReturn(true);
 
         PostMemberInfoReqDto postMemberInfoReqDto = PostMemberInfoReqDto.builder()
@@ -178,7 +179,7 @@ class MemberControllerTest extends ControllerTest {
     void putMemberSSAFYInformation() {
 
         given(memberService.registerMemberInformation(any(), any()))
-                .willReturn(MemberFixture.UNCERTIFIED_SSAFY_MEMBER);
+                .willReturn(memberFixture.createUncertifiedSSAFYMember());
         given(semesterValidator.isValid(any(), any())).willReturn(true);
         given(semesterConstantProvider.getMAX_SEMESTER()).willReturn(10);
         given(semesterConstantProvider.getMIN_SEMESTER()).willReturn(1);
@@ -210,7 +211,7 @@ class MemberControllerTest extends ControllerTest {
     void certificationSSAFY() {
 
         given(memberService.certifySSAFYInformation(any(), any()))
-                .willReturn(MemberFixture.POST_CERTIFICATION_INFO_RESPONSE);
+                .willReturn(memberFixture.createPostCertificationInfoResDto());
         given(semesterValidator.isValid(any(), any())).willReturn(true);
         given(semesterConstantProvider.getMAX_SEMESTER()).willReturn(10);
         given(semesterConstantProvider.getMIN_SEMESTER()).willReturn(1);
@@ -218,7 +219,7 @@ class MemberControllerTest extends ControllerTest {
         restDocs
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .cookie(ACCESS_TOKEN)
-                .body(MemberFixture.POST_CERTIFICATION_INFO_REQUEST)
+                .body(memberFixture.createPostCertificationInfoReqDto())
                 .when().post("/members/ssafy-certification")
                 .then().log().all()
                 .assertThat()
@@ -241,7 +242,7 @@ class MemberControllerTest extends ControllerTest {
     void getMyPortfolio() {
 
         given(memberService.getMyPortfolio(any()))
-                .willReturn(MemberFixture.MY_PORTFOLIO);
+                .willReturn(memberFixture.createGetMemberPortfolioResDto());
 
         restDocs
                 .cookie(ACCESS_TOKEN)
@@ -259,7 +260,7 @@ class MemberControllerTest extends ControllerTest {
     void getOtherPortfolio() {
 
         given(memberService.getMemberPortfolioById(any()))
-                .willReturn(MemberFixture.MY_PORTFOLIO);
+                .willReturn(memberFixture.createGetMemberPortfolioResDto());
 
         restDocs
                 .when().get("members/{memberId}/portfolio", 99)
@@ -279,7 +280,7 @@ class MemberControllerTest extends ControllerTest {
         restDocs
                 .cookie(ACCESS_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(MemberFixture.PUT_MEMBER_PORTFOLIO_REQUEST)
+                .body(memberFixture.createPutMemberPortfolioReqDto())
                 .when().put("members/portfolio")
                 .then().log().all()
                 .assertThat()
@@ -300,7 +301,7 @@ class MemberControllerTest extends ControllerTest {
     void getMemberDefaultInformation() {
 
         given(memberService.getMemberDefaultInfoByMemberId(any()))
-                .willReturn(MemberFixture.GET_MEMBER_DEFAULT_INFO);
+                .willReturn(GetMemberDefaultInfoResDto.from(memberFixture.createMember()));
 
         restDocs
                 .when().get("members/{memberId}/default-information", 99)
@@ -334,7 +335,7 @@ class MemberControllerTest extends ControllerTest {
         restDocs
                 .cookie(ACCESS_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(MemberFixture.PATCH_MEMBER_DEFAULT_INFO_REQUEST)
+                .body(memberFixture.createPatchMemberDefaultInfoReqDto())
                 .when().patch("members/default-information")
                 .then().log().all()
                 .assertThat()
@@ -353,7 +354,7 @@ class MemberControllerTest extends ControllerTest {
     void getStatusOfPublicProfile() {
 
         given(memberService.getMemberPublicProfileByMemberId(any()))
-                .willReturn(MemberFixture.GET_MEMBER_PUBLIC_PROFILE);
+                .willReturn(memberFixture.createGetMemberPublicProfileResDto());
 
         restDocs
                 .cookie(ACCESS_TOKEN)
@@ -374,7 +375,7 @@ class MemberControllerTest extends ControllerTest {
     void getOtherStatusOfPublicProfile() {
 
         given(memberService.getMemberPublicProfileByMemberId(any()))
-                .willReturn(MemberFixture.GET_MEMBER_PUBLIC_PROFILE);
+                .willReturn(memberFixture.createGetMemberPublicProfileResDto());
 
         restDocs
                 .cookie(ACCESS_TOKEN)
@@ -398,7 +399,7 @@ class MemberControllerTest extends ControllerTest {
         restDocs
                 .cookie(ACCESS_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(MemberFixture.PATCH_MEMBER_PUBLIC_PROFILE_REQUEST)
+                .body(memberFixture.createPatchMemberPublicProfileReqDto())
                 .when().patch("members/public-profile")
                 .then().log().all()
                 .assertThat()
@@ -415,11 +416,11 @@ class MemberControllerTest extends ControllerTest {
     void checkNicknamePossible() {
 
         given(memberService.checkNicknamePossible(any()))
-                .willReturn(MemberFixture.POST_NICKNAME_RESPONSE);
+                .willReturn(memberFixture.createPostNicknameResDto());
 
         restDocs
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(MemberFixture.POST_NICKNAME_REQUEST)
+                .body(memberFixture.createPostNicknameReqDto())
                 .when().post("members/nickname")
                 .then().log().all()
                 .assertThat()
@@ -442,7 +443,7 @@ class MemberControllerTest extends ControllerTest {
         restDocs
                 .cookie(ACCESS_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(MemberFixture.POST_NICKNAME_REQUEST)
+                .body(memberFixture.createPostNicknameReqDto())
                 .when().patch("members/nickname")
                 .then().log().all()
                 .assertThat()
@@ -461,7 +462,7 @@ class MemberControllerTest extends ControllerTest {
         restDocs
                 .cookie(ACCESS_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(MemberFixture.PATCH_IS_MAJOR_REQUEST)
+                .body(memberFixture.createPatchMemberMajorReqDto())
                 .when().patch("members/major")
                 .then().log().all()
                 .assertThat()
@@ -480,7 +481,7 @@ class MemberControllerTest extends ControllerTest {
         restDocs
                 .cookie(ACCESS_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(MemberFixture.PATCH_MEMBER_MAJOR_TRACK)
+                .body(memberFixture.createPatchMemberMajorTrackReqDto())
                 .when().patch("members/major-track")
                 .then().log().all()
                 .assertThat()
