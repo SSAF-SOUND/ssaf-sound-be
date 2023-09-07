@@ -214,6 +214,13 @@ public class MemberFixture {
         return new PatchMemberDefaultInfoReqDto(false, null, null);
     }
 
+    public PostMemberReqDto createPostMemberReqDto() {
+        return PostMemberReqDto.builder()
+                .oauthName("github")
+                .oauthIdentifier("1232312312312")
+                .build();
+    }
+
     public static final Member MEMBER_WALTER = Member.builder()
             .id(1L)
             .role(memberRole)
