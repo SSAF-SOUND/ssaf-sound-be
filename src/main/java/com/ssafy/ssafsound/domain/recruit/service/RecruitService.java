@@ -1,6 +1,8 @@
 package com.ssafy.ssafsound.domain.recruit.service;
 
 import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
+import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
@@ -132,6 +134,25 @@ public class RecruitService {
         }
         return recruitsResDto;
     }
+
+    @Transactional(readOnly = true)
+    public GetRecruitsResDto getMyProfileRecruits(Long memberId, Long cursor, Pageable pageable) {
+        // 마이프로필 -> 내가 합류한 프로젝트/ 스터디 목록을 조회한다.
+        Member member = memberRepository.findById(memberId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+        if(!member.getPublicProfile()) {
+            throw new MemberException(MemberErrorInfo.MEMBER_PROFILE_SECRET);
+        }
+
+
+
+//        Slice<Recruit> recruitPages = recruitRepository.findRecruitByGetRecruitsReqDto(getRecruitsReqDto, pageable);
+//        GetRecruitsResDto recruitsResDto = GetRecruitsResDto.fromPage(recruitPages);
+//        if(!recruitsResDto.getRecruits().isEmpty()) {
+//            addRecruitParticipants(recruitsResDto);
+//        }
+        return null;
+    }
+
 
     @Transactional
     public void expiredRecruit(Long recruitId, Long memberId) {
