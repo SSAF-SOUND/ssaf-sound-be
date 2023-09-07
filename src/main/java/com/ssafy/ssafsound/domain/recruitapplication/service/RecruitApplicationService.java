@@ -61,7 +61,7 @@ public class RecruitApplicationService {
         List<RecruitQuestionReply> participantAnswers = makeRecruitQuestionReplies(postRecruitApplicationReqDto, recruit, recruitApplication);
         recruitApplicationRepository.save(recruitApplication);
         recruitQuestionReplyRepository.saveAll(participantAnswers);
-        return new PatchRecruitApplicationStatusResDto(recruitApplication.getId(), MatchStatus.WAITING_REGISTER_APPROVE.name());
+        return new PatchRecruitApplicationStatusResDto(recruitApplication.getId(), MatchStatus.PENDING.name());
     }
 
     @Transactional
@@ -73,7 +73,7 @@ public class RecruitApplicationService {
         return changeRecruitApplicationState(recruitApplication, memberId, status,
                 (entity, mid) -> {
                     boolean isNotRegister = !entity.getRecruit().getMember().getId().equals(mid);
-                    boolean isNotValidMatchStatus = !entity.getMatchStatus().equals(MatchStatus.WAITING_REGISTER_APPROVE);
+                    boolean isNotValidMatchStatus = !entity.getMatchStatus().equals(MatchStatus.PENDING);
                     return isNotRegister || isNotValidMatchStatus;
                 });
     }
@@ -85,7 +85,7 @@ public class RecruitApplicationService {
 
         return changeRecruitApplicationState(recruitApplication, memberId, status,
                 (entity, mid)-> {
-                    boolean isNotValidRegisterAndState = (!entity.getRecruit().getMember().getId().equals(mid) || !entity.getMatchStatus().equals(MatchStatus.WAITING_REGISTER_APPROVE));
+                    boolean isNotValidRegisterAndState = (!entity.getRecruit().getMember().getId().equals(mid) || !entity.getMatchStatus().equals(MatchStatus.PENDING));
                     return isNotValidRegisterAndState;
                 });
     }
@@ -98,7 +98,7 @@ public class RecruitApplicationService {
         return changeRecruitApplicationState(recruitApplication, memberId, status,
                 (entity, mid)-> {
                     boolean isNotValidParticipantCancel = (!entity.getMember().getId().equals(memberId)
-                            || (entity.getMatchStatus() != MatchStatus.WAITING_REGISTER_APPROVE));
+                            || (entity.getMatchStatus() != MatchStatus.PENDING));
                     boolean isNotValidRegisterCancel = (!entity.getRecruit().getMember().getId().equals(memberId) ||
                             entity.getMatchStatus() != MatchStatus.DONE);
                     return isNotValidParticipantCancel && isNotValidRegisterCancel;
@@ -144,7 +144,7 @@ public class RecruitApplicationService {
         RecruitApplication recentRecruitApplication = recruitApplicationRepository.findTopByRecruitIdAndMemberIdOrderByIdDesc(recruitId, memberId);
         if(recentRecruitApplication == null) return false;
 
-        boolean prevWaitingMember = recentRecruitApplication.getMatchStatus().equals(MatchStatus.WAITING_REGISTER_APPROVE);
+        boolean prevWaitingMember = recentRecruitApplication.getMatchStatus().equals(MatchStatus.PENDING);
         boolean prevDoneMember = recentRecruitApplication.getMatchStatus().equals(MatchStatus.DONE);
         return (prevWaitingMember || prevDoneMember);
     }
