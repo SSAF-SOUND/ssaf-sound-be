@@ -21,6 +21,8 @@ import static com.ssafy.ssafsound.global.util.fixture.PostFixture.POST_FIXTURE2;
 import static org.mockito.BDDMockito.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class PostServiceTest {
@@ -72,37 +74,19 @@ class PostServiceTest {
         given(postRepository.findWithDetailsByBoardId(getPostReqDto.getBoardId(), getPostReqDto.getCursor(), getPostReqDto.getSize())).willReturn(posts);
 
         // when
-        GetPostResDto getPostResDto = postService.findPosts(getPostReqDto);
+        GetPostResDto response = postService.findPosts(getPostReqDto);
 
         // then
-        assertAll(
-                () -> assertThat(getPostResDto.getPosts()).hasSize(2),
-                () -> assertThat(getPostResDto.getPosts())
-                        .extracting("title")
-                        .containsExactly(POST_FIXTURE1.getTitle(), POST_FIXTURE2.getTitle()),
-                () -> assertThat(getPostResDto.getPosts())
-                        .extracting("boardTitle")
-                        .containsExactly(POST_FIXTURE1.getBoard().getTitle(), POST_FIXTURE2.getBoard().getTitle())
-//                () -> assertThat(response.getTitle()).isEqualTo(post.getTitle()),
-//                () -> assertThat(response.getContent()).isEqualTo(post.getContent()),
-//                () -> assertThat(response.isAuthorized()).isFalse(),
-//                () -> assertThat(response.isModified()).isFalse(),
-//                () -> assertThat(response.getCreatedAt()).isNotNull(),
-//                () -> assertThat(response.getBoardId()).isEqualTo(postBoard.getBoard().getId())
-        );
+        assertThat(response).usingRecursiveComparison().isEqualTo(GetPostResDto.ofPosts(posts, getPostReqDto.getSize()));
 
         // verify
+        verify(boardRepository, times(1)).existsById(getPostReqDto.getBoardId());
+        verify(postRepository, times(1)).findWithDetailsByBoardId(getPostReqDto.getBoardId(), getPostReqDto.getCursor(), getPostReqDto.getSize());
     }
 
     @Test
     @DisplayName("존재하지 않은 BoardId가 주어졌다면 게시글 목록 조회가 실패합니다.")
     void Given_BoardId_When_findPosts_Then_Fail() {
-
-    }
-
-    @Test
-    @DisplayName("최소값 보다 작은 Size가 주어졌다면 게시글 목록 조회가 실패합니다.")
-    void Given_Size_When_findPosts_Then_Fail() {
 
     }
 
