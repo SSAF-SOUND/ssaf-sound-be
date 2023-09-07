@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.domain.member.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
+import com.ssafy.ssafsound.domain.auth.dto.CreateMemberTokensResDto;
 import com.ssafy.ssafsound.domain.auth.service.AuthService;
 import com.ssafy.ssafsound.domain.auth.util.ClientUtils;
 import com.ssafy.ssafsound.domain.member.domain.*;
@@ -50,14 +51,18 @@ public class MemberService {
     }
 
     @Transactional
-    public Member saveTokenByMember(AuthenticatedMember authenticatedMember, String accessToken, String refreshToken) {
+    public Member saveTokenByMember(
+        AuthenticatedMember authenticatedMember,
+        CreateMemberTokensResDto createMemberTokensResDto) {
         Member member = memberRepository.findById(authenticatedMember.getMemberId())
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-        Optional<MemberToken> memberTokenOptional = memberTokenRepository.findById(authenticatedMember.getMemberId());
+        Optional<MemberToken> memberTokenOptional = memberTokenRepository
+            .findById(authenticatedMember.getMemberId());
 
-        memberTokenOptional.ifPresentOrElse(memberToken -> changeMemberTokens(memberToken, accessToken, refreshToken),
-                () -> createMemberToken(member, accessToken, refreshToken));
+        memberTokenOptional.ifPresentOrElse(
+            memberToken -> changeMemberTokens(memberToken, createMemberTokensResDto),
+                () -> createMemberToken(member, createMemberTokensResDto));
 
         return member;
     }
@@ -295,15 +300,19 @@ public class MemberService {
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
     }
 
-    private void changeMemberTokens(MemberToken memberToken, String accessToken, String refreshToken) {
-        memberToken.changeAccessTokenByLogin(accessToken);
-        memberToken.changeRefreshTokenByLogin(refreshToken);
+    private void changeMemberTokens(
+        MemberToken memberToken,
+        CreateMemberTokensResDto createMemberTokensResDto) {
+        memberToken.changeAccessTokenByLogin(createMemberTokensResDto.getAccessToken());
+        memberToken.changeRefreshTokenByLogin(createMemberTokensResDto.getRefreshToken());
     }
 
-    private void createMemberToken(Member member, String accessToken, String refreshToken) {
+    private void createMemberToken(
+        Member member,
+        CreateMemberTokensResDto createMemberTokensResDto) {
         MemberToken memberToken = MemberToken.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
+                .accessToken(createMemberTokensResDto.getAccessToken())
+                .refreshToken(createMemberTokensResDto.getRefreshToken())
                 .member(member)
                 .build();
         memberTokenRepository.save(memberToken);
