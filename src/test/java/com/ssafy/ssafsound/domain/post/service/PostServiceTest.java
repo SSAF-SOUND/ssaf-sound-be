@@ -1,5 +1,7 @@
 package com.ssafy.ssafsound.domain.post.service;
 
+import com.ssafy.ssafsound.domain.board.exception.BoardErrorInfo;
+import com.ssafy.ssafsound.domain.board.exception.BoardException;
 import com.ssafy.ssafsound.domain.board.repository.BoardRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.post.domain.Post;
@@ -59,8 +61,9 @@ class PostServiceTest {
 
 
     @Test
-    @DisplayName("정상적인 BoardId, Cursor, Size가 주어졌다면 게시글 목록 조회가 성공합니다.")
+    @DisplayName("정상적인 boardId, cursor, size가 주어졌다면 게시글 목록 조회가 성공합니다.")
     void Given_BoardIdAndCursorAndSize_When_findPosts_Then_Success() {
+        // given
         GetPostReqDto getPostReqDto = GetPostReqDto.builder()
                 .boardId(1L)
                 .cursor(-1L)
@@ -69,7 +72,6 @@ class PostServiceTest {
 
         List<Post> posts = List.of(POST_FIXTURE1, POST_FIXTURE2);
 
-        // given
         given(boardRepository.existsById(getPostReqDto.getBoardId())).willReturn(true);
         given(postRepository.findWithDetailsByBoardId(getPostReqDto.getBoardId(), getPostReqDto.getCursor(), getPostReqDto.getSize())).willReturn(posts);
 
@@ -85,9 +87,23 @@ class PostServiceTest {
     }
 
     @Test
-    @DisplayName("존재하지 않은 BoardId가 주어졌다면 게시글 목록 조회가 실패합니다.")
+    @DisplayName("존재하지 않은 boardId가 주어졌다면 게시글 목록 조회가 실패합니다.")
     void Given_BoardId_When_findPosts_Then_Fail() {
+        // given
+        GetPostReqDto getPostReqDto = GetPostReqDto.builder()
+                .boardId(100L)
+                .cursor(-1L)
+                .size(10)
+                .build();
 
+        given(boardRepository.existsById(getPostReqDto.getBoardId())).willReturn(false);
+
+        // when, then
+        BoardException exception = assertThrows(BoardException.class, () -> postService.findPosts(getPostReqDto));
+        assertEquals(BoardErrorInfo.NO_BOARD, exception.getInfo());
+
+        // verify
+        verify(boardRepository, times(1)).existsById(getPostReqDto.getBoardId());
     }
 
     @Test
