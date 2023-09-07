@@ -32,7 +32,7 @@ public class RecruitApplicationFixture {
             .recruitId(1L)
             .recruitApplicationId(1L)
             .recruitType(RecruitType.FRONT_END.getName())
-            .matchStatus(MatchStatus.WAITING_REGISTER_APPROVE)
+            .matchStatus(MatchStatus.PENDING)
             .author(new AuthorElement(MemberFixture.MEMBER_TIM, false))
             .question(RecruitFixture.RECRUIT_1.getQuestions().get(0).getContent())
             .reply("취업 준비를 위해서 신청하게되었습니다.")
@@ -44,9 +44,9 @@ public class RecruitApplicationFixture {
     public static final GetRecruitApplicationsResDto GET_RECRUIT_APPLICATIONS_RES_DTO = new GetRecruitApplicationsResDto(RecruitFixture.RECRUIT_1, Arrays.asList(APPLICATION1_ELEMENT));
 
     public static final GetRecruitParticipantsResDto GET_RECRUIT_PARTICIPANTS_RES_DTO = GetRecruitParticipantsResDto
-            .of(List.of(getRecruitApplication1_ByMatchStatus(MatchStatus.WAITING_REGISTER_APPROVE, new MetaData(RecruitType.FRONT_END), false)),List.of(RecruitFixture.RECRUIT_1_BE_LIMIT_3, RecruitFixture.RECRUIT_1_FE_LIMIT_3));
+            .of(List.of(getRecruitApplication1_ByMatchStatus(MatchStatus.PENDING, new MetaData(RecruitType.FRONT_END), false)),List.of(RecruitFixture.RECRUIT_1_BE_LIMIT_3, RecruitFixture.RECRUIT_1_FE_LIMIT_3));
 
-    public static final PatchRecruitApplicationStatusResDto WAITING_STATUS_APPLICATION = new PatchRecruitApplicationStatusResDto(1L, MatchStatus.WAITING_REGISTER_APPROVE.name());
+    public static final PatchRecruitApplicationStatusResDto WAITING_STATUS_APPLICATION = new PatchRecruitApplicationStatusResDto(1L, MatchStatus.PENDING.name());
 
     public static final PatchRecruitApplicationStatusResDto REJECT_STATUS_APPLICATION = new PatchRecruitApplicationStatusResDto(1L, MatchStatus.REJECT.name());
 
