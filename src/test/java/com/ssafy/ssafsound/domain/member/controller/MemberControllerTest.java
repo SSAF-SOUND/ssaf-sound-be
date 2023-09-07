@@ -1,6 +1,8 @@
 package com.ssafy.ssafsound.domain.member.controller;
 
-import com.ssafy.ssafsound.domain.member.dto.*;
+import com.ssafy.ssafsound.domain.member.dto.GetMemberDefaultInfoResDto;
+import com.ssafy.ssafsound.domain.member.dto.GetMemberResDto;
+import com.ssafy.ssafsound.domain.member.dto.PostMemberInfoReqDto;
 import com.ssafy.ssafsound.global.docs.ControllerTest;
 import com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet;
 import com.ssafy.ssafsound.global.util.fixture.MemberFixture;
@@ -133,7 +135,7 @@ class MemberControllerTest extends ControllerTest {
     void getSSAFYMemberInformation() {
 
         given(memberService.getMemberInformation(any()))
-                .willReturn(memberFixture.createCertifiedSSAFYMember());
+                .willReturn(memberFixture.createCertifiedSSAFYMemberResDto());
 
         restDocs
                 .cookie(ACCESS_TOKEN)
@@ -179,7 +181,7 @@ class MemberControllerTest extends ControllerTest {
     void putMemberSSAFYInformation() {
 
         given(memberService.registerMemberInformation(any(), any()))
-                .willReturn(memberFixture.createUncertifiedSSAFYMember());
+                .willReturn(memberFixture.createUncertifiedSSAFYMemberResDto());
         given(semesterValidator.isValid(any(), any())).willReturn(true);
         given(semesterConstantProvider.getMAX_SEMESTER()).willReturn(10);
         given(semesterConstantProvider.getMIN_SEMESTER()).willReturn(1);

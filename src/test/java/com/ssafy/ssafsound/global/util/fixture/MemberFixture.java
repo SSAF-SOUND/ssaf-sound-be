@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.global.util.fixture;
 
+import com.ssafy.ssafsound.domain.auth.dto.CreateMemberTokensResDto;
 import com.ssafy.ssafsound.domain.member.domain.*;
 import com.ssafy.ssafsound.domain.member.dto.*;
 import com.ssafy.ssafsound.domain.meta.domain.Campus;
@@ -17,16 +18,19 @@ public class MemberFixture {
 
     private static final MemberRole memberRole = MemberRole.builder().id(1).roleType("user").build();
 
-    public static final MemberProfile memberProfile = MemberProfile.builder()
-            .introduce("안녕하세요! 반가워요.")
-            .build();
-
     public static List<String> skills = new ArrayList<>(){
         {
             add("Java");
             add("Spring");
         }
     };
+
+    public MemberProfile createMemberProfile() {
+        return MemberProfile.builder()
+                .introduce("자기소개 하겠습니다.")
+                .member(createMember())
+                .build();
+    }
 
     public Set<MemberLink> memberLinks = new HashSet<>(){
         {
@@ -53,6 +57,8 @@ public class MemberFixture {
         return Member.builder()
                 .id(1L)
                 .role(memberRole)
+                .oauthType(OAuthType.GOOGLE)
+                .oauthIdentifier("gimtaeyon@gmail.com")
                 .build();
     }
 
@@ -60,9 +66,42 @@ public class MemberFixture {
         return Member.builder()
                 .id(1L)
                 .role(memberRole)
+                .oauthType(OAuthType.GITHUB)
+                .oauthIdentifier("1232312312312")
                 .nickname("james")
                 .ssafyMember(false)
                 .major(true)
+                .build();
+    }
+
+    public Member createCertifiedSSAFYMember() {
+        return Member.builder()
+                .id(1L)
+                .role(memberRole)
+                .oauthType(OAuthType.GITHUB)
+                .oauthIdentifier("1232312312312")
+                .nickname("james")
+                .ssafyMember(true)
+                .major(true)
+                .campus(new MetaData(Campus.SEOUL))
+                .majorTrack(new MetaData(MajorTrack.JAVA))
+                .semester(9)
+                .certificationState(AuthenticationStatus.CERTIFIED)
+                .build();
+    }
+
+    public Member createUncertifiedSSAFYMember() {
+        return Member.builder()
+                .id(1L)
+                .role(memberRole)
+                .oauthType(OAuthType.GITHUB)
+                .oauthIdentifier("1232312312312")
+                .nickname("james")
+                .ssafyMember(true)
+                .major(true)
+                .campus(new MetaData(Campus.SEOUL))
+                .semester(9)
+                .certificationState(AuthenticationStatus.UNCERTIFIED)
                 .build();
     }
 
@@ -75,14 +114,30 @@ public class MemberFixture {
         return SSAFYInfo.of(9, "서울", "CERTIFIED", new MetaData(MajorTrack.JAVA));
     }
 
-    public GetMemberResDto createCertifiedSSAFYMember() {
-        return new GetMemberResDto(1L, "user", "paul", true, true,
-                createCertifiedSSAFYInfo());
+    public GetMemberResDto createCertifiedSSAFYMemberResDto() {
+        return GetMemberResDto.fromSSAFYUser(createCertifiedSSAFYMember());
     }
 
-    public GetMemberResDto createUncertifiedSSAFYMember() {
-        return new GetMemberResDto(1L, "user", "james", true, true,
-                createUncertifiedSSAFYInfo());
+    public GetMemberResDto createUncertifiedSSAFYMemberResDto() {
+        return GetMemberResDto.fromSSAFYUser(createUncertifiedSSAFYMember());
+    }
+
+    public PostMemberInfoReqDto createPostGeneralMemberInfoReqDto() {
+        return PostMemberInfoReqDto.builder()
+                .ssafyMember(false)
+                .nickname("james")
+                .isMajor(true)
+                .build();
+    }
+
+    public PostMemberInfoReqDto createPostSSAFYMemberInfoReqDto() {
+        return PostMemberInfoReqDto.builder()
+                .ssafyMember(true)
+                .nickname("james")
+                .isMajor(true)
+                .campus("서울")
+                .semester(9)
+                .build();
     }
 
     public Member createMember() {
@@ -149,7 +204,7 @@ public class MemberFixture {
     }
 
     public GetMemberPortfolioResDto createGetMemberPortfolioResDto() {
-        return GetMemberPortfolioResDto.ofMemberProfile(createMember(), memberProfile);
+        return GetMemberPortfolioResDto.ofMemberProfile(createMember(), createMemberProfile());
     }
 
     public PutMemberPortfolioReqDto createPutMemberPortfolioReqDto() {
@@ -219,6 +274,25 @@ public class MemberFixture {
                 .oauthName("github")
                 .oauthIdentifier("1232312312312")
                 .build();
+    }
+
+    public CreateMemberTokensResDto createMemberTokensResDto() {
+        return CreateMemberTokensResDto.builder()
+            .accessToken(AuthFixture.accessToken)
+            .refreshToken(AuthFixture.refreshToken)
+            .build();
+    }
+
+    public MemberToken createMemberToken() {
+        return MemberToken.builder()
+                .member(createGeneralMember())
+                .accessToken(AuthFixture.accessToken)
+                .refreshToken(AuthFixture.refreshToken)
+                .build();
+    }
+
+    public PatchMemberNicknameReqDto createPatchMemberNicknameReqDto() {
+        return new PatchMemberNicknameReqDto("james");
     }
 
     public static final Member MEMBER_WALTER = Member.builder()
