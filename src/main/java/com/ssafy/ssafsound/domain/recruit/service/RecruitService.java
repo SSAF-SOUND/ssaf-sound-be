@@ -149,6 +149,13 @@ public class RecruitService {
         return recruitsResDto;
     }
 
+    @Transactional(readOnly = true)
+    public GetRecruitsResDto getScrapedRecruits(Long memberId, Long cursor, Pageable pageable) {
+        Slice<Recruit> recruitPages = recruitRepository.findMemberScrapRecruits(memberId, cursor, pageable);
+        GetRecruitsResDto recruitsResDto = GetRecruitsResDto.fromPage(recruitPages);
+        return recruitsResDto;
+    }
+
     @Transactional
     public void expiredRecruit(Long recruitId, Long memberId) {
         Recruit recruit = recruitRepository.findByIdUsingFetchJoinRegister(recruitId)

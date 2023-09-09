@@ -10,8 +10,6 @@ import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.domain.recruit.domain.Category;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
-import com.ssafy.ssafsound.domain.recruit.domain.RecruitLimitation;
-import com.ssafy.ssafsound.domain.recruit.domain.RecruitSkill;
 import com.ssafy.ssafsound.domain.recruit.dto.GetRecruitsReqDto;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +27,7 @@ import java.util.stream.Collectors;
 import static com.ssafy.ssafsound.domain.recruit.domain.QRecruit.recruit;
 import static com.ssafy.ssafsound.domain.recruit.domain.QRecruitSkill.recruitSkill;
 import static com.ssafy.ssafsound.domain.recruit.domain.QRecruitLimitation.recruitLimitation;
+import static com.ssafy.ssafsound.domain.recruit.domain.QRecruitScrap.recruitScrap;
 import static com.ssafy.ssafsound.domain.recruitapplication.domain.QRecruitApplication.recruitApplication;
 import static com.ssafy.ssafsound.domain.member.domain.QMember.member;
 
@@ -46,7 +45,6 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
     public Slice<Recruit> findRecruitByGetRecruitsReqDto(GetRecruitsReqDto dto, Pageable pageable) {
         // cursor base pagination (value -1 or null ignore search condition)
         Long cursor = dto.getCursor();
-        BooleanExpression recruitIdLtThanCursor = ((cursor != null) && (cursor != -1)) ? recruit.id.lt(cursor) : null;
 
         // recruit category (STUDY | PROJECT)
         BooleanExpression categoryEq = recruit.category.eq(Category.valueOf(dto.getCategory().toUpperCase()));
@@ -56,7 +54,7 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
         BooleanExpression titleEq = StringUtils.hasText(keyword) ? recruit.title.contains(keyword) : null;
 
         JPAQuery<Recruit> recruitDynamicQuery = jpaQueryFactory.selectFrom(recruit)
-                .where(recruitIdLtThanCursor, categoryEq, titleEq);
+                .where(recruitIdLtThanCursor(cursor), categoryEq, titleEq);
 
         // recruit skill
         List<String> skills = dto.getSkills();
@@ -101,7 +99,7 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
     }
 
     @Override
-    public Slice<Recruit> findMemberJoinRecruitWithCursorAndPageable(Long memberId, Long cursorId, Pageable pageable) {
+    public Slice<Recruit> findMemberJoinRecruitWithCursorAndPageable(Long memberId, Long cursor, Pageable pageable) {
         List<Long> memberJoinRecruitIds = jpaQueryFactory.select(recruitApplication.recruit.id)
                 .from(recruitApplication)
                 .innerJoin(recruitApplication.recruit, recruit)
@@ -111,12 +109,31 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
 
         List<Recruit> recruits = jpaQueryFactory.selectFrom(recruit)
                 .innerJoin(recruit.member, member)
-                .where(recruit.id.in(memberJoinRecruitIds), recruit.member.id.eq(memberId))
+                .where(recruitIdLtThanCursor(cursor), recruit.id.in(memberJoinRecruitIds), recruit.member.id.eq(memberId))
                 .limit(pageable.getPageSize()+1)
                 .orderBy(recruit.id.desc())
                 .fetch();
 
         boolean hasNext = pageable.isPaged() && recruits.size() > pageable.getPageSize();
         return new SliceImpl<>(hasNext ? recruits.subList(0, pageable.getPageSize()) : recruits, pageable, hasNext);
+    }
+
+    @Override
+    public Slice<Recruit> findMemberScrapRecruits(Long memberId, Long cursor, Pageable pageable) {
+        List<Recruit> recruits = jpaQueryFactory.select(recruitScrap.recruit)
+                .from(recruitScrap)
+                .innerJoin(recruitScrap.recruit, recruit)
+                .innerJoin(recruitScrap.member, member)
+                .where(recruitIdLtThanCursor(cursor), recruitScrap.member.id.eq(memberId))
+                .limit(pageable.getPageSize()+1)
+                .orderBy(recruit.id.desc())
+                .fetch();
+
+        boolean hasNext = pageable.isPaged() && recruits.size() > pageable.getPageSize();
+        return new SliceImpl<>(hasNext ? recruits.subList(0, pageable.getPageSize()) : recruits, pageable, hasNext);
+    }
+
+    private BooleanExpression recruitIdLtThanCursor(Long cursor) {
+        return ((cursor != null) && (cursor != -1)) ? recruit.id.lt(cursor) : null;
     }
 }
