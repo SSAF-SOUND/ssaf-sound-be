@@ -125,34 +125,29 @@ public class RecruitService {
     }
 
     @Transactional(readOnly = true)
-    public GetRecruitsResDto getRecruits(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable) {
+    public GetRecruitsResDto getRecruits(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable, Long loginMemberId) {
         // 페이지네이션 조건에 따라 프로젝트/스터디 글 목록을 조회한다.
-        Slice<Recruit> recruitPages = recruitRepository.findRecruitByGetRecruitsReqDto(getRecruitsReqDto, pageable);
+        Slice<Recruit> recruitPages;
+        Long memberId = getRecruitsReqDto.getMemberId();
+
+        // 사용자 Id 여부로 프로필, 사용자가 참여한 리크루트 목록 조회, 일반 글 목록 조회를 구분한다.
+        if(memberId != null) {
+            Member member = memberRepository.findById(memberId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+            if(!member.getPublicProfile() && !memberId.equals(loginMemberId)) {
+                throw new MemberException(MemberErrorInfo.MEMBER_PROFILE_SECRET);
+            }
+
+            recruitPages = recruitRepository.findMemberJoinRecruitWithCursorAndPageable(memberId, getRecruitsReqDto.getCursor(), pageable);
+        } else {
+            recruitPages = recruitRepository.findRecruitByGetRecruitsReqDto(getRecruitsReqDto, pageable);
+        }
+
         GetRecruitsResDto recruitsResDto = GetRecruitsResDto.fromPage(recruitPages);
         if(!recruitsResDto.getRecruits().isEmpty()) {
             addRecruitParticipants(recruitsResDto);
         }
         return recruitsResDto;
     }
-
-    @Transactional(readOnly = true)
-    public GetRecruitsResDto getMyProfileRecruits(Long memberId, Long cursor, Pageable pageable) {
-        // 마이프로필 -> 내가 합류한 프로젝트/ 스터디 목록을 조회한다.
-        Member member = memberRepository.findById(memberId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
-        if(!member.getPublicProfile()) {
-            throw new MemberException(MemberErrorInfo.MEMBER_PROFILE_SECRET);
-        }
-
-
-
-//        Slice<Recruit> recruitPages = recruitRepository.findRecruitByGetRecruitsReqDto(getRecruitsReqDto, pageable);
-//        GetRecruitsResDto recruitsResDto = GetRecruitsResDto.fromPage(recruitPages);
-//        if(!recruitsResDto.getRecruits().isEmpty()) {
-//            addRecruitParticipants(recruitsResDto);
-//        }
-        return null;
-    }
-
 
     @Transactional
     public void expiredRecruit(Long recruitId, Long memberId) {
