@@ -373,14 +373,14 @@ class RecruitServiceTest {
     @DisplayName("키워드를 입력하지 않은 리크루트 목록 검색")
     @Test
     void Given_NotIncludeKeyword_When_GetPagingRecruits_Then_Success() {
-        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(emptyKeywordDto, pageInfo);
+        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(emptyKeywordDto, pageInfo, null);
         assertEquals(1, getRecruitsResDto.getRecruits().size());
     }
 
     @DisplayName("키워드를 입력한 리크루트 목록 검색 (검색 결과 O)")
     @Test
     void Given_IncludeKeyword_When_GetPagingRecruits_Then_Success() {
-        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(findTitleDto, pageInfo);
+        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(findTitleDto, pageInfo, null);
         assertEquals(1, getRecruitsResDto.getRecruits().size());
     }
 
@@ -389,7 +389,7 @@ class RecruitServiceTest {
     void Given_IncludeKeywordAndIncludeRegisterRecruitType_When_GetPagingRecruits_Then_Success() {
         savedRecruit.setRegisterRecruitType(new MetaData(RecruitType.DESIGN));
 
-        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(findTitleDto, pageInfo);
+        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(findTitleDto, pageInfo, null);
         assertEquals(1, getRecruitsResDto.getRecruits().size());
         assertEquals(1, getRecruitsResDto.getRecruits().get(0).getParticipants().size());
         assertEquals(3, getRecruitsResDto.getRecruits().get(0).getParticipants().get(0).getLimit());
@@ -400,7 +400,7 @@ class RecruitServiceTest {
     @DisplayName("키워드를 입력한 리크루트 목록 검색 (검색 결과 X)")
     @Test
     void Given_IncludeKeyword_When_GetPagingRecruits_Then_EmptySet() {
-        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(notFindKeywordDto, pageInfo);
+        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(notFindKeywordDto, pageInfo, null);
         assertEquals(0, getRecruitsResDto.getRecruits().size());
     }
 
@@ -423,5 +423,11 @@ class RecruitServiceTest {
                 RecruitErrorInfo.INVALID_CHANGE_MEMBER_OPERATION.getCode(),
                 recruitException.getInfo().getCode()
         );
+    }
+
+    @DisplayName("사용자 프로필 - 사용자가 참가한 리크루트 목록 조회")
+    @Test
+    void Given_MemberId_When_GetMemberJoinRecruits_Then_Success() {
+        // TODO Test Refactoring 시 일괄 작성
     }
 }
