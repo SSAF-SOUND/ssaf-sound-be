@@ -23,6 +23,7 @@ import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.post.domain.Post;
+import com.ssafy.ssafsound.domain.post.domain.PostLike;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostReqDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
@@ -224,6 +225,7 @@ class PostServiceTest {
 		verify(postLikeRepository, times(1)).findByPostIdAndMemberId(post.getId(), member.getId());
 		verify(postLikeRepository, times(1)).countByPostId(post.getId());
 		verify(postConstantProvider, times(1)).getHOT_POST_LIKES_THRESHOLD();
+		verify(postLikeRepository, times(1)).save(any());
 
 		verify(postLikeRepository, times(0)).delete(any());
 		verify(hotPostRepository, times(0)).existsByPostId(any());
@@ -232,6 +234,35 @@ class PostServiceTest {
 	@Test
 	@DisplayName("게시글을 이미 좋아요 했다면 좋아요가 취소됩니다.")
 	void Given_PostIdAndLoginMemberId_When_DeleteLikePost_Then_Success() {
+		// given
+		Post post = POST_FIXTURE1;
+		Member member = MemberFixture.GENERAL_MEMBER;
+		PostLike postLike = PostLike.of(post, member);
+		int likeCount = 4;
+
+		given(postRepository.findById(post.getId())).willReturn(Optional.of(post));
+		given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+		given(postLikeRepository.findByPostIdAndMemberId(post.getId(), member.getId())).willReturn(
+			Optional.of(postLike));
+		given(postLikeRepository.countByPostId(post.getId())).willReturn(likeCount);
+
+		// when
+		PostCommonLikeResDto response = postService.likePost(post.getId(), member.getId());
+
+		// then
+		assertThat(response).usingRecursiveComparison()
+			.isEqualTo(new PostCommonLikeResDto(likeCount - 1, false));
+
+		// verify
+		verify(postRepository, times(1)).findById(post.getId());
+		verify(memberRepository, times(1)).findById(member.getId());
+		verify(postLikeRepository, times(1)).findByPostIdAndMemberId(post.getId(), member.getId());
+		verify(postLikeRepository, times(1)).countByPostId(post.getId());
+		verify(postLikeRepository, times(1)).delete(any());
+
+		verify(postConstantProvider, times(0)).getHOT_POST_LIKES_THRESHOLD();
+		verify(postLikeRepository, times(0)).save(any());
+		verify(hotPostRepository, times(0)).existsByPostId(any());
 	}
 
 	@Test
