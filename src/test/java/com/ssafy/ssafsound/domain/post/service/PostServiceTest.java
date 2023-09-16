@@ -140,12 +140,19 @@ class PostServiceTest {
 	@DisplayName("비 로그인 시 유효한 postId가 주어졌다면 게시글 상세 보기가 성공합니다.")
 	void Given_PostId_When_findPost_Then_Success() {
 		// given
+		Post post = POST_FIXTURE1;
+
+		given(postRepository.findWithMemberAndPostImageFetchById(post.getId())).willReturn(Optional.of(post));
 
 		// when
+		GetPostDetailResDto response = postService.findPost(post.getId(), null);
 
 		// then
+		assertThat(response).usingRecursiveComparison()
+			.isEqualTo(GetPostDetailResDto.of(post, null));
 
 		// verify
+		verify(postRepository, times(1)).findWithMemberAndPostImageFetchById(post.getId());
 
 	}
 
