@@ -145,28 +145,28 @@ public class PostService {
 		Member loginMember = memberRepository.findById(loginMemberId)
 			.orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-		PostScrap postScrap = postScrapRepository.findByPostIdAndMemberId(postId, loginMember.getId())
+		Post post = postRepository.findById(postId)
+			.orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
+
+		PostScrap postScrap = postScrapRepository.findByPostIdAndMemberId(post.getId(), loginMember.getId())
 			.orElse(null);
 
-		Integer scrapCount = postScrapRepository.countByPostId(postId);
-		return togglePostScrap(scrapCount, postId, loginMember, postScrap);
+		Integer scrapCount = postScrapRepository.countByPostId(post.getId());
+		return togglePostScrap(scrapCount, post, loginMember, postScrap);
 	}
 
-	private PostPostScrapResDto togglePostScrap(Integer scrapCount, Long postId, Member loginMember,
+	private PostPostScrapResDto togglePostScrap(Integer scrapCount, Post post, Member loginMember,
 		PostScrap postScrap) {
 		if (postScrap != null) {
 			deleteScrapIfAlreadyExists(postScrap);
 			return new PostPostScrapResDto(scrapCount - 1, false);
 		}
-		saveScrap(postId, loginMember);
+		saveScrap(post, loginMember);
 		return new PostPostScrapResDto(scrapCount + 1, true);
 	}
 
-	private void saveScrap(Long postId, Member loginMember) {
-		PostScrap postScrap = PostScrap.builder()
-			.post(postRepository.getReferenceById(postId))
-			.member(loginMember)
-			.build();
+	private void saveScrap(Post post, Member loginMember) {
+		PostScrap postScrap = PostScrap.of(post, loginMember);
 		postScrapRepository.save(postScrap);
 	}
 
