@@ -28,6 +28,7 @@ import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostReqDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
 import com.ssafy.ssafsound.domain.post.dto.PostCommonLikeResDto;
+import com.ssafy.ssafsound.domain.post.dto.PostPostScrapResDto;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
 import com.ssafy.ssafsound.domain.post.exception.PostException;
 import com.ssafy.ssafsound.domain.post.repository.HotPostRepository;
@@ -360,15 +361,73 @@ class PostServiceTest {
 		// verify
 		verify(memberRepository, times(1)).findById(member.getId());
 		verify(postRepository, times(1)).findById(postId);
+	}
+
+	@Test
+	@DisplayName("게시글을 스크랩 하지 않았다면 스크랩이 저장됩니다.")
+	void Given_PostIdAndLoginMemberId_When_SaveScrapPost_Then_Success() {
+		// given
+		Member member = MemberFixture.GENERAL_MEMBER;
+		Post post = POST_FIXTURE1;
+		int scrapCount = 10;
+
+		given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+		given(postRepository.findById(post.getId())).willReturn(Optional.of(post));
+		given(postScrapRepository.findByPostIdAndMemberId(post.getId(), member.getId())).willReturn(Optional.empty());
+		given(postScrapRepository.countByPostId(post.getId())).willReturn(scrapCount);
+
+		// when
+		PostPostScrapResDto response = postService.scrapPost(post.getId(), member.getId());
+
+		// then
+		assertThat(response).usingRecursiveComparison()
+			.isEqualTo(new PostPostScrapResDto(scrapCount + 1, true));
+
+		// verify
+		verify(memberRepository, times(1)).findById(member.getId());
+		verify(postRepository, times(1)).findById(post.getId());
+		verify(postScrapRepository, times(1)).findByPostIdAndMemberId(post.getId(), member.getId());
+		verify(postScrapRepository, times(1)).countByPostId(post.getId());
+		verify(postScrapRepository, times(1)).save(any());
+	}
+
+	@Test
+	@DisplayName("게시글을 이미 스크랩 했다면 스크랩이 취소됩니다.")
+	void Given_PostIdAndLoginMemberId_When_DeleteScrapPost_Then_Success() {
+		// given
+
+		// when
+
+		// then
+
+		// verify
 
 	}
 
 	@Test
-	void deleteHotPostsUnderThreshold() {
+	@DisplayName("유효하지 않은 loginMemberId가 주어졌다면 게시글 스크랩에 예외를 발생합니다.")
+	void Given_InvalidLoginMemberId_When_scrapPost_Then_Success() {
+		// given
+
+		// when
+
+		// then
+
+		// verify
+
 	}
 
 	@Test
-	void scrapPost() {
+	@DisplayName("유효하지 않은 postId가 주어졌다면 게시글 스크랩에 예외를 발생합니다.")
+	void Given_InvalidPostId_When_scrapPost_Then_Success() {
+		// given
+
+		// when
+
+		// then
+
+		// verify
+
 	}
 
 	@Test
