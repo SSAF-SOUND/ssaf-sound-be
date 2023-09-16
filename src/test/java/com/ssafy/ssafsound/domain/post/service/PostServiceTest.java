@@ -19,6 +19,8 @@ import com.ssafy.ssafsound.domain.board.exception.BoardErrorInfo;
 import com.ssafy.ssafsound.domain.board.exception.BoardException;
 import com.ssafy.ssafsound.domain.board.repository.BoardRepository;
 import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
+import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
@@ -178,13 +180,20 @@ class PostServiceTest {
 	@DisplayName("로그인 시 유효하지 않은 loginMemberId가 주어졌다면 게시글 상세보기에 예외를 발생합니다.")
 	void Given_InvalidLoginMemberId_When_findPost_Then_Success() {
 		// given
+		Post post = POST_FIXTURE1;
+		Long memberId = 100L;
 
-		// when
+		given(postRepository.findWithMemberAndPostImageFetchById(post.getId())).willReturn(Optional.of(post));
+		given(memberRepository.findById(memberId)).willReturn(Optional.empty());
 
-		// then
+		// when, then
+		MemberException exception = assertThrows(MemberException.class,
+			() -> postService.findPost(post.getId(), memberId));
+		assertEquals(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID, exception.getInfo());
 
 		// verify
-
+		verify(postRepository, times(1)).findWithMemberAndPostImageFetchById(post.getId());
+		verify(memberRepository, times(1)).findById(memberId);
 	}
 
 	@Test
