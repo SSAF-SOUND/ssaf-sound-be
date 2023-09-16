@@ -24,6 +24,8 @@ import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostReqDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
+import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
+import com.ssafy.ssafsound.domain.post.exception.PostException;
 import com.ssafy.ssafsound.domain.post.repository.HotPostRepository;
 import com.ssafy.ssafsound.domain.post.repository.PostImageRepository;
 import com.ssafy.ssafsound.domain.post.repository.PostLikeRepository;
@@ -160,13 +162,16 @@ class PostServiceTest {
 	@DisplayName("유효하지 않은 postId가 주어졌다면 게시글 상세보기에 예외를 발생합니다.")
 	void Given_InvalidPostId_When_findPost_Then_Success() {
 		// given
+		Long postId = 100L;
 
-		// when
+		given(postRepository.findWithMemberAndPostImageFetchById(postId)).willReturn(Optional.empty());
 
-		// then
+		// when, then
+		PostException exception = assertThrows(PostException.class, () -> postService.findPost(postId, null));
+		assertEquals(PostErrorInfo.NOT_FOUND_POST, exception.getInfo());
 
 		// verify
-
+		verify(postRepository, times(1)).findWithMemberAndPostImageFetchById(postId);
 	}
 
 	@Test
