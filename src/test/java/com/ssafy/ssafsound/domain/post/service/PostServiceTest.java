@@ -24,6 +24,7 @@ import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.domain.PostLike;
+import com.ssafy.ssafsound.domain.post.domain.PostScrap;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostReqDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
@@ -76,11 +77,7 @@ class PostServiceTest {
 	@DisplayName("유효한 boardId, cursor, size가 주어졌다면 게시글 목록 조회가 성공합니다.")
 	void Given_BoardIdAndCursorAndSize_When_findPosts_Then_Success() {
 		// given
-		GetPostReqDto getPostReqDto = GetPostReqDto.builder()
-			.boardId(1L)
-			.cursor(-1L)
-			.size(10)
-			.build();
+		GetPostReqDto getPostReqDto = GetPostReqDto.builder().boardId(1L).cursor(-1L).size(10).build();
 
 		List<Post> posts = List.of(POST_FIXTURE1, POST_FIXTURE2);
 
@@ -105,11 +102,7 @@ class PostServiceTest {
 	@DisplayName("유효하지 않은 boardId가 주어졌다면 게시글 목록 조회에 예외를 발생합니다.")
 	void Given_BoardId_When_findPosts_Then_Fail() {
 		// given
-		GetPostReqDto getPostReqDto = GetPostReqDto.builder()
-			.boardId(100L)
-			.cursor(-1L)
-			.size(10)
-			.build();
+		GetPostReqDto getPostReqDto = GetPostReqDto.builder().boardId(100L).cursor(-1L).size(10).build();
 
 		given(boardRepository.existsById(getPostReqDto.getBoardId())).willReturn(false);
 
@@ -135,8 +128,7 @@ class PostServiceTest {
 		GetPostDetailResDto response = postService.findPost(post.getId(), member.getId());
 
 		// then
-		assertThat(response).usingRecursiveComparison()
-			.isEqualTo(GetPostDetailResDto.of(post, member));
+		assertThat(response).usingRecursiveComparison().isEqualTo(GetPostDetailResDto.of(post, member));
 
 		// verify
 		verify(postRepository, times(1)).findWithMemberAndPostImageFetchById(post.getId());
@@ -155,8 +147,7 @@ class PostServiceTest {
 		GetPostDetailResDto response = postService.findPost(post.getId(), null);
 
 		// then
-		assertThat(response).usingRecursiveComparison()
-			.isEqualTo(GetPostDetailResDto.of(post, null));
+		assertThat(response).usingRecursiveComparison().isEqualTo(GetPostDetailResDto.of(post, null));
 
 		// verify
 		verify(postRepository, times(1)).findWithMemberAndPostImageFetchById(post.getId());
@@ -217,8 +208,7 @@ class PostServiceTest {
 		PostCommonLikeResDto response = postService.likePost(post.getId(), member.getId());
 
 		// then
-		assertThat(response).usingRecursiveComparison()
-			.isEqualTo(new PostCommonLikeResDto(likeCount + 1, true));
+		assertThat(response).usingRecursiveComparison().isEqualTo(new PostCommonLikeResDto(likeCount + 1, true));
 
 		// verify
 		verify(postRepository, times(1)).findById(post.getId());
@@ -250,8 +240,7 @@ class PostServiceTest {
 		PostCommonLikeResDto response = postService.likePost(post.getId(), member.getId());
 
 		// then
-		assertThat(response).usingRecursiveComparison()
-			.isEqualTo(new PostCommonLikeResDto(likeCount - 1, false));
+		assertThat(response).usingRecursiveComparison().isEqualTo(new PostCommonLikeResDto(likeCount - 1, false));
 
 		// verify
 		verify(postRepository, times(1)).findById(post.getId());
@@ -280,8 +269,7 @@ class PostServiceTest {
 		PostCommonLikeResDto response = postService.likePost(post.getId(), member.getId());
 
 		// then
-		assertThat(response).usingRecursiveComparison()
-			.isEqualTo(new PostCommonLikeResDto(likeCount + 1, true));
+		assertThat(response).usingRecursiveComparison().isEqualTo(new PostCommonLikeResDto(likeCount + 1, true));
 
 		// verify
 		verify(postRepository, times(1)).findById(post.getId());
@@ -312,8 +300,7 @@ class PostServiceTest {
 		PostCommonLikeResDto response = postService.likePost(post.getId(), member.getId());
 
 		// then
-		assertThat(response).usingRecursiveComparison()
-			.isEqualTo(new PostCommonLikeResDto(likeCount + 1, true));
+		assertThat(response).usingRecursiveComparison().isEqualTo(new PostCommonLikeResDto(likeCount + 1, true));
 
 		// verify
 		verify(postRepository, times(1)).findById(post.getId());
@@ -380,8 +367,7 @@ class PostServiceTest {
 		PostPostScrapResDto response = postService.scrapPost(post.getId(), member.getId());
 
 		// then
-		assertThat(response).usingRecursiveComparison()
-			.isEqualTo(new PostPostScrapResDto(scrapCount + 1, true));
+		assertThat(response).usingRecursiveComparison().isEqualTo(new PostPostScrapResDto(scrapCount + 1, true));
 
 		// verify
 		verify(memberRepository, times(1)).findById(member.getId());
@@ -395,13 +381,29 @@ class PostServiceTest {
 	@DisplayName("게시글을 이미 스크랩 했다면 스크랩이 취소됩니다.")
 	void Given_PostIdAndLoginMemberId_When_DeleteScrapPost_Then_Success() {
 		// given
+		Member member = MemberFixture.GENERAL_MEMBER;
+		Post post = POST_FIXTURE1;
+		PostScrap postScrap = PostScrap.of(post, member);
+		int scrapCount = 10;
+
+		given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+		given(postRepository.findById(post.getId())).willReturn(Optional.of(post));
+		given(postScrapRepository.findByPostIdAndMemberId(post.getId(), member.getId())).willReturn(
+			Optional.of(postScrap));
+		given(postScrapRepository.countByPostId(post.getId())).willReturn(scrapCount);
 
 		// when
+		PostPostScrapResDto response = postService.scrapPost(post.getId(), member.getId());
 
 		// then
+		assertThat(response).usingRecursiveComparison().isEqualTo(new PostPostScrapResDto(scrapCount - 1, false));
 
 		// verify
-
+		verify(memberRepository, times(1)).findById(member.getId());
+		verify(postRepository, times(1)).findById(post.getId());
+		verify(postScrapRepository, times(1)).findByPostIdAndMemberId(post.getId(), member.getId());
+		verify(postScrapRepository, times(1)).countByPostId(post.getId());
+		verify(postScrapRepository, times(1)).delete(any());
 	}
 
 	@Test
