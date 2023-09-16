@@ -329,24 +329,38 @@ class PostServiceTest {
 	@DisplayName("유효하지 않은 loginMemberId가 주어졌다면 게시글 좋아요에 예외를 발생합니다.")
 	void Given_InvalidLoginMemberId_When_likePost_Then_Success() {
 		// given
+		Post post = POST_FIXTURE1;
+		Long memberId = -1L;
 
-		// when
+		given(memberRepository.findById(memberId)).willReturn(Optional.empty());
 
-		// then
+		// when, then
+		MemberException exception = assertThrows(MemberException.class,
+			() -> postService.likePost(post.getId(), memberId));
+		assertEquals(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID, exception.getInfo());
 
 		// verify
+		verify(memberRepository, times(1)).findById(memberId);
 	}
 
 	@Test
 	@DisplayName("유효하지 않은 postId가 주어졌다면 게시글 좋아요에 예외를 발생합니다.")
 	void Given_InvalidPostId_When_likePost_Then_Success() {
 		// given
+		Long postId = -1L;
+		Member member = MemberFixture.GENERAL_MEMBER;
 
-		// when
+		given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+		given(postRepository.findById(postId)).willReturn(Optional.empty());
 
-		// then
+		// when, then
+		PostException exception = assertThrows(PostException.class, () -> postService.likePost(postId, member.getId()));
+		assertEquals(PostErrorInfo.NOT_FOUND_POST, exception.getInfo());
 
 		// verify
+		verify(memberRepository, times(1)).findById(member.getId());
+		verify(postRepository, times(1)).findById(postId);
+
 	}
 
 	@Test
