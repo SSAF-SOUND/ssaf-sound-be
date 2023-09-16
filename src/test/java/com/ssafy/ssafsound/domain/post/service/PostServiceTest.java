@@ -428,13 +428,20 @@ class PostServiceTest {
 	@DisplayName("유효하지 않은 postId가 주어졌다면 게시글 스크랩에 예외를 발생합니다.")
 	void Given_InvalidPostId_When_scrapPost_Then_Success() {
 		// given
+		Member member = MemberFixture.MEMBER_JAMES;
+		Long postId = 101021242313L;
 
-		// when
+		given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+		given(postRepository.findById(postId)).willReturn(Optional.empty());
 
-		// then
+		// when, then
+		PostException exception = assertThrows(PostException.class,
+			() -> postService.scrapPost(postId, member.getId()));
+		assertEquals(PostErrorInfo.NOT_FOUND_POST, exception.getInfo());
 
 		// verify
-
+		verify(memberRepository, times(1)).findById(member.getId());
+		verify(postRepository, times(1)).findById(postId);
 	}
 
 	@Test
