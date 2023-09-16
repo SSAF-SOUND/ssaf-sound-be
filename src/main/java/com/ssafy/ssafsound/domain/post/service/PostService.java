@@ -73,7 +73,10 @@ public class PostService {
         Member loginMember = memberRepository.findById(loginMemberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-        PostLike postLike = postLikeRepository.findByPostIdAndMemberId(postId, loginMember.getId())
+        Post post = postRepository.findWithMemberAndPostImageFetchById(postId)
+            .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
+
+        PostLike postLike = postLikeRepository.findByPostIdAndMemberId(post.getId(), loginMember.getId())
                 .orElse(null);
 
         Integer likeCount = postLikeRepository.countByPostId(postId);
