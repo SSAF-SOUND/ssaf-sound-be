@@ -126,7 +126,7 @@ public class PostService {
 	}
 
 	private boolean isSelectedHotPost(Integer likeCount, Post post) {
-		return likeCount + 1 >= postConstantProvider.getHOT_POST_LIKES_THRESHOLD() &&
+		return likeCount + 1 == postConstantProvider.getHOT_POST_LIKES_THRESHOLD() &&
 			!hotPostRepository.existsByPostId(post.getId());
 	}
 
