@@ -93,7 +93,7 @@ public class PostService {
 		Member loginMember = memberRepository.findById(loginMemberId)
 			.orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-		Post post = postRepository.findWithMemberAndPostImageFetchById(postId)
+		Post post = postRepository.findById(postId)
 			.orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
 		PostLike postLike = postLikeRepository.findByPostIdAndMemberId(post.getId(), loginMember.getId())
@@ -117,10 +117,7 @@ public class PostService {
 	}
 
 	private void saveLike(Post post, Member loginMember) {
-		PostLike postLike = PostLike.builder()
-			.post(post)
-			.member(loginMember)
-			.build();
+		PostLike postLike = PostLike.of(post, loginMember);
 		postLikeRepository.save(postLike);
 	}
 
