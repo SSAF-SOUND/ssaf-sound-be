@@ -131,9 +131,7 @@ public class PostService {
 	}
 
 	private void saveHotPost(Post post) {
-		HotPost hotPost = HotPost.builder()
-			.post(post)
-			.build();
+		HotPost hotPost = HotPost.from(post);
 		hotPostRepository.save(hotPost);
 	}
 
