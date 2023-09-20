@@ -139,7 +139,8 @@ public class RecruitControllerTest extends ControllerTest {
                                 fieldWithPath("author.ssafyMember").type(JsonFieldType.BOOLEAN).description("싸피 멤버 여부"),
                                 fieldWithPath("questions").type(JsonFieldType.ARRAY).description("리쿠르트 질문"),
                                 fieldWithPath("scraped").type(JsonFieldType.BOOLEAN).description("조회자 리크루트 스크랩 여부"),
-                                fieldWithPath("scrapCount").type(JsonFieldType.NUMBER).description("리쿠르트 스크랩 갯수")
+                                fieldWithPath("scrapCount").type(JsonFieldType.NUMBER).description("리쿠르트 스크랩 갯수"),
+                                fieldWithPath("matchStatus").type(JsonFieldType.STRING).description("조회 유저 신청 상태")
                         ))
                 );
     }

@@ -74,8 +74,10 @@ public class RecruitService {
                 .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
         long scrapCount = recruitScrapRepository.countByRecruitId(recruitId);
         Boolean scraped = recruitScrapRepository.existsByRecruitIdAndMemberId(recruitId, memberId);
+
+        RecruitApplication recruitApplication = recruitApplicationRepository.findTopByRecruitIdAndMemberIdOrderByIdDesc(recruitId, memberId);
         recruit.increaseView();
-        return GetRecruitDetailResDto.of(recruit, scrapCount, scraped);
+        return GetRecruitDetailResDto.of(recruit, scrapCount, scraped, recruitApplication);
     }
 
     @Transactional

@@ -6,6 +6,7 @@ import com.ssafy.ssafsound.domain.meta.domain.RecruitType;
 import com.ssafy.ssafsound.domain.meta.domain.Skill;
 import com.ssafy.ssafsound.domain.recruit.domain.*;
 import com.ssafy.ssafsound.domain.recruit.dto.*;
+import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -112,6 +113,7 @@ public class RecruitFixture {
             .author(new AuthorElement(MemberFixture.MEMBER_KIM, false))
             .scrapCount(1L)
             .scraped(true)
+            .matchStatus(MatchStatus.INITIAL.name())
             .build();
 
     private static final List<RecruitLimitElement> RECRUIT_1_UPDATE_LIMIT = List.of(
