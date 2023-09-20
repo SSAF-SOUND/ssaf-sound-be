@@ -146,6 +146,8 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                                         fieldWithPath("limit").type(JsonFieldType.NUMBER).description("인원 제한 수")
                                 ).andWithPrefix("data.recruitTypes.*.members[].",
                                         fieldWithPath("memberId").type(JsonFieldType.NUMBER).description("참여자 PK"),
+                                        fieldWithPath("recruitApplicationId").type(JsonFieldType.NUMBER).description("참여신청 PK"),
+                                        fieldWithPath("modifiedAt").type(JsonFieldType.STRING).description("참여 신청일"),
                                         fieldWithPath("nickname").type(JsonFieldType.STRING).description("참여자 닉네임"),
                                         fieldWithPath("isMajor").type(JsonFieldType.BOOLEAN).description("전공자 여부")
                                 ).andWithPrefix("data.recruitTypes.*.members[].ssafyInfo.",

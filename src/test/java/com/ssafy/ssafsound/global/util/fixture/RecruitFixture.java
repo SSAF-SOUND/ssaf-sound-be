@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.global.util.fixture;
 
+import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.RecruitType;
@@ -7,8 +8,10 @@ import com.ssafy.ssafsound.domain.meta.domain.Skill;
 import com.ssafy.ssafsound.domain.recruit.domain.*;
 import com.ssafy.ssafsound.domain.recruit.dto.*;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -53,6 +56,10 @@ public class RecruitFixture {
             .member(MemberFixture.MEMBER_KIM)
             .build();
 
+    static {
+        ReflectionTestUtils.setField(RECRUIT_1, BaseTimeEntity.class,"createdAt", LocalDateTime.now(), LocalDateTime.class);
+        ReflectionTestUtils.setField(RECRUIT_1, BaseTimeEntity.class,"modifiedAt", LocalDateTime.now(), LocalDateTime.class);
+    }
     public static final RecruitQuestion RECRUIT_QUESTION_1 = RecruitQuestion.builder()
             .id(1L)
             .content(RECRUIT_QUESTION)
@@ -86,7 +93,6 @@ public class RecruitFixture {
             .recruit(RECRUIT_1)
             .type(new MetaData(RecruitType.FRONT_END))
             .build();
-
     public static final List<RecruitSkillElement> RECRUIT_1_SKILL_DTO = List.of(
             RecruitSkillElement.builder().skillId(Skill.SPRING.getId()).name(Skill.SPRING.getName()).build(),
             RecruitSkillElement.builder().skillId(Skill.REACT.getId()).name(Skill.REACT.getName()).build());
