@@ -6,6 +6,8 @@ import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import com.ssafy.ssafsound.domain.recruit.domain.RecruitQuestion;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
+import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
+import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -33,8 +35,9 @@ public class GetRecruitDetailResDto {
     private AuthorElement author;
     private long scrapCount;
     private Boolean scraped;
+    private String matchStatus;
 
-    public static GetRecruitDetailResDto of(Recruit recruit, long scrapCount, Boolean scraped) {
+    public static GetRecruitDetailResDto of(Recruit recruit, long scrapCount, Boolean scraped, RecruitApplication recruitApplication) {
 
         if(recruit.getDeletedRecruit()) throw new RecruitException(RecruitErrorInfo.IS_DELETED);
 
@@ -52,6 +55,10 @@ public class GetRecruitDetailResDto {
         addRegisterRecruitType(limits, registerRecruitType);
         List<String> questions = recruit.getQuestions().stream().map(RecruitQuestion::getContent).collect(Collectors.toList());
 
+        String matchStatus = (recruitApplication != null) ? recruitApplication.getMatchStatus().name() : MatchStatus.INITIAL.name();
+        if(matchStatus.equals(MatchStatus.CANCEL.name())) {
+            matchStatus = MatchStatus.INITIAL.name();
+        }
         return GetRecruitDetailResDto.builder()
                 .category(recruit.getCategory().name())
                 .recruitId(recruit.getId())
@@ -68,6 +75,7 @@ public class GetRecruitDetailResDto {
                 .author(new AuthorElement(register, false))
                 .scrapCount(scrapCount)
                 .scraped(scraped)
+                .matchStatus(matchStatus)
                 .build();
     }
 

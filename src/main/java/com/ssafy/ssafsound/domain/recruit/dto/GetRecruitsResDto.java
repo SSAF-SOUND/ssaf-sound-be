@@ -32,10 +32,10 @@ public class GetRecruitsResDto {
         return result;
     }
 
-    public static GetRecruitsResDto fromPage(Slice<Recruit> sliceRecruit) {
+    public static GetRecruitsResDto fromPageAndMemberId(Slice<Recruit> sliceRecruit, Long memberId) {
         List<RecruitElement> recruits = sliceRecruit.toList()
                 .stream()
-                .map(RecruitElement::from)
+                .map((recruit -> RecruitElement.fromRecruitAndLoginMemberId(recruit, memberId)))
                 .collect(Collectors.toList());
         Long nextCursor = recruits.isEmpty() ? -1L : recruits.get(recruits.size()-1).getRecruitId();
 

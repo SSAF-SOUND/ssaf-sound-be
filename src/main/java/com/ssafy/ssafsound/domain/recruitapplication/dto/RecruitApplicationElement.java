@@ -10,6 +10,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -39,9 +41,15 @@ public class RecruitApplicationElement {
     @JsonProperty
     private Boolean liked;
 
+    @JsonProperty
+    private LocalDateTime createdAt;
+
+    @JsonProperty
+    private LocalDateTime modifiedAt;
+
     public RecruitApplicationElement(Long recruitId, Long recruitApplicationId, MetaData recruitType, MatchStatus matchStatus,
                                      Member member,
-                                     String reply, String question, Boolean isLike) {
+                                     String reply, String question, Boolean isLike, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.recruitId = recruitId;
         this.recruitApplicationId = recruitApplicationId;
         this.recruitType = recruitType.getName();
@@ -50,5 +58,7 @@ public class RecruitApplicationElement {
         this.reply = reply;
         this.question = question;
         this.liked = isLike;
+        this.createdAt = createdAt;
+        this.modifiedAt = modifiedAt;
     }
 }

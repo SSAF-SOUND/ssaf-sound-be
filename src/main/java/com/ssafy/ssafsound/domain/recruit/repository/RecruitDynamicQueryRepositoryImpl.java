@@ -1,78 +1,139 @@
 package com.ssafy.ssafsound.domain.recruit.repository;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.domain.recruit.domain.Category;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import com.ssafy.ssafsound.domain.recruit.dto.GetRecruitsReqDto;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
+import lombok.RequiredArgsConstructor;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
+import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.ssafy.ssafsound.domain.recruit.domain.QRecruit.recruit;
+import static com.ssafy.ssafsound.domain.recruit.domain.QRecruitSkill.recruitSkill;
+import static com.ssafy.ssafsound.domain.recruit.domain.QRecruitLimitation.recruitLimitation;
+import static com.ssafy.ssafsound.domain.recruit.domain.QRecruitScrap.recruitScrap;
+import static com.ssafy.ssafsound.domain.recruitapplication.domain.QRecruitApplication.recruitApplication;
+import static com.ssafy.ssafsound.domain.member.domain.QMember.member;
+
+
+@Repository
+@RequiredArgsConstructor
+@Slf4j
 public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRepository {
 
-    @Autowired
-    MetaDataConsumer metaDataConsumer;
+    private final MetaDataConsumer metaDataConsumer;
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final JPAQueryFactory jpaQueryFactory;
 
     @Override
     public Slice<Recruit> findRecruitByGetRecruitsReqDto(GetRecruitsReqDto dto, Pageable pageable) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Recruit> cq = cb.createQuery(Recruit.class);
+        // cursor base pagination (value -1 or null ignore search condition)
+        Long cursor = dto.getCursor();
 
-        Root<Recruit> root = cq.from(Recruit.class);
-        List<Predicate> predicates = new ArrayList<>();
+        // recruit category (STUDY | PROJECT)
+        BooleanExpression categoryEq = recruit.category.eq(Category.valueOf(dto.getCategory().toUpperCase()));
 
-        /* 정적 검색 조건 처리 -> 카테고리 */
-        Predicate category = cb.equal(root.get("category"),  Category.valueOf(dto.getCategory().toUpperCase()));
-        predicates.add(category);
-        /* 동적 검색 조건 처리 -> 커서, 검색 키워드, 모집파트, 모집중 여부 */
-        if(dto.getCursor() != null) {
-            Predicate cursorInfo = cb.lessThan(root.get("id"), dto.getCursor());
-            predicates.add(cursorInfo);
-        }
+        // recruit title contains search keyword
+        String keyword = dto.getKeyword();
+        BooleanExpression titleEq = StringUtils.hasText(keyword) ? recruit.title.contains(keyword) : null;
 
-        if(StringUtils.hasText(dto.getKeyword())) {
-            Predicate titleContainKeyword = cb.like(root.get("title"), "%"+dto.getKeyword()+"%");
-            predicates.add(titleContainKeyword);
-        }
+        JPAQuery<Recruit> recruitDynamicQuery = jpaQueryFactory.selectFrom(recruit)
+                .where(recruitIdLtThanCursor(cursor), categoryEq, titleEq);
 
+        // recruit skill
         List<String> skills = dto.getSkills();
-        if(skills!=null && !skills.isEmpty()) {
-            predicates.add(root.get("skills").in(skills));
+        if(skills!=null && skills.size() > 0) {
+            String metaDataType = MetaDataType.SKILL.name();
+            List<MetaData> containSkills = skills.stream()
+                    .map(skillName->metaDataConsumer.getMetaData(metaDataType, skillName))
+                    .collect(Collectors.toList());
+
+            JPQLQuery<Long> recruitSkillContainRecruitIds = JPAExpressions
+                    .select(recruitSkill.recruit.id)
+                    .from(recruitSkill)
+                    .innerJoin(recruitSkill.recruit, recruit)
+                    .where(recruitSkill.skill.in(containSkills));
+
+            recruitDynamicQuery.where(recruit.id.in(recruitSkillContainRecruitIds));
         }
 
+        // recruit types limitation
         List<String> recruitTypes = dto.getRecruitTypes();
-        if(recruitTypes!=null && !recruitTypes.isEmpty()) {
-            List<MetaData> limitTypes = recruitTypes.stream().map(
-                   type->metaDataConsumer.getMetaData(MetaDataType.RECRUIT_TYPE.name(), type)
-            ).collect(Collectors.toList());
-            predicates.add(root.get("limitations").get("type").in(limitTypes));
-        }
-        cq.where(predicates.toArray(new Predicate[0]));
-        cq.orderBy(cb.desc(root.get("id")));
+        if(dto.getCategory().toUpperCase().equals(Category.PROJECT.name()) && recruitTypes!=null && !recruitTypes.isEmpty()) {
+            String metaDataType = MetaDataType.RECRUIT_TYPE.name();
+            List<MetaData> containRecruitTypes = recruitTypes.stream()
+                    .map(recruitType->metaDataConsumer.getMetaData(metaDataType, recruitType))
+                    .collect(Collectors.toList());
 
-        TypedQuery<Recruit> query = entityManager.createQuery(cq);
-        List<Recruit> recruits = query.setMaxResults(pageable.getPageSize()+1)
-                .getResultList();
+            JPQLQuery<Long> limitationContainRecruitIds = JPAExpressions
+                    .select(recruitLimitation.recruit.id)
+                    .from(recruitLimitation)
+                    .innerJoin(recruitLimitation.recruit, recruit)
+                    .where(recruitLimitation.type.in(containRecruitTypes));
+
+            recruitDynamicQuery.where(recruit.id.in(limitationContainRecruitIds));
+        }
+
+        List<Recruit> recruits = recruitDynamicQuery
+                .limit(pageable.getPageSize()+1)
+                .orderBy(recruit.id.desc())
+                .fetch();
+        boolean hasNext = pageable.isPaged() && recruits.size() > pageable.getPageSize();
+        return new SliceImpl<>(hasNext ? recruits.subList(0, pageable.getPageSize()) : recruits, pageable, hasNext);
+    }
+
+    @Override
+    public Slice<Recruit> findMemberJoinRecruitWithCursorAndPageable(Long memberId, Long cursor, Pageable pageable) {
+        List<Long> memberJoinRecruitIds = jpaQueryFactory.select(recruitApplication.recruit.id)
+                .from(recruitApplication)
+                .innerJoin(recruitApplication.recruit, recruit)
+                .innerJoin(recruitApplication.member, member)
+                .where(recruitApplication.member.id.eq(memberId), recruitApplication.matchStatus.eq(MatchStatus.DONE))
+                .fetch();
+
+        List<Recruit> recruits = jpaQueryFactory.selectFrom(recruit)
+                .innerJoin(recruit.member, member)
+                .where(recruitIdLtThanCursor(cursor), recruit.id.in(memberJoinRecruitIds), recruit.member.id.eq(memberId))
+                .limit(pageable.getPageSize()+1)
+                .orderBy(recruit.id.desc())
+                .fetch();
 
         boolean hasNext = pageable.isPaged() && recruits.size() > pageable.getPageSize();
         return new SliceImpl<>(hasNext ? recruits.subList(0, pageable.getPageSize()) : recruits, pageable, hasNext);
+    }
+
+    @Override
+    public Slice<Recruit> findMemberScrapRecruits(Long memberId, Long cursor, Pageable pageable) {
+        List<Recruit> recruits = jpaQueryFactory.select(recruitScrap.recruit)
+                .from(recruitScrap)
+                .innerJoin(recruitScrap.recruit, recruit)
+                .innerJoin(recruitScrap.member, member)
+                .where(recruitIdLtThanCursor(cursor), recruitScrap.member.id.eq(memberId))
+                .limit(pageable.getPageSize()+1)
+                .orderBy(recruit.id.desc())
+                .fetch();
+
+        boolean hasNext = pageable.isPaged() && recruits.size() > pageable.getPageSize();
+        return new SliceImpl<>(hasNext ? recruits.subList(0, pageable.getPageSize()) : recruits, pageable, hasNext);
+    }
+
+    private BooleanExpression recruitIdLtThanCursor(Long cursor) {
+        return ((cursor != null) && (cursor != -1)) ? recruit.id.lt(cursor) : null;
     }
 }

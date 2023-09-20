@@ -5,6 +5,7 @@ import com.ssafy.ssafsound.domain.member.dto.SSAFYInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,13 +20,15 @@ public class RecruitParticipantElement {
         members = new ArrayList<>();
     }
 
-    public void addMember(Member member) {
+    public void addMember(Long recruitApplicationId, LocalDateTime modifiedAt, Member member) {
         SSAFYInfo ssafyInfo = null;
         if(member.getSsafyMember()) {
             ssafyInfo = SSAFYInfo.from(member);
         }
 
         members.add(ParticipantElement.builder()
+                .recruitApplicationId(recruitApplicationId)
+                .modifiedAt(modifiedAt)
                 .memberId(member.getId())
                 .nickname(member.getNickname())
                 .isMajor(member.getMajor())

@@ -24,7 +24,7 @@ public class PostRecruitApplicationReqDto {
                 .member(member)
                 .recruit(recruit)
                 .type(recruitType)
-                .matchStatus(MatchStatus.WAITING_REGISTER_APPROVE)
+                .matchStatus(MatchStatus.PENDING)
                 .build();
     }
 }

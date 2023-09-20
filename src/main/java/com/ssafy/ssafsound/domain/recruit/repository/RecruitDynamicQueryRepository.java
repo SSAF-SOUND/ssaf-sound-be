@@ -7,4 +7,6 @@ import org.springframework.data.domain.Slice;
 
 public interface RecruitDynamicQueryRepository {
     Slice<Recruit> findRecruitByGetRecruitsReqDto(GetRecruitsReqDto dto, Pageable pageable);
+    Slice<Recruit> findMemberJoinRecruitWithCursorAndPageable(Long memberId, Long cursorId, Pageable pageable);
+    Slice<Recruit> findMemberScrapRecruits(Long memberId, Long cursorId, Pageable pageable);
 }

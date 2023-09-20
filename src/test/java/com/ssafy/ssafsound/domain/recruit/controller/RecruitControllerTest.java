@@ -139,7 +139,8 @@ public class RecruitControllerTest extends ControllerTest {
                                 fieldWithPath("author.ssafyMember").type(JsonFieldType.BOOLEAN).description("싸피 멤버 여부"),
                                 fieldWithPath("questions").type(JsonFieldType.ARRAY).description("리쿠르트 질문"),
                                 fieldWithPath("scraped").type(JsonFieldType.BOOLEAN).description("조회자 리크루트 스크랩 여부"),
-                                fieldWithPath("scrapCount").type(JsonFieldType.NUMBER).description("리쿠르트 스크랩 갯수")
+                                fieldWithPath("scrapCount").type(JsonFieldType.NUMBER).description("리쿠르트 스크랩 갯수"),
+                                fieldWithPath("matchStatus").type(JsonFieldType.STRING).description("조회 유저 신청 상태")
                         ))
                 );
     }
@@ -196,7 +197,7 @@ public class RecruitControllerTest extends ControllerTest {
     void getRecruits() {
         doReturn(RecruitFixture.GET_RECRUITS_RES_DTO)
                 .when(recruitService)
-                .getRecruits(any(), any());
+                .getRecruits(any(), any(), any());
 
         restDocs
                 .cookie(ACCESS_TOKEN)
@@ -205,6 +206,7 @@ public class RecruitControllerTest extends ControllerTest {
                 .assertThat()
                 .statusCode(HttpStatus.OK.value())
                 .apply(document("recruit/recruits",
+                        requestCookieAccessTokenOptional(),
                         requestParameters(
                                 parameterWithName("cursor").optional().description("다음 조회 커서 default(초기화면)에서는 미포함"),
                                 parameterWithName("size").description("페이징 사이즈"),
@@ -212,13 +214,16 @@ public class RecruitControllerTest extends ControllerTest {
                                 parameterWithName("keyword").description("리크루트 게시글 제목 검색 키워드"),
                                 parameterWithName("isFinished").description("리크루트 종료 여부"),
                                 parameterWithName("recruitTypes").description("리크루트 모집파트, 메타데이터-리크루트 목록 조회 참고"),
-                                parameterWithName("skills").description("리크루트와 연관된 기술 스택, 메타데이터-스킬 목록 조회 참고")
+                                parameterWithName("skills").description("리크루트와 연관된 기술 스택, 메타데이터-스킬 목록 조회 참고"),
+                                parameterWithName("memberId").optional().description("사용자 프로필 - 참여중인 리크루트 목록 조회 시 사용될 사용자의 Id")
                         ),
                         getEnvelopPatternWithData().andWithPrefix("data.",
                                 fieldWithPath("nextCursor").type(JsonFieldType.NUMBER).description("다음 조회할 커서 번호"),
                                 fieldWithPath("isLast").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부")
                             ).andWithPrefix("data.recruits[].",
                                 fieldWithPath("recruitId").type(JsonFieldType.NUMBER).description("리크루트 id"),
+                                fieldWithPath("category").type(JsonFieldType.STRING).description("카테고리 project|study"),
+                                fieldWithPath("mine").type(JsonFieldType.BOOLEAN).description("내가 쓴 글 여부(토큰 기준)"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("리크루트 모집글 제목, 글자 수 제한 50자"),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("리크루트 본문 요약본 최대 50자"),
                                 fieldWithPath("recruitEnd").type(JsonFieldType.STRING).description("yyyy-MM-dd 모집 종료 일자"),
