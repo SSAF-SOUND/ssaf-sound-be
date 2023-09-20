@@ -221,6 +221,7 @@ public class RecruitControllerTest extends ControllerTest {
                                 fieldWithPath("isLast").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부")
                             ).andWithPrefix("data.recruits[].",
                                 fieldWithPath("recruitId").type(JsonFieldType.NUMBER).description("리크루트 id"),
+                                fieldWithPath("category").type(JsonFieldType.STRING).description("카테고리 project|study"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("리크루트 모집글 제목, 글자 수 제한 50자"),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("리크루트 본문 요약본 최대 50자"),
                                 fieldWithPath("recruitEnd").type(JsonFieldType.STRING).description("yyyy-MM-dd 모집 종료 일자"),

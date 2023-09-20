@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @Builder
 public class RecruitElement {
     private Long recruitId;
+    private String category;
     private String title;
     private boolean finishedRecruit;
     private String recruitEnd;
@@ -49,6 +50,7 @@ public class RecruitElement {
 
         return RecruitElement.builder()
                 .recruitId(recruit.getId())
+                .category(recruit.getCategory().name())
                 .title(recruit.getTitle())
                 .finishedRecruit(recruit.getFinishedRecruit())
                 .recruitEnd(recruit.getEndDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
