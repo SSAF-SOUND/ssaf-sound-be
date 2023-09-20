@@ -136,7 +136,7 @@ public class RecruitFixture {
         RECRUIT_1.setRecruitLimitations(List.of(RECRUIT_1_BE_LIMIT_3, RECRUIT_1_FE_LIMIT_3));
     }
 
-    private static final RecruitElement RECRUIT_1_ELEMENT = RecruitElement.from(RECRUIT_1);
+    private static final RecruitElement RECRUIT_1_ELEMENT = RecruitElement.fromRecruitAndLoginMemberId(RECRUIT_1, 2L);
 
     public static final GetRecruitsResDto GET_RECRUITS_RES_DTO = GetRecruitsResDto.builder()
             .recruits(List.of(RECRUIT_1_ELEMENT))

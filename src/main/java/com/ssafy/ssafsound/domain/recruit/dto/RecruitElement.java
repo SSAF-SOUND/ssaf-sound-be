@@ -23,6 +23,7 @@ public class RecruitElement {
     private String content;
     private List<RecruitSkillElement> skills;
     private List<RecruitParticipant> participants;
+    private Boolean mine;
 
     @JsonIgnore
     public Map<String, RecruitParticipant> getRecruitParticipantMap() {
@@ -34,7 +35,7 @@ public class RecruitElement {
         return recruitTypeMaps;
     }
 
-    public static RecruitElement from(Recruit recruit) {
+    public static RecruitElement fromRecruitAndLoginMemberId(Recruit recruit, Long memberId) {
         List<RecruitSkillElement> skills = recruit.getSkills()
                 .stream()
                 .map(RecruitSkillElement::from).collect(Collectors.toList());
@@ -57,6 +58,7 @@ public class RecruitElement {
                 .content(content)
                 .participants(recruitParticipants)
                 .skills(skills)
+                .mine(recruit.getMember().getId().equals(memberId))
                 .build();
     }
 

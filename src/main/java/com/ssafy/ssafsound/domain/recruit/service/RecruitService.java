@@ -142,7 +142,7 @@ public class RecruitService {
             recruitPages = recruitRepository.findRecruitByGetRecruitsReqDto(getRecruitsReqDto, pageable);
         }
 
-        GetRecruitsResDto recruitsResDto = GetRecruitsResDto.fromPage(recruitPages);
+        GetRecruitsResDto recruitsResDto = GetRecruitsResDto.fromPageAndMemberId(recruitPages, memberId);
         if(!recruitsResDto.getRecruits().isEmpty()) {
             addRecruitParticipants(recruitsResDto);
         }
@@ -152,7 +152,7 @@ public class RecruitService {
     @Transactional(readOnly = true)
     public GetRecruitsResDto getScrapedRecruits(Long memberId, Long cursor, Pageable pageable) {
         Slice<Recruit> recruitPages = recruitRepository.findMemberScrapRecruits(memberId, cursor, pageable);
-        GetRecruitsResDto recruitsResDto = GetRecruitsResDto.fromPage(recruitPages);
+        GetRecruitsResDto recruitsResDto = GetRecruitsResDto.fromPageAndMemberId(recruitPages, memberId);
         return recruitsResDto;
     }
 
