@@ -16,12 +16,14 @@ import java.util.stream.Collectors;
 @Builder
 public class RecruitElement {
     private Long recruitId;
+    private String category;
     private String title;
     private boolean finishedRecruit;
     private String recruitEnd;
     private String content;
     private List<RecruitSkillElement> skills;
     private List<RecruitParticipant> participants;
+    private Boolean mine;
 
     @JsonIgnore
     public Map<String, RecruitParticipant> getRecruitParticipantMap() {
@@ -33,7 +35,7 @@ public class RecruitElement {
         return recruitTypeMaps;
     }
 
-    public static RecruitElement from(Recruit recruit) {
+    public static RecruitElement fromRecruitAndLoginMemberId(Recruit recruit, Long memberId) {
         List<RecruitSkillElement> skills = recruit.getSkills()
                 .stream()
                 .map(RecruitSkillElement::from).collect(Collectors.toList());
@@ -49,12 +51,14 @@ public class RecruitElement {
 
         return RecruitElement.builder()
                 .recruitId(recruit.getId())
+                .category(recruit.getCategory().name())
                 .title(recruit.getTitle())
                 .finishedRecruit(recruit.getFinishedRecruit())
                 .recruitEnd(recruit.getEndDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .content(content)
                 .participants(recruitParticipants)
                 .skills(skills)
+                .mine(recruit.getMember().getId().equals(memberId))
                 .build();
     }
 

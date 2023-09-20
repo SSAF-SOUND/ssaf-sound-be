@@ -99,7 +99,7 @@ class RecruitApplicationServiceTest {
     RecruitApplication recruitApplication = RecruitApplication.builder()
             .id(1L)
             .isLike(false)
-            .matchStatus(MatchStatus.WAITING_REGISTER_APPROVE)
+            .matchStatus(MatchStatus.PENDING)
             .recruit(recruit)
             .type(new MetaData(RecruitType.DESIGN))
             .member(participant)

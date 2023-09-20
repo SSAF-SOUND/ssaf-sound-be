@@ -1,13 +1,17 @@
 package com.ssafy.ssafsound.global.util.fixture;
 
+import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.RecruitType;
 import com.ssafy.ssafsound.domain.meta.domain.Skill;
 import com.ssafy.ssafsound.domain.recruit.domain.*;
 import com.ssafy.ssafsound.domain.recruit.dto.*;
+import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -52,6 +56,10 @@ public class RecruitFixture {
             .member(MemberFixture.MEMBER_KIM)
             .build();
 
+    static {
+        ReflectionTestUtils.setField(RECRUIT_1, BaseTimeEntity.class,"createdAt", LocalDateTime.now(), LocalDateTime.class);
+        ReflectionTestUtils.setField(RECRUIT_1, BaseTimeEntity.class,"modifiedAt", LocalDateTime.now(), LocalDateTime.class);
+    }
     public static final RecruitQuestion RECRUIT_QUESTION_1 = RecruitQuestion.builder()
             .id(1L)
             .content(RECRUIT_QUESTION)
@@ -85,7 +93,6 @@ public class RecruitFixture {
             .recruit(RECRUIT_1)
             .type(new MetaData(RecruitType.FRONT_END))
             .build();
-
     public static final List<RecruitSkillElement> RECRUIT_1_SKILL_DTO = List.of(
             RecruitSkillElement.builder().skillId(Skill.SPRING.getId()).name(Skill.SPRING.getName()).build(),
             RecruitSkillElement.builder().skillId(Skill.REACT.getId()).name(Skill.REACT.getName()).build());
@@ -112,6 +119,7 @@ public class RecruitFixture {
             .author(new AuthorElement(MemberFixture.MEMBER_KIM, false))
             .scrapCount(1L)
             .scraped(true)
+            .matchStatus(MatchStatus.INITIAL.name())
             .build();
 
     private static final List<RecruitLimitElement> RECRUIT_1_UPDATE_LIMIT = List.of(
@@ -136,7 +144,7 @@ public class RecruitFixture {
         RECRUIT_1.setRecruitLimitations(List.of(RECRUIT_1_BE_LIMIT_3, RECRUIT_1_FE_LIMIT_3));
     }
 
-    private static final RecruitElement RECRUIT_1_ELEMENT = RecruitElement.from(RECRUIT_1);
+    private static final RecruitElement RECRUIT_1_ELEMENT = RecruitElement.fromRecruitAndLoginMemberId(RECRUIT_1, 2L);
 
     public static final GetRecruitsResDto GET_RECRUITS_RES_DTO = GetRecruitsResDto.builder()
             .recruits(List.of(RECRUIT_1_ELEMENT))

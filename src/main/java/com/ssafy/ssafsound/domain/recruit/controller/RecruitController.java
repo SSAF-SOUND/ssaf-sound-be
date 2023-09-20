@@ -57,9 +57,16 @@ public class RecruitController {
     }
 
     @GetMapping
-    public EnvelopeResponse<GetRecruitsResDto> getRecruits(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable) {
+    public EnvelopeResponse<GetRecruitsResDto> getRecruits(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable, @Authentication AuthenticatedMember memberInfo) {
         return EnvelopeResponse.<GetRecruitsResDto>builder()
-                .data(recruitService.getRecruits(getRecruitsReqDto, pageable))
+                .data(recruitService.getRecruits(getRecruitsReqDto, pageable, memberInfo == null ? null : memberInfo.getMemberId()))
+                .build();
+    }
+
+    @GetMapping("/scraped")
+    public EnvelopeResponse<GetRecruitsResDto> getScrapedRecruits(Long cursor, Pageable pageable, @Authentication AuthenticatedMember memberInfo) {
+        return EnvelopeResponse.<GetRecruitsResDto>builder()
+                .data(recruitService.getScrapedRecruits(memberInfo == null ? null : memberInfo.getMemberId(), cursor, pageable))
                 .build();
     }
 }

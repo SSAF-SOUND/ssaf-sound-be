@@ -6,6 +6,7 @@ import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +25,10 @@ public class GetRecruitParticipantsResDto {
         });
 
         recruitApplications.forEach(recruitApplication -> {
+            Long recruitApplicationId = recruitApplication.getId();
+            LocalDateTime modifiedAt = recruitApplication.getModifiedAt();
             String recruitType = recruitApplication.getType().getName();
-            participantElementMap.get(recruitType).addMember(recruitApplication.getMember());
+            participantElementMap.get(recruitType).addMember(recruitApplicationId, modifiedAt, recruitApplication.getMember());
         });
 
         return new GetRecruitParticipantsResDto(participantElementMap);
@@ -39,7 +42,8 @@ public class GetRecruitParticipantsResDto {
             recruitTypes.put(recruitType, recruitParticipantElement);
         }
 
-        recruitParticipantElement.addMember(recruit.getMember());
+        // 리크루트 등록자는 별도의 리크루트 신청이 없으며, 리크루트 글 등록일이 참여 확정일이다.
+        recruitParticipantElement.addMember(-1L, recruit.getCreatedAt(), recruit.getMember());
         recruitParticipantElement.increaseLimit();
     }
 }

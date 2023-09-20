@@ -1,6 +1,8 @@
 package com.ssafy.ssafsound.domain.recruit.service;
 
 import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
+import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
@@ -72,8 +74,10 @@ public class RecruitService {
                 .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
         long scrapCount = recruitScrapRepository.countByRecruitId(recruitId);
         Boolean scraped = recruitScrapRepository.existsByRecruitIdAndMemberId(recruitId, memberId);
+
+        RecruitApplication recruitApplication = recruitApplicationRepository.findTopByRecruitIdAndMemberIdOrderByIdDesc(recruitId, memberId);
         recruit.increaseView();
-        return GetRecruitDetailResDto.of(recruit, scrapCount, scraped);
+        return GetRecruitDetailResDto.of(recruit, scrapCount, scraped, recruitApplication);
     }
 
     @Transactional
@@ -123,13 +127,34 @@ public class RecruitService {
     }
 
     @Transactional(readOnly = true)
-    public GetRecruitsResDto getRecruits(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable) {
+    public GetRecruitsResDto getRecruits(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable, Long loginMemberId) {
         // 페이지네이션 조건에 따라 프로젝트/스터디 글 목록을 조회한다.
-        Slice<Recruit> recruitPages = recruitRepository.findRecruitByGetRecruitsReqDto(getRecruitsReqDto, pageable);
-        GetRecruitsResDto recruitsResDto = GetRecruitsResDto.fromPage(recruitPages);
+        Slice<Recruit> recruitPages;
+        Long memberId = getRecruitsReqDto.getMemberId();
+
+        // 사용자 Id 여부로 프로필, 사용자가 참여한 리크루트 목록 조회, 일반 글 목록 조회를 구분한다.
+        if(memberId != null) {
+            Member member = memberRepository.findById(memberId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+            if(!member.getPublicProfile() && !memberId.equals(loginMemberId)) {
+                throw new MemberException(MemberErrorInfo.MEMBER_PROFILE_SECRET);
+            }
+
+            recruitPages = recruitRepository.findMemberJoinRecruitWithCursorAndPageable(memberId, getRecruitsReqDto.getCursor(), pageable);
+        } else {
+            recruitPages = recruitRepository.findRecruitByGetRecruitsReqDto(getRecruitsReqDto, pageable);
+        }
+
+        GetRecruitsResDto recruitsResDto = GetRecruitsResDto.fromPageAndMemberId(recruitPages, memberId);
         if(!recruitsResDto.getRecruits().isEmpty()) {
             addRecruitParticipants(recruitsResDto);
         }
+        return recruitsResDto;
+    }
+
+    @Transactional(readOnly = true)
+    public GetRecruitsResDto getScrapedRecruits(Long memberId, Long cursor, Pageable pageable) {
+        Slice<Recruit> recruitPages = recruitRepository.findMemberScrapRecruits(memberId, cursor, pageable);
+        GetRecruitsResDto recruitsResDto = GetRecruitsResDto.fromPageAndMemberId(recruitPages, memberId);
         return recruitsResDto;
     }
 

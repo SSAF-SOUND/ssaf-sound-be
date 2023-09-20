@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.recruitapplication.domain;
 
+import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.meta.converter.RecruitTypeConverter;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
@@ -16,7 +17,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecruitApplication {
+public class RecruitApplication extends BaseTimeEntity {
 
     @Id
     @Column(name = "recruit_application_id")
