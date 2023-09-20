@@ -44,6 +44,8 @@ public class RecruitApplicationFixture {
             .question(RecruitFixture.RECRUIT_1.getQuestions().get(0).getContent())
             .reply("취업 준비를 위해서 신청하게되었습니다.")
             .liked(false)
+            .createdAt(LocalDateTime.now())
+            .modifiedAt(LocalDateTime.now())
             .build();
 
     public static final GetRecruitApplicationDetailResDto APPLICATION_DETAIL_RES_DTO = new GetRecruitApplicationDetailResDto(APPLICATION1_ELEMENT);
