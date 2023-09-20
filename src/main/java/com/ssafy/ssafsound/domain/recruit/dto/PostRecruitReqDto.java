@@ -52,7 +52,7 @@ public class PostRecruitReqDto {
     public Recruit to() {
         Recruit recruit = Recruit.builder()
                 .view(0L)
-                .category(Category.valueOf(category))
+                .category(Category.valueOf(category.toUpperCase()))
                 .title(title)
                 .content(content)
                 .startDateTime(LocalDateTime.now())
