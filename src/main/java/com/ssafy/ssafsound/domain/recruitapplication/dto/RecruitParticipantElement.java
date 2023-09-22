@@ -28,7 +28,7 @@ public class RecruitParticipantElement {
 
         members.add(ParticipantElement.builder()
                 .recruitApplicationId(recruitApplicationId)
-                .modifiedAt(modifiedAt)
+                .joinedAt(modifiedAt)
                 .memberId(member.getId())
                 .nickname(member.getNickname())
                 .isMajor(member.getMajor())
