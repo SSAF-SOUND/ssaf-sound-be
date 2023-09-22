@@ -193,8 +193,7 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                                 fieldWithPath("question").type(JsonFieldType.STRING).description("등록자 질문"),
                                 fieldWithPath("reply").type(JsonFieldType.STRING).description("참여자 답변"),
                                 fieldWithPath("liked").type(JsonFieldType.BOOLEAN).description("등록자 좋아요 여부"),
-                                fieldWithPath("createdAt").type(JsonFieldType.STRING).description("등록일"),
-                                fieldWithPath("modifiedAt").type(JsonFieldType.STRING).optional().description("최종 수정일")
+                                fieldWithPath("appliedAt").type(JsonFieldType.STRING).description("등록일")
                         ).andWithPrefix("data.recruitApplications.*.[].author.ssafyInfo.",
                                 fieldWithPath("semester").type(JsonFieldType.NUMBER).description("참여자 싸피 기수 (1~10)"),
                                 fieldWithPath("campus").type(JsonFieldType.STRING).description("참여자 소속 캠퍼스 메타데이터-캠퍼스 목록 조회 참고"),
