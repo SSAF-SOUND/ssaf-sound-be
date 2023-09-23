@@ -23,4 +23,5 @@ public interface HotPostRepository extends JpaRepository<HotPost, Long>, HotPost
     void deleteHotPostsUnderThreshold(@Param("threshold") Long threshold);
 
     Optional<HotPost> findByPostId(Long postId);
+    Boolean existsByPostId(Long postId);
 }

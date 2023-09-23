@@ -29,9 +29,9 @@ public class AuthorElement {
     public AuthorElement(Member member, Boolean anonymity) {
         this.memberId = anonymity? -1 : member.getId();
         this.nickname = anonymity? "익명" : member.getNickname();
-        this.memberRole = member.getRole().getRoleType();
-        this.ssafyMember = member.getSsafyMember();
-        this.isMajor = member.getMajor();
-        this.ssafyInfo = SSAFYInfo.from(member);
+        this.memberRole = anonymity? null : member.getRole().getRoleType();
+        this.ssafyMember = anonymity? null : member.getSsafyMember();
+        this.isMajor = anonymity? null : member.getMajor();
+        this.ssafyInfo = anonymity? null : SSAFYInfo.from(member);
     }
 }
