@@ -18,10 +18,13 @@ public class RecruitCommentFixture {
 
     private static final Long DEFAULT_COMMENT_GROUP = -1L;
 
+    private static final MemberFixture memberFixture = new MemberFixture();
+
     public static final PostRecruitCommentReqDto POST_RECRUIT_COMMENT_REQ_DTO = new PostRecruitCommentReqDto("공모전 수상이 목표인가요?", DEFAULT_COMMENT_GROUP);
 
     public static final PostRecruitCommentResDto POST_RECRUIT_COMMENT_RES_DTO
-            = new PostRecruitCommentResDto(1L, "공모전 수상이 목표인가요?", MemberFixture.MEMBER_TIM.getId(), MemberFixture.MEMBER_TIM.getNickname(), 1L);
+            = new PostRecruitCommentResDto(1L, "공모전 수상이 목표인가요?",
+            memberFixture.createMember().getId(), memberFixture.createMember().getNickname(), 1L);
 
     public static final PatchRecruitCommentReqDto PATCH_RECRUIT_COMMENT_REQ_DTO = new PatchRecruitCommentReqDto("덧글 수정");
 
@@ -30,7 +33,7 @@ public class RecruitCommentFixture {
             .content("공모전 수상이 목표인가요?")
             .deletedComment(false)
             .recruit(RecruitFixture.RECRUIT_1)
-            .member(MemberFixture.MEMBER_TIM)
+            .member(memberFixture.createMember())
             .build();
 
     public static final PostRecruitCommentLikeResDto POST_RECRUIT_COMMENT_LIKE_RES_DTO = new PostRecruitCommentLikeResDto(1, true);
