@@ -1,23 +1,18 @@
 package com.ssafy.ssafsound.domain.member.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
-import com.ssafy.ssafsound.domain.auth.service.token.JwtTokenProvider;
-import com.ssafy.ssafsound.domain.member.domain.*;
+import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.domain.MemberProfile;
+import com.ssafy.ssafsound.domain.member.domain.MemberToken;
 import com.ssafy.ssafsound.domain.member.dto.*;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.*;
 import com.ssafy.ssafsound.domain.meta.domain.*;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
-import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
-import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
+import com.ssafy.ssafsound.global.util.fixture.MemberFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -47,115 +42,53 @@ class MemberServiceTest {
     @Mock
     private MetaDataConsumer metaDataConsumer;
     @Mock
-    private JwtTokenProvider jwtTokenProvider;
-    @Mock
     private MemberConstantProvider memberConstantProvider;
     @InjectMocks
     private MemberService memberService;
-    @Captor
-    ArgumentCaptor<MemberToken> memberTokenArgumentCaptor;
-    PostMemberReqDto postMemberReqDto;
-    Member member, ssafyMember, notSSAFYMember;
-    MemberRole memberRole;
-    PostMemberInfoReqDto generalMemberInfoReqDto;
-    PostMemberInfoReqDto SSAFYMemberInfoReqDto;
-    PostNicknameReqDto postNicknameReqDto;
-    AuthenticatedMember authenticatedMember;
-
-    @BeforeEach
-    void setUp() {
-        postMemberReqDto = PostMemberReqDto.builder()
-                .oauthName("github")
-                .oauthIdentifier("1232312312312")
-                .build();
-
-        memberRole = MemberRole.builder()
-                .id(1)
-                .roleType("user")
-                .build();
-
-        member = Member.builder()
-                .oauthType(OAuthType.valueOf(postMemberReqDto.getOauthName().toUpperCase()))
-                .oauthIdentifier(postMemberReqDto.getOauthIdentifier())
-                .id(1L)
-                .role(memberRole)
-                .build();
-
-        ssafyMember = Member.builder()
-                .oauthType(OAuthType.valueOf(postMemberReqDto.getOauthName().toUpperCase()))
-                .oauthIdentifier(postMemberReqDto.getOauthIdentifier())
-                .id(2L)
-                .role(memberRole)
-                .ssafyMember(true)
-                .build();
-        notSSAFYMember = Member.builder()
-                .id(3L)
-                .role(memberRole)
-                .ssafyMember(false)
-                .build();
-
-        generalMemberInfoReqDto = PostMemberInfoReqDto.builder()
-                .ssafyMember(false)
-                .nickname("taeyong")
-                .isMajor(true)
-                .build();
-
-        SSAFYMemberInfoReqDto = PostMemberInfoReqDto.builder()
-                .ssafyMember(true)
-                .nickname("taeyong")
-                .campus("서울")
-                .isMajor(true)
-                .semester(9)
-                .build();
-
-        postNicknameReqDto = new PostNicknameReqDto("taeyong");
-        authenticatedMember = AuthenticatedMember.from(member);
-    }
+    MemberFixture memberFixture = new MemberFixture();
 
     @Test
     @DisplayName("새로운 Oauth Identifier가 주어졌다면 멤버를 저장하는데 성공합니다.")
     void Given_OauthIdentifier_When_SaveMember_Then_Success() {
-        AuthenticatedMember authenticatedMemberReq = AuthenticatedMember.builder()
-                .memberId(member.getId())
-                .memberRole(member.getRole().getRoleType())
-                .build();
-
-        //given Mock Stub
-        given(memberRepository.findByOauthIdentifier(postMemberReqDto.getOauthIdentifier())).willReturn(Optional.empty());
-        given(memberRoleRepository.findByRoleType("user")).willReturn(Optional.of(memberRole));
-        given(memberRepository.save(argThat(member -> member.getOauthIdentifier().equals("1232312312312")))).willReturn(member);
+        //given
+        Member member = memberFixture.createGeneralMember();
+        PostMemberReqDto postMemberReqDto = memberFixture.createPostMemberReqDto();
+        given(memberRepository.findByOauthIdentifier(postMemberReqDto.getOauthIdentifier()))
+                .willReturn(Optional.empty());
+        given(memberRoleRepository.findByRoleType("user")).willReturn(Optional.of(member.getRole()));
+        given(memberRepository.save(any())).willReturn(member);
 
         //when
-        AuthenticatedMember authenticatedMemberRes = memberService.createMemberByOauthIdentifier(postMemberReqDto);
+        AuthenticatedMember response = memberService.createMemberByOauthIdentifier(postMemberReqDto);
 
         //then
         assertAll(
-                () -> assertThat(authenticatedMemberRes.getMemberId()).isEqualTo(authenticatedMemberReq.getMemberId()),
-                () -> assertThat(authenticatedMemberRes.getMemberRole()).isEqualTo(authenticatedMemberReq.getMemberRole())
+                () -> assertEquals(response.getMemberId(), member.getId()),
+                () -> assertEquals(response.getMemberRole(), member.getRole().getRoleType())
         );
 
         //verify
-        verify(memberRepository).findByOauthIdentifier(eq(postMemberReqDto.getOauthIdentifier()));
-        verify(memberRoleRepository).findByRoleType(eq("user"));
-        verify(memberRepository).save(any());
+        verify(memberRepository, times(1))
+                .findByOauthIdentifier(eq(postMemberReqDto.getOauthIdentifier()));
+        verify(memberRoleRepository, times(1)).findByRoleType(eq("user"));
+        verify(memberRepository, times(1)).save(any());
     }
 
     @Test
     @DisplayName("존재하는 Oauth Identifier와 일치한다면 해당 멤버를 가져옵니다.")
     void Given_ExistOauthIdentifier_When_FindMember_Then_Success() {
-        AuthenticatedMember authenticatedMemberReq = AuthenticatedMember.builder()
-                .memberId(member.getId())
-                .memberRole(member.getRole().getRoleType())
-                .build();
-
+        //given
+        Member member = memberFixture.createGeneralMember();
+        PostMemberReqDto postMemberReqDto = memberFixture.createPostMemberReqDto();
+        given(memberRepository.findByOauthIdentifier(postMemberReqDto.getOauthIdentifier()))
+                .willReturn(Optional.of(member));
         //when
-        given(memberRepository.findByOauthIdentifier(postMemberReqDto.getOauthIdentifier())).willReturn(Optional.of(member));
-        AuthenticatedMember authenticatedMemberRes = memberService.createMemberByOauthIdentifier(postMemberReqDto);
+        AuthenticatedMember response = memberService.createMemberByOauthIdentifier(postMemberReqDto);
 
         //then
         assertAll(
-                () -> assertThat(authenticatedMemberRes.getMemberId()).isEqualTo(authenticatedMemberReq.getMemberId()),
-                () -> assertThat(authenticatedMemberRes.getMemberRole()).isEqualTo(authenticatedMemberReq.getMemberRole())
+                () -> assertEquals(response.getMemberId(), member.getId()),
+                () -> assertEquals(response.getMemberRole(), member.getRole().getRoleType())
         );
 
         verify(memberRepository).findByOauthIdentifier(eq(postMemberReqDto.getOauthIdentifier()));
@@ -164,302 +97,344 @@ class MemberServiceTest {
     @Test
     @DisplayName("존재하는 Oauth Identifier를 가져왔지만 요청된 정보와 일치하지 않다면 예외를 던진다.")
     void Given_OauthIdentifier_When_CompareIncorrectRequest_Then_ThrowException() {
-        PostMemberReqDto testPostMemberReqDto = PostMemberReqDto.builder()
-                .oauthName("kakao")
-                .oauthIdentifier(postMemberReqDto.getOauthIdentifier())
-                .build();
+        //given
+        PostMemberReqDto postMemberReqDto = memberFixture.createPostMemberReqDto();
+        Member member = memberFixture.createInitializerMember();
+        given(memberRepository.findByOauthIdentifier(postMemberReqDto.getOauthIdentifier()))
+                .willReturn(Optional.of(member));
 
-        given(memberRepository.findByOauthIdentifier(postMemberReqDto.getOauthIdentifier())).willReturn(Optional.of(member));
+        //when, then
+        assertThrows(MemberException.class,
+            () -> memberService.createMemberByOauthIdentifier(postMemberReqDto));
 
-        assertThrows(MemberException.class, () -> memberService.createMemberByOauthIdentifier(testPostMemberReqDto));
+        //verify
+        verify(memberRepository, times(1))
+                .findByOauthIdentifier(postMemberReqDto.getOauthIdentifier());
     }
 
     @Test
     @DisplayName("Member가 토큰을 발급한 적이 없다면 토큰을 발급하고 저장한다.")
     void Given_Tokens_When_InitializeMember_Then_Success() {
-        String accessToken = jwtTokenProvider.createAccessToken(authenticatedMember);
-        String refreshToken = jwtTokenProvider.createRefreshToken(authenticatedMember);
-        given(memberTokenRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.empty());
-        given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
+        //given
+        Member member = memberFixture.createInitializerMember();
+        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(member);
+        given(memberTokenRepository.findById(authenticatedMember.getMemberId()))
+            .willReturn(Optional.empty());
+        given(memberRepository.findById(authenticatedMember.getMemberId()))
+            .willReturn(Optional.of(member));
 
-        memberService.saveTokenByMember(authenticatedMember, accessToken, refreshToken);
+        //when
+        Member response = memberService
+            .saveTokenByMember(authenticatedMember, memberFixture.createMemberTokensResDto());
 
-        verify(memberTokenRepository).save(memberTokenArgumentCaptor.capture());
-        MemberToken memberTokenRes = memberTokenArgumentCaptor.getValue();
-
+        //then
         assertAll(
-                () -> assertThat(memberTokenRes.getAccessToken()).isEqualTo(accessToken),
-                () -> assertThat(memberTokenRes.getRefreshToken()).isEqualTo(refreshToken)
+            () -> assertEquals(response.getId(), authenticatedMember.getMemberId()),
+            () -> assertEquals(response.getRole().getRoleType(), authenticatedMember.getMemberRole())
         );
 
-        verify(memberTokenRepository).findById(authenticatedMember.getMemberId());
-        verify(memberRepository).findById(authenticatedMember.getMemberId());
+
+        //verify
+        verify(memberTokenRepository, times(1))
+            .findById(authenticatedMember.getMemberId());
+        verify(memberRepository, times(1))
+            .findById(authenticatedMember.getMemberId());
     }
 
     @Test
     @DisplayName("Member가 토큰을 발급한 적이 있다면 새로운 토큰들로 저장한다.")
     void Given_Tokens_When_JoinedMember_Then_SuccessExchangeTokens() {
-        String accessToken = jwtTokenProvider.createAccessToken(authenticatedMember);
-        String refreshToken = jwtTokenProvider.createRefreshToken(authenticatedMember);
-        MemberToken memberToken = MemberToken.builder()
-                .member(member)
-                .build();
+        //given
+        MemberToken memberToken = memberFixture.createMemberToken();
+        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(memberToken.getMember());
+        given(memberRepository.findById(authenticatedMember.getMemberId()))
+                .willReturn(Optional.of(memberToken.getMember()));
+        given(memberTokenRepository.findById(authenticatedMember.getMemberId()))
+                .willReturn(Optional.of(memberToken));
 
-        given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
-        given(memberTokenRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(memberToken));
+        //when
+        Member response = memberService.saveTokenByMember(authenticatedMember, memberFixture.createMemberTokensResDto());
 
-        memberService.saveTokenByMember(authenticatedMember, accessToken, refreshToken);
+        //then
+        assertAll(
+                () -> assertEquals(response.getId(), authenticatedMember.getMemberId()),
+                () -> assertEquals(response.getRole().getRoleType(), authenticatedMember.getMemberRole())
+        );
 
-        verify(memberRepository).findById(authenticatedMember.getMemberId());
-        verify(memberTokenRepository).findById(authenticatedMember.getMemberId());
+        //verify
+        verify(memberRepository, times(1)).findById(authenticatedMember.getMemberId());
+        verify(memberTokenRepository, times(1)).findById(authenticatedMember.getMemberId());
     }
 
     @Test
     @DisplayName("가입이 안된 Member라면 토큰 발급을 시도하면 예외가 발생한다.")
     void Given_Member_When_NotJoinedMember_Then_ThrowMemberException() {
-        String accessToken = jwtTokenProvider.createAccessToken(authenticatedMember);
-        String refreshToken = jwtTokenProvider.createRefreshToken(authenticatedMember);
+        //given
+        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(memberFixture.createInitializerMember());
+        given(memberRepository.findById(any())).willReturn(Optional.empty());
 
-        given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.empty());
-
+        //when, then
         assertThrows(MemberException.class,
-                () -> memberService.saveTokenByMember(authenticatedMember, accessToken, refreshToken));
+                () -> memberService.saveTokenByMember(authenticatedMember, memberFixture.createMemberTokensResDto()));
 
-        verify(memberRepository).findById(authenticatedMember.getMemberId());
+        //verify
+        verify(memberRepository, times(1)).findById(authenticatedMember.getMemberId());
     }
 
     @Test
     @DisplayName("이미 존재하는 닉네임이라면 닉네임 중복이라는 예외가 발생한다.")
     void Given_Nickname_When_ExistNickname_Then_ThrowMemberException() {
+        //given
+        PostNicknameReqDto postNicknameReqDto = memberFixture.createPostNicknameReqDto();
         given(memberRepository.existsByNickname(postNicknameReqDto.getNickname())).willReturn(true);
 
+        //when, then
         assertThrows(MemberException.class, () -> memberService.checkNicknamePossible(postNicknameReqDto));
 
-        verify(memberRepository).existsByNickname(eq("taeyong"));
+        //verify
+        verify(memberRepository, times(1)).existsByNickname(eq("james"));
     }
 
     @Test
     @DisplayName("존재하지 않는 닉네임이라면 닉네임 사용을 할 수 있는 dto를 반환한다.")
     void Given_Nickname_When_NotExistNickname_Then_ReturnTrue() {
-        PostNicknameResDto postNicknameResDto = PostNicknameResDto.builder()
-                .possible(true)
-                .build();
-
+        //given
+        PostNicknameReqDto postNicknameReqDto = memberFixture.createPostNicknameReqDto();
         given(memberRepository.existsByNickname(postNicknameReqDto.getNickname())).willReturn(false);
 
+        //when
         PostNicknameResDto result = memberService.checkNicknamePossible(postNicknameReqDto);
 
-        assertThat(result.isPossible()).isEqualTo(postNicknameResDto.isPossible());
+        //then
+        assertThat(result.isPossible()).isTrue();
 
-        verify(memberRepository).existsByNickname(eq("taeyong"));
+        //verify
+        verify(memberRepository, times(1))
+                .existsByNickname(eq(postNicknameReqDto.getNickname()));
     }
 
     @Test
     @DisplayName("회원가입 이후 정보 입력을 하지 않았다면 닉네임과 싸피멤버여부에 대해 null을 가진 dto를 반환한다.")
     void Given_Member_When_GetMemberInfo_Then_Success() {
-        GetMemberResDto getMemberResDto = GetMemberResDto.fromGeneralUser(member);
-        given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
+        //given
+        Member member = memberFixture.createInitializerMember();
+        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
 
-        GetMemberResDto result = memberService.getMemberInformation(authenticatedMember.getMemberId());
+        //when
+        GetMemberResDto response = memberService.getMemberInformation(member.getId());
 
-        assertAll(
-                () -> assertThat(result.getMemberId()).isEqualTo(getMemberResDto.getMemberId()),
-                () -> assertThat(result.getMemberRole()).isEqualTo(getMemberResDto.getMemberRole()),
-                () -> assertThat(result.getSsafyMember()).isEqualTo(getMemberResDto.getSsafyMember()),
-                () -> assertThat(result.getNickname()).isEqualTo(getMemberResDto.getNickname())
-        );
+        //then
+        assertThat(response).usingRecursiveComparison().isEqualTo(GetMemberResDto.fromGeneralUser(member));
 
-        verify(memberRepository).findById(authenticatedMember.getMemberId());
+        //verify
+        verify(memberRepository, times(1)).findById(member.getId());
     }
 
     @Test
     @DisplayName("회원가입 이후 싸피유저가 아닌 일반 유저에 대해 정보 입력을 했다면 일반 유저 dto를 반환한다.")
     void Given_Member_When_GetGeneralMemberInfo_Then_Success() {
-        member.setGeneralMemberInformation(generalMemberInfoReqDto);
-        GetMemberResDto getMemberResDto = GetMemberResDto.fromGeneralUser(member);
-        given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
+        //given
+        Member member = memberFixture.createGeneralMember();
+        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
 
-        GetMemberResDto result = memberService.getMemberInformation(authenticatedMember.getMemberId());
+        //when
+        GetMemberResDto response = memberService.getMemberInformation(member.getId());
 
-        assertAll(
-                () -> assertThat(result.getMemberId()).isEqualTo(getMemberResDto.getMemberId()),
-                () -> assertThat(result.getMemberRole()).isEqualTo(getMemberResDto.getMemberRole()),
-                () -> assertThat(result.getSsafyMember()).isEqualTo(getMemberResDto.getSsafyMember()),
-                () -> assertThat(result.getNickname()).isEqualTo(getMemberResDto.getNickname()),
-                () -> assertThat(result.getIsMajor()).isEqualTo(getMemberResDto.getIsMajor())
-        );
-        verify(memberRepository).findById(authenticatedMember.getMemberId());
+        //then
+        assertThat(response).usingRecursiveComparison().isEqualTo(GetMemberResDto.fromGeneralUser(member));
+
+        //verify
+        verify(memberRepository, times(1)).findById(member.getId());
     }
 
     @Test
     @DisplayName("회원가입 이후 싸피유저에 대한 정보 입력을 했다면 싸피 유저 dto를 반환한다.")
     void Given_Member_When_GetSSAFYMemberInfo_Then_Success() {
-        given(metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), SSAFYMemberInfoReqDto.getCampus())).willReturn(new MetaData(Campus.SEOUL));
-        member.setSSAFYMemberInformation(SSAFYMemberInfoReqDto, metaDataConsumer);
-        GetMemberResDto getMemberResDto = GetMemberResDto.fromSSAFYUser(member);
-        given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
+        //given
+        GetMemberResDto getMemberResDto = memberFixture.createCertifiedSSAFYMemberResDto();
+        given(memberRepository.findById(getMemberResDto.getMemberId()))
+                .willReturn(Optional.of(memberFixture.createCertifiedSSAFYMember()));
+        //when
+        GetMemberResDto response = memberService.getMemberInformation(getMemberResDto.getMemberId());
 
-        GetMemberResDto result = memberService.getMemberInformation(authenticatedMember.getMemberId());
+        //then
+        assertThat(response).usingRecursiveComparison().isEqualTo(getMemberResDto);
 
-        assertAll(
-                () -> assertThat(result.getMemberId()).isEqualTo(getMemberResDto.getMemberId()),
-                () -> assertThat(result.getMemberRole()).isEqualTo(getMemberResDto.getMemberRole()),
-                () -> assertThat(result.getSsafyMember()).isEqualTo(getMemberResDto.getSsafyMember()),
-                () -> assertThat(result.getNickname()).isEqualTo(getMemberResDto.getNickname()),
-                () -> assertThat(result.getIsMajor()).isEqualTo(getMemberResDto.getIsMajor()),
-                () -> assertThat(result.getSsafyInfo().getCampus()).isEqualTo(getMemberResDto.getSsafyInfo().getCampus()),
-                () -> assertThat(result.getSsafyInfo().getSemester()).isEqualTo(getMemberResDto.getSsafyInfo().getSemester())
-        );
-
-        verify(metaDataConsumer).getMetaData(MetaDataType.CAMPUS.name(), "서울");
-        verify(memberRepository).findById(authenticatedMember.getMemberId());
+        //verify
+        verify(memberRepository, times(1)).findById(getMemberResDto.getMemberId());
     }
 
     @Test
     @DisplayName("소셜 로그인 이후, 회원정보 입력에서 닉네임이 중복됐다면 예외가 발생한다.")
     void Given_ExistNickname_When_Register_MemberInfo_Then_ThrowMemberException() {
-        given(memberRepository.existsByNickname(generalMemberInfoReqDto.getNickname())).willReturn(true);
+        //given
+        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(memberFixture.createGeneralMember());
+        PostMemberInfoReqDto postMemberInfoReqDto = memberFixture.createPostGeneralMemberInfoReqDto();
+        given(memberRepository.existsByNickname(postMemberInfoReqDto.getNickname())).willReturn(true);
 
-        assertThrows(MemberException.class, () -> memberService.registerMemberInformation(authenticatedMember, generalMemberInfoReqDto));
+        //when, then
+        assertThrows(MemberException.class,
+                () -> memberService.registerMemberInformation(authenticatedMember, postMemberInfoReqDto));
 
-        verify(memberRepository).existsByNickname(generalMemberInfoReqDto.getNickname());
+        //verify
+        verify(memberRepository, times(1)).existsByNickname(postMemberInfoReqDto.getNickname());
     }
 
     @Test
     @DisplayName("소셜 로그인 이후, 회원정보 입력에서 회원을 찾을 수 없다면 예외가 발생한다.")
     void Given_NotExistMember_When_Register_MemberInfo_Then_ThrowMemberException() {
-        given(memberRepository.existsByNickname(generalMemberInfoReqDto.getNickname())).willReturn(false);
+        //given
+        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(memberFixture.createGeneralMember());
+        PostMemberInfoReqDto postMemberInfoReqDto = memberFixture.createPostGeneralMemberInfoReqDto();
+        given(memberRepository.existsByNickname(postMemberInfoReqDto.getNickname())).willReturn(false);
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.empty());
 
-        assertThrows(MemberException.class, () -> memberService.registerMemberInformation(authenticatedMember, generalMemberInfoReqDto));
+        //when, then
+        assertThrows(MemberException.class,
+                () -> memberService.registerMemberInformation(authenticatedMember, postMemberInfoReqDto));
 
-        verify(memberRepository).existsByNickname(generalMemberInfoReqDto.getNickname());
-        verify(memberRepository).findById(authenticatedMember.getMemberId());
+        //verify
+        verify(memberRepository, times(1)).existsByNickname(postMemberInfoReqDto.getNickname());
+        verify(memberRepository, times(1)).findById(authenticatedMember.getMemberId());
     }
 
     @Test
     @DisplayName("소셜 로그인 이후, 일반 회원 정보에 대해 입력했다면 일반 회원정보 dto를 return 받는다.")
     void Given_PostGeneralMemberInfo_When_Register_MemberInfo_Then_ReturnGeneralMemberResDto() {
-        member.setGeneralMemberInformation(generalMemberInfoReqDto);
-        GetMemberResDto getMemberResDto = GetMemberResDto.fromGeneralUser(member);
-        given(memberRepository.existsByNickname(generalMemberInfoReqDto.getNickname())).willReturn(false);
+        //given
+        Member member = memberFixture.createGeneralMember();
+        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(member);
+        PostMemberInfoReqDto postMemberInfoReqDto = memberFixture.createPostGeneralMemberInfoReqDto();
+        given(memberRepository.existsByNickname(postMemberInfoReqDto.getNickname())).willReturn(false);
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
 
-        GetMemberResDto result = memberService.registerMemberInformation(authenticatedMember, generalMemberInfoReqDto);
+        //when
+        GetMemberResDto response = memberService.registerMemberInformation(authenticatedMember, postMemberInfoReqDto);
 
-        assertThat(result).extracting(GetMemberResDto::getMemberId).isEqualTo(getMemberResDto.getMemberId());
-        assertThat(result).extracting(GetMemberResDto::getSsafyMember).isEqualTo(getMemberResDto.getSsafyMember());
-        assertThat(result).extracting(GetMemberResDto::getNickname).isEqualTo(getMemberResDto.getNickname());
-        assertThat(result).extracting(GetMemberResDto::getIsMajor).isEqualTo(getMemberResDto.getIsMajor());
+        //then
+        assertThat(response).usingRecursiveComparison().isEqualTo(GetMemberResDto.fromGeneralUser(member));
 
-        verify(memberRepository).existsByNickname(generalMemberInfoReqDto.getNickname());
-        verify(memberRepository).findById(authenticatedMember.getMemberId());
+        //verify
+        verify(memberRepository, times(1)).existsByNickname(postMemberInfoReqDto.getNickname());
+        verify(memberRepository, times(1)).findById(authenticatedMember.getMemberId());
     }
 
     @Test
     @DisplayName("소셜 로그인 이후, 싸피 회원 정보에 대해 입력했다면 싸피 회원정보 dto를 return 받는다.")
     void Given_PostSSAFYMemberInfo_When_Register_MemberInfo_Then_ReturnSSAFYMemberResDto() {
-        given(metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), SSAFYMemberInfoReqDto.getCampus())).willReturn(new MetaData(Campus.SEOUL));
-        member.setSSAFYMemberInformation(SSAFYMemberInfoReqDto, metaDataConsumer);
-        GetMemberResDto getMemberResDto = GetMemberResDto.fromSSAFYUser(member);
-        given(memberRepository.existsByNickname(SSAFYMemberInfoReqDto.getNickname())).willReturn(false);
+        //given
+        Member member = memberFixture.createCertifiedSSAFYMember();
+        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(member);
+        PostMemberInfoReqDto postMemberInfoReqDto = memberFixture.createPostSSAFYMemberInfoReqDto();
+        given(memberRepository.existsByNickname(postMemberInfoReqDto.getNickname())).willReturn(false);
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
+        given(metaDataConsumer.getMetaData(any(), any())).willReturn(new MetaData(Campus.SEOUL));
 
-        GetMemberResDto result = memberService.registerMemberInformation(authenticatedMember, SSAFYMemberInfoReqDto);
+        //when
+        GetMemberResDto response = memberService.registerMemberInformation(authenticatedMember, postMemberInfoReqDto);
 
-        assertThat(result).extracting(GetMemberResDto::getMemberId).isEqualTo(getMemberResDto.getMemberId());
-        assertThat(result).extracting(GetMemberResDto::getSsafyMember).isEqualTo(getMemberResDto.getSsafyMember());
-        assertThat(result).extracting(GetMemberResDto::getNickname).isEqualTo(getMemberResDto.getNickname());
-        assertThat(result).extracting(GetMemberResDto::getIsMajor).isEqualTo(getMemberResDto.getIsMajor());
-        assertThat(result).extracting(GetMemberResDto::getSsafyInfo).extracting(SSAFYInfo::getCampus).isEqualTo(getMemberResDto.getSsafyInfo().getCampus());
-        assertThat(result).extracting(GetMemberResDto::getSsafyInfo).extracting(SSAFYInfo::getSemester).isEqualTo(getMemberResDto.getSsafyInfo().getSemester());
+        //then
+        assertThat(response).usingRecursiveComparison().isEqualTo(GetMemberResDto.fromSSAFYUser(member));
 
-        verify(metaDataConsumer, times(2)).getMetaData(MetaDataType.CAMPUS.name(), "서울");
-        verify(memberRepository).existsByNickname(generalMemberInfoReqDto.getNickname());
-        verify(memberRepository).findById(authenticatedMember.getMemberId());
+        //verify
+        verify(memberRepository, times(1)).existsByNickname(postMemberInfoReqDto.getNickname());
+        verify(memberRepository, times(1)).findById(authenticatedMember.getMemberId());
     }
 
-    @ParameterizedTest
-    @CsvSource({"Java, 1, ONE_SEMESTER, 선물", "Java, 2, TWO_SEMESTER, 하나", "Java, 3, THREE_SEMESTER, 출발", "Java, 4, FOUR_SEMESTER, 충전", "Java, 5, FIVE_SEMESTER, 극복",
-            "Java, 6, SIX_SEMESTER, hot식스", "Java, 7, SEVEN_SEMESTER, 럭키", "Java, 8, EIGHT_SEMESTER, 칠전팔", "Java, 9, NINE_SEMESTER, great", "Java, 10, TEN_SEMESTER, 텐션"})
+    @Test
     @DisplayName("싸피생 인증 요청 시, 정답에 대한 요청을 했으면 성공한다.")
-    void Given_PostCertificationInfo_When_Submit_SSAFY_Certification_Answer_Then_Success(String majorTrack, int semester, String name, String answer) {
+    void Given_PostCertificationInfo_When_Submit_SSAFY_Certification_Answer_Then_Success() {
+        //given
         PostCertificationInfoReqDto postCertificationInfoReqDto = PostCertificationInfoReqDto.builder()
-                .majorTrack(majorTrack)
-                .semester(semester)
-                .answer(answer)
+                .majorTrack("Java")
+                .semester(1)
+                .answer("선물")
                 .build();
-
-        given(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TRACK.name(), majorTrack))
+        Member member = memberFixture.createUncertifiedSSAFYMember();
+        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(member);
+        given(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TRACK.name(), "Java"))
                 .willReturn(new MetaData(MajorTrack.JAVA));
         given(metaDataConsumer.getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer()))
-                .willReturn(new MetaData(Certification.valueOf(name)));
+                .willReturn(new MetaData(Certification.ONE_SEMESTER));
         given(memberRepository.findById(authenticatedMember.getMemberId()))
                 .willReturn(Optional.of(member));
         given(memberConstantProvider.getCERTIFICATION_INQUIRY_TIME()).willReturn(5);
         given(memberConstantProvider.getMAX_MINUTES()).willReturn(5);
 
-        PostCertificationInfoResDto postCertificationInfoResDto = memberService
+        //when
+        PostCertificationInfoResDto response = memberService
                 .certifySSAFYInformation(authenticatedMember.getMemberId(), postCertificationInfoReqDto);
 
-        assertThat(member.getCertificationState()).isEqualTo(AuthenticationStatus.CERTIFIED);
-        assertThat(member.getMajorTrack().getName()).isEqualTo(majorTrack);
-        assertTrue(postCertificationInfoResDto.isPossible());
+        //then
+        assertThat(response.isPossible()).isTrue();
 
-        verify(metaDataConsumer).getMetaData(MetaDataType.MAJOR_TRACK.name(), majorTrack);
-        verify(metaDataConsumer).getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer());
-        verify(memberRepository).findById(authenticatedMember.getMemberId());
+        //verify
+        verify(metaDataConsumer, times(1))
+                .getMetaData(MetaDataType.MAJOR_TRACK.name(), "Java");
+        verify(metaDataConsumer, times(1))
+                .getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer());
+        verify(memberRepository, times(1)).findById(authenticatedMember.getMemberId());
     }
 
-    @ParameterizedTest
-    @CsvSource({"Java, 2, ONE_SEMESTER, 선물", "Java, 3, TWO_SEMESTER, 하나", "Java, 1, THREE_SEMESTER, 출발", "Java, 5, FOUR_SEMESTER, 충전", "Java, 6, FIVE_SEMESTER, 극복",
-            "Java, 2, SIX_SEMESTER, hot식스", "Java, 4, SEVEN_SEMESTER, 럭키", "Java, 7, EIGHT_SEMESTER, 칠전팔", "Java, 8, NINE_SEMESTER, great", "Java, 9, TEN_SEMESTER, 텐션"})
+    @Test
     @DisplayName("싸피생 인증 요청 시, 정답에 대한 요청이 존재하지만 기수 정보가 다를 때 인증에 실패한다.")
-    void Given_PostCertificationInfo_When_Submit_SSAFY_Certification_Answer_Then_Fail(String majorTrack, int semester, String name, String answer) {
+    void Given_PostCertificationInfo_When_Submit_SSAFY_Certification_Answer_Then_Fail() {
+        //given
         PostCertificationInfoReqDto postCertificationInfoReqDto = PostCertificationInfoReqDto.builder()
-                .majorTrack(majorTrack)
-                .semester(semester)
-                .answer(answer)
+                .majorTrack("Java")
+                .semester(2)
+                .answer("선물")
                 .build();
+        Member member = memberFixture.createUncertifiedSSAFYMember();
+        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(member);
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
         given(metaDataConsumer.getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer().toLowerCase()))
-                .willReturn(new MetaData(Certification.valueOf(name)));
+                .willReturn(new MetaData(Certification.ONE_SEMESTER));
         given(memberConstantProvider.getMAX_MINUTES()).willReturn(5);
         given(memberConstantProvider.getCERTIFICATION_INQUIRY_TIME()).willReturn(5);
 
-        PostCertificationInfoResDto postCertificationInfoResDto = memberService.certifySSAFYInformation(
+        //when
+        PostCertificationInfoResDto response = memberService.certifySSAFYInformation(
                 authenticatedMember.getMemberId(), postCertificationInfoReqDto);
 
-        assertThat(postCertificationInfoResDto.isPossible()).isFalse();
+        //then
+        assertThat(response.isPossible()).isFalse();
 
-        verify(metaDataConsumer).getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer().toLowerCase());
+        //verify
+        verify(metaDataConsumer, times(1))
+                .getMetaData(MetaDataType.CERTIFICATION.name(), postCertificationInfoReqDto.getAnswer().toLowerCase());
     }
 
 
     @Test
     @DisplayName("싸피생 인증 요청 시, 회원 정보를 찾을 수 없다면 예외가 발생한다.")
     void Given_PostCertificationInfo_When_Submit_SSAFY_Certification_Answer_Then_ThrowMemberException() {
+        //given
         PostCertificationInfoReqDto postCertificationInfoReqDto = PostCertificationInfoReqDto.builder()
+                .majorTrack("Java")
                 .semester(1)
                 .answer("선물")
                 .build();
-
+        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(memberFixture.createUncertifiedSSAFYMember());
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.empty());
 
+        //when, then
         assertThrows(MemberException.class, () -> memberService.certifySSAFYInformation(
                 authenticatedMember.getMemberId(), postCertificationInfoReqDto));
 
-        verify(memberRepository).findById(authenticatedMember.getMemberId());
+        //verify
+        verify(memberRepository, times(1)).findById(authenticatedMember.getMemberId());
     }
 
     @Test
     @DisplayName("마이 프로필 공개 여부 수정 시도 시, 회원 정보를 찾을 수 없다면 예외가 발생한다")
     void Given_IsNotExistMember_When_Try_Change_Public_Profile_Then_ThrowMemberException() {
         //given
-        PatchMemberPublicProfileReqDto patchMemberPublicProfileReqDto = new PatchMemberPublicProfileReqDto();
+        PatchMemberPublicProfileReqDto patchMemberPublicProfileReqDto = memberFixture.createPatchMemberPublicProfileReqDto();
+        Member member = memberFixture.createMember();
         given(memberRepository.findById(member.getId())).willReturn(Optional.empty());
 
-        //then
+        //when, then
         assertThrows(MemberException.class,
                 () -> memberService.patchMemberPublicProfile(member.getId(), patchMemberPublicProfileReqDto));
 
@@ -471,10 +446,11 @@ class MemberServiceTest {
     @DisplayName("마이 프로필 공개 여부 수정에 성공한다.")
     void Given_Valid_PatchMemberPublicProfileReqDto_When_Try_Change_Public_Profile_Then_Success() {
         //given
-        PatchMemberPublicProfileReqDto patchMemberPublicProfileReqDto = new PatchMemberPublicProfileReqDto(false);
+        PatchMemberPublicProfileReqDto patchMemberPublicProfileReqDto = memberFixture.createPatchMemberPublicProfileReqDto();
+        Member member = memberFixture.createMember();
         given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
 
-        //then
+        //when, then
         memberService.patchMemberPublicProfile(member.getId(), patchMemberPublicProfileReqDto);
 
         //verify
@@ -485,9 +461,10 @@ class MemberServiceTest {
     @DisplayName("마이 프로필 공개 여부 조회 시도 시, 회원 정보를 찾을 수 없다면 예외가 발생한다")
     void Given_IsNotExistMember_When_Get_Public_Profile_Then_ThrowMemberException() {
         //given
+        Member member = memberFixture.createMember();
         given(memberRepository.findById(member.getId())).willReturn(Optional.empty());
 
-        //then
+        //when, then
         assertThrows(MemberException.class,
                 () -> memberService.getMemberPublicProfileByMemberId(member.getId()));
 
@@ -499,10 +476,14 @@ class MemberServiceTest {
     @DisplayName("마이 프로필 공개 여부 조회에 성공한다.")
     void Given_Valid_Member_When_Get_Public_Profile_Then_Success() {
         //given
+        Member member = memberFixture.createMember();
         given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
 
+        //when
+        GetMemberPublicProfileResDto response = memberService.getMemberPublicProfileByMemberId(member.getId());
+
         //then
-        memberService.getMemberPublicProfileByMemberId(member.getId());
+        assertThat(response.getIsPublic()).isEqualTo(member.getPublicProfile());
 
         //verify
         verify(memberRepository, times(1)).findById(member.getId());
@@ -513,28 +494,36 @@ class MemberServiceTest {
     @DisplayName("멤버의 포트폴리오 정보를 수정하는데 성공한다.")
     void Given_Valid_Member_Portfolio_Information_When_Put_Portfolio_Then_Success() {
         //given
-        PutMemberPortfolioReqDto putMemberPortfolioReqDto = mock(PutMemberPortfolioReqDto.class);
-        MemberProfile memberProfile = mock(MemberProfile.class);
-        given(memberRepository.findById(1L)).willReturn(Optional.of(member));
-        given(putMemberPortfolioReqDto.getSelfIntroduction()).willReturn("자기소개 합니다.");
+        PutMemberPortfolioReqDto putMemberPortfolioReqDto = memberFixture.createPutMemberPortfolioReqDto();
+        MemberProfile memberProfile = memberFixture.createMemberProfile();
+        Member member = memberProfile.getMember();
+        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
         given(memberProfileRepository.findMemberProfileByMember(member)).willReturn(Optional.of(memberProfile));
 
-        //then
+        //when
         memberService.registerMemberPortfolio(member.getId(), putMemberPortfolioReqDto);
+
+        //then
+        assertThat(memberProfile.getIntroduce()).isEqualTo(putMemberPortfolioReqDto.getSelfIntroduction());
 
         //verify
         verify(memberRepository, times(1)).findById(member.getId());
+        verify(memberLinkRepository, times(1)).deleteMemberLinksByMember(member);
+        verify(memberSkillRepository, times(1)).deleteMemberSkillsByMember(member);
     }
 
     @Test
     @DisplayName("멤버의 닉네임을 수정하는데 성공한다.")
     void Given_Nickname_When_ChangeNickname_Then_Success() {
         //given
-        PatchMemberNicknameReqDto patchMemberNicknameReqDto = mock(PatchMemberNicknameReqDto.class);
+        Member member = memberFixture.createMember();
         given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
 
+        //when
+        memberService.changeMemberNickname(member.getId(), memberFixture.createPatchMemberNicknameReqDto());
+
         //then
-        memberService.changeMemberNickname(member.getId(), patchMemberNicknameReqDto);
+        assertThat(member.getNickname()).isEqualTo(memberFixture.createPatchMemberNicknameReqDto().getNickname());
 
         //verify
         verify(memberRepository, times(1)).findById(member.getId());
@@ -544,13 +533,15 @@ class MemberServiceTest {
     @DisplayName("멤버는 전공자 여부를 수정하는데 성공한다.")
     void Given_Member_WhenChangeMajor_Then_Success() {
         //given
-        PatchMemberMajorReqDto patchMemberMajorReqDto = PatchMemberMajorReqDto
-                .builder()
-                .isMajor(false)
-                .build();
+        PatchMemberMajorReqDto patchMemberMajorReqDto = memberFixture.createPatchMemberMajorReqDto();
+        Member member = memberFixture.createMember();
         given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
 
+        //when
         memberService.changeMemberMajor(member.getId(), patchMemberMajorReqDto);
+
+        //then
+        assertThat(member.getMajor()).isEqualTo(patchMemberMajorReqDto.getIsMajor());
 
         //verify
         verify(memberRepository, times(1)).findById(member.getId());
@@ -560,50 +551,39 @@ class MemberServiceTest {
     @DisplayName("멤버 전공자 트랙을 수정하는데 성공합니다.")
     void Given_Member_WhenChangeMajorTrack_Then_Success() {
         //given
-        PatchMemberMajorTrackReqDto patchMemberMajorTrackReqDto = PatchMemberMajorTrackReqDto
-                .builder()
-                .majorTrack("Embedded")
-                .build();
-        given(memberRepository.findById(ssafyMember.getId())).willReturn(Optional.of(ssafyMember));
+        PatchMemberMajorTrackReqDto patchMemberMajorTrackReqDto = memberFixture.createPatchMemberMajorTrackReqDto();
+        Member member = memberFixture.createCertifiedSSAFYMember();
+        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
         given(metaDataConsumer.getMetaData(eq(MetaDataType.MAJOR_TRACK.name()), eq("Embedded")))
                 .willReturn(new MetaData(MajorTrack.EMBEDDED));
 
-        memberService.changeMemberMajorTrack(ssafyMember.getId(), patchMemberMajorTrackReqDto.getMajorTrack());
+        //when
+        memberService.changeMemberMajorTrack(member.getId(), patchMemberMajorTrackReqDto.getMajorTrack());
 
-        verify(memberRepository, times(1)).findById(ssafyMember.getId());
+        //then
+        assertThat(member.getMajorTrack().getName()).isEqualTo(patchMemberMajorTrackReqDto.getMajorTrack());
+
+        //verify
+        verify(memberRepository, times(1)).findById(member.getId());
         verify(metaDataConsumer, times(1))
                 .getMetaData(eq(MetaDataType.MAJOR_TRACK.name()), eq("Embedded"));
     }
 
-    @Test
-    @DisplayName("잘못된 전공자 트랙 정보를 입력했을때 클라이언트 측 예외가 발생합니다.")
-    void Given_Member_WhenChangeMajorTrack_Then_Fail() {
-        //given
-        PatchMemberMajorTrackReqDto patchMemberMajorTrackReqDto = PatchMemberMajorTrackReqDto
-                .builder()
-                .majorTrack("Embed")
-                .build();
-        given(memberRepository.findById(ssafyMember.getId())).willReturn(Optional.of(ssafyMember));
-        given(metaDataConsumer.getMetaData(eq(MetaDataType.MAJOR_TRACK.name()), eq("Embed")))
-                .willThrow(new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
-
-
-        assertThrows(ResourceNotFoundException.class,
-                () -> memberService.changeMemberMajorTrack(ssafyMember.getId(), patchMemberMajorTrackReqDto.getMajorTrack()));
-    }
 
     @Test
     @DisplayName("싸피생이 아닌 멤버가 전공 트랙 정보를 수정하려고 할 때 예외가 발생합니다.")
     void Given_NotSSAFYMember_WhenChangeMajorTrack_Then_Fail() {
         //given
-        PatchMemberMajorTrackReqDto patchMemberMajorTrackReqDto = PatchMemberMajorTrackReqDto
-                .builder()
-                .majorTrack("Embedded")
-                .build();
-        given(memberRepository.findById(notSSAFYMember.getId())).willReturn(Optional.of(notSSAFYMember));
+        PatchMemberMajorTrackReqDto patchMemberMajorTrackReqDto = memberFixture.createPatchMemberMajorTrackReqDto();
+        Member member = memberFixture.createGeneralMember();
+        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
 
+        //when, then
         assertThrows(MemberException.class,
                 () -> memberService
-                        .changeMemberMajorTrack(notSSAFYMember.getId(), patchMemberMajorTrackReqDto.getMajorTrack()));
+                        .changeMemberMajorTrack(member.getId(), patchMemberMajorTrackReqDto.getMajorTrack()));
+
+        //verify
+        verify(memberRepository, times(1)).findById(member.getId());
     }
 }

@@ -12,13 +12,15 @@ import static com.ssafy.ssafsound.global.util.fixture.MemberFixture.*;
 
 public class PostFixture {
 
+    private static final MemberFixture memberFixture = new MemberFixture();
+
     public static final Post POST_FIXTURE1 = Post.builder()
             .id(1L)
             .title("싸탈하고 싶다.")
             .content("싸탈하고 싶은 밤이네요")
             .anonymity(false)
             .board(BOARD_FIXTURE1)
-            .member(MEMBER_KIM)
+            .member(memberFixture.createMember())
             .build();
 
     public static final Post POST_FIXTURE2 = Post.builder()
@@ -27,7 +29,7 @@ public class PostFixture {
             .content("결과가 암울해")
             .anonymity(true)
             .board(BOARD_FIXTURE1)
-            .member(MEMBER_YONG)
+            .member(memberFixture.createMember())
             .build();
 
     public static final Post POST_FIXTURE3 = Post.builder()
@@ -36,7 +38,7 @@ public class PostFixture {
             .content("취업이 뭐죠??")
             .anonymity(true)
             .board(BOARD_FIXTURE2)
-            .member(MEMBER_YONG)
+            .member(memberFixture.createMember())
             .build();
 
     public static final GetPostElement GET_POST_ELEMENT1 = GetPostElement.builder()
@@ -183,7 +185,7 @@ public class PostFixture {
             POST_FIXTURE1, null);
 
     public static final GetPostDetailResDto GET_POST_DETAIL_RES_DTO2 = GetPostDetailResDto.of(
-            POST_FIXTURE2, MEMBER_YONG);
+            POST_FIXTURE2, memberFixture.createMember());
 
     public static final PostPostWriteReqDto POST_POST_WRITE_REQ_DTO1 = PostPostWriteReqDto.builder()
             .title("안녕하세요 첫 글이네요")

@@ -1,23 +1,18 @@
 package com.ssafy.ssafsound.global.util.fixture;
 
 import com.ssafy.ssafsound.domain.comment.domain.Comment;
-import com.ssafy.ssafsound.domain.comment.dto.CommentIdElement;
-import com.ssafy.ssafsound.domain.comment.dto.GetCommentElement;
-import com.ssafy.ssafsound.domain.comment.dto.GetCommentReplyElement;
-import com.ssafy.ssafsound.domain.comment.dto.GetCommentResDto;
-import com.ssafy.ssafsound.domain.comment.dto.PatchCommentUpdateReqDto;
-import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReqDto;
+import com.ssafy.ssafsound.domain.comment.dto.*;
 import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
 import com.ssafy.ssafsound.domain.post.dto.PostCommonLikeResDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.ssafy.ssafsound.global.util.fixture.MemberFixture.CERTIFIED_SSAFY_INFO;
-import static com.ssafy.ssafsound.global.util.fixture.MemberFixture.MEMBER_TIM;
 import static com.ssafy.ssafsound.global.util.fixture.PostFixture.POST_FIXTURE1;
 
 public class CommentFixture {
+
+    private static final MemberFixture memberFixture = new MemberFixture();
 
     public static final AuthorElement AUTHOR_ELEMENT_COMMENT1 = AuthorElement.builder()
             .memberId(1L)
@@ -25,7 +20,7 @@ public class CommentFixture {
             .memberRole("user")
             .ssafyMember(true)
             .isMajor(true)
-            .ssafyInfo(CERTIFIED_SSAFY_INFO)
+            .ssafyInfo(memberFixture.createCertifiedSSAFYInfo())
             .build();
 
     public static final AuthorElement AUTHOR_ELEMENT_COMMENT2 = AuthorElement.builder()
@@ -94,7 +89,7 @@ public class CommentFixture {
 
     public static final Comment COMMENT_FIXTURE_1 = Comment.builder()
             .id(1L)
-            .member(MEMBER_TIM)
+            .member(memberFixture.createMember())
             .deletedComment(Boolean.FALSE)
             .anonymity(Boolean.FALSE)
             .post(POST_FIXTURE1)
