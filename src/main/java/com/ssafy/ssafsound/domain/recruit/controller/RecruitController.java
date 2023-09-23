@@ -59,14 +59,28 @@ public class RecruitController {
     @GetMapping
     public EnvelopeResponse<GetRecruitsResDto> getRecruits(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable, @Authentication AuthenticatedMember memberInfo) {
         return EnvelopeResponse.<GetRecruitsResDto>builder()
-                .data(recruitService.getRecruits(getRecruitsReqDto, pageable, memberInfo == null ? null : memberInfo.getMemberId()))
+                .data(recruitService.getRecruits(getRecruitsReqDto, pageable, memberInfo.getMemberId()))
                 .build();
     }
 
-    @GetMapping("/scraped")
+    @GetMapping("/my-scrap")
     public EnvelopeResponse<GetRecruitsResDto> getScrapedRecruits(Long cursor, Pageable pageable, @Authentication AuthenticatedMember memberInfo) {
         return EnvelopeResponse.<GetRecruitsResDto>builder()
-                .data(recruitService.getScrapedRecruits(memberInfo == null ? null : memberInfo.getMemberId(), cursor, pageable))
+                .data(recruitService.getScrapedRecruits(memberInfo.getMemberId(), cursor, pageable))
+                .build();
+    }
+
+    @GetMapping("/joined")
+    public  EnvelopeResponse<GetRecruitsResDto> getMemberJoinedRecruits(GetMemberJoinRecruitsReqDto getMemberJoinRecruitsReqDto, @Authentication AuthenticatedMember memberInfo) {
+        return EnvelopeResponse.<GetRecruitsResDto>builder()
+                .data(recruitService.getMemberJoinRecruits(getMemberJoinRecruitsReqDto, memberInfo.getMemberId()))
+                .build();
+    }
+
+    @GetMapping("/applied")
+    public EnvelopeResponse<GetMemberAppliedRecruitsResDto> getMemberAppliedRecruits(GetMemberAppliedRecruitsReqDto recruitsReqDto, @Authentication AuthenticatedMember memberInfo) {
+        return EnvelopeResponse.<GetMemberAppliedRecruitsResDto>builder()
+                .data(recruitService.getMemberAppliedRecruits(recruitsReqDto, 1L))
                 .build();
     }
 }

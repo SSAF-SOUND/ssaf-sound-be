@@ -13,36 +13,36 @@ import java.util.stream.Collectors;
 
 @Getter
 @Builder
-public class GetRecruitsResDto implements AddParticipantDto {
-    private List<RecruitElement> recruits;
+public class GetMemberAppliedRecruitsResDto implements AddParticipantDto {
+    private List<AppliedRecruitElement> recruits;
     private Long nextCursor;
     private Boolean isLast;
 
     @JsonIgnore
     public List<Long> getRecruitsId() {
-        return recruits.stream().map(RecruitElement::getRecruitId).collect(Collectors.toList());
+        return recruits.stream().map(AppliedRecruitElement::getRecruitId).collect(Collectors.toList());
     }
 
     @JsonIgnore
     public Map<Long, Map<String, RecruitParticipant>> getRecruitParticipantMapByRecruitIdAndRecruitType() {
         Map<Long, Map<String, RecruitParticipant>> result = new TreeMap<>();
-        for(RecruitElement recruitElement: recruits) {
+        for(AppliedRecruitElement recruitElement: recruits) {
             result.put(recruitElement.getRecruitId(), recruitElement.getRecruitParticipantMap());
         }
         return result;
     }
 
-    public static GetRecruitsResDto fromPageAndMemberId(Slice<Recruit> sliceRecruit, Long memberId) {
-        List<RecruitElement> recruits = sliceRecruit.toList()
+    public static GetMemberAppliedRecruitsResDto fromPageAndMemberId(Slice<AppliedRecruit> appliedRecruitSlice, Long memberId) {
+        List<AppliedRecruitElement> recruits = appliedRecruitSlice.toList()
                 .stream()
-                .map((recruit -> RecruitElement.fromRecruitAndLoginMemberId(recruit, memberId)))
+                .map((appliedRecruit -> AppliedRecruitElement.fromRecruitAndLoginMemberId(appliedRecruit, memberId)))
                 .collect(Collectors.toList());
         Long nextCursor = recruits.isEmpty() ? -1L : recruits.get(recruits.size()-1).getRecruitId();
 
-        return GetRecruitsResDto.builder()
+        return GetMemberAppliedRecruitsResDto.builder()
                 .recruits(recruits)
                 .nextCursor(nextCursor)
-                .isLast(sliceRecruit.isLast())
+                .isLast(appliedRecruitSlice.isLast())
                 .build();
     }
 }

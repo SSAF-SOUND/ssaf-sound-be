@@ -144,10 +144,23 @@ public class RecruitFixture {
         RECRUIT_1.setRecruitLimitations(List.of(RECRUIT_1_BE_LIMIT_3, RECRUIT_1_FE_LIMIT_3));
     }
 
-    private static final RecruitElement RECRUIT_1_ELEMENT = RecruitElement.fromRecruitAndLoginMemberId(RECRUIT_1, 2L);
+    private static final RecruitElement RECRUIT_1_ELEMENT = RecruitElement.fromRecruitAndLoginMemberId(RECRUIT_1, 1L);
 
     public static final GetRecruitsResDto GET_RECRUITS_RES_DTO = GetRecruitsResDto.builder()
             .recruits(List.of(RECRUIT_1_ELEMENT))
+            .nextCursor(1L)
+            .isLast(true)
+            .build();
+
+    private static final AppliedRecruit APPLIED_RECRUIT = AppliedRecruit.builder()
+            .recruit(RECRUIT_1)
+            .appliedAt(RecruitApplicationFixture.APPLICATION1_ELEMENT.getCreatedAt())
+            .matchStatus(RecruitApplicationFixture.APPLICATION1_ELEMENT.getMatchStatus())
+            .build();
+    private static final AppliedRecruitElement APPLIED_RECRUIT_ELEMENT = AppliedRecruitElement.fromRecruitAndLoginMemberId(APPLIED_RECRUIT, 100L);
+
+    public static final GetMemberAppliedRecruitsResDto GET_MEMBER_APPLIED_RECRUITS_RES_DTO = GetMemberAppliedRecruitsResDto.builder()
+            .recruits(List.of(APPLIED_RECRUIT_ELEMENT))
             .nextCursor(1L)
             .isLast(true)
             .build();
