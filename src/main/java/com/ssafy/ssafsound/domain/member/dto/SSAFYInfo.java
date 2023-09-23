@@ -24,7 +24,11 @@ public class SSAFYInfo {
     }
 
     public static SSAFYInfo from(Member member) {
-        return new SSAFYInfo(member.getSemester(), member.getCampus().getName(), member.getCertificationState().name(), member.getMajorTrack() == null ? null : member.getMajorTrack().getName());
+        return new SSAFYInfo(
+                member.getSemester(),
+                member.getCampus().getName(),
+                member.getCertificationState().name(),
+                member.getMajorTrack() == null ? null : member.getMajorTrack().getName());
     }
     public static SSAFYInfo of(int semester, String campus, String certificationState, MetaData majorTrack) {
         if (majorTrack == null) return new SSAFYInfo(semester, campus, certificationState);

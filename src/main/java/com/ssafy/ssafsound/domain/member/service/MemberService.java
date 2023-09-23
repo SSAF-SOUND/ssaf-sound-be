@@ -290,7 +290,8 @@ public class MemberService {
     }
 
     private boolean isSSAFYMemberInformation(Member member) {
-        return member.getSsafyMember() && member.getNickname() != null && member.getMajor() != null;
+        return member.getSsafyMember() && member.getNickname() != null && member.getMajor() != null
+                && member.getSemester() != null && member.getCampus() != null && member.getCertificationState() != null;
     }
 
     private Member getMemberByMemberIdOrThrowException(Long memberId) {
