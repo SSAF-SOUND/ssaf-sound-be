@@ -157,8 +157,8 @@ public class RecruitApplicationService {
 
     @Transactional(readOnly = true)
     public GetRecruitApplicationDetailResDto getRecentPendingRecruitApplicationByRecruitId(Long recruitId, Long memberId) {
-//        memberRepository.findById(memberId).orElseThrow(()->new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
-        return new GetRecruitApplicationDetailResDto(recruitApplicationComplexQueryRepository.findTopByRecruitIdAndMemberId(recruitId, 2L));
+        memberRepository.findById(memberId).orElseThrow(()->new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+        return new GetRecruitApplicationDetailResDto(recruitApplicationComplexQueryRepository.findTopByRecruitIdAndMemberId(recruitId, memberId));
     }
 
     private boolean isPrevExistWaitingOrDoneMember(Long recruitId, Long memberId) {

@@ -76,4 +76,11 @@ public class RecruitController {
                 .data(recruitService.getMemberJoinRecruits(getMemberJoinRecruitsReqDto, memberInfo.getMemberId()))
                 .build();
     }
+
+    @GetMapping("/applied")
+    public EnvelopeResponse<GetMemberAppliedRecruitsResDto> getMemberAppliedRecruits(GetMemberAppliedRecruitsReqDto recruitsReqDto, @Authentication AuthenticatedMember memberInfo) {
+        return EnvelopeResponse.<GetMemberAppliedRecruitsResDto>builder()
+                .data(recruitService.getMemberAppliedRecruits(recruitsReqDto, 1L))
+                .build();
+    }
 }

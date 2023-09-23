@@ -172,7 +172,24 @@ public class RecruitService {
         return recruitsResDto;
     }
 
-    private void addRecruitParticipants(GetRecruitsResDto recruitsResDto) {
+    @Transactional
+    public GetMemberAppliedRecruitsResDto getMemberAppliedRecruits(GetMemberAppliedRecruitsReqDto recruitsReqDto, Long memberId) {
+        memberRepository.findById(memberId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+
+        Slice<AppliedRecruit> appliedRecruitSlice = recruitRepository.findMemberAppliedRecruits(memberId,
+                recruitsReqDto.getCursor(),
+                recruitsReqDto.getCategory(),
+                recruitsReqDto.getMatchStatus(),
+                Pageable.ofSize(recruitsReqDto.getSize()));
+
+        GetMemberAppliedRecruitsResDto recruitsResDto = GetMemberAppliedRecruitsResDto.fromPageAndMemberId(appliedRecruitSlice, memberId);
+        if(!recruitsResDto.getRecruits().isEmpty()) {
+            addRecruitParticipants(recruitsResDto);
+        }
+        return recruitsResDto;
+    }
+
+    private void addRecruitParticipants(AddParticipantDto recruitsResDto) {
         // Recruit Id, Recruit Type 두 depth로 이루어진 Map으로 리크루트별 참여자 목록을 가공한다.
         Map<Long, Map<String, RecruitParticipant>> participantsMap = recruitsResDto.getRecruitParticipantMapByRecruitIdAndRecruitType();
 
