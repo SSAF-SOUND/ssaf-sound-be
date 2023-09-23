@@ -28,8 +28,8 @@ public interface RecruitApplicationRepository extends JpaRepository<RecruitAppli
             "inner join r.member as m " +
             "left outer join recruit_question_reply as rp on r.id = rp.application.id " +
             "left outer join rp.question as rq " +
-            "where r.recruit.id = :recruitId and r.recruit.member.id = :registerId and r.matchStatus = com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus.PENDING")
-    List<RecruitApplicationElement> findByRecruitIdAndRegisterMemberIdWithQuestionReply(Long recruitId, Long registerId);
+            "where r.recruit.id = :recruitId and r.recruit.member.id = :registerId and r.matchStatus = :matchStatus")
+    List<RecruitApplicationElement> findByRecruitIdAndRegisterMemberAndMatchStatusIdWithQuestionReply(Long recruitId, Long registerId, MatchStatus matchStatus);
 
     @Query("SELECT new com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement(r.recruit.id, r.id, r.type, r.matchStatus, m, rp.content, rq.content, r.isLike, r.createdAt, r.modifiedAt) from recruit_application r  " +
             "inner join r.member as m " +

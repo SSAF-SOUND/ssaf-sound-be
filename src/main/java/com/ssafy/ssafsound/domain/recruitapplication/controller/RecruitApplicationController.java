@@ -73,4 +73,11 @@ public class RecruitApplicationController {
                 .data(recruitApplicationService.getRecruitApplicationByIdAndRegisterId(recruitApplicationId, authenticatedMember.getMemberId()))
                 .build();
     }
+
+    @GetMapping("/recruit-applications/rejected")
+    public EnvelopeResponse<GetRecruitApplicationsResDto> getRejectedRecruitApplicationByRecruitId(Long recruitId, @Authentication AuthenticatedMember authenticatedMember) {
+        return EnvelopeResponse.<GetRecruitApplicationsResDto>builder()
+                .data(recruitApplicationService.getRejectedRecruitApplicationByRecruitId(recruitId, authenticatedMember == null ? null : authenticatedMember.getMemberId()))
+                .build();
+    }
 }

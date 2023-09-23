@@ -303,4 +303,10 @@ class RecruitApplicationServiceTest {
                 ()-> recruitApplicationService.toggleRecruitApplicationLike(1L, 2L)
         );
     }
+
+    @DisplayName("등록자 리크루트 거절 목록 조회")
+    @Test
+    void GivenRecruitIdAndRegisterToken_When_GetRejectedRecruitApplicationThen_Success() {
+        // TODO
+    }
 }

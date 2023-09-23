@@ -268,4 +268,48 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                         )
                 );
     }
+
+    @DisplayName("등록자 거절한 리크루트 신청 목록 조회")
+    @Test
+    void getRejectedRecruit() {
+        doReturn(RecruitApplicationFixture.GET_REJECTED_RECRUIT_APPLICATIONS_RES_DTO)
+                .when(recruitApplicationService)
+                .getRejectedRecruitApplicationByRecruitId(any(), any());
+
+        restDocs
+                .cookie(ACCESS_TOKEN)
+                .when().get("/recruit-applications/rejected?recruitId=1")
+                .then().log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
+                .apply(document("recruitApplication/register-rejected-applications",
+                                requestCookieAccessTokenMandatory(),
+                                requestParameters(
+                                        parameterWithName("recruitId").description("리크루트 PK")
+                                ),
+                                getEnvelopPatternWithData().andWithPrefix(
+                                        "data.",
+                                        fieldWithPath("recruitId").type(JsonFieldType.NUMBER).description("리크루트 PK"),
+                                        fieldWithPath("category").type(JsonFieldType.STRING).description("PROJECT | STUDY")
+                                ).andWithPrefix("data.recruitApplications.*.[].",
+                                        fieldWithPath("recruitApplicationId").type(JsonFieldType.NUMBER).description("리크루트 참여 신청 PK"),
+                                        fieldWithPath("matchStatus").type(JsonFieldType.STRING).description("매칭 상태 - (PENDING:등록자 수락대기), (DONE:매칭 성공), (REJECT:매칭 거절),  (CANCEL:매칭취소)"),
+                                        fieldWithPath("author.memberId").type(JsonFieldType.NUMBER).description("참여자 PK"),
+                                        fieldWithPath("author.nickname").type(JsonFieldType.STRING).description("참여자 닉네임"),
+                                        fieldWithPath("author.isMajor").type(JsonFieldType.BOOLEAN).description("전공자 여부"),
+                                        fieldWithPath("author.memberRole").type(JsonFieldType.STRING).description("참여자 권한"),
+                                        fieldWithPath("author.ssafyMember").type(JsonFieldType.BOOLEAN).description("싸피 인증 여부"),
+                                        fieldWithPath("question").type(JsonFieldType.STRING).description("등록자 질문"),
+                                        fieldWithPath("reply").type(JsonFieldType.STRING).description("참여자 답변"),
+                                        fieldWithPath("liked").type(JsonFieldType.BOOLEAN).description("등록자 좋아요 여부"),
+                                        fieldWithPath("appliedAt").type(JsonFieldType.STRING).description("참여 신청일")
+                                ).andWithPrefix("data.recruitApplications.*.[].author.ssafyInfo.",
+                                        fieldWithPath("semester").type(JsonFieldType.NUMBER).description("참여자 싸피 기수 (1~10)"),
+                                        fieldWithPath("campus").type(JsonFieldType.STRING).description("참여자 소속 캠퍼스 메타데이터-캠퍼스 목록 조회 참고"),
+                                        fieldWithPath("certificationState").type(JsonFieldType.STRING).description("참여자 ssafy 인증 여부 UNCERTIFIED | CERTIFIED"),
+                                        fieldWithPath("majorTrack").type(JsonFieldType.STRING).description("전공 트랙 Embedded | Mobile | Python | Java")
+                                )
+                        )
+                );
+    }
 }
