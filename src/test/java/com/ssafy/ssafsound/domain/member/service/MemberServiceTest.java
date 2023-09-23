@@ -7,10 +7,7 @@ import com.ssafy.ssafsound.domain.member.domain.MemberToken;
 import com.ssafy.ssafsound.domain.member.dto.*;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.*;
-import com.ssafy.ssafsound.domain.meta.domain.Certification;
-import com.ssafy.ssafsound.domain.meta.domain.MajorTrack;
-import com.ssafy.ssafsound.domain.meta.domain.MetaData;
-import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
+import com.ssafy.ssafsound.domain.meta.domain.*;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.global.util.fixture.MemberFixture;
 import org.junit.jupiter.api.DisplayName;
@@ -195,7 +192,7 @@ class MemberServiceTest {
         assertThrows(MemberException.class, () -> memberService.checkNicknamePossible(postNicknameReqDto));
 
         //verify
-        verify(memberRepository, times(1)).existsByNickname(eq("taeyong"));
+        verify(memberRepository, times(1)).existsByNickname(eq("james"));
     }
 
     @Test
@@ -331,6 +328,7 @@ class MemberServiceTest {
         PostMemberInfoReqDto postMemberInfoReqDto = memberFixture.createPostSSAFYMemberInfoReqDto();
         given(memberRepository.existsByNickname(postMemberInfoReqDto.getNickname())).willReturn(false);
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
+        given(metaDataConsumer.getMetaData(any(), any())).willReturn(new MetaData(Campus.SEOUL));
 
         //when
         GetMemberResDto response = memberService.registerMemberInformation(authenticatedMember, postMemberInfoReqDto);

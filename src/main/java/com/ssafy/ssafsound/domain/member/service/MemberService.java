@@ -2,8 +2,6 @@ package com.ssafy.ssafsound.domain.member.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberTokensResDto;
-import com.ssafy.ssafsound.domain.auth.service.AuthService;
-import com.ssafy.ssafsound.domain.auth.util.ClientUtils;
 import com.ssafy.ssafsound.domain.member.domain.*;
 import com.ssafy.ssafsound.domain.member.dto.*;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
