@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 public class ParticipantElement {
     private Long recruitApplicationId;
-    private LocalDateTime modifiedAt;
+    private LocalDateTime joinedAt;
     private Long memberId;
     private String nickname;
     private Boolean isMajor;
