@@ -1,6 +1,8 @@
 package com.ssafy.ssafsound.domain.member.dto;
 
 import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
+import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import lombok.Getter;
 
@@ -24,6 +26,9 @@ public class SSAFYInfo {
     }
 
     public static SSAFYInfo from(Member member) {
+        if(member.getSemester() == null) throw new MemberException(MemberErrorInfo.MEMBER_INFORMATION_ERROR);
+        if(member.getCampus().getName() == null) throw new MemberException(MemberErrorInfo.MEMBER_INFORMATION_ERROR);
+
         return new SSAFYInfo(
                 member.getSemester(),
                 member.getCampus().getName(),
