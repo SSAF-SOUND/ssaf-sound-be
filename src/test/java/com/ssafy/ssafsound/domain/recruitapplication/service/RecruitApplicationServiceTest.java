@@ -309,4 +309,10 @@ class RecruitApplicationServiceTest {
     void GivenRecruitIdAndRegisterToken_When_GetRejectedRecruitApplicationThen_Success() {
         // TODO
     }
+
+    @DisplayName("사용자 리크루트 신청 상세 조회")
+    @Test
+    void GivenRecruitIdAndMemberToken_When_GetRecentPendingRecruitApplicationThen_Success() {
+        // TODO
+    }
 }
