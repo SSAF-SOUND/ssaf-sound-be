@@ -77,7 +77,14 @@ public class RecruitApplicationController {
     @GetMapping("/recruit-applications/rejected")
     public EnvelopeResponse<GetRecruitApplicationsResDto> getRejectedRecruitApplicationByRecruitId(Long recruitId, @Authentication AuthenticatedMember authenticatedMember) {
         return EnvelopeResponse.<GetRecruitApplicationsResDto>builder()
-                .data(recruitApplicationService.getRejectedRecruitApplicationByRecruitId(recruitId, authenticatedMember == null ? null : authenticatedMember.getMemberId()))
+                .data(recruitApplicationService.getRejectedRecruitApplicationByRecruitId(recruitId, authenticatedMember.getMemberId()))
+                .build();
+    }
+
+    @GetMapping("/recruit-applications/mine")
+    public EnvelopeResponse<GetRecruitApplicationDetailResDto> getRecentPendingRecruitApplicationByRecruitId(Long recruitId, @Authentication AuthenticatedMember authenticatedMember) {
+        return EnvelopeResponse.<GetRecruitApplicationDetailResDto>builder()
+                .data(recruitApplicationService.getRecentPendingRecruitApplicationByRecruitId(recruitId, authenticatedMember.getMemberId()))
                 .build();
     }
 }
