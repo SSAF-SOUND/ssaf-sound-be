@@ -63,7 +63,7 @@ public class RecruitController {
                 .build();
     }
 
-    @GetMapping("/scraped")
+    @GetMapping("/my-scrap")
     public EnvelopeResponse<GetRecruitsResDto> getScrapedRecruits(Long cursor, Pageable pageable, @Authentication AuthenticatedMember memberInfo) {
         return EnvelopeResponse.<GetRecruitsResDto>builder()
                 .data(recruitService.getScrapedRecruits(memberInfo == null ? null : memberInfo.getMemberId(), cursor, pageable))
