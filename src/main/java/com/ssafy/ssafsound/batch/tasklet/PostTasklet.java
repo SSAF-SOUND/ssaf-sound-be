@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.batch.tasklet;
 
+import com.ssafy.ssafsound.domain.post.service.PostConstantProvider;
 import com.ssafy.ssafsound.domain.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,14 +11,12 @@ import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.beans.factory.annotation.Value;
 
 @Slf4j
 @RequiredArgsConstructor
 public class PostTasklet implements Tasklet, StepExecutionListener {
-    @Value("${spring.constant.post.HOT_POST_LIKES_THRESHOLD}")
-    private Long HOT_POST_LIKES_THRESHOLD;
     private final PostService postService;
+    private final PostConstantProvider postConstantProvider;
 
     @Override
     public void beforeStep(StepExecution stepExecution) {
@@ -25,7 +24,7 @@ public class PostTasklet implements Tasklet, StepExecutionListener {
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
-        postService.deleteHotPostsUnderThreshold(HOT_POST_LIKES_THRESHOLD);
+        postService.deleteHotPostsUnderThreshold(postConstantProvider.getHOT_POST_LIKES_THRESHOLD());
         return RepeatStatus.FINISHED;
     }
 
