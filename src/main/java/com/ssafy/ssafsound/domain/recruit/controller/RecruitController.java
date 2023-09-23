@@ -69,4 +69,11 @@ public class RecruitController {
                 .data(recruitService.getScrapedRecruits(memberInfo == null ? null : memberInfo.getMemberId(), cursor, pageable))
                 .build();
     }
+
+    @GetMapping("/joined")
+    public  EnvelopeResponse<GetRecruitsResDto> getMemberJoinedRecruits(GetMemberJoinRecruitsReqDto getMemberJoinRecruitsReqDto, @Authentication AuthenticatedMember memberInfo) {
+        return EnvelopeResponse.<GetRecruitsResDto>builder()
+                .data(recruitService.getMemberJoinRecruits(getMemberJoinRecruitsReqDto, memberInfo == null ? null : memberInfo.getMemberId()))
+                .build();
+    }
 }

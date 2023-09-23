@@ -47,7 +47,7 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
         Long cursor = dto.getCursor();
 
         // recruit category (STUDY | PROJECT)
-        BooleanExpression categoryEq = recruit.category.eq(Category.valueOf(dto.getCategory().toUpperCase()));
+        BooleanExpression categoryEq = dto.getCategory() == null ? null : recruit.category.eq(Category.valueOf(dto.getCategory().toUpperCase()));
 
         // recruit title contains search keyword
         String keyword = dto.getKeyword();
@@ -99,17 +99,29 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
     }
 
     @Override
-    public Slice<Recruit> findMemberJoinRecruitWithCursorAndPageable(Long memberId, Long cursor, Pageable pageable) {
+    public Slice<Recruit> findMemberJoinRecruitWithCursorAndPageable(Long memberId, String category, Long cursor, Pageable pageable) {
+        BooleanExpression applicationRecruitCategoryEq =
+                category == null ? null :
+                recruitApplication.recruit.category.eq(Category.valueOf(category.toUpperCase()));
+
         List<Long> memberJoinRecruitIds = jpaQueryFactory.select(recruitApplication.recruit.id)
                 .from(recruitApplication)
                 .innerJoin(recruitApplication.recruit, recruit)
                 .innerJoin(recruitApplication.member, member)
-                .where(recruitApplication.member.id.eq(memberId), recruitApplication.matchStatus.eq(MatchStatus.DONE))
+                .where(recruitApplication.member.id.eq(memberId),
+                        recruitApplication.matchStatus.eq(MatchStatus.DONE),
+                        applicationRecruitCategoryEq)
                 .fetch();
+
+
+        BooleanExpression categoryEq = category == null ? null : recruit.category.eq(Category.valueOf(category.toUpperCase()));
 
         List<Recruit> recruits = jpaQueryFactory.selectFrom(recruit)
                 .innerJoin(recruit.member, member)
-                .where(recruitIdLtThanCursor(cursor), recruit.id.in(memberJoinRecruitIds), recruit.member.id.eq(memberId))
+                .where(recruitIdLtThanCursor(cursor),
+                        recruit.id.in(memberJoinRecruitIds),
+                        recruit.member.id.eq(memberId),
+                        categoryEq)
                 .limit(pageable.getPageSize()+1)
                 .orderBy(recruit.id.desc())
                 .fetch();
