@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.domain.comment.domain;
 
 import com.ssafy.ssafsound.domain.BaseTimeEntity;
+import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReqDto;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import lombok.AllArgsConstructor;

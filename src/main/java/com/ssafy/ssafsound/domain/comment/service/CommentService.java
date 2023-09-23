@@ -14,6 +14,7 @@ import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
+import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.dto.PostCommonLikeResDto;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
 import com.ssafy.ssafsound.domain.post.exception.PostException;
@@ -69,7 +70,7 @@ public class CommentService {
                 .build();
 
         comment = commentRepository.save(comment);
-        comment.setCommentGroup(comment);
+        commentRepository.updateByCommentGroup(comment.getId());
 
         return new CommentIdElement(comment.getId());
     }
