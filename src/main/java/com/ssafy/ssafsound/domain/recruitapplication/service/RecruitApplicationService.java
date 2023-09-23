@@ -1,5 +1,7 @@
 package com.ssafy.ssafsound.domain.recruitapplication.service;
 
+import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
+import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
@@ -17,12 +19,14 @@ import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.*;
+import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicationComplexQueryRepository;
 import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicationRepository;
 import com.ssafy.ssafsound.domain.recruitapplication.validator.RecruitApplicationValidator;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitApplicationLikeResDto;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -37,6 +41,7 @@ public class RecruitApplicationService {
     private final RecruitRepository recruitRepository;
     private final RecruitQuestionReplyRepository recruitQuestionReplyRepository;
     private final RecruitApplicationRepository recruitApplicationRepository;
+    private final RecruitApplicationComplexQueryRepository recruitApplicationComplexQueryRepository;
     private final RecruitLimitationRepository recruitLimitationRepository;
     private final MemberRepository memberRepository;
     private final MetaDataConsumer metaDataConsumer;
@@ -121,7 +126,7 @@ public class RecruitApplicationService {
     @Transactional(readOnly = true)
     public GetRecruitApplicationsResDto getRecruitApplications(Long recruitId, Long memberId) {
         Recruit recruit = recruitRepository.findById(recruitId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
-        return new GetRecruitApplicationsResDto(recruit, recruitApplicationRepository.findByRecruitIdAndRegisterMemberIdWithQuestionReply(recruitId, memberId));
+        return new GetRecruitApplicationsResDto(recruit, recruitApplicationRepository.findByRecruitIdAndRegisterMemberAndMatchStatusIdWithQuestionReply(recruitId, memberId, MatchStatus.PENDING));
     }
 
     @Transactional
@@ -138,6 +143,22 @@ public class RecruitApplicationService {
     @Transactional(readOnly = true)
     public GetRecruitApplicationDetailResDto getRecruitApplicationByIdAndRegisterId(Long recruitApplicationId, Long registerId) {
         return new GetRecruitApplicationDetailResDto(recruitApplicationRepository.findByRecruitApplicationIdAndRegisterId(recruitApplicationId, registerId));
+    }
+
+    @Transactional(readOnly = true)
+    public GetRecruitApplicationsResDto getRejectedRecruitApplicationByRecruitId(Long recruitId, Long memberId) {
+        Recruit recruit = recruitRepository.findByIdFetchJoinRegister(recruitId);
+
+        if(recruit==null || !recruit.getMember().getId().equals(memberId)) {
+            throw new RecruitException(RecruitErrorInfo.NOT_VALID_REGISTER_READ_REJECT_REQUEST);
+        }
+        return new GetRecruitApplicationsResDto(recruit, recruitApplicationRepository.findByRecruitIdAndRegisterMemberAndMatchStatusIdWithQuestionReply(recruitId, memberId, MatchStatus.REJECT));
+    }
+
+    @Transactional(readOnly = true)
+    public GetRecruitApplicationDetailResDto getRecentPendingRecruitApplicationByRecruitId(Long recruitId, Long memberId) {
+        memberRepository.findById(memberId).orElseThrow(()->new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+        return new GetRecruitApplicationDetailResDto(recruitApplicationComplexQueryRepository.findTopByRecruitIdAndMemberId(recruitId, memberId));
     }
 
     private boolean isPrevExistWaitingOrDoneMember(Long recruitId, Long memberId) {

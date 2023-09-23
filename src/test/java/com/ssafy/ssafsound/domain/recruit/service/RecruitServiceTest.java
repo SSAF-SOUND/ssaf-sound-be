@@ -436,4 +436,10 @@ class RecruitServiceTest {
     void Given_MemberId_When_GetScrapedRecruits_Then_Success() {
         // TODO Test Refactoring 시 일괄 작성
     }
+
+    @DisplayName("사용자 프로필 - 사용자 신청한 리크루트 조회")
+    @Test
+    void Given_MemberIdCategoryMatchStatus_GetAppiedRecruits_Then_Success() {
+        // TODO Test Refactoring 시 일괄 작성
+    }
 }

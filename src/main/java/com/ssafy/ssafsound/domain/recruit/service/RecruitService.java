@@ -21,6 +21,7 @@ import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicati
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -129,22 +130,8 @@ public class RecruitService {
     @Transactional(readOnly = true)
     public GetRecruitsResDto getRecruits(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable, Long loginMemberId) {
         // 페이지네이션 조건에 따라 프로젝트/스터디 글 목록을 조회한다.
-        Slice<Recruit> recruitPages;
-        Long memberId = getRecruitsReqDto.getMemberId();
-
-        // 사용자 Id 여부로 프로필, 사용자가 참여한 리크루트 목록 조회, 일반 글 목록 조회를 구분한다.
-        if(memberId != null) {
-            Member member = memberRepository.findById(memberId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
-            if(!member.getPublicProfile() && !memberId.equals(loginMemberId)) {
-                throw new MemberException(MemberErrorInfo.MEMBER_PROFILE_SECRET);
-            }
-
-            recruitPages = recruitRepository.findMemberJoinRecruitWithCursorAndPageable(memberId, getRecruitsReqDto.getCursor(), pageable);
-        } else {
-            recruitPages = recruitRepository.findRecruitByGetRecruitsReqDto(getRecruitsReqDto, pageable);
-        }
-
-        GetRecruitsResDto recruitsResDto = GetRecruitsResDto.fromPageAndMemberId(recruitPages, memberId);
+        Slice<Recruit> recruitPages = recruitRepository.findRecruitByGetRecruitsReqDto(getRecruitsReqDto, pageable);
+        GetRecruitsResDto recruitsResDto = GetRecruitsResDto.fromPageAndMemberId(recruitPages, loginMemberId);
         if(!recruitsResDto.getRecruits().isEmpty()) {
             addRecruitParticipants(recruitsResDto);
         }
@@ -169,7 +156,40 @@ public class RecruitService {
         recruit.expired();
     }
 
-    private void addRecruitParticipants(GetRecruitsResDto recruitsResDto) {
+    @Transactional(readOnly = true)
+    public GetRecruitsResDto getMemberJoinRecruits(GetMemberJoinRecruitsReqDto recruitsReqDto, Long loginMemberId) {
+        Long memberId = recruitsReqDto.getMemberId();
+        Member member = memberRepository.findById(memberId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+        if(!member.getPublicProfile()) {
+            throw new MemberException(MemberErrorInfo.MEMBER_PROFILE_SECRET);
+        }
+
+        Slice<Recruit> recruitPages = recruitRepository.findMemberJoinRecruitWithCursorAndPageable(memberId, recruitsReqDto.getCategory(), recruitsReqDto.getCursor(), PageRequest.ofSize(recruitsReqDto.getSize()));
+        GetRecruitsResDto recruitsResDto = GetRecruitsResDto.fromPageAndMemberId(recruitPages, loginMemberId);
+        if(!recruitsResDto.getRecruits().isEmpty()) {
+            addRecruitParticipants(recruitsResDto);
+        }
+        return recruitsResDto;
+    }
+
+    @Transactional
+    public GetMemberAppliedRecruitsResDto getMemberAppliedRecruits(GetMemberAppliedRecruitsReqDto recruitsReqDto, Long memberId) {
+        memberRepository.findById(memberId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+
+        Slice<AppliedRecruit> appliedRecruitSlice = recruitRepository.findMemberAppliedRecruits(memberId,
+                recruitsReqDto.getCursor(),
+                recruitsReqDto.getCategory(),
+                recruitsReqDto.getMatchStatus(),
+                Pageable.ofSize(recruitsReqDto.getSize()));
+
+        GetMemberAppliedRecruitsResDto recruitsResDto = GetMemberAppliedRecruitsResDto.fromPageAndMemberId(appliedRecruitSlice, memberId);
+        if(!recruitsResDto.getRecruits().isEmpty()) {
+            addRecruitParticipants(recruitsResDto);
+        }
+        return recruitsResDto;
+    }
+
+    private void addRecruitParticipants(AddParticipantDto recruitsResDto) {
         // Recruit Id, Recruit Type 두 depth로 이루어진 Map으로 리크루트별 참여자 목록을 가공한다.
         Map<Long, Map<String, RecruitParticipant>> participantsMap = recruitsResDto.getRecruitParticipantMapByRecruitIdAndRecruitType();
 

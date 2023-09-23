@@ -11,7 +11,6 @@ import java.util.List;
 @Builder
 public class GetRecruitsReqDto {
     private Long cursor;
-    private Long memberId;
 
     @NotBlank
     private String category;
