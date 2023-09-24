@@ -121,6 +121,7 @@ public class RecruitFixture {
             .author(new AuthorElement(memberFixture.createMember(), false))
             .scrapCount(1L)
             .scraped(true)
+            .mine(true)
             .matchStatus(MatchStatus.INITIAL.name())
             .build();
 
