@@ -57,7 +57,7 @@ public class RecruitApplicationFixture {
             .recruitApplicationId(1L)
             .recruitType(RecruitType.FRONT_END.getName())
             .matchStatus(MatchStatus.REJECT)
-            .author(new AuthorElement(MemberFixture.MEMBER_TIM, false))
+            .author(new AuthorElement(memberFixture.createMemberList().get(1), false))
             .question(RecruitFixture.RECRUIT_1.getQuestions().get(0).getContent())
             .reply("취업 준비를 위해서 신청하게되었습니다.")
             .liked(false)
