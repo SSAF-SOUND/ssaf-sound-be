@@ -291,7 +291,7 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                                         "data.",
                                         fieldWithPath("recruitId").type(JsonFieldType.NUMBER).description("리크루트 PK"),
                                         fieldWithPath("category").type(JsonFieldType.STRING).description("PROJECT | STUDY")
-                                ).andWithPrefix("data.recruitApplications.*.[].",
+                                ).andWithPrefix("data.recruitApplications[].",
                                         fieldWithPath("recruitApplicationId").type(JsonFieldType.NUMBER).description("리크루트 참여 신청 PK"),
                                         fieldWithPath("matchStatus").type(JsonFieldType.STRING).description("매칭 상태 - (PENDING:등록자 수락대기), (DONE:매칭 성공), (REJECT:매칭 거절),  (CANCEL:매칭취소)"),
                                         fieldWithPath("author.memberId").type(JsonFieldType.NUMBER).description("참여자 PK"),
@@ -303,7 +303,7 @@ public class RecruitApplicationControllerTest extends ControllerTest {
                                         fieldWithPath("reply").type(JsonFieldType.STRING).description("참여자 답변"),
                                         fieldWithPath("liked").type(JsonFieldType.BOOLEAN).description("등록자 좋아요 여부"),
                                         fieldWithPath("appliedAt").type(JsonFieldType.STRING).description("참여 신청일")
-                                ).andWithPrefix("data.recruitApplications.*.[].author.ssafyInfo.",
+                                ).andWithPrefix("data.recruitApplications[].author.ssafyInfo.",
                                         fieldWithPath("semester").type(JsonFieldType.NUMBER).description("참여자 싸피 기수 (1~10)"),
                                         fieldWithPath("campus").type(JsonFieldType.STRING).description("참여자 소속 캠퍼스 메타데이터-캠퍼스 목록 조회 참고"),
                                         fieldWithPath("certificationState").type(JsonFieldType.STRING).description("참여자 ssafy 인증 여부 UNCERTIFIED | CERTIFIED"),

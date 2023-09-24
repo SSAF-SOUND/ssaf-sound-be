@@ -8,6 +8,7 @@ import com.ssafy.ssafsound.domain.meta.domain.Skill;
 import com.ssafy.ssafsound.domain.recruit.domain.*;
 import com.ssafy.ssafsound.domain.recruit.dto.*;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
+import com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
@@ -153,10 +154,11 @@ public class RecruitFixture {
             .isLast(true)
             .build();
 
+    private static final RecruitApplicationElement APPLICATION_ELEMENT = RecruitApplicationFixture.APPLICATION1_ELEMENT();
     private static final AppliedRecruit APPLIED_RECRUIT = AppliedRecruit.builder()
             .recruit(RECRUIT_1)
-            .appliedAt(RecruitApplicationFixture.APPLICATION1_ELEMENT.getCreatedAt())
-            .matchStatus(RecruitApplicationFixture.APPLICATION1_ELEMENT.getMatchStatus())
+            .appliedAt(APPLICATION_ELEMENT.getCreatedAt())
+            .matchStatus(APPLICATION_ELEMENT.getMatchStatus())
             .build();
     private static final AppliedRecruitElement APPLIED_RECRUIT_ELEMENT = AppliedRecruitElement.fromRecruitAndLoginMemberId(APPLIED_RECRUIT, 100L);
 

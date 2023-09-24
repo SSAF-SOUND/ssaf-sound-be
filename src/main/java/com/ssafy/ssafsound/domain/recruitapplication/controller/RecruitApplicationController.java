@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.domain.recruitapplication.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.validator.Authentication;
+import com.ssafy.ssafsound.domain.recruit.dto.GetRejectedRecruitApplicationsResDto;
 import com.ssafy.ssafsound.domain.recruit.dto.PatchRecruitApplicationStatusResDto;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.*;
@@ -75,8 +76,8 @@ public class RecruitApplicationController {
     }
 
     @GetMapping("/recruit-applications/rejected")
-    public EnvelopeResponse<GetRecruitApplicationsResDto> getRejectedRecruitApplicationByRecruitId(Long recruitId, @Authentication AuthenticatedMember authenticatedMember) {
-        return EnvelopeResponse.<GetRecruitApplicationsResDto>builder()
+    public EnvelopeResponse<GetRejectedRecruitApplicationsResDto> getRejectedRecruitApplicationByRecruitId(Long recruitId, @Authentication AuthenticatedMember authenticatedMember) {
+        return EnvelopeResponse.<GetRejectedRecruitApplicationsResDto>builder()
                 .data(recruitApplicationService.getRejectedRecruitApplicationByRecruitId(recruitId, authenticatedMember.getMemberId()))
                 .build();
     }

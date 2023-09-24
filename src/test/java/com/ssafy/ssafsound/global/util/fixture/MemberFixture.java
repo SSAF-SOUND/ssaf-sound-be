@@ -306,6 +306,4 @@ public class MemberFixture {
             .role(memberRole)
             .nickname("sheryl")
             .build();
-
-    
 }

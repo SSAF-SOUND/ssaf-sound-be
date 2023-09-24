@@ -4,6 +4,7 @@ import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.RecruitType;
+import com.ssafy.ssafsound.domain.recruit.dto.GetRejectedRecruitApplicationsResDto;
 import com.ssafy.ssafsound.domain.recruit.dto.PatchRecruitApplicationStatusResDto;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
@@ -39,18 +40,20 @@ public class RecruitApplicationFixture {
         return recruitApplication;
     }
 
-    public static final RecruitApplicationElement APPLICATION1_ELEMENT = RecruitApplicationElement.builder()
-            .recruitId(1L)
-            .recruitApplicationId(1L)
-            .recruitType(RecruitType.FRONT_END.getName())
-            .matchStatus(MatchStatus.PENDING)
-            .author(new AuthorElement(memberFixture.createMember(), false))
-            .question(RecruitFixture.RECRUIT_1.getQuestions().get(0).getContent())
-            .reply("취업 준비를 위해서 신청하게되었습니다.")
-            .liked(false)
-            .createdAt(LocalDateTime.now())
-            .modifiedAt(LocalDateTime.now())
-            .build();
+    public static final RecruitApplicationElement APPLICATION1_ELEMENT() {
+        return RecruitApplicationElement.builder()
+                .recruitId(1L)
+                .recruitApplicationId(1L)
+                .recruitType(RecruitType.FRONT_END.getName())
+                .matchStatus(MatchStatus.PENDING)
+                .author(new AuthorElement(memberFixture.createMember(), false))
+                .question(RecruitFixture.RECRUIT_1.getQuestions().get(0).getContent())
+                .reply("취업 준비를 위해서 신청하게되었습니다.")
+                .liked(false)
+                .createdAt(LocalDateTime.now())
+                .modifiedAt(LocalDateTime.now())
+                .build();
+    }
 
     public static final RecruitApplicationElement APPLICATION_REJECT_ELEMENT = RecruitApplicationElement.builder()
             .recruitId(1L)
@@ -65,11 +68,11 @@ public class RecruitApplicationFixture {
             .modifiedAt(LocalDateTime.now())
             .build();
 
-    public static final GetRecruitApplicationDetailResDto APPLICATION_DETAIL_RES_DTO = new GetRecruitApplicationDetailResDto(APPLICATION1_ELEMENT);
+    public static final GetRecruitApplicationDetailResDto APPLICATION_DETAIL_RES_DTO = new GetRecruitApplicationDetailResDto(APPLICATION1_ELEMENT());
 
-    public static final GetRecruitApplicationsResDto GET_RECRUIT_APPLICATIONS_RES_DTO = new GetRecruitApplicationsResDto(RecruitFixture.RECRUIT_1, Arrays.asList(APPLICATION1_ELEMENT));
+    public static final GetRecruitApplicationsResDto GET_RECRUIT_APPLICATIONS_RES_DTO = new GetRecruitApplicationsResDto(RecruitFixture.RECRUIT_1, Arrays.asList(APPLICATION1_ELEMENT()));
 
-    public static final GetRecruitApplicationsResDto GET_REJECTED_RECRUIT_APPLICATIONS_RES_DTO = new GetRecruitApplicationsResDto(RecruitFixture.RECRUIT_1, Arrays.asList(APPLICATION_REJECT_ELEMENT));
+    public static final GetRejectedRecruitApplicationsResDto GET_REJECTED_RECRUIT_APPLICATIONS_RES_DTO = new GetRejectedRecruitApplicationsResDto(RecruitFixture.RECRUIT_1, Arrays.asList(APPLICATION_REJECT_ELEMENT));
     public static final GetRecruitParticipantsResDto GET_RECRUIT_PARTICIPANTS_RES_DTO = GetRecruitParticipantsResDto
             .of(List.of(getRecruitApplication1_ByMatchStatus(MatchStatus.DONE, new MetaData(RecruitType.FRONT_END), false)),List.of(RecruitFixture.RECRUIT_1_BE_LIMIT_3, RecruitFixture.RECRUIT_1_FE_LIMIT_3));
 
