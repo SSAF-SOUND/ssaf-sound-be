@@ -353,7 +353,7 @@ public class RecruitControllerTest extends ControllerTest {
                                         parameterWithName("cursor").optional().description("다음 조회 커서 default(초기화면)에서는 미포함"),
                                         parameterWithName("size").description("페이징 사이즈"),
                                         parameterWithName("category").description("카테고리 project|study"),
-                                        parameterWithName("matchStatus").optional().description("리크루트 게시글 제목 검색 키워드")
+                                        parameterWithName("matchStatus").optional().description("리크루트 매칭 상태")
                                 ),
                                 getEnvelopPatternWithData().andWithPrefix("data.",
                                         fieldWithPath("nextCursor").type(JsonFieldType.NUMBER).description("다음 조회할 커서 번호"),
