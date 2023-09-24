@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.recruit.controller;
 
+import com.ssafy.ssafsound.domain.recruit.dto.PostRecruitResDto;
 import com.ssafy.ssafsound.global.docs.ControllerTest;
 import com.ssafy.ssafsound.global.util.fixture.RecruitFixture;
 import org.junit.jupiter.api.DisplayName;
@@ -25,6 +26,10 @@ public class RecruitControllerTest extends ControllerTest {
     @DisplayName("리크루트 등록")
     @Test
     void saveRecruit() {
+        doReturn(new PostRecruitResDto(1L))
+                .when(recruitService)
+                .saveRecruit(any(), any());
+
         restDocs
                 .cookie(ACCESS_TOKEN)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -47,7 +52,9 @@ public class RecruitControllerTest extends ControllerTest {
                                 fieldWithPath("limitations[].recruitType").type(JsonFieldType.STRING).description("리크루트 모집파트, 메타데이터-리크루트 목록 조회 참고"),
                                 fieldWithPath("limitations[].limit").type(JsonFieldType.NUMBER).description("인원 제한 1명이상 10명 이하")
                         ),
-                        getEnvelopPatternWithNoContent())
+                        getEnvelopPatternWithData().andWithPrefix("data.",
+                                fieldWithPath("recruitId").type(JsonFieldType.NUMBER).description("생성된 리크루트 ID")
+                        ))
                 );
     }
 
@@ -353,7 +360,7 @@ public class RecruitControllerTest extends ControllerTest {
                                         parameterWithName("cursor").optional().description("다음 조회 커서 default(초기화면)에서는 미포함"),
                                         parameterWithName("size").description("페이징 사이즈"),
                                         parameterWithName("category").description("카테고리 project|study"),
-                                        parameterWithName("matchStatus").optional().description("리크루트 게시글 제목 검색 키워드")
+                                        parameterWithName("matchStatus").optional().description("리크루트 매칭 상태")
                                 ),
                                 getEnvelopPatternWithData().andWithPrefix("data.",
                                         fieldWithPath("nextCursor").type(JsonFieldType.NUMBER).description("다음 조회할 커서 번호"),

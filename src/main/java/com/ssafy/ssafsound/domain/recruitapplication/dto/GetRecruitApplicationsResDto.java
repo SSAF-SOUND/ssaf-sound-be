@@ -14,7 +14,7 @@ import java.util.Map;
 public class GetRecruitApplicationsResDto {
     private String category;
     private Long recruitId;
-    private Map<String, List<PendingRecruitApplicationElement>> recruitApplications;
+    private Map<String, List<RecruitApplicationResElement>> recruitApplications;
 
     public GetRecruitApplicationsResDto(Recruit recruit, List<RecruitApplicationElement> recruitApplications) {
         this.category = recruit.getCategory().name();
@@ -28,9 +28,9 @@ public class GetRecruitApplicationsResDto {
         });
 
         recruitApplications.forEach(recruitApplicationElement -> {
-            List<PendingRecruitApplicationElement> applications = this.recruitApplications
+            List<RecruitApplicationResElement> applications = this.recruitApplications
                     .getOrDefault(recruitApplicationElement.getRecruitType(), new ArrayList<>());
-            applications.add(new PendingRecruitApplicationElement(recruitApplicationElement));
+            applications.add(new RecruitApplicationResElement(recruitApplicationElement));
             this.recruitApplications.put(recruitApplicationElement.getRecruitType(), applications);
         });
     }

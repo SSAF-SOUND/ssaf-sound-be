@@ -19,9 +19,10 @@ public class RecruitController {
     private final RecruitService recruitService;
 
     @PostMapping
-    public EnvelopeResponse<Void> saveRecruit(@Authentication AuthenticatedMember memberInfo, @Valid @RequestBody PostRecruitReqDto recruitReqDto) {
-        recruitService.saveRecruit(memberInfo.getMemberId(), recruitReqDto);
-        return EnvelopeResponse.<Void>builder().build();
+    public EnvelopeResponse<PostRecruitResDto> saveRecruit(@Authentication AuthenticatedMember memberInfo, @Valid @RequestBody PostRecruitReqDto recruitReqDto) {
+        return EnvelopeResponse.<PostRecruitResDto>builder()
+                .data(recruitService.saveRecruit(memberInfo.getMemberId(), recruitReqDto))
+                .build();
     }
 
     @PostMapping("/{recruitId}/scrap")
