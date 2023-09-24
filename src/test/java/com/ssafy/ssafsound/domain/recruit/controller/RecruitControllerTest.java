@@ -244,7 +244,7 @@ public class RecruitControllerTest extends ControllerTest {
                                 fieldWithPath("limit").type(JsonFieldType.NUMBER).description("리크루트 모집 인원 제한 1명이상 10명 이하")
                             ).andWithPrefix("data.recruits[].participants[].members[].",
                                 fieldWithPath("nickname").type(JsonFieldType.STRING).description("리크루트 참여자 닉네임"),
-                                fieldWithPath("major").type(JsonFieldType.BOOLEAN).description("리크루트 참여자 전공 여부")
+                                fieldWithPath("isMajor").type(JsonFieldType.BOOLEAN).description("리크루트 참여자 전공 여부")
                             )
                         )
                 );
@@ -289,7 +289,7 @@ public class RecruitControllerTest extends ControllerTest {
                                 fieldWithPath("limit").type(JsonFieldType.NUMBER).description("리크루트 모집 인원 제한 1명이상 10명 이하")
                         ).andWithPrefix("data.recruits[].participants[].members[].",
                                 fieldWithPath("nickname").type(JsonFieldType.STRING).description("리크루트 참여자 닉네임"),
-                                fieldWithPath("major").type(JsonFieldType.BOOLEAN).description("리크루트 참여자 전공 여부")
+                                fieldWithPath("isMajor").type(JsonFieldType.BOOLEAN).description("리크루트 참여자 전공 여부")
                         )
                 )
             );
@@ -336,7 +336,7 @@ public class RecruitControllerTest extends ControllerTest {
                                         fieldWithPath("limit").type(JsonFieldType.NUMBER).description("리크루트 모집 인원 제한 1명이상 10명 이하")
                                 ).andWithPrefix("data.recruits[].participants[].members[].",
                                         fieldWithPath("nickname").type(JsonFieldType.STRING).description("리크루트 참여자 닉네임"),
-                                        fieldWithPath("major").type(JsonFieldType.BOOLEAN).description("리크루트 참여자 전공 여부")
+                                        fieldWithPath("isMajor").type(JsonFieldType.BOOLEAN).description("리크루트 참여자 전공 여부")
                                 )
                         )
                 );
@@ -385,7 +385,7 @@ public class RecruitControllerTest extends ControllerTest {
                                         fieldWithPath("limit").type(JsonFieldType.NUMBER).description("리크루트 모집 인원 제한 1명이상 10명 이하")
                                 ).andWithPrefix("data.recruits[].participants[].members[].",
                                         fieldWithPath("nickname").type(JsonFieldType.STRING).description("리크루트 참여자 닉네임"),
-                                        fieldWithPath("major").type(JsonFieldType.BOOLEAN).description("리크루트 참여자 전공 여부")
+                                        fieldWithPath("isMajor").type(JsonFieldType.BOOLEAN).description("리크루트 참여자 전공 여부")
                                 )
                         )
                 );
