@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-public class PendingRecruitApplicationElement {
+public class RecruitApplicationResElement {
     private Long recruitApplicationId;
     private MatchStatus matchStatus;
     private AuthorElement author;
@@ -18,7 +18,7 @@ public class PendingRecruitApplicationElement {
     private Boolean liked;
     private LocalDateTime appliedAt;
 
-    public PendingRecruitApplicationElement(RecruitApplicationElement recruitApplicationElement) {
+    public RecruitApplicationResElement(RecruitApplicationElement recruitApplicationElement) {
         this.recruitApplicationId = recruitApplicationElement.getRecruitApplicationId();
         this.matchStatus =  recruitApplicationElement.getMatchStatus();
         this.author =  recruitApplicationElement.getAuthor();

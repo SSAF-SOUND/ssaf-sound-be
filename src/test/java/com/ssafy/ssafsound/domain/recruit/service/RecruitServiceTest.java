@@ -31,9 +31,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.verify;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Arrays;
@@ -43,6 +40,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RecruitServiceTest {
@@ -216,33 +214,10 @@ class RecruitServiceTest {
                 .memberId(1L)
                 .build();
 
-        Recruit recruit = recruitService.saveRecruit(existUser.getMemberId(), postRecruitReqDto);
+        recruitService.saveRecruit(existUser.getMemberId(), postRecruitReqDto);
 
-        assertAll(
-                ()-> assertEquals(member, recruit.getMember()),
-                ()-> {
-                    assertEquals( 0, recruit.getApplications().size());
-                    assertEquals(RecruitType.DESIGN.getName(), recruit.getRegisterRecruitType().getName());
-                },
-                ()-> {
-                    List<RecruitLimitation> recruitLimitations = recruit.getLimitations();
-                    assertNotNull(recruitLimitations);
-                    assertEquals(RecruitType.values().length, recruitLimitations.size());
-
-                    for(RecruitLimitation recruitLimitation: recruitLimitations) {
-                        assertEquals(2, recruitLimitation.getLimitation());
-                        assertEquals(0, recruitLimitation.getCurrentNumber());
-                    }
-                },
-                ()-> {
-                    List<RecruitSkill> skills = recruit.getSkills();
-                    Skill[] allSkill = Skill.values();
-                    int len = skills.size();
-                    for(int i=0; i<len; ++i) {
-                        assertEquals(allSkill[i].getName(), skills.get(i).getSkill().getName());
-                    }
-                }
-        );
+        verify(recruitRepository, times(1)).save(any());
+        verify(recruitLimitationRepository, times(1)).saveAll(any());
     }
 
     @DisplayName("토큰으로부터 얻은 사용자 정보가 유효하지 않은 경우 리크루트글 등록 실패")

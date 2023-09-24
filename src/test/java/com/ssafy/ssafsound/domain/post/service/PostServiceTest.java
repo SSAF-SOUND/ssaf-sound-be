@@ -73,6 +73,8 @@ class PostServiceTest {
 	@InjectMocks
 	private PostService postService;
 
+	private MemberFixture memberFixture = new MemberFixture();
+
 	@Test
 	@DisplayName("유효한 boardId, cursor, size가 주어졌다면 게시글 목록 조회가 성공합니다.")
 	void Given_BoardIdAndCursorAndSize_When_findPosts_Then_Success() {
@@ -119,7 +121,7 @@ class PostServiceTest {
 	void Given_PostIdAndLoginMemberId_When_findPost_Then_Success() {
 		// given
 		Post post = POST_FIXTURE1;
-		Member member = MemberFixture.GENERAL_MEMBER;
+		Member member = memberFixture.createGeneralMember();
 
 		given(postRepository.findWithMemberAndPostImageFetchById(post.getId())).willReturn(Optional.of(post));
 		given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
@@ -195,7 +197,7 @@ class PostServiceTest {
 	void Given_PostIdAndLoginMemberId_When_SaveLikePost_Then_Success() {
 		// given
 		Post post = POST_FIXTURE1;
-		Member member = MemberFixture.GENERAL_MEMBER;
+		Member member = memberFixture.createGeneralMember();
 		int likeCount = 4;
 
 		given(postRepository.findById(post.getId())).willReturn(Optional.of(post));
@@ -226,7 +228,7 @@ class PostServiceTest {
 	void Given_PostIdAndLoginMemberId_When_DeleteLikePost_Then_Success() {
 		// given
 		Post post = POST_FIXTURE1;
-		Member member = MemberFixture.GENERAL_MEMBER;
+		Member member = memberFixture.createGeneralMember();
 		PostLike postLike = PostLike.of(post, member);
 		int likeCount = 4;
 
@@ -255,7 +257,7 @@ class PostServiceTest {
 	void Given_PostIdAndLoginMemberId_When_NotExistsHotPost_Then_Success() {
 		// given
 		Post post = POST_FIXTURE1;
-		Member member = MemberFixture.GENERAL_MEMBER;
+		Member member = memberFixture.createGeneralMember();
 		int likeCount = 9;
 
 		given(postRepository.findById(post.getId())).willReturn(Optional.of(post));
@@ -286,7 +288,7 @@ class PostServiceTest {
 	void Given_PostIdAndLoginMemberId_When_ExistsHotPost_Then_Success() {
 		// given
 		Post post = POST_FIXTURE1;
-		Member member = MemberFixture.GENERAL_MEMBER;
+		Member member = memberFixture.createGeneralMember();
 		int likeCount = 9;
 
 		given(postRepository.findById(post.getId())).willReturn(Optional.of(post));
@@ -336,7 +338,7 @@ class PostServiceTest {
 	void Given_InvalidPostId_When_likePost_Then_Success() {
 		// given
 		Long postId = -1L;
-		Member member = MemberFixture.GENERAL_MEMBER;
+		Member member = memberFixture.createGeneralMember();
 
 		given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
 		given(postRepository.findById(postId)).willReturn(Optional.empty());
@@ -354,7 +356,7 @@ class PostServiceTest {
 	@DisplayName("게시글을 스크랩 하지 않았다면 스크랩이 저장됩니다.")
 	void Given_PostIdAndLoginMemberId_When_SaveScrapPost_Then_Success() {
 		// given
-		Member member = MemberFixture.GENERAL_MEMBER;
+		Member member = memberFixture.createGeneralMember();
 		Post post = POST_FIXTURE1;
 		int scrapCount = 10;
 
@@ -381,7 +383,7 @@ class PostServiceTest {
 	@DisplayName("게시글을 이미 스크랩 했다면 스크랩이 취소됩니다.")
 	void Given_PostIdAndLoginMemberId_When_DeleteScrapPost_Then_Success() {
 		// given
-		Member member = MemberFixture.GENERAL_MEMBER;
+		Member member = memberFixture.createGeneralMember();
 		Post post = POST_FIXTURE1;
 		PostScrap postScrap = PostScrap.of(post, member);
 		int scrapCount = 10;
@@ -428,7 +430,7 @@ class PostServiceTest {
 	@DisplayName("유효하지 않은 postId가 주어졌다면 게시글 스크랩에 예외를 발생합니다.")
 	void Given_InvalidPostId_When_scrapPost_Then_Success() {
 		// given
-		Member member = MemberFixture.MEMBER_JAMES;
+		Member member = memberFixture.createGeneralMember();
 		Long postId = 101021242313L;
 
 		given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));

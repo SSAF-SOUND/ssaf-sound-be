@@ -10,6 +10,7 @@ import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import com.ssafy.ssafsound.domain.recruit.domain.RecruitLimitation;
 import com.ssafy.ssafsound.domain.recruit.domain.RecruitQuestion;
 import com.ssafy.ssafsound.domain.recruit.domain.RecruitQuestionReply;
+import com.ssafy.ssafsound.domain.recruit.dto.GetRejectedRecruitApplicationsResDto;
 import com.ssafy.ssafsound.domain.recruit.dto.PatchRecruitApplicationStatusResDto;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
@@ -146,13 +147,15 @@ public class RecruitApplicationService {
     }
 
     @Transactional(readOnly = true)
-    public GetRecruitApplicationsResDto getRejectedRecruitApplicationByRecruitId(Long recruitId, Long memberId) {
+    public GetRejectedRecruitApplicationsResDto getRejectedRecruitApplicationByRecruitId(Long recruitId, Long memberId) {
         Recruit recruit = recruitRepository.findByIdFetchJoinRegister(recruitId);
 
         if(recruit==null || !recruit.getMember().getId().equals(memberId)) {
             throw new RecruitException(RecruitErrorInfo.NOT_VALID_REGISTER_READ_REJECT_REQUEST);
         }
-        return new GetRecruitApplicationsResDto(recruit, recruitApplicationRepository.findByRecruitIdAndRegisterMemberAndMatchStatusIdWithQuestionReply(recruitId, memberId, MatchStatus.REJECT));
+
+        List<RecruitApplicationElement> rejectedApplications = recruitApplicationRepository.findByRecruitIdAndRegisterMemberAndMatchStatusIdWithQuestionReply(recruitId, memberId, MatchStatus.REJECT);
+        return new GetRejectedRecruitApplicationsResDto(recruit, rejectedApplications);
     }
 
     @Transactional(readOnly = true)
