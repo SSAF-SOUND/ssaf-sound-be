@@ -12,8 +12,6 @@ import com.ssafy.ssafsound.domain.member.domain.MemberToken;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import com.ssafy.ssafsound.domain.member.service.MemberService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -24,6 +22,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
