@@ -78,7 +78,7 @@ public class AuthService {
 
         try {
             if (!accessToken.equals("")) {
-                AuthenticatedMember authenticatedMember = jwtTokenProvider.getParsedClaims(accessToken);
+                AuthenticatedMember authenticatedMember = jwtTokenProvider.getParsedClaimsByAccessToken(accessToken);
                 memberId = authenticatedMember.getMemberId();
             } else if (!refreshToken.equals("")) {
                 memberId = jwtTokenProvider.getMemberIdByRefreshToken(refreshToken);

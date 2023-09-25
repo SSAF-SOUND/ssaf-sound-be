@@ -68,13 +68,13 @@ public class JwtTokenProvider {
         return claims.get("memberId", Long.class);
     }
 
-    public AuthenticatedMember getParsedClaims(String token) {
+    public AuthenticatedMember getParsedClaimsByAccessToken(String accessToken) {
         Claims claims;
         try {
             claims = Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
-                    .parseClaimsJws(token)
+                    .parseClaimsJws(accessToken)
                     .getBody();
         } catch (ExpiredJwtException e) {
             throw new AuthException(AuthErrorInfo.AUTH_TOKEN_EXPIRED);
