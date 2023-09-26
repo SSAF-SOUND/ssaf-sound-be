@@ -20,6 +20,7 @@ import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.time.Clock;
@@ -77,10 +78,10 @@ public class AuthService {
         Long memberId = null;
 
         try {
-            if (!accessToken.equals("")) {
+            if (StringUtils.hasText(accessToken)) {
                 AuthenticatedMember authenticatedMember = jwtTokenProvider.getParsedClaimsByAccessToken(accessToken);
                 memberId = authenticatedMember.getMemberId();
-            } else if (!refreshToken.equals("")) {
+            } else if (StringUtils.hasText(refreshToken)) {
                 memberId = jwtTokenProvider.getMemberIdByRefreshToken(refreshToken);
             }
 
