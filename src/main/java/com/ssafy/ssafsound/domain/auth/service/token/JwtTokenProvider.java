@@ -69,6 +69,8 @@ public class JwtTokenProvider {
                     .getBody();
         } catch (ExpiredJwtException e) {
             throw new AuthException(AuthErrorInfo.AUTH_TOKEN_EXPIRED);
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new AuthException(AuthErrorInfo.AUTH_TOKEN_INVALID);
         }
         return claims.get("memberId", Long.class);
     }
