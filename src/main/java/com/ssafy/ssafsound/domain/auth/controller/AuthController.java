@@ -48,8 +48,8 @@ public class AuthController {
 
     @DeleteMapping("/logout")
     public EnvelopeResponse<Void> logout(
-            @CookieValue(value = "accessToken") String accessToken,
-            @CookieValue(value = "refreshToken") String refreshToken,
+            @CookieValue(value = "accessToken", defaultValue = "") String accessToken,
+            @CookieValue(value = "refreshToken", defaultValue = "") String refreshToken,
             HttpServletResponse response) {
         authService.deleteTokens(accessToken, refreshToken);
         cookieProvider.setResponseWithCookies(response, null, null);
