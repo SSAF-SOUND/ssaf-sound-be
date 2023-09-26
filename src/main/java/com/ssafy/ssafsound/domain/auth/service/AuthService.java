@@ -17,14 +17,18 @@ import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberLoginLogRepository;
 import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Service
+@Slf4j
 public class AuthService {
 
     private final OauthProviderFactory oauthProviderFactory;
@@ -72,13 +76,21 @@ public class AuthService {
     @Transactional
     public void deleteTokens(String accessToken, String refreshToken) {
         Long memberId = null;
-        if (jwtTokenProvider.isValid(accessToken)) {
-            AuthenticatedMember authenticatedMember = jwtTokenProvider.getParsedClaims(accessToken);
-            memberId = authenticatedMember.getMemberId();
-        } else if (jwtTokenProvider.isValid(refreshToken)) {
-            memberId = jwtTokenProvider.getMemberIdByRefreshToken(refreshToken);
+
+        try {
+            if (StringUtils.hasText(accessToken)) {
+                AuthenticatedMember authenticatedMember = jwtTokenProvider.getParsedClaimsByAccessToken(accessToken);
+                memberId = authenticatedMember.getMemberId();
+            } else if (StringUtils.hasText(refreshToken)) {
+                memberId = jwtTokenProvider.getMemberIdByRefreshToken(refreshToken);
+            }
+
+            if (Objects.nonNull(memberId)) {
+                memberTokenRepository.deleteById(memberId);
+            }
+        } catch (AuthException e) {
+            log.debug("유효하지 않은 토큰입니다.");
         }
-        if(memberId != null) memberTokenRepository.deleteById(memberId);
     }
 
     @Transactional(readOnly = true)
