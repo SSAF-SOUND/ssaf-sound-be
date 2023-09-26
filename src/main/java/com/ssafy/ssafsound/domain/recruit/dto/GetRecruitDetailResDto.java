@@ -36,8 +36,9 @@ public class GetRecruitDetailResDto {
     private long scrapCount;
     private Boolean scraped;
     private String matchStatus;
+    private Boolean mine;
 
-    public static GetRecruitDetailResDto of(Recruit recruit, long scrapCount, Boolean scraped, RecruitApplication recruitApplication) {
+    public static GetRecruitDetailResDto of(Recruit recruit, long scrapCount, Boolean scraped, Boolean mine, RecruitApplication recruitApplication) {
 
         if(recruit.getDeletedRecruit()) throw new RecruitException(RecruitErrorInfo.IS_DELETED);
 
@@ -76,6 +77,7 @@ public class GetRecruitDetailResDto {
                 .scrapCount(scrapCount)
                 .scraped(scraped)
                 .matchStatus(matchStatus)
+                .mine(mine)
                 .build();
     }
 
