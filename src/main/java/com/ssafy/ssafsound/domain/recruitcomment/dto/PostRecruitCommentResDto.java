@@ -15,13 +15,13 @@ public class PostRecruitCommentResDto {
     private String nickname;
     private Long commentGroup;
 
-    public static PostRecruitCommentResDto from(RecruitComment recruitComment) {
+    public static PostRecruitCommentResDto to(RecruitComment recruitComment, Long commentGroupId) {
         return new PostRecruitCommentResDto(
                 recruitComment.getId(),
                 recruitComment.getContent(),
                 recruitComment.getMember().getId(),
                 recruitComment.getMember().getNickname(),
-                recruitComment.getCommentGroup().getId()
+                commentGroupId
         );
     }
 }

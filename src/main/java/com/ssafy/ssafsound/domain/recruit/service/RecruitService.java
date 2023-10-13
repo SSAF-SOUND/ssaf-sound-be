@@ -161,7 +161,8 @@ public class RecruitService {
     public GetRecruitsResDto getMemberJoinRecruits(GetMemberJoinRecruitsReqDto recruitsReqDto, Long loginMemberId) {
         Long memberId = recruitsReqDto.getMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
-        if(!member.getPublicProfile()) {
+
+        if(!memberId.equals(loginMemberId) && !member.getPublicProfile()) {
             throw new MemberException(MemberErrorInfo.MEMBER_PROFILE_SECRET);
         }
 

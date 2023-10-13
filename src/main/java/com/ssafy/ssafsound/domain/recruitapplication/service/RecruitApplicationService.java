@@ -66,7 +66,10 @@ public class RecruitApplicationService {
                 metaDataConsumer.getMetaData(MetaDataType.RECRUIT_TYPE.name(), recruitType));
         List<RecruitQuestionReply> participantAnswers = makeRecruitQuestionReplies(postRecruitApplicationReqDto, recruit, recruitApplication);
         recruitApplicationRepository.save(recruitApplication);
-        recruitQuestionReplyRepository.saveAll(participantAnswers);
+
+        if(participantAnswers.size() != 0) {
+            recruitQuestionReplyRepository.saveAll(participantAnswers);
+        }
         return new PatchRecruitApplicationStatusResDto(recruitApplication.getId(), MatchStatus.PENDING.name());
     }
 
@@ -75,7 +78,8 @@ public class RecruitApplicationService {
         RecruitApplication recruitApplication = recruitApplicationRepository.findByIdFetchRecruitWriter(recruitApplicationId)
                 .orElseThrow(() -> new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
-        getNotFullRecruitLimitation(recruitApplication.getRecruit(), recruitApplication.getType());
+        RecruitLimitation recruitLimitation = getNotFullRecruitLimitation(recruitApplication.getRecruit(), recruitApplication.getType());
+        recruitLimitation.increaseCurrentNumber();
         return changeRecruitApplicationState(recruitApplication, memberId, status,
                 (entity, mid) -> {
                     boolean isNotRegister = !entity.getRecruit().getMember().getId().equals(mid);
@@ -143,7 +147,11 @@ public class RecruitApplicationService {
 
     @Transactional(readOnly = true)
     public GetRecruitApplicationDetailResDto getRecruitApplicationByIdAndRegisterId(Long recruitApplicationId, Long registerId) {
-        return new GetRecruitApplicationDetailResDto(recruitApplicationRepository.findByRecruitApplicationIdAndRegisterId(recruitApplicationId, registerId));
+        RecruitApplicationElement recruitApplicationElement = recruitApplicationRepository.findByRecruitApplicationIdAndRegisterId(recruitApplicationId, registerId);
+        if(recruitApplicationElement == null) {
+            throw new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND);
+        }
+        return new GetRecruitApplicationDetailResDto(recruitApplicationElement);
     }
 
     @Transactional(readOnly = true)
@@ -211,7 +219,7 @@ public class RecruitApplicationService {
         List<String> answers = dto.getContents();
 
         int len = recruitQuestion.size();
-        if(answers.size() != len) {
+        if(len!=0 && answers.size() != len) {
             throw new RecruitException(RecruitErrorInfo.NOT_SAME_LENGTH_RECRUIT_QUESTION_ANSWER);
         }
 
@@ -224,7 +232,7 @@ public class RecruitApplicationService {
                     RecruitQuestionReply.builder()
                             .application(recruitApplication)
                             .question(recruitQuestion.get(i))
-                            .content(dto.getContents().get(i))
+                            .content(answers.get(i))
                             .build()
             );
         }

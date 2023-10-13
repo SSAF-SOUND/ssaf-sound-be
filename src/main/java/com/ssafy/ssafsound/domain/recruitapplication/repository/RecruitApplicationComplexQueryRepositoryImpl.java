@@ -27,10 +27,11 @@ public class RecruitApplicationComplexQueryRepositoryImpl implements RecruitAppl
         try {
             return jpaQueryFactory.select(
                             Projections
-                                    .fields(
+                                    .constructor(
                                             RecruitApplicationElement.class,
                                             recruit.id,
                                             recruitApplication.id,
+                                            recruitApplication.type,
                                             recruitApplication.matchStatus,
                                             member,
                                             recruitQuestionReply.content,
@@ -42,9 +43,9 @@ public class RecruitApplicationComplexQueryRepositoryImpl implements RecruitAppl
                     .from(recruitApplication)
                     .innerJoin(recruitApplication.member, member)
                     .innerJoin(recruitApplication.recruit, recruit)
-                    .join(recruitQuestion).on(recruitQuestion.recruit.id.eq(recruit.id))
-                    .join(recruitQuestionReply).on(recruitQuestionReply.question.id.eq(recruitQuestion.id))
-                    .where(recruit.id.eq(recruitId), member.id.eq(memberId), recruitApplication.matchStatus.eq(MatchStatus.PENDING))
+                    .leftJoin(recruitQuestion).on(recruitQuestion.recruit.id.eq(recruit.id))
+                    .leftJoin(recruitQuestionReply).on(recruitQuestionReply.question.id.eq(recruitQuestion.id))
+                    .where(recruit.id.eq(recruitId), member.id.eq(memberId))
                     .orderBy(recruitApplication.id.desc())
                     .limit(1)
                     .fetchOne();

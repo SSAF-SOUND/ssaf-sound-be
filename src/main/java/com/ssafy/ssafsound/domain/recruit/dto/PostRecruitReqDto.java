@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.util.StringUtils;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -68,7 +70,9 @@ public class PostRecruitReqDto {
     private void setRecruitQuestions (Recruit recruit) {
         if(questions == null) return;
 
-        List<RecruitQuestion> recruitQuestions = questions.stream().map((question)-> RecruitQuestion.builder()
+        List<RecruitQuestion> recruitQuestions = questions.stream()
+            .filter(StringUtils::hasText)
+            .map((question)-> RecruitQuestion.builder()
                 .recruit(recruit)
                 .content(question)
                 .build()
