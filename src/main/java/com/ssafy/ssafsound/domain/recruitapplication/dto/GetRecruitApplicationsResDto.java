@@ -20,6 +20,10 @@ public class GetRecruitApplicationsResDto {
         this.category = recruit.getCategory().name();
         this.recruitId = recruit.getId();
         this.recruitApplications = new HashMap<>();
+
+        recruit.getLimitations().forEach(recruitLimitation ->
+                this.recruitApplications.put(recruitLimitation.getType().getName(), new ArrayList<>()));
+
         recruitApplications.sort((r1, r2)->{
             if(r1.getLiked().equals(r2.getLiked())) {
                 return r1.getRecruitApplicationId().compareTo(r2.getRecruitApplicationId());

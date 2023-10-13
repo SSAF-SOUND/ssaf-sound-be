@@ -81,7 +81,7 @@ public class RecruitController {
     @GetMapping("/applied")
     public EnvelopeResponse<GetMemberAppliedRecruitsResDto> getMemberAppliedRecruits(GetMemberAppliedRecruitsReqDto recruitsReqDto, @Authentication AuthenticatedMember memberInfo) {
         return EnvelopeResponse.<GetMemberAppliedRecruitsResDto>builder()
-                .data(recruitService.getMemberAppliedRecruits(recruitsReqDto, 1L))
+                .data(recruitService.getMemberAppliedRecruits(recruitsReqDto, memberInfo.getMemberId()))
                 .build();
     }
 }

@@ -77,7 +77,7 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
 
         // recruit types limitation
         List<String> recruitTypes = dto.getRecruitTypes();
-        if(dto.getCategory().toUpperCase().equals(Category.PROJECT.name()) && recruitTypes!=null && !recruitTypes.isEmpty()) {
+        if(dto.getCategory() != null && dto.getCategory().toUpperCase().equals(Category.PROJECT.name()) && recruitTypes!=null && !recruitTypes.isEmpty()) {
             String metaDataType = MetaDataType.RECRUIT_TYPE.name();
             List<MetaData> containRecruitTypes = recruitTypes.stream()
                     .map(recruitType->metaDataConsumer.getMetaData(metaDataType, recruitType))
@@ -121,8 +121,7 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
         List<Recruit> recruits = jpaQueryFactory.selectFrom(recruit)
                 .innerJoin(recruit.member, member)
                 .where(recruitIdLtThanCursor(cursor),
-                        recruit.id.in(memberJoinRecruitIds),
-                        recruit.member.id.eq(memberId),
+                        recruit.id.in(memberJoinRecruitIds).or(recruit.member.id.eq(memberId)),
                         categoryEq)
                 .limit(pageable.getPageSize()+1)
                 .orderBy(recruit.id.desc())
@@ -153,7 +152,7 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
         BooleanExpression matchStatusEq = (matchStatus == null) ? null : recruitApplication.matchStatus.eq(MatchStatus.valueOf(matchStatus.toUpperCase()));
 
         List<AppliedRecruit> recruits = jpaQueryFactory.select(
-                        Projections.fields(
+                        Projections.constructor(
                                 AppliedRecruit.class,
                                 recruit,
                                 recruitApplication.matchStatus,
@@ -166,7 +165,8 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
                 .where(recruitIdLtThanCursor(cursor),
                         recruitApplication.member.id.eq(memberId),
                         categoryEq,
-                        matchStatusEq)
+                        matchStatusEq,
+                        recruitApplication.matchStatus.notIn(MatchStatus.CANCEL))
                 .limit(pageable.getPageSize() + 1)
                 .orderBy(recruitApplication.id.desc())
                 .fetch();
