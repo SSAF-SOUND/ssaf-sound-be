@@ -77,7 +77,7 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
 
         // recruit types limitation
         List<String> recruitTypes = dto.getRecruitTypes();
-        if(dto.getCategory().toUpperCase().equals(Category.PROJECT.name()) && recruitTypes!=null && !recruitTypes.isEmpty()) {
+        if(dto.getCategory() != null && dto.getCategory().toUpperCase().equals(Category.PROJECT.name()) && recruitTypes!=null && !recruitTypes.isEmpty()) {
             String metaDataType = MetaDataType.RECRUIT_TYPE.name();
             List<MetaData> containRecruitTypes = recruitTypes.stream()
                     .map(recruitType->metaDataConsumer.getMetaData(metaDataType, recruitType))
