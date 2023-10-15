@@ -586,4 +586,23 @@ class MemberServiceTest {
         //verify
         verify(memberRepository, times(1)).findById(member.getId());
     }
+
+    @Test
+    @DisplayName("회원 탈퇴 요청 시, 회원 탈퇴에 성공한다.")
+    void Given_Member_When_leave_Then_Success() {
+        //given
+        Member member = memberFixture.createGeneralMember();
+        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+
+        //when
+        memberService.leaveMember(member.getId());
+        given(memberRepository.findById(member.getId())).willReturn(Optional.empty());
+
+        //then
+        assertThrows(MemberException.class, () -> memberService.leaveMember(member.getId()));
+
+        //verify
+        verify(memberRepository, times(1)).delete(member);
+        verify(memberRepository, times(2)).findById(member.getId());
+    }
 }
