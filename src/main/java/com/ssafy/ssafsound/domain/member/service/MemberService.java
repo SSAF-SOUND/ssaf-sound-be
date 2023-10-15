@@ -169,6 +169,12 @@ public class MemberService {
         member.setMajorTrack(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TRACK.name(), majorTrack));
     }
 
+    @Transactional
+    public void leaveMember(Long memberId) {
+        Member member = getMemberByMemberIdOrThrowException(memberId);
+        memberRepository.delete(member);
+    }
+
     @Transactional(readOnly = true)
     public GetMemberPortfolioResDto getMyPortfolio(Long memberId) {
         Member member = memberRepository.findWithMemberLinksAndMemberSkills(memberId)

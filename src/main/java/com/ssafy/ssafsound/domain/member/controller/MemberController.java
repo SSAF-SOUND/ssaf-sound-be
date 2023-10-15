@@ -163,4 +163,12 @@ public class MemberController {
         return EnvelopeResponse.<Void>builder()
                 .build();
     }
+
+    @DeleteMapping
+    public EnvelopeResponse<Void> leaveMember(@Authentication AuthenticatedMember authenticatedMember) {
+        memberService.leaveMember(authenticatedMember.getMemberId());
+
+        return EnvelopeResponse.<Void>builder()
+                .build();
+    }
 }
