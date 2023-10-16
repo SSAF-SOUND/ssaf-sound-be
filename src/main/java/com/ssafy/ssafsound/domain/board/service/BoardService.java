@@ -18,7 +18,7 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     public GetBoardResDto findBoards() {
-        List<Board> boards = boardRepository.findAll();
+        List<Board> boards = boardRepository.findAllByUsedBoardTrue();
         return GetBoardResDto.from(boards);
     }
 }

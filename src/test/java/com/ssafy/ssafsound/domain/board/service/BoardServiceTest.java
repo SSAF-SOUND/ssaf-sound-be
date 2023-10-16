@@ -3,6 +3,7 @@ package com.ssafy.ssafsound.domain.board.service;
 import com.ssafy.ssafsound.domain.board.domain.Board;
 import com.ssafy.ssafsound.domain.board.dto.GetBoardResDto;
 import com.ssafy.ssafsound.domain.board.repository.BoardRepository;
+import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
 import com.ssafy.ssafsound.global.util.fixture.BoardFixture;
 
 import org.junit.jupiter.api.DisplayName;
@@ -32,25 +33,23 @@ class BoardServiceTest {
 
     @Test
     @DisplayName("게시판 목록 조회가 성공적으로 수행됩니다.")
-    void Given_Nothing_When_FindBoards_Then_Success() {
+    void Given_Empty_When_FindBoards_Then_Success() {
         Board freeBoard = boardFixture.getFreeBoard();
         Board jobBoard = boardFixture.getJobBoard();
 
         List<Board> boards = List.of(freeBoard, jobBoard);
 
         // given
-        given(boardRepository.findAll()).willReturn(boards);
+        given(boardRepository.findAllByUsedBoardTrue()).willReturn(boards);
 
         // when
-        GetBoardResDto getBoardResDto = boardService.findBoards();
+        GetBoardResDto response = boardService.findBoards();
 
         // then
-        assertThat(getBoardResDto.getBoards())
-                .hasSize(2)
-                .extracting("title")
-                .containsExactly(freeBoard.getTitle(), jobBoard.getTitle());
+        assertThat(response).usingRecursiveComparison()
+            .isEqualTo(GetBoardResDto.from(boards));
 
         // verify
-        verify(boardRepository).findAll();
+        verify(boardRepository).findAllByUsedBoardTrue();
     }
 }
