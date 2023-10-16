@@ -102,7 +102,7 @@ class PostServiceTest {
 
 	@Test
 	@DisplayName("유효하지 않은 boardId가 주어졌다면 게시글 목록 조회에 예외를 발생합니다.")
-	void Given_BoardId_When_findPosts_Then_Fail() {
+	void Given_BoardId_When_findPosts_Then_ThrowException() {
 		// given
 		GetPostReqDto getPostReqDto = GetPostReqDto.builder().boardId(100L).cursor(-1L).size(10).build();
 
@@ -158,7 +158,7 @@ class PostServiceTest {
 
 	@Test
 	@DisplayName("유효하지 않은 postId가 주어졌다면 게시글 상세보기에 예외를 발생합니다.")
-	void Given_InvalidPostId_When_findPost_Then_Success() {
+	void Given_InvalidPostId_When_findPost_Then_ThrowException() {
 		// given
 		Long postId = 100L;
 
@@ -174,7 +174,7 @@ class PostServiceTest {
 
 	@Test
 	@DisplayName("로그인 시 유효하지 않은 loginMemberId가 주어졌다면 게시글 상세보기에 예외를 발생합니다.")
-	void Given_InvalidLoginMemberId_When_findPost_Then_Success() {
+	void Given_InvalidLoginMemberId_When_findPost_Then_ThrowException() {
 		// given
 		Post post = POST_FIXTURE1;
 		Long memberId = 100L;
@@ -254,7 +254,7 @@ class PostServiceTest {
 
 	@Test
 	@DisplayName("좋아요가 특정 개수를 달성했다면 Hot 게시글로 등록됩니다.")
-	void Given_PostIdAndLoginMemberId_When_NotExistsHotPost_Then_Success() {
+	void Given_PostIdAndLoginMemberId_When_likePost_Then_SaveHotPost() {
 		// given
 		Post post = POST_FIXTURE1;
 		Member member = memberFixture.createGeneralMember();
@@ -285,7 +285,7 @@ class PostServiceTest {
 
 	@Test
 	@DisplayName("좋아요가 특정 개수를 달성했지만 이미 Hot 게시글이라면 등록되지 않습니다.")
-	void Given_PostIdAndLoginMemberId_When_ExistsHotPost_Then_Success() {
+	void Given_PostIdAndLoginMemberId_When_likePost_Then_NotSaveHotPost() {
 		// given
 		Post post = POST_FIXTURE1;
 		Member member = memberFixture.createGeneralMember();
@@ -317,7 +317,7 @@ class PostServiceTest {
 
 	@Test
 	@DisplayName("유효하지 않은 loginMemberId가 주어졌다면 게시글 좋아요에 예외를 발생합니다.")
-	void Given_InvalidLoginMemberId_When_likePost_Then_Success() {
+	void Given_InvalidLoginMemberId_When_likePost_Then_ThrowException() {
 		// given
 		Post post = POST_FIXTURE1;
 		Long memberId = -1L;
@@ -335,7 +335,7 @@ class PostServiceTest {
 
 	@Test
 	@DisplayName("유효하지 않은 postId가 주어졌다면 게시글 좋아요에 예외를 발생합니다.")
-	void Given_InvalidPostId_When_likePost_Then_Success() {
+	void Given_InvalidPostId_When_likePost_Then_ThrowException() {
 		// given
 		Long postId = -1L;
 		Member member = memberFixture.createGeneralMember();
@@ -354,7 +354,7 @@ class PostServiceTest {
 
 	@Test
 	@DisplayName("게시글을 스크랩 하지 않았다면 스크랩이 저장됩니다.")
-	void Given_PostIdAndLoginMemberId_When_SaveScrapPost_Then_Success() {
+	void Given_PostIdAndLoginMemberId_When_scrapPost_Then_SaveScrap() {
 		// given
 		Member member = memberFixture.createGeneralMember();
 		Post post = POST_FIXTURE1;
@@ -381,7 +381,7 @@ class PostServiceTest {
 
 	@Test
 	@DisplayName("게시글을 이미 스크랩 했다면 스크랩이 취소됩니다.")
-	void Given_PostIdAndLoginMemberId_When_DeleteScrapPost_Then_Success() {
+	void Given_PostIdAndLoginMemberId_When_scrapPost_Then_CancelScrap() {
 		// given
 		Member member = memberFixture.createGeneralMember();
 		Post post = POST_FIXTURE1;
@@ -410,7 +410,7 @@ class PostServiceTest {
 
 	@Test
 	@DisplayName("유효하지 않은 loginMemberId가 주어졌다면 게시글 스크랩에 예외를 발생합니다.")
-	void Given_InvalidLoginMemberId_When_scrapPost_Then_Success() {
+	void Given_InvalidLoginMemberId_When_scrapPost_Then_ThrowException() {
 		// given
 		Long memberId = -101L;
 		Post post = POST_FIXTURE1;
@@ -428,7 +428,7 @@ class PostServiceTest {
 
 	@Test
 	@DisplayName("유효하지 않은 postId가 주어졌다면 게시글 스크랩에 예외를 발생합니다.")
-	void Given_InvalidPostId_When_scrapPost_Then_Success() {
+	void Given_InvalidPostId_When_scrapPost_Then_ThrowException() {
 		// given
 		Member member = memberFixture.createGeneralMember();
 		Long postId = 101021242313L;
@@ -447,7 +447,18 @@ class PostServiceTest {
 	}
 
 	@Test
-	void writePost() {
+	@DisplayName("정상적인 boardId, MemberId가 주어졌다면 게시글 쓰기가 성공합니다.")
+	void Given_BoardIdAndMemberId_When_writePost_Then_Success() {
+	}
+
+	@Test
+	@DisplayName("유효하지 않은 boardID가 주어졌다면 게시글 쓰기에 예외를 발생합니다.")
+	void Given_InvalidBoardId_When_writePost_Then_ThrowException() {
+	}
+
+	@Test
+	@DisplayName("유효하지 않은 memberId가 주어졌다면 게시글 쓰기에 예외를 발생합니다.")
+	void Given_InvalidMemberId_When_writePost_Then_ThrowException() {
 	}
 
 	@Test
