@@ -6,20 +6,17 @@ import com.ssafy.ssafsound.domain.post.dto.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.ssafy.ssafsound.global.util.fixture.BoardFixture.BOARD_FIXTURE1;
-import static com.ssafy.ssafsound.global.util.fixture.BoardFixture.BOARD_FIXTURE2;
-import static com.ssafy.ssafsound.global.util.fixture.MemberFixture.*;
-
 public class PostFixture {
 
     private static final MemberFixture memberFixture = new MemberFixture();
+    private static final BoardFixture boardFixture = new BoardFixture();
 
     public static final Post POST_FIXTURE1 = Post.builder()
             .id(1L)
             .title("싸탈하고 싶다.")
             .content("싸탈하고 싶은 밤이네요")
             .anonymity(false)
-            .board(BOARD_FIXTURE1)
+            .board(boardFixture.getFreeBoard())
             .member(memberFixture.createMember())
             .build();
 
@@ -28,7 +25,7 @@ public class PostFixture {
             .title("삼성 B형을 봤는데")
             .content("결과가 암울해")
             .anonymity(true)
-            .board(BOARD_FIXTURE1)
+            .board(boardFixture.getFreeBoard())
             .member(memberFixture.createMember())
             .build();
 
@@ -37,7 +34,7 @@ public class PostFixture {
             .title("안녕하세요 취업 게시판의 첫 글이네요")
             .content("취업이 뭐죠??")
             .anonymity(true)
-            .board(BOARD_FIXTURE2)
+            .board(boardFixture.getJobBoard())
             .member(memberFixture.createMember())
             .build();
 
