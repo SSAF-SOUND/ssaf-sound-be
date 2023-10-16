@@ -186,7 +186,7 @@ public class PostService {
 
 		Post post = Post.of(board, loginMember, postPostWriteReqDto.getTitle(), postPostWriteReqDto.getContent(),
 			postPostWriteReqDto.isAnonymity());
-		postRepository.save(post);
+		Long postId = postRepository.save(post).getId();
 
 		if (images.size() > 0) {
 			for (ImageInfo image : images) {
@@ -194,7 +194,7 @@ public class PostService {
 				postImageRepository.save(postImage);
 			}
 		}
-		return new PostIdElement(post.getId());
+		return new PostIdElement(postId);
 	}
 
 	@Transactional

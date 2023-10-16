@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.ssafy.ssafsound.domain.board.domain.Board;
 import com.ssafy.ssafsound.domain.board.exception.BoardErrorInfo;
 import com.ssafy.ssafsound.domain.board.exception.BoardException;
 import com.ssafy.ssafsound.domain.board.repository.BoardRepository;
@@ -29,7 +30,9 @@ import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostReqDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
 import com.ssafy.ssafsound.domain.post.dto.PostCommonLikeResDto;
+import com.ssafy.ssafsound.domain.post.dto.PostIdElement;
 import com.ssafy.ssafsound.domain.post.dto.PostPostScrapResDto;
+import com.ssafy.ssafsound.domain.post.dto.PostPostWriteReqDto;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
 import com.ssafy.ssafsound.domain.post.exception.PostException;
 import com.ssafy.ssafsound.domain.post.repository.HotPostRepository;
@@ -37,6 +40,7 @@ import com.ssafy.ssafsound.domain.post.repository.PostImageRepository;
 import com.ssafy.ssafsound.domain.post.repository.PostLikeRepository;
 import com.ssafy.ssafsound.domain.post.repository.PostRepository;
 import com.ssafy.ssafsound.domain.post.repository.PostScrapRepository;
+import com.ssafy.ssafsound.global.util.fixture.BoardFixture;
 import com.ssafy.ssafsound.global.util.fixture.MemberFixture;
 import com.ssafy.ssafsound.infra.storage.service.AwsS3StorageService;
 
@@ -73,7 +77,8 @@ class PostServiceTest {
 	@InjectMocks
 	private PostService postService;
 
-	private MemberFixture memberFixture = new MemberFixture();
+	private final MemberFixture memberFixture = new MemberFixture();
+	private final BoardFixture boardFixture = new BoardFixture();
 
 	@Test
 	@DisplayName("유효한 boardId, cursor, size가 주어졌다면 게시글 목록 조회가 성공합니다.")
@@ -449,6 +454,33 @@ class PostServiceTest {
 	@Test
 	@DisplayName("정상적인 boardId, MemberId가 주어졌다면 게시글 쓰기가 성공합니다.")
 	void Given_BoardIdAndMemberId_When_writePost_Then_Success() {
+		// given
+		Board board = boardFixture.getFreeBoard();
+		Member member = memberFixture.createGeneralMember();
+		Post post = POST_FIXTURE1;
+
+		PostPostWriteReqDto postPostWriteReqDto = PostPostWriteReqDto.builder()
+			.title(post.getTitle())
+			.content(post.getContent())
+			.anonymity(post.getAnonymity())
+			.images(List.of())
+			.build();
+
+		given(boardRepository.findById(board.getId())).willReturn(Optional.of(board));
+		given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+		given(postRepository.save(any())).willReturn(post);
+
+		// when
+		PostIdElement response = postService.writePost(board.getId(), member.getId(), postPostWriteReqDto);
+
+		// then
+		assertThat(response).usingRecursiveComparison()
+			.isEqualTo(new PostIdElement(post.getId()));
+
+		// verify
+		verify(boardRepository, times(1)).findById(board.getId());
+		verify(memberRepository, times(1)).findById(member.getId());
+		verify(postRepository, times(1)).save(any());
 	}
 
 	@Test
