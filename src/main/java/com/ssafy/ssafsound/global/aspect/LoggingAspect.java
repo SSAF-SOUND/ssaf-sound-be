@@ -13,14 +13,9 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Aspect
 @Component
@@ -51,8 +46,7 @@ public class LoggingAspect {
             params.put("controller", controllerName);
             params.put("method",  methodName);
             params.put("params",  getParams(request));
-            params.put("log_time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
-                    Calendar.getInstance().getTime()));
+            params.put("log_time", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyy-MM-dd HH:mm:ss")));
             params.put("request_uri", request.getRequestURI());
             params.put("http_method", request.getMethod());
         } catch (Exception e) {
@@ -80,8 +74,7 @@ public class LoggingAspect {
             params.put("service", serviceName);
             params.put("method", methodName);
             params.put("params", Arrays.toString(proceedingJoinPoint.getArgs()));
-            params.put("log_time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                    .format(Calendar.getInstance().getTime()));
+            params.put("log_time", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyy-MM-dd HH:mm:ss")));
         } catch (Exception e) {
             log.error("LoggingAspect - Service error", e);
         }
