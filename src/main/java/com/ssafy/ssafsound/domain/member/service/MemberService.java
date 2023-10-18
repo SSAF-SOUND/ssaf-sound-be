@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.domain.member.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberTokensResDto;
+import com.ssafy.ssafsound.domain.event.MemberLeavedEvent;
 import com.ssafy.ssafsound.domain.member.domain.AccountState;
 import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
 import com.ssafy.ssafsound.domain.member.domain.Member;
@@ -22,6 +23,7 @@ import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +44,7 @@ public class MemberService {
     private final MemberLinkRepository memberLinkRepository;
     private final MetaDataConsumer metaDataConsumer;
     private final MemberConstantProvider memberConstantProvider;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public AuthenticatedMember createMemberByOauthIdentifier(PostMemberReqDto postMemberReqDto) {
@@ -190,6 +193,7 @@ public class MemberService {
     public void leaveMember(Long memberId) {
         Member member = getMemberByMemberIdOrThrowException(memberId);
         member.setAccountStateDeleted();
+        applicationEventPublisher.publishEvent(new MemberLeavedEvent(member.getId()));
     }
 
     @Transactional(readOnly = true)
