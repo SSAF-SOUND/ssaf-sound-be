@@ -323,7 +323,7 @@ public class MemberService {
     }
 
     private boolean isDeletedMember(Member member) {
-        return member.getAccountState() == AccountState.DELETE;
+        return member.getAccountState() == AccountState.DELETED;
     }
 
     private void changeMemberTokens(
