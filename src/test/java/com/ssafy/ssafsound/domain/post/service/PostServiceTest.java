@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.post.service;
 
+import static com.ssafy.ssafsound.domain.member.domain.QMember.*;
 import static com.ssafy.ssafsound.global.util.fixture.PostFixture.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -549,13 +550,28 @@ class PostServiceTest {
 	@DisplayName("유효하지 않은 memberId가 주어졌다면 게시글 쓰기에 예외를 발생합니다.")
 	void Given_InvalidMemberId_When_writePost_Then_ThrowException() {
 		// given
+		Board board = boardFixture.getFreeBoard();
+		Long memberId = 100L;
+		Post post = POST_FIXTURE1;
 
-		// when
+		PostPostWriteReqDto postPostWriteReqDto = PostPostWriteReqDto.builder()
+			.title(post.getTitle())
+			.content(post.getContent())
+			.anonymity(post.getAnonymity())
+			.images(List.of())
+			.build();
 
-		// then
+		given(boardRepository.findById(board.getId())).willReturn(Optional.of(board));
+		given(memberRepository.findById(memberId)).willReturn(Optional.empty());
+
+		// when, then
+		MemberException exception = assertThrows(MemberException.class,
+			() -> postService.writePost(board.getId(), memberId, postPostWriteReqDto));
+		assertEquals(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID, exception.getInfo());
 
 		// verify
-
+		verify(boardRepository, times(1)).findById(board.getId());
+		verify(memberRepository, times(1)).findById(memberId);
 	}
 
 	@Test
