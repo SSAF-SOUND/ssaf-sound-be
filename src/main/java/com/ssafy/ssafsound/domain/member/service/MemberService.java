@@ -246,6 +246,8 @@ public class MemberService {
 
         if (isPrivateOfMemberProfile(member)) {
             throw new MemberException(MemberErrorInfo.MEMBER_PROFILE_SECRET);
+        } else if (isDeletedMember(member)) {
+            throw new MemberException(MemberErrorInfo.MEMBER_DELETED);
         }
         MemberProfile memberProfile = memberProfileRepository.findMemberProfileByMember(member).orElseGet(MemberProfile::new);
 
