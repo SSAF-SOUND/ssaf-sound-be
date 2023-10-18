@@ -76,7 +76,9 @@ public class MemberService {
     }
 
     @Transactional
-    public GetMemberResDto registerMemberInformation(AuthenticatedMember authenticatedMember, PostMemberInfoReqDto postMemberInfoReqDto) {
+    public GetMemberResDto registerMemberInformation(
+            AuthenticatedMember authenticatedMember,
+            PostMemberInfoReqDto postMemberInfoReqDto) {
         boolean existNickname = memberRepository.existsByNickname(postMemberInfoReqDto.getNickname());
 
         if(existNickname) throw new MemberException(MemberErrorInfo.MEMBER_NICKNAME_DUPLICATION);
@@ -182,7 +184,7 @@ public class MemberService {
     @Transactional
     public void leaveMember(Long memberId) {
         Member member = getMemberByMemberIdOrThrowException(memberId);
-        memberRepository.delete(member);
+        member.setAccountStateDeleted();
     }
 
     @Transactional(readOnly = true)

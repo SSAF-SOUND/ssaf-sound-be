@@ -187,4 +187,6 @@ public class Member extends BaseTimeEntity {
     public void changeMajorStatus(Boolean isMajor) {
         this.major = isMajor;
     }
+
+    public void setAccountStateDeleted() { this.accountState = AccountState.DELETE; }
 }
