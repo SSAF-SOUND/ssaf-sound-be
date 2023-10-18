@@ -42,6 +42,7 @@ import com.ssafy.ssafsound.domain.post.repository.PostRepository;
 import com.ssafy.ssafsound.domain.post.repository.PostScrapRepository;
 import com.ssafy.ssafsound.global.util.fixture.BoardFixture;
 import com.ssafy.ssafsound.global.util.fixture.MemberFixture;
+import com.ssafy.ssafsound.global.util.fixture.PostFixture;
 import com.ssafy.ssafsound.infra.storage.service.AwsS3StorageService;
 
 @ExtendWith(MockitoExtension.class)
@@ -79,6 +80,7 @@ class PostServiceTest {
 
 	private final MemberFixture memberFixture = new MemberFixture();
 	private final BoardFixture boardFixture = new BoardFixture();
+	private final PostFixture postFixture = new PostFixture();
 
 	@Test
 	@DisplayName("유효한 boardId, cursor, size가 주어졌다면 게시글 목록 조회가 성공합니다.")
@@ -452,8 +454,8 @@ class PostServiceTest {
 	}
 
 	@Test
-	@DisplayName("정상적인 boardId, MemberId가 주어졌다면 게시글 쓰기가 성공합니다.")
-	void Given_BoardIdAndMemberId_When_writePost_Then_Success() {
+	@DisplayName("정상적인 boardId, MemberId가 주어졌다면 게시글 쓰기가 성공합니다.(이미지 X)")
+	void Given_BoardIdAndMemberId_NotImage_When_writePost_Then_Success() {
 		// given
 		Board board = boardFixture.getFreeBoard();
 		Member member = memberFixture.createGeneralMember();
@@ -484,13 +486,63 @@ class PostServiceTest {
 	}
 
 	@Test
+	@DisplayName("정상적인 boardId, MemberId가 주어졌다면 게시글 쓰기가 성공합니다.(이미지 O)")
+	void Given_BoardIdAndMemberId_Image_When_writePost_Then_Success() {
+		// given
+		Board board = boardFixture.getFreeBoard();
+		Member member = memberFixture.createGeneralMember();
+		Post post = POST_FIXTURE1;
+
+		int size = 2;
+		PostPostWriteReqDto postPostWriteReqDto = PostPostWriteReqDto.builder()
+			.title(post.getTitle())
+			.content(post.getContent())
+			.anonymity(post.getAnonymity())
+			.images(PostFixture.createImageInfos(size))
+			.build();
+
+		given(boardRepository.findById(board.getId())).willReturn(Optional.of(board));
+		given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+		given(postRepository.save(any())).willReturn(post);
+
+		// when
+		PostIdElement response = postService.writePost(board.getId(), member.getId(), postPostWriteReqDto);
+
+		// then
+		assertThat(response).usingRecursiveComparison()
+			.isEqualTo(new PostIdElement(post.getId()));
+
+		// verify
+		verify(boardRepository, times(1)).findById(board.getId());
+		verify(memberRepository, times(1)).findById(member.getId());
+		verify(postRepository, times(1)).save(any());
+		verify(postImageRepository, times(size)).save(any());
+	}
+
+	@Test
 	@DisplayName("유효하지 않은 boardID가 주어졌다면 게시글 쓰기에 예외를 발생합니다.")
 	void Given_InvalidBoardId_When_writePost_Then_ThrowException() {
+		// given
+
+		// when
+
+		// then
+
+		// verify
+
 	}
 
 	@Test
 	@DisplayName("유효하지 않은 memberId가 주어졌다면 게시글 쓰기에 예외를 발생합니다.")
 	void Given_InvalidMemberId_When_writePost_Then_ThrowException() {
+		// given
+
+		// when
+
+		// then
+
+		// verify
+
 	}
 
 	@Test
