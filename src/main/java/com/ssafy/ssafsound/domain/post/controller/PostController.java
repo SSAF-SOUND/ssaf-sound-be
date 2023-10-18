@@ -2,9 +2,6 @@ package com.ssafy.ssafsound.domain.post.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.validator.Authentication;
-import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
-import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
-import com.ssafy.ssafsound.domain.post.dto.PostPostWriteReqDto;
 import com.ssafy.ssafsound.domain.post.dto.*;
 import com.ssafy.ssafsound.domain.post.service.PostService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
@@ -23,7 +20,7 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping
-    public EnvelopeResponse<GetPostResDto> findPosts(@Valid GetPostReqDto getPostReqDto) {
+    public EnvelopeResponse<GetPostResDto> findPosts(@Valid @ModelAttribute GetPostReqDto getPostReqDto) {
         return EnvelopeResponse.<GetPostResDto>builder()
                 .data(postService.findPosts(getPostReqDto))
                 .build();
