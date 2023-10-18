@@ -523,13 +523,26 @@ class PostServiceTest {
 	@DisplayName("유효하지 않은 boardID가 주어졌다면 게시글 쓰기에 예외를 발생합니다.")
 	void Given_InvalidBoardId_When_writePost_Then_ThrowException() {
 		// given
+		Long boardId = 10L;
+		Member member = memberFixture.createGeneralMember();
+		Post post = POST_FIXTURE1;
 
-		// when
+		PostPostWriteReqDto postPostWriteReqDto = PostPostWriteReqDto.builder()
+			.title(post.getTitle())
+			.content(post.getContent())
+			.anonymity(post.getAnonymity())
+			.images(List.of())
+			.build();
 
-		// then
+		given(boardRepository.findById(boardId)).willReturn(Optional.empty());
+
+		// when, then
+		BoardException exception = assertThrows(BoardException.class,
+			() -> postService.writePost(boardId, member.getId(), postPostWriteReqDto));
+		assertEquals(BoardErrorInfo.NO_BOARD, exception.getInfo());
 
 		// verify
-
+		verify(boardRepository, times(1)).findById(boardId);
 	}
 
 	@Test
