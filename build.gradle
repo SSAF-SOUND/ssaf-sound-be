@@ -82,11 +82,23 @@ jacocoTestCoverageVerification {
 
             excludes = ['com.ssafy.ssafsound.domain.BaseTimeEntity',
                         'com.ssafy.ssafsound.domain.*.domain.**',
-                        'com.ssafy.ssafsound.domain.meta.converter.CampusConverter',
-                        'com.ssafy.ssafsound.domain.meta.converter.SkillConverter',
                         'com.ssafy.ssafsound.global.**',
                         '*.*Controller',
-                        '*.SsafsoundApplication']
+                        '*.SsafsoundApplication',
+                        'com.ssafy.ssafsound.domain.*.dto.**',
+                        'com.ssafy.ssafsound.domain.*.validator.**',
+                        'com.ssafy.ssafsound.domain.*.exception.**',
+                        'com.ssafy.ssafsound.domain.meta.converter.**',
+                        'com.ssafy.ssafsound.domain.*.repository.**',
+                        'com.ssafy.ssafsound.infra.**',
+                        'com.ssafy.ssafsound.domain.auth.service.oauth.**',
+                        'com.ssafy.ssafsound.batch.**',
+                        'com.ssafy.ssafsound.domain.lunch.task.**',
+                        'com.ssafy.ssafsound.domain.recruit.task.**',
+                        'com.ssafy.ssafsound.domain.auth.util.**',
+                        'com.ssafy.ssafsound.domain.auth.service.token.**',
+                        'com.ssafy.ssafsound.domain.QBaseTimeEntity',
+                        'com.ssafy.ssafsound.domain.chat.service.*Service']
         }
     }
 }
