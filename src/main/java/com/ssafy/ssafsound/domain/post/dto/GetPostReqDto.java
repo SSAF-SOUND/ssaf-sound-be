@@ -1,10 +1,8 @@
 package com.ssafy.ssafsound.domain.post.dto;
 
-import com.ssafy.ssafsound.domain.post.validator.CheckCursor;
 import lombok.*;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
