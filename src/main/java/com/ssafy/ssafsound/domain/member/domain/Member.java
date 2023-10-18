@@ -16,8 +16,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -26,9 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity(name="member")
-@SQLDelete(sql = "UPDATE member SET deleted = true WHERE member_id = ?")
-@Where(clause = "deleted = false")
-@Table(indexes = @Index(name = "nickname_index", columnList = "nickname", unique = true))
+@Table(indexes = @Index(name = "nickname_index", columnList = "nickname"))
 @Getter
 @Builder
 @NoArgsConstructor
@@ -85,10 +81,6 @@ public class Member extends BaseTimeEntity {
     @Column
     @Builder.Default
     private Boolean publicProfile = true;
-
-    @Column
-    @Builder.Default
-    private boolean deleted = Boolean.FALSE;
 
     @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     @Builder.Default
