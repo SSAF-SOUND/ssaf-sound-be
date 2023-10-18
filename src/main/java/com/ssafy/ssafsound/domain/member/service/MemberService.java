@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.domain.member.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberTokensResDto;
+import com.ssafy.ssafsound.domain.member.domain.AccountState;
 import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.domain.MemberProfile;
@@ -48,7 +49,11 @@ public class MemberService {
         Member member;
         if (optionalMember.isPresent()) {
             member = optionalMember.get();
-            if (isInvalidOauthLogin(member, postMemberReqDto)) throw new MemberException(MemberErrorInfo.MEMBER_OAUTH_NOT_FOUND);
+            if (isInvalidOauthLogin(member, postMemberReqDto)) {
+                throw new MemberException(MemberErrorInfo.MEMBER_OAUTH_NOT_FOUND);
+            } else if(isDeletedMember(member)) {
+                throw new MemberException(MemberErrorInfo.MEMBER_DELETED);
+            }
             return AuthenticatedMember.from(member);
         } else {
             MemberRole memberRole = findMemberRoleByRoleName("user");
@@ -315,6 +320,10 @@ public class MemberService {
     private Member getMemberByMemberIdOrThrowException(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+    }
+
+    private boolean isDeletedMember(Member member) {
+        return member.getAccountState() == AccountState.DELETE;
     }
 
     private void changeMemberTokens(
