@@ -6,8 +6,17 @@ import com.ssafy.ssafsound.domain.member.domain.MemberProfile;
 import com.ssafy.ssafsound.domain.member.domain.MemberToken;
 import com.ssafy.ssafsound.domain.member.dto.*;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
-import com.ssafy.ssafsound.domain.member.repository.*;
-import com.ssafy.ssafsound.domain.meta.domain.*;
+import com.ssafy.ssafsound.domain.member.repository.MemberLinkRepository;
+import com.ssafy.ssafsound.domain.member.repository.MemberProfileRepository;
+import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
+import com.ssafy.ssafsound.domain.member.repository.MemberRoleRepository;
+import com.ssafy.ssafsound.domain.member.repository.MemberSkillRepository;
+import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
+import com.ssafy.ssafsound.domain.meta.domain.Campus;
+import com.ssafy.ssafsound.domain.meta.domain.Certification;
+import com.ssafy.ssafsound.domain.meta.domain.MajorTrack;
+import com.ssafy.ssafsound.domain.meta.domain.MetaData;
+import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.global.util.fixture.MemberFixture;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +24,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Optional;
 
@@ -43,6 +54,8 @@ class MemberServiceTest {
     private MetaDataConsumer metaDataConsumer;
     @Mock
     private MemberConstantProvider memberConstantProvider;
+    @Spy
+    private ApplicationEventPublisher applicationEventPublisher;
     @InjectMocks
     private MemberService memberService;
     MemberFixture memberFixture = new MemberFixture();
@@ -596,13 +609,11 @@ class MemberServiceTest {
 
         //when
         memberService.leaveMember(member.getId());
-        given(memberRepository.findById(member.getId())).willReturn(Optional.empty());
 
         //then
-        assertThrows(MemberException.class, () -> memberService.leaveMember(member.getId()));
+        assertEquals("@" + member.getId(), member.getNickname());
 
         //verify
-        verify(memberRepository, times(1)).delete(member);
-        verify(memberRepository, times(2)).findById(member.getId());
+        verify(memberRepository, times(1)).findById(member.getId());
     }
 }

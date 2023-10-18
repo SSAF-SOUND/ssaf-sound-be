@@ -195,6 +195,7 @@ public class MemberService {
     public void leaveMember(Long memberId) {
         Member member = getMemberByMemberIdOrThrowException(memberId);
         member.setAccountStateDeleted();
+        member.changeNickname("@" + member.getId());
         applicationEventPublisher.publishEvent(new MemberLeavedEvent(member.getId()));
     }
 
