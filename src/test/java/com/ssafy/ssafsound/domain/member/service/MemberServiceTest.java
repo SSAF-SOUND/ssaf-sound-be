@@ -18,6 +18,7 @@ import com.ssafy.ssafsound.domain.meta.domain.MajorTrack;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
+import com.ssafy.ssafsound.domain.term.repository.TermRepository;
 import com.ssafy.ssafsound.global.util.fixture.MemberFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,6 +51,8 @@ class MemberServiceTest {
     private MemberLinkRepository memberLinkRepository;
     @Mock
     private MemberSkillRepository memberSkillRepository;
+    @Mock
+    private TermRepository termRepository;
     @Mock
     private MetaDataConsumer metaDataConsumer;
     @Mock
@@ -301,6 +304,7 @@ class MemberServiceTest {
         PostMemberInfoReqDto postMemberInfoReqDto = memberFixture.createPostGeneralMemberInfoReqDto();
         given(memberRepository.existsByNickname(postMemberInfoReqDto.getNickname())).willReturn(false);
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.empty());
+        given(termRepository.getSizeByRequiredTerm()).willReturn(postMemberInfoReqDto.getTermSequences().size());
 
         //when, then
         assertThrows(MemberException.class,
@@ -309,6 +313,7 @@ class MemberServiceTest {
         //verify
         verify(memberRepository, times(1)).existsByNickname(postMemberInfoReqDto.getNickname());
         verify(memberRepository, times(1)).findById(authenticatedMember.getMemberId());
+        verify(termRepository, times(1)).getSizeByRequiredTerm();
     }
 
     @Test
@@ -320,6 +325,7 @@ class MemberServiceTest {
         PostMemberInfoReqDto postMemberInfoReqDto = memberFixture.createPostGeneralMemberInfoReqDto();
         given(memberRepository.existsByNickname(postMemberInfoReqDto.getNickname())).willReturn(false);
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
+        given(termRepository.getSizeByRequiredTerm()).willReturn(postMemberInfoReqDto.getTermSequences().size());
 
         //when
         GetMemberResDto response = memberService.registerMemberInformation(authenticatedMember, postMemberInfoReqDto);
@@ -330,6 +336,7 @@ class MemberServiceTest {
         //verify
         verify(memberRepository, times(1)).existsByNickname(postMemberInfoReqDto.getNickname());
         verify(memberRepository, times(1)).findById(authenticatedMember.getMemberId());
+        verify(termRepository, times(1)).getSizeByRequiredTerm();
     }
 
     @Test

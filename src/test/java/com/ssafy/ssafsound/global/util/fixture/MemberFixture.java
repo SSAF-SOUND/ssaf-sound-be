@@ -127,6 +127,7 @@ public class MemberFixture {
                 .ssafyMember(false)
                 .nickname("james")
                 .isMajor(true)
+                .termSequences(new HashSet<>(List.of(1, 2, 3)))
                 .build();
     }
 
