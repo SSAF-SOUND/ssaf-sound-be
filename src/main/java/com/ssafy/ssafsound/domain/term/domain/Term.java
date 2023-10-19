@@ -26,7 +26,7 @@ public class Term extends BaseTimeEntity {
     private Long id;
 
     @Column
-    private String contents;
+    private String content;
 
     @Column
     private String name;
