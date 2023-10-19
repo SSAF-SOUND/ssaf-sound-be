@@ -184,26 +184,17 @@ public class PostService {
 
 		List<ImageInfo> images = postPostWriteReqDto.getImages();
 
-		Post post = Post.builder()
-			.board(board)
-			.member(loginMember)
-			.title(postPostWriteReqDto.getTitle())
-			.content(postPostWriteReqDto.getContent())
-			.anonymity(postPostWriteReqDto.isAnonymity())
-			.build();
-		postRepository.save(post);
+		Post post = Post.of(board, loginMember, postPostWriteReqDto.getTitle(), postPostWriteReqDto.getContent(),
+			postPostWriteReqDto.isAnonymity());
+		Long postId = postRepository.save(post).getId();
 
 		if (images.size() > 0) {
 			for (ImageInfo image : images) {
-				PostImage postImage = PostImage.builder()
-					.post(post)
-					.imagePath(image.getImagePath())
-					.imageUrl(image.getImageUrl())
-					.build();
+				PostImage postImage = PostImage.of(post, image.getImagePath(), image.getImageUrl());
 				postImageRepository.save(postImage);
 			}
 		}
-		return new PostIdElement(post.getId());
+		return new PostIdElement(postId);
 	}
 
 	@Transactional

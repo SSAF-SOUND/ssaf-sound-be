@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.post.service;
 
+import static com.ssafy.ssafsound.domain.member.domain.QMember.*;
 import static com.ssafy.ssafsound.global.util.fixture.PostFixture.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.ssafy.ssafsound.domain.board.domain.Board;
 import com.ssafy.ssafsound.domain.board.exception.BoardErrorInfo;
 import com.ssafy.ssafsound.domain.board.exception.BoardException;
 import com.ssafy.ssafsound.domain.board.repository.BoardRepository;
@@ -29,7 +31,9 @@ import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostReqDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
 import com.ssafy.ssafsound.domain.post.dto.PostCommonLikeResDto;
+import com.ssafy.ssafsound.domain.post.dto.PostIdElement;
 import com.ssafy.ssafsound.domain.post.dto.PostPostScrapResDto;
+import com.ssafy.ssafsound.domain.post.dto.PostPostWriteReqDto;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
 import com.ssafy.ssafsound.domain.post.exception.PostException;
 import com.ssafy.ssafsound.domain.post.repository.HotPostRepository;
@@ -37,7 +41,9 @@ import com.ssafy.ssafsound.domain.post.repository.PostImageRepository;
 import com.ssafy.ssafsound.domain.post.repository.PostLikeRepository;
 import com.ssafy.ssafsound.domain.post.repository.PostRepository;
 import com.ssafy.ssafsound.domain.post.repository.PostScrapRepository;
+import com.ssafy.ssafsound.global.util.fixture.BoardFixture;
 import com.ssafy.ssafsound.global.util.fixture.MemberFixture;
+import com.ssafy.ssafsound.global.util.fixture.PostFixture;
 import com.ssafy.ssafsound.infra.storage.service.AwsS3StorageService;
 
 @ExtendWith(MockitoExtension.class)
@@ -73,7 +79,9 @@ class PostServiceTest {
 	@InjectMocks
 	private PostService postService;
 
-	private MemberFixture memberFixture = new MemberFixture();
+	private final MemberFixture memberFixture = new MemberFixture();
+	private final BoardFixture boardFixture = new BoardFixture();
+	private final PostFixture postFixture = new PostFixture();
 
 	@Test
 	@DisplayName("유효한 boardId, cursor, size가 주어졌다면 게시글 목록 조회가 성공합니다.")
@@ -102,7 +110,7 @@ class PostServiceTest {
 
 	@Test
 	@DisplayName("유효하지 않은 boardId가 주어졌다면 게시글 목록 조회에 예외를 발생합니다.")
-	void Given_BoardId_When_findPosts_Then_Fail() {
+	void Given_BoardId_When_findPosts_Then_ThrowException() {
 		// given
 		GetPostReqDto getPostReqDto = GetPostReqDto.builder().boardId(100L).cursor(-1L).size(10).build();
 
@@ -158,7 +166,7 @@ class PostServiceTest {
 
 	@Test
 	@DisplayName("유효하지 않은 postId가 주어졌다면 게시글 상세보기에 예외를 발생합니다.")
-	void Given_InvalidPostId_When_findPost_Then_Success() {
+	void Given_InvalidPostId_When_findPost_Then_ThrowException() {
 		// given
 		Long postId = 100L;
 
@@ -174,7 +182,7 @@ class PostServiceTest {
 
 	@Test
 	@DisplayName("로그인 시 유효하지 않은 loginMemberId가 주어졌다면 게시글 상세보기에 예외를 발생합니다.")
-	void Given_InvalidLoginMemberId_When_findPost_Then_Success() {
+	void Given_InvalidLoginMemberId_When_findPost_Then_ThrowException() {
 		// given
 		Post post = POST_FIXTURE1;
 		Long memberId = 100L;
@@ -254,7 +262,7 @@ class PostServiceTest {
 
 	@Test
 	@DisplayName("좋아요가 특정 개수를 달성했다면 Hot 게시글로 등록됩니다.")
-	void Given_PostIdAndLoginMemberId_When_NotExistsHotPost_Then_Success() {
+	void Given_PostIdAndLoginMemberId_When_likePost_Then_SaveHotPost() {
 		// given
 		Post post = POST_FIXTURE1;
 		Member member = memberFixture.createGeneralMember();
@@ -285,7 +293,7 @@ class PostServiceTest {
 
 	@Test
 	@DisplayName("좋아요가 특정 개수를 달성했지만 이미 Hot 게시글이라면 등록되지 않습니다.")
-	void Given_PostIdAndLoginMemberId_When_ExistsHotPost_Then_Success() {
+	void Given_PostIdAndLoginMemberId_When_likePost_Then_NotSaveHotPost() {
 		// given
 		Post post = POST_FIXTURE1;
 		Member member = memberFixture.createGeneralMember();
@@ -317,7 +325,7 @@ class PostServiceTest {
 
 	@Test
 	@DisplayName("유효하지 않은 loginMemberId가 주어졌다면 게시글 좋아요에 예외를 발생합니다.")
-	void Given_InvalidLoginMemberId_When_likePost_Then_Success() {
+	void Given_InvalidLoginMemberId_When_likePost_Then_ThrowException() {
 		// given
 		Post post = POST_FIXTURE1;
 		Long memberId = -1L;
@@ -335,7 +343,7 @@ class PostServiceTest {
 
 	@Test
 	@DisplayName("유효하지 않은 postId가 주어졌다면 게시글 좋아요에 예외를 발생합니다.")
-	void Given_InvalidPostId_When_likePost_Then_Success() {
+	void Given_InvalidPostId_When_likePost_Then_ThrowException() {
 		// given
 		Long postId = -1L;
 		Member member = memberFixture.createGeneralMember();
@@ -354,7 +362,7 @@ class PostServiceTest {
 
 	@Test
 	@DisplayName("게시글을 스크랩 하지 않았다면 스크랩이 저장됩니다.")
-	void Given_PostIdAndLoginMemberId_When_SaveScrapPost_Then_Success() {
+	void Given_PostIdAndLoginMemberId_When_scrapPost_Then_SaveScrap() {
 		// given
 		Member member = memberFixture.createGeneralMember();
 		Post post = POST_FIXTURE1;
@@ -381,7 +389,7 @@ class PostServiceTest {
 
 	@Test
 	@DisplayName("게시글을 이미 스크랩 했다면 스크랩이 취소됩니다.")
-	void Given_PostIdAndLoginMemberId_When_DeleteScrapPost_Then_Success() {
+	void Given_PostIdAndLoginMemberId_When_scrapPost_Then_CancelScrap() {
 		// given
 		Member member = memberFixture.createGeneralMember();
 		Post post = POST_FIXTURE1;
@@ -410,7 +418,7 @@ class PostServiceTest {
 
 	@Test
 	@DisplayName("유효하지 않은 loginMemberId가 주어졌다면 게시글 스크랩에 예외를 발생합니다.")
-	void Given_InvalidLoginMemberId_When_scrapPost_Then_Success() {
+	void Given_InvalidLoginMemberId_When_scrapPost_Then_ThrowException() {
 		// given
 		Long memberId = -101L;
 		Post post = POST_FIXTURE1;
@@ -428,7 +436,7 @@ class PostServiceTest {
 
 	@Test
 	@DisplayName("유효하지 않은 postId가 주어졌다면 게시글 스크랩에 예외를 발생합니다.")
-	void Given_InvalidPostId_When_scrapPost_Then_Success() {
+	void Given_InvalidPostId_When_scrapPost_Then_ThrowException() {
 		// given
 		Member member = memberFixture.createGeneralMember();
 		Long postId = 101021242313L;
@@ -447,7 +455,123 @@ class PostServiceTest {
 	}
 
 	@Test
-	void writePost() {
+	@DisplayName("정상적인 boardId, MemberId가 주어졌다면 게시글 쓰기가 성공합니다.(이미지 X)")
+	void Given_BoardIdAndMemberId_NotImage_When_writePost_Then_Success() {
+		// given
+		Board board = boardFixture.getFreeBoard();
+		Member member = memberFixture.createGeneralMember();
+		Post post = POST_FIXTURE1;
+
+		PostPostWriteReqDto postPostWriteReqDto = PostPostWriteReqDto.builder()
+			.title(post.getTitle())
+			.content(post.getContent())
+			.anonymity(post.getAnonymity())
+			.images(List.of())
+			.build();
+
+		given(boardRepository.findById(board.getId())).willReturn(Optional.of(board));
+		given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+		given(postRepository.save(any())).willReturn(post);
+
+		// when
+		PostIdElement response = postService.writePost(board.getId(), member.getId(), postPostWriteReqDto);
+
+		// then
+		assertThat(response).usingRecursiveComparison()
+			.isEqualTo(new PostIdElement(post.getId()));
+
+		// verify
+		verify(boardRepository, times(1)).findById(board.getId());
+		verify(memberRepository, times(1)).findById(member.getId());
+		verify(postRepository, times(1)).save(any());
+	}
+
+	@Test
+	@DisplayName("정상적인 boardId, MemberId가 주어졌다면 게시글 쓰기가 성공합니다.(이미지 O)")
+	void Given_BoardIdAndMemberId_Image_When_writePost_Then_Success() {
+		// given
+		Board board = boardFixture.getFreeBoard();
+		Member member = memberFixture.createGeneralMember();
+		Post post = POST_FIXTURE1;
+
+		int size = 2;
+		PostPostWriteReqDto postPostWriteReqDto = PostPostWriteReqDto.builder()
+			.title(post.getTitle())
+			.content(post.getContent())
+			.anonymity(post.getAnonymity())
+			.images(PostFixture.createImageInfos(size))
+			.build();
+
+		given(boardRepository.findById(board.getId())).willReturn(Optional.of(board));
+		given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+		given(postRepository.save(any())).willReturn(post);
+
+		// when
+		PostIdElement response = postService.writePost(board.getId(), member.getId(), postPostWriteReqDto);
+
+		// then
+		assertThat(response).usingRecursiveComparison()
+			.isEqualTo(new PostIdElement(post.getId()));
+
+		// verify
+		verify(boardRepository, times(1)).findById(board.getId());
+		verify(memberRepository, times(1)).findById(member.getId());
+		verify(postRepository, times(1)).save(any());
+		verify(postImageRepository, times(size)).save(any());
+	}
+
+	@Test
+	@DisplayName("유효하지 않은 boardID가 주어졌다면 게시글 쓰기에 예외를 발생합니다.")
+	void Given_InvalidBoardId_When_writePost_Then_ThrowException() {
+		// given
+		Long boardId = 10L;
+		Member member = memberFixture.createGeneralMember();
+		Post post = POST_FIXTURE1;
+
+		PostPostWriteReqDto postPostWriteReqDto = PostPostWriteReqDto.builder()
+			.title(post.getTitle())
+			.content(post.getContent())
+			.anonymity(post.getAnonymity())
+			.images(List.of())
+			.build();
+
+		given(boardRepository.findById(boardId)).willReturn(Optional.empty());
+
+		// when, then
+		BoardException exception = assertThrows(BoardException.class,
+			() -> postService.writePost(boardId, member.getId(), postPostWriteReqDto));
+		assertEquals(BoardErrorInfo.NO_BOARD, exception.getInfo());
+
+		// verify
+		verify(boardRepository, times(1)).findById(boardId);
+	}
+
+	@Test
+	@DisplayName("유효하지 않은 memberId가 주어졌다면 게시글 쓰기에 예외를 발생합니다.")
+	void Given_InvalidMemberId_When_writePost_Then_ThrowException() {
+		// given
+		Board board = boardFixture.getFreeBoard();
+		Long memberId = 100L;
+		Post post = POST_FIXTURE1;
+
+		PostPostWriteReqDto postPostWriteReqDto = PostPostWriteReqDto.builder()
+			.title(post.getTitle())
+			.content(post.getContent())
+			.anonymity(post.getAnonymity())
+			.images(List.of())
+			.build();
+
+		given(boardRepository.findById(board.getId())).willReturn(Optional.of(board));
+		given(memberRepository.findById(memberId)).willReturn(Optional.empty());
+
+		// when, then
+		MemberException exception = assertThrows(MemberException.class,
+			() -> postService.writePost(board.getId(), memberId, postPostWriteReqDto));
+		assertEquals(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID, exception.getInfo());
+
+		// verify
+		verify(boardRepository, times(1)).findById(board.getId());
+		verify(memberRepository, times(1)).findById(memberId);
 	}
 
 	@Test
