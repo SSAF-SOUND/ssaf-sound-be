@@ -2,24 +2,20 @@ package com.ssafy.ssafsound.global.aspect;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import static java.util.Objects.isNull;
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Aspect
 @Component
@@ -36,60 +32,66 @@ public class LoggingAspect {
     public void ServiceLog() {
     }
 
-    private Method getMethod(JoinPoint joinPoint) {
-        MethodSignature signature = (MethodSignature)joinPoint.getSignature();
-        return signature.getMethod();
-    }
+    @Around("ControllerLog()")
+    public Object ExecutionLog(ProceedingJoinPoint joinPoint) throws Throwable {
+        Object result = joinPoint.proceed();
+        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(
+                RequestContextHolder.getRequestAttributes())).getRequest();
 
-    private void printResponse(EnvelopeResponse<?> response) {
-        try {
-            log.info("\n=======\nresponse : {} \n========", objectMapper.writeValueAsString(response.getData()));
-        } catch (JsonProcessingException exception) {
-            log.warn("logging failed!!");
-        }
-    }
-
-    @Before("ControllerLog()")
-    public void ExecutionLog(JoinPoint joinPoint) {
-        Method method = getMethod(joinPoint);
-        log.info("======= controller method name = {} =======", method.getName());
-
-        Object[] args = joinPoint.getArgs();
-        if (!isNull(args)) {
-            for (Object arg : args) {
-                if(!isNull(arg)) {
-                    log.info("parameter type = {}", arg.getClass().getSimpleName());
-                    log.info("parameter value = {}", arg);
-                }
-            }
-        }
-    }
-
-    @AfterReturning(value = "ControllerLog()", returning = "response")
-    public void afterReturnLog(JoinPoint joinPoint, EnvelopeResponse<?> response) {
-        Method method = getMethod(joinPoint);
-
-        if (!isNull(response)) {
-            printResponse(response);
-        }
-    }
-
-    @Before("ServiceLog()")
-    public void methodLogger(JoinPoint joinPoint) {
-        String serviceName = joinPoint.getSignature().getDeclaringType().getSimpleName();
+        String controllerName = joinPoint.getSignature().getDeclaringType().getSimpleName();
         String methodName = joinPoint.getSignature().getName();
+
+        Map<String, Object> params = new LinkedHashMap<>();
+        try {
+            params.put("controller", controllerName);
+            params.put("method",  methodName);
+            params.put("params",  getParams(request));
+            params.put("log_time", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyy-MM-dd HH:mm:ss")));
+            params.put("request_uri", request.getRequestURI());
+            params.put("http_method", request.getMethod());
+        } catch (Exception e) {
+            log.error("LoggerAspect - Controller error", e);
+        }
+        log.info("\n" + "ControllerLogAspect : {}" + "\n", params);
+        return result;
+    }
+
+    @AfterThrowing(pointcut = "execution(* com.ssafy.ssafsound.*.*(..))", throwing = "ex")
+    public void logException(Exception ex) {
+        log.info("\n" + "예외 메시지:" + ex.getMessage() + "\n");
+    }
+
+    @Around("ServiceLog()")
+    public Object methodLogger(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        Object result = proceedingJoinPoint.proceed();
+
+        String serviceName = proceedingJoinPoint.getSignature().getDeclaringType().getSimpleName();
+        String methodName = proceedingJoinPoint.getSignature().getName();
 
         Map<String, Object> params = new LinkedHashMap<>();
 
         try {
-            params.put("service",  serviceName);
+            params.put("service", serviceName);
             params.put("method", methodName);
-            params.put("params", Arrays.toString(joinPoint.getArgs()));
-            params.put("log_time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                    .format(Calendar.getInstance().getTime()));
+            params.put("params", Arrays.toString(proceedingJoinPoint.getArgs()));
+            params.put("log_time", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyy-MM-dd HH:mm:ss")));
         } catch (Exception e) {
             log.error("LoggingAspect - Service error", e);
         }
-        log.info("\nServiceLogAspect" + " : {}\n", params);
+        log.info("\n" + "ServiceLogAspect : {}" + "\n", params);
+        return result;
     }
+
+    private String getParams(HttpServletRequest request) throws JsonProcessingException {
+        Enumeration<String> params = request.getParameterNames();
+        Map<String, String> object = new HashMap<>();
+        while (params.hasMoreElements()) {
+            String param = params.nextElement();
+            String replaceParam = param.replace("\\.", "-");
+            object.put(replaceParam, request.getParameter(param));
+        }
+
+        return objectMapper.writeValueAsString(object);
+    }
+
 }

@@ -22,11 +22,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.method.HandlerMethod;
-
-import javax.servlet.http.HttpServletRequest;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 @Slf4j
 @RestControllerAdvice
@@ -83,10 +78,8 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public EnvelopeResponse RuntimeExceptionHandler(RuntimeException e,
-                                                    HandlerMethod method,
-                                                    HttpServletRequest request) {
-        exactErrorLog(e, method, request);
+    public EnvelopeResponse RuntimeExceptionHandler(RuntimeException e) {
+        extractLog(e);
 
         return EnvelopeResponse.builder()
                 .code(GlobalErrorInfo.INTERNAL_SERVER_ERROR.getCode())
@@ -205,18 +198,12 @@ public class ExceptionControllerAdvice {
                 .build();
     }
 
-    private void exactErrorLog(Exception e, HandlerMethod handlerMethod,
-                               HttpServletRequest request) {
-        String errorDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                .format(Calendar.getInstance().getTime());
-        String requestURI = request.getRequestURI();
-        String exceptionName = e.getClass().getSimpleName();
-        String controllerName = handlerMethod.getMethod().getDeclaringClass().getSimpleName();
-        String methodName = handlerMethod.getMethod().getName();
-        String message = e.getMessage();
+
+    private void extractLog(RuntimeException e) {
         String lineNumber = String.valueOf(e.getStackTrace()[0].getLineNumber());
-        log.error("\n[Time: {} | Class: {} | Method: {} | LineNumber: {} " +
-                "| Path: {} | Exception: {} | Message: {}]\n",
-                errorDate, controllerName, methodName, lineNumber, requestURI, exceptionName, message);
+        String className = e.getStackTrace()[0].getClassName();
+        String methodName = e.getStackTrace()[0].getMethodName();
+        String message = e.getMessage();
+        log.error("\n" + "className : {}, methodName: {}, 예외 발생시킨 line: {}, 이유: {}", className, methodName, lineNumber, message);
     }
 }

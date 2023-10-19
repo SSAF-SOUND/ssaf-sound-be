@@ -6,6 +6,9 @@ operation::members/information/[snippets='cookie,http-request,http-response,resp
 === 일반 멤버 정보 조회
 operation::members/general-information/[snippets='cookie,http-request,http-response,response-fields']
 
+=== 회원 탈퇴
+operation::members/leave/[snippets='cookie,http-request,http-response,response-fields']
+
 === 싸피생 멤버 정보 조회
 operation::members/ssafy-information/[snippets='cookie,http-request,http-response,response-fields']
 

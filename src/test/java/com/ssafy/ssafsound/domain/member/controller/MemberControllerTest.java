@@ -495,4 +495,19 @@ class MemberControllerTest extends ControllerTest {
                         getEnvelopPatternWithNoContent()))
                 .expect(status().isOk());
     }
+
+    @DisplayName("회원 탈퇴 요청에 대해 성공한다.")
+    @Test
+    void leaveMember() {
+
+        restDocs
+                .cookie(ACCESS_TOKEN)
+                .when().delete("/members")
+                .then().log().all()
+                .assertThat()
+                .apply(document("members/leave",
+                        requestCookieAccessTokenMandatory(),
+                        getEnvelopPatternWithNoContent()))
+                .expect(status().isOk());
+    }
 }
