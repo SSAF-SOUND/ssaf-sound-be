@@ -24,10 +24,8 @@ public class GetCommentResDto {
 
             if (commentId.equals(commentGroup)) {
                 linkedHashMap.put(commentId, GetCommentElement.of(comment, loginMember));
-            } else {
-                if (linkedHashMap.containsKey(commentGroup)){
-                    linkedHashMap.get(commentGroup).addReply(GetCommentReplyElement.of(comment, loginMember));
-                }
+            } else if (linkedHashMap.containsKey(commentGroup)){
+                linkedHashMap.get(commentGroup).addReply(GetCommentReplyElement.of(comment, loginMember));
             }
         }
         return GetCommentResDto.builder()
