@@ -22,6 +22,7 @@ import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
+import com.ssafy.ssafsound.domain.term.repository.TermRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +44,7 @@ public class MemberService {
     private final MemberProfileRepository memberProfileRepository;
     private final MemberSkillRepository memberSkillRepository;
     private final MemberLinkRepository memberLinkRepository;
+    private final TermRepository termRepository;
     private final MetaDataConsumer metaDataConsumer;
     private final MemberConstantProvider memberConstantProvider;
     private final ApplicationEventPublisher applicationEventPublisher;
@@ -91,6 +94,8 @@ public class MemberService {
 
         if(existNickname) {
             throw new MemberException(MemberErrorInfo.MEMBER_NICKNAME_DUPLICATION);
+        } else if (isNotAgreedRequiredTerms(postMemberInfoReqDto.getTermSequences())) {
+            throw new MemberException(MemberErrorInfo.MEMBER_INPUT_INFORMATION_FAIL);
         }
 
         Member member = memberRepository.findById(authenticatedMember.getMemberId())
@@ -351,5 +356,11 @@ public class MemberService {
                 .member(member)
                 .build();
         memberTokenRepository.save(memberToken);
+    }
+
+    private boolean isNotAgreedRequiredTerms(Set<Integer> termSequences) {
+        Integer size = termRepository.getSizeByRequiredTerm();
+
+        return size != termSequences.size();
     }
 }
