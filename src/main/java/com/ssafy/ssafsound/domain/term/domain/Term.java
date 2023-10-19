@@ -33,7 +33,7 @@ public class Term extends BaseTimeEntity {
 
     @Column
     @Builder.Default
-    private Boolean usedYN = true;
+    private Boolean usedYN = false;
 
     @Column
     @Builder.Default
