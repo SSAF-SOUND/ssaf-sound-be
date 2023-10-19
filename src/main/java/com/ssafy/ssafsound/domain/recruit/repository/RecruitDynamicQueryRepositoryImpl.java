@@ -93,6 +93,7 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
         }
 
         List<Recruit> recruits = recruitDynamicQuery
+                .where(recruit.finishedRecruit.eq(dto.isFinished()))
                 .limit(pageable.getPageSize()+1)
                 .orderBy(recruit.id.desc())
                 .fetch();
