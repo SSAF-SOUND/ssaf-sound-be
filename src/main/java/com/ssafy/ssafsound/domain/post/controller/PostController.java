@@ -73,35 +73,36 @@ public class PostController {
     }
 
     @GetMapping("/hot")
-    public EnvelopeResponse<GetPostResDto> findHotPosts(@Valid GetPostHotReqDto getPostHotReqDto) {
+    public EnvelopeResponse<GetPostResDto> findHotPosts(@Valid @ModelAttribute GetPostHotReqDto getPostHotReqDto) {
+        log.info(String.valueOf(getPostHotReqDto.getCursor()));
         return EnvelopeResponse.<GetPostResDto>builder()
                 .data(postService.findHotPosts(getPostHotReqDto))
                 .build();
     }
 
     @GetMapping("/my")
-    public EnvelopeResponse<GetPostResDto> findMyPosts(@Valid GetPostMyReqDto getPostMyReqDto, @Authentication AuthenticatedMember loginMember) {
+    public EnvelopeResponse<GetPostResDto> findMyPosts(@Valid @ModelAttribute GetPostMyReqDto getPostMyReqDto, @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<GetPostResDto>builder()
                 .data(postService.findMyPosts(getPostMyReqDto, loginMember.getMemberId()))
                 .build();
     }
 
     @GetMapping("/my-scrap")
-    public EnvelopeResponse<GetPostResDto> findMyScrapPosts(@Valid GetPostMyReqDto getPostMyScrapReqDto, @Authentication AuthenticatedMember loginMember) {
+    public EnvelopeResponse<GetPostResDto> findMyScrapPosts(@Valid @ModelAttribute GetPostMyReqDto getPostMyScrapReqDto, @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<GetPostResDto>builder()
                 .data(postService.findMyScrapPosts(getPostMyScrapReqDto, loginMember.getMemberId()))
                 .build();
     }
 
     @GetMapping("/search")
-    public EnvelopeResponse<GetPostResDto> searchPosts(@Valid GetPostSearchReqDto getPostSearchReqDto) {
+    public EnvelopeResponse<GetPostResDto> searchPosts(@Valid @ModelAttribute GetPostSearchReqDto getPostSearchReqDto) {
         return EnvelopeResponse.<GetPostResDto>builder()
                 .data(postService.searchPosts(getPostSearchReqDto))
                 .build();
     }
 
     @GetMapping("/hot/search")
-    public EnvelopeResponse<GetPostResDto> searchHotPosts(@Valid GetPostHotSearchReqDto getPostHotSearchReqDto) {
+    public EnvelopeResponse<GetPostResDto> searchHotPosts(@Valid @ModelAttribute GetPostHotSearchReqDto getPostHotSearchReqDto) {
         return EnvelopeResponse.<GetPostResDto>builder()
                 .data(postService.searchHotPosts(getPostHotSearchReqDto))
                 .build();
