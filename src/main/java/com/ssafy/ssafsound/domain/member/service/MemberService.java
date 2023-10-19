@@ -2,15 +2,28 @@ package com.ssafy.ssafsound.domain.member.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberTokensResDto;
-import com.ssafy.ssafsound.domain.member.domain.*;
+import com.ssafy.ssafsound.domain.event.MemberLeavedEvent;
+import com.ssafy.ssafsound.domain.member.domain.AccountState;
+import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
+import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.domain.MemberProfile;
+import com.ssafy.ssafsound.domain.member.domain.MemberRole;
+import com.ssafy.ssafsound.domain.member.domain.MemberToken;
+import com.ssafy.ssafsound.domain.member.domain.OAuthType;
 import com.ssafy.ssafsound.domain.member.dto.*;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
-import com.ssafy.ssafsound.domain.member.repository.*;
+import com.ssafy.ssafsound.domain.member.repository.MemberLinkRepository;
+import com.ssafy.ssafsound.domain.member.repository.MemberProfileRepository;
+import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
+import com.ssafy.ssafsound.domain.member.repository.MemberRoleRepository;
+import com.ssafy.ssafsound.domain.member.repository.MemberSkillRepository;
+import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +44,7 @@ public class MemberService {
     private final MemberLinkRepository memberLinkRepository;
     private final MetaDataConsumer metaDataConsumer;
     private final MemberConstantProvider memberConstantProvider;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public AuthenticatedMember createMemberByOauthIdentifier(PostMemberReqDto postMemberReqDto) {
@@ -38,7 +52,11 @@ public class MemberService {
         Member member;
         if (optionalMember.isPresent()) {
             member = optionalMember.get();
-            if (isInvalidOauthLogin(member, postMemberReqDto)) throw new MemberException(MemberErrorInfo.MEMBER_OAUTH_NOT_FOUND);
+            if (isInvalidOauthLogin(member, postMemberReqDto)) {
+                throw new MemberException(MemberErrorInfo.MEMBER_OAUTH_NOT_FOUND);
+            } else if(isDeletedMember(member)) {
+                throw new MemberException(MemberErrorInfo.MEMBER_DELETED);
+            }
             return AuthenticatedMember.from(member);
         } else {
             MemberRole memberRole = findMemberRoleByRoleName("user");
@@ -66,10 +84,14 @@ public class MemberService {
     }
 
     @Transactional
-    public GetMemberResDto registerMemberInformation(AuthenticatedMember authenticatedMember, PostMemberInfoReqDto postMemberInfoReqDto) {
+    public GetMemberResDto registerMemberInformation(
+            AuthenticatedMember authenticatedMember,
+            PostMemberInfoReqDto postMemberInfoReqDto) {
         boolean existNickname = memberRepository.existsByNickname(postMemberInfoReqDto.getNickname());
 
-        if(existNickname) throw new MemberException(MemberErrorInfo.MEMBER_NICKNAME_DUPLICATION);
+        if(existNickname) {
+            throw new MemberException(MemberErrorInfo.MEMBER_NICKNAME_DUPLICATION);
+        }
 
         Member member = memberRepository.findById(authenticatedMember.getMemberId())
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
@@ -169,6 +191,14 @@ public class MemberService {
         member.setMajorTrack(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TRACK.name(), majorTrack));
     }
 
+    @Transactional
+    public void leaveMember(Long memberId) {
+        Member member = getMemberByMemberIdOrThrowException(memberId);
+        member.setAccountStateDeleted();
+        member.changeNickname("@" + member.getId());
+        applicationEventPublisher.publishEvent(new MemberLeavedEvent(member.getId()));
+    }
+
     @Transactional(readOnly = true)
     public GetMemberPortfolioResDto getMyPortfolio(Long memberId) {
         Member member = memberRepository.findWithMemberLinksAndMemberSkills(memberId)
@@ -223,6 +253,8 @@ public class MemberService {
 
         if (isPrivateOfMemberProfile(member)) {
             throw new MemberException(MemberErrorInfo.MEMBER_PROFILE_SECRET);
+        } else if (isDeletedMember(member)) {
+            throw new MemberException(MemberErrorInfo.MEMBER_DELETED);
         }
         MemberProfile memberProfile = memberProfileRepository.findMemberProfileByMember(member).orElseGet(MemberProfile::new);
 
@@ -297,6 +329,10 @@ public class MemberService {
     private Member getMemberByMemberIdOrThrowException(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+    }
+
+    private boolean isDeletedMember(Member member) {
+        return member.getAccountState() == AccountState.DELETED;
     }
 
     private void changeMemberTokens(
