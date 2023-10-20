@@ -98,7 +98,8 @@ jacocoTestCoverageVerification {
                         'com.ssafy.ssafsound.domain.auth.util.**',
                         'com.ssafy.ssafsound.domain.auth.service.token.**',
                         'com.ssafy.ssafsound.domain.QBaseTimeEntity',
-                        'com.ssafy.ssafsound.domain.chat.service.*Service']
+                        'com.ssafy.ssafsound.domain.chat.service.*Service',
+                        'com.ssafy.ssafsound.domain.term.service.*Service']
         }
     }
 }
