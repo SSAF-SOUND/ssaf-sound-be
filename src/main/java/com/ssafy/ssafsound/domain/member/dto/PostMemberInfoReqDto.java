@@ -34,7 +34,7 @@ public class PostMemberInfoReqDto {
     private String campus;
 
     @Builder.Default
-    private Set<Integer> termSequences = new HashSet<>();
+    private Set<Long> termIds = new HashSet<>();
 
     @JsonIgnore
     public boolean isNotSemesterPresent() {
