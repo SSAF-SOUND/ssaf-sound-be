@@ -22,6 +22,7 @@ import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
+import com.ssafy.ssafsound.domain.term.domain.Term;
 import com.ssafy.ssafsound.domain.term.repository.TermRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -94,7 +95,7 @@ public class MemberService {
 
         if(existNickname) {
             throw new MemberException(MemberErrorInfo.MEMBER_NICKNAME_DUPLICATION);
-        } else if (isNotAgreedRequiredTerms(postMemberInfoReqDto.getTermSequences())) {
+        } else if (isNotAgreedRequiredTerms(postMemberInfoReqDto.getTermIds())) {
             throw new MemberException(MemberErrorInfo.MEMBER_INPUT_INFORMATION_FAIL);
         }
 
@@ -358,9 +359,18 @@ public class MemberService {
         memberTokenRepository.save(memberToken);
     }
 
-    private boolean isNotAgreedRequiredTerms(Set<Integer> termSequences) {
-        Integer size = termRepository.getSizeByRequiredTerm();
+    private boolean isNotAgreedRequiredTerms(Set<Long> termSequences) {
+        List<Term> terms = termRepository.getRequiredTerms();
+        boolean allIdsExistInTermSequences = terms.stream()
+                .map(Term::getId)
+                .allMatch(termSequences::contains);
 
-        return size != termSequences.size();
+        if (terms.size() != termSequences.size()) {
+            return true;
+        } else if (!allIdsExistInTermSequences) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

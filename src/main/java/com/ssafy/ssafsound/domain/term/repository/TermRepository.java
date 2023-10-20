@@ -24,11 +24,10 @@ public class TermRepository {
 
     }
 
-    public Integer getSizeByRequiredTerm() {
+    public List<Term> getRequiredTerms() {
         return jpaQueryFactory
                 .selectFrom(term)
                 .where(term.usedYN.eq(true), term.requiredYN.eq(true))
-                .fetch()
-                .size();
+                .fetch();
     }
 }

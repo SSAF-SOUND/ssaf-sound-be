@@ -20,6 +20,7 @@ import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.domain.term.repository.TermRepository;
 import com.ssafy.ssafsound.global.util.fixture.MemberFixture;
+import com.ssafy.ssafsound.global.util.fixture.TermFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,6 +63,7 @@ class MemberServiceTest {
     @InjectMocks
     private MemberService memberService;
     MemberFixture memberFixture = new MemberFixture();
+    TermFixture termFixture = new TermFixture();
 
     @Test
     @DisplayName("새로운 Oauth Identifier가 주어졌다면 멤버를 저장하는데 성공합니다.")
@@ -304,7 +306,8 @@ class MemberServiceTest {
         PostMemberInfoReqDto postMemberInfoReqDto = memberFixture.createPostGeneralMemberInfoReqDto();
         given(memberRepository.existsByNickname(postMemberInfoReqDto.getNickname())).willReturn(false);
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.empty());
-        given(termRepository.getSizeByRequiredTerm()).willReturn(postMemberInfoReqDto.getTermSequences().size());
+        given(termRepository.getRequiredTerms())
+                .willReturn(termFixture.createTerms(postMemberInfoReqDto.getTermIds()));
 
         //when, then
         assertThrows(MemberException.class,
@@ -313,7 +316,7 @@ class MemberServiceTest {
         //verify
         verify(memberRepository, times(1)).existsByNickname(postMemberInfoReqDto.getNickname());
         verify(memberRepository, times(1)).findById(authenticatedMember.getMemberId());
-        verify(termRepository, times(1)).getSizeByRequiredTerm();
+        verify(termRepository, times(1)).getRequiredTerms();
     }
 
     @Test
@@ -325,7 +328,7 @@ class MemberServiceTest {
         PostMemberInfoReqDto postMemberInfoReqDto = memberFixture.createPostGeneralMemberInfoReqDto();
         given(memberRepository.existsByNickname(postMemberInfoReqDto.getNickname())).willReturn(false);
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
-        given(termRepository.getSizeByRequiredTerm()).willReturn(postMemberInfoReqDto.getTermSequences().size());
+        given(termRepository.getRequiredTerms()).willReturn(termFixture.createTerms(postMemberInfoReqDto.getTermIds()));
 
         //when
         GetMemberResDto response = memberService.registerMemberInformation(authenticatedMember, postMemberInfoReqDto);
@@ -336,7 +339,7 @@ class MemberServiceTest {
         //verify
         verify(memberRepository, times(1)).existsByNickname(postMemberInfoReqDto.getNickname());
         verify(memberRepository, times(1)).findById(authenticatedMember.getMemberId());
-        verify(termRepository, times(1)).getSizeByRequiredTerm();
+        verify(termRepository, times(1)).getRequiredTerms();
     }
 
     @Test
