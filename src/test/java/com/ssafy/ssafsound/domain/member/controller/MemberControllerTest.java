@@ -56,7 +56,7 @@ class MemberControllerTest extends ControllerTest {
                 fieldWithPath("isMajor").description("전공자 여부"),
                 fieldWithPath("semester").optional().description("싸피 기수"),
                 fieldWithPath("campus").optional().description("캠퍼스 이름"),
-                fieldWithPath("termIds").description("필수 약관 동의 아이디값")
+                fieldWithPath("termIds").description("필수 약관 동의 아이디 값")
         );
     }
 
