@@ -361,13 +361,13 @@ public class MemberService {
         memberTokenRepository.save(memberToken);
     }
 
-    private boolean isNotAgreedRequiredTerms(Member member, Set<Long> termSequences) {
+    private boolean isNotAgreedRequiredTerms(Member member, Set<Long> termIds) {
         List<Term> terms = termRepository.getRequiredTerms();
         boolean allIdsExistInTermSequences = terms.stream()
                 .map(Term::getId)
-                .allMatch(termSequences::contains);
+                .allMatch(termIds::contains);
 
-        if (terms.size() != termSequences.size()) {
+        if (terms.size() != termIds.size()) {
             return true;
         } else if (!allIdsExistInTermSequences) {
             return true;
