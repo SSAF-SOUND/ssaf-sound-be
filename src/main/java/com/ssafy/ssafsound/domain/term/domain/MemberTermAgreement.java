@@ -15,6 +15,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity(name = "member_term_agreement")
 @Getter
@@ -35,4 +37,10 @@ public class MemberTermAgreement extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public static List<MemberTermAgreement> ofMemberAndTerms(Member member, List<Term> terms) {
+        return terms.stream()
+                .map(term -> MemberTermAgreement.builder().member(member).term(term).build())
+                .collect(Collectors.toList());
+    }
 }

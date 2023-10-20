@@ -18,6 +18,7 @@ import com.ssafy.ssafsound.domain.meta.domain.MajorTrack;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
+import com.ssafy.ssafsound.domain.term.repository.MemberTermAgreementRepository;
 import com.ssafy.ssafsound.domain.term.repository.TermRepository;
 import com.ssafy.ssafsound.global.util.fixture.MemberFixture;
 import com.ssafy.ssafsound.global.util.fixture.TermFixture;
@@ -54,6 +55,8 @@ class MemberServiceTest {
     private MemberSkillRepository memberSkillRepository;
     @Mock
     private TermRepository termRepository;
+    @Mock
+    private MemberTermAgreementRepository memberTermAgreementRepository;
     @Mock
     private MetaDataConsumer metaDataConsumer;
     @Mock
@@ -306,8 +309,6 @@ class MemberServiceTest {
         PostMemberInfoReqDto postMemberInfoReqDto = memberFixture.createPostGeneralMemberInfoReqDto();
         given(memberRepository.existsByNickname(postMemberInfoReqDto.getNickname())).willReturn(false);
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.empty());
-        given(termRepository.getRequiredTerms())
-                .willReturn(termFixture.createTerms(postMemberInfoReqDto.getTermIds()));
 
         //when, then
         assertThrows(MemberException.class,
@@ -316,7 +317,6 @@ class MemberServiceTest {
         //verify
         verify(memberRepository, times(1)).existsByNickname(postMemberInfoReqDto.getNickname());
         verify(memberRepository, times(1)).findById(authenticatedMember.getMemberId());
-        verify(termRepository, times(1)).getRequiredTerms();
     }
 
     @Test
@@ -340,6 +340,7 @@ class MemberServiceTest {
         verify(memberRepository, times(1)).existsByNickname(postMemberInfoReqDto.getNickname());
         verify(memberRepository, times(1)).findById(authenticatedMember.getMemberId());
         verify(termRepository, times(1)).getRequiredTerms();
+        verify(memberTermAgreementRepository, times(1)).saveAll(any());
     }
 
     @Test

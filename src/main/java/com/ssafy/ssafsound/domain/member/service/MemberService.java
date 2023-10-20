@@ -22,7 +22,9 @@ import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
+import com.ssafy.ssafsound.domain.term.domain.MemberTermAgreement;
 import com.ssafy.ssafsound.domain.term.domain.Term;
+import com.ssafy.ssafsound.domain.term.repository.MemberTermAgreementRepository;
 import com.ssafy.ssafsound.domain.term.repository.TermRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -46,6 +48,7 @@ public class MemberService {
     private final MemberSkillRepository memberSkillRepository;
     private final MemberLinkRepository memberLinkRepository;
     private final TermRepository termRepository;
+    private final MemberTermAgreementRepository memberTermAgreementRepository;
     private final MetaDataConsumer metaDataConsumer;
     private final MemberConstantProvider memberConstantProvider;
     private final ApplicationEventPublisher applicationEventPublisher;
@@ -92,15 +95,14 @@ public class MemberService {
             AuthenticatedMember authenticatedMember,
             PostMemberInfoReqDto postMemberInfoReqDto) {
         boolean existNickname = memberRepository.existsByNickname(postMemberInfoReqDto.getNickname());
+        Member member = memberRepository.findById(authenticatedMember.getMemberId())
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
         if(existNickname) {
             throw new MemberException(MemberErrorInfo.MEMBER_NICKNAME_DUPLICATION);
-        } else if (isNotAgreedRequiredTerms(postMemberInfoReqDto.getTermIds())) {
+        } else if (isNotAgreedRequiredTerms(member, postMemberInfoReqDto.getTermIds())) {
             throw new MemberException(MemberErrorInfo.MEMBER_INPUT_INFORMATION_FAIL);
         }
-
-        Member member = memberRepository.findById(authenticatedMember.getMemberId())
-                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
         return member.registerMemberInformation(postMemberInfoReqDto, metaDataConsumer);
     }
@@ -359,7 +361,7 @@ public class MemberService {
         memberTokenRepository.save(memberToken);
     }
 
-    private boolean isNotAgreedRequiredTerms(Set<Long> termSequences) {
+    private boolean isNotAgreedRequiredTerms(Member member, Set<Long> termSequences) {
         List<Term> terms = termRepository.getRequiredTerms();
         boolean allIdsExistInTermSequences = terms.stream()
                 .map(Term::getId)
@@ -370,6 +372,7 @@ public class MemberService {
         } else if (!allIdsExistInTermSequences) {
             return true;
         } else {
+            memberTermAgreementRepository.saveAll(MemberTermAgreement.ofMemberAndTerms(member, terms));
             return false;
         }
     }
