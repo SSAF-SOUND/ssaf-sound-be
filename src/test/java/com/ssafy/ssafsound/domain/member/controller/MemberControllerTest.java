@@ -13,6 +13,9 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.RequestFieldsSnippet;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.requestCookieAccessTokenMandatory;
 import static com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet.requestCookieAccessTokenNeedless;
 import static org.mockito.ArgumentMatchers.any;
@@ -52,7 +55,8 @@ class MemberControllerTest extends ControllerTest {
                 fieldWithPath("ssafyMember").description("싸피인 여부"),
                 fieldWithPath("isMajor").description("전공자 여부"),
                 fieldWithPath("semester").optional().description("싸피 기수"),
-                fieldWithPath("campus").optional().description("캠퍼스 이름")
+                fieldWithPath("campus").optional().description("캠퍼스 이름"),
+                fieldWithPath("termIds").description("필수 약관 동의 아이디 값")
         );
     }
 
@@ -160,6 +164,7 @@ class MemberControllerTest extends ControllerTest {
                 .nickname("james")
                 .ssafyMember(false)
                 .isMajor(true)
+                .termIds(new HashSet<>(Set.of(1L, 2L, 3L)))
                 .build();
 
         restDocs
