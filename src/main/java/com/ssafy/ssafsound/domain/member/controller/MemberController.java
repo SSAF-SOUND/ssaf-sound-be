@@ -79,7 +79,7 @@ public class MemberController {
             @Authentication AuthenticatedMember authenticatedMember,
             @Valid @RequestBody PostMemberInfoReqDto postMemberInfoReqDto) {
         return EnvelopeResponse.<GetMemberResDto>builder()
-                .data(memberService.registerMemberInformation(authenticatedMember, postMemberInfoReqDto))
+                .data(memberService.registerMemberInformation(authenticatedMember.getMemberId(), postMemberInfoReqDto))
                 .build();
     }
 

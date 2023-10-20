@@ -92,10 +92,10 @@ public class MemberService {
 
     @Transactional
     public GetMemberResDto registerMemberInformation(
-            AuthenticatedMember authenticatedMember,
+            Long memberId,
             PostMemberInfoReqDto postMemberInfoReqDto) {
         boolean existNickname = memberRepository.existsByNickname(postMemberInfoReqDto.getNickname());
-        Member member = memberRepository.findById(authenticatedMember.getMemberId())
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
         if(existNickname) {

@@ -295,7 +295,7 @@ class MemberServiceTest {
 
         //when, then
         assertThrows(MemberException.class,
-                () -> memberService.registerMemberInformation(authenticatedMember, postMemberInfoReqDto));
+                () -> memberService.registerMemberInformation(authenticatedMember.getMemberId(), postMemberInfoReqDto));
 
         //verify
         verify(memberRepository, times(1)).existsByNickname(postMemberInfoReqDto.getNickname());
@@ -312,7 +312,7 @@ class MemberServiceTest {
 
         //when, then
         assertThrows(MemberException.class,
-                () -> memberService.registerMemberInformation(authenticatedMember, postMemberInfoReqDto));
+                () -> memberService.registerMemberInformation(authenticatedMember.getMemberId(), postMemberInfoReqDto));
 
         //verify
         verify(memberRepository, times(1)).existsByNickname(postMemberInfoReqDto.getNickname());
@@ -331,7 +331,8 @@ class MemberServiceTest {
         given(termRepository.getRequiredTerms()).willReturn(termFixture.createTerms(postMemberInfoReqDto.getTermIds()));
 
         //when
-        GetMemberResDto response = memberService.registerMemberInformation(authenticatedMember, postMemberInfoReqDto);
+        GetMemberResDto response = memberService
+                .registerMemberInformation(authenticatedMember.getMemberId(), postMemberInfoReqDto);
 
         //then
         assertThat(response).usingRecursiveComparison().isEqualTo(GetMemberResDto.fromGeneralUser(member));
@@ -355,7 +356,8 @@ class MemberServiceTest {
         given(metaDataConsumer.getMetaData(any(), any())).willReturn(new MetaData(Campus.SEOUL));
 
         //when
-        GetMemberResDto response = memberService.registerMemberInformation(authenticatedMember, postMemberInfoReqDto);
+        GetMemberResDto response = memberService
+                .registerMemberInformation(authenticatedMember.getMemberId(), postMemberInfoReqDto);
 
         //then
         assertThat(response).usingRecursiveComparison().isEqualTo(GetMemberResDto.fromSSAFYUser(member));
