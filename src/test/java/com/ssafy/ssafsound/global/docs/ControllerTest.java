@@ -26,6 +26,8 @@ import com.ssafy.ssafsound.domain.recruitapplication.controller.RecruitApplicati
 import com.ssafy.ssafsound.domain.recruitapplication.service.RecruitApplicationService;
 import com.ssafy.ssafsound.domain.recruitcomment.controller.RecruitCommentController;
 import com.ssafy.ssafsound.domain.recruitcomment.service.RecruitCommentService;
+import com.ssafy.ssafsound.domain.term.controller.TermController;
+import com.ssafy.ssafsound.domain.term.service.TermService;
 import com.ssafy.ssafsound.global.interceptor.AuthInterceptor;
 import com.ssafy.ssafsound.global.report.controller.ReportController;
 import com.ssafy.ssafsound.global.report.service.ReportService;
@@ -67,7 +69,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
         RecruitCommentController.class,
         StorageController.class,
         //ChatController.class
-        ReportController.class
+        ReportController.class,
+        TermController.class
 })
 @ExtendWith(RestDocumentationExtension.class)
 public class ControllerTest {
@@ -115,6 +118,9 @@ public class ControllerTest {
 
     @MockBean
     protected ReportService reportService;
+
+    @MockBean
+    protected TermService termService;
 
     @MockBean
     protected JwtTokenProvider jwtTokenProvider;

@@ -1,0 +1,4 @@
+== 약관
+
+=== 사용중인 약관 목록 불러오기
+operation::terms/get-required-terms/[snippets='cookie,response-fields,http-response']

@@ -18,7 +18,10 @@ import com.ssafy.ssafsound.domain.meta.domain.MajorTrack;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
+import com.ssafy.ssafsound.domain.term.repository.MemberTermAgreementRepository;
+import com.ssafy.ssafsound.domain.term.repository.TermRepository;
 import com.ssafy.ssafsound.global.util.fixture.MemberFixture;
+import com.ssafy.ssafsound.global.util.fixture.TermFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,6 +54,10 @@ class MemberServiceTest {
     @Mock
     private MemberSkillRepository memberSkillRepository;
     @Mock
+    private TermRepository termRepository;
+    @Mock
+    private MemberTermAgreementRepository memberTermAgreementRepository;
+    @Mock
     private MetaDataConsumer metaDataConsumer;
     @Mock
     private MemberConstantProvider memberConstantProvider;
@@ -59,6 +66,7 @@ class MemberServiceTest {
     @InjectMocks
     private MemberService memberService;
     MemberFixture memberFixture = new MemberFixture();
+    TermFixture termFixture = new TermFixture();
 
     @Test
     @DisplayName("새로운 Oauth Identifier가 주어졌다면 멤버를 저장하는데 성공합니다.")
@@ -287,7 +295,7 @@ class MemberServiceTest {
 
         //when, then
         assertThrows(MemberException.class,
-                () -> memberService.registerMemberInformation(authenticatedMember, postMemberInfoReqDto));
+                () -> memberService.registerMemberInformation(authenticatedMember.getMemberId(), postMemberInfoReqDto));
 
         //verify
         verify(memberRepository, times(1)).existsByNickname(postMemberInfoReqDto.getNickname());
@@ -304,7 +312,7 @@ class MemberServiceTest {
 
         //when, then
         assertThrows(MemberException.class,
-                () -> memberService.registerMemberInformation(authenticatedMember, postMemberInfoReqDto));
+                () -> memberService.registerMemberInformation(authenticatedMember.getMemberId(), postMemberInfoReqDto));
 
         //verify
         verify(memberRepository, times(1)).existsByNickname(postMemberInfoReqDto.getNickname());
@@ -320,9 +328,11 @@ class MemberServiceTest {
         PostMemberInfoReqDto postMemberInfoReqDto = memberFixture.createPostGeneralMemberInfoReqDto();
         given(memberRepository.existsByNickname(postMemberInfoReqDto.getNickname())).willReturn(false);
         given(memberRepository.findById(authenticatedMember.getMemberId())).willReturn(Optional.of(member));
+        given(termRepository.getRequiredTerms()).willReturn(termFixture.createTerms(postMemberInfoReqDto.getTermIds()));
 
         //when
-        GetMemberResDto response = memberService.registerMemberInformation(authenticatedMember, postMemberInfoReqDto);
+        GetMemberResDto response = memberService
+                .registerMemberInformation(authenticatedMember.getMemberId(), postMemberInfoReqDto);
 
         //then
         assertThat(response).usingRecursiveComparison().isEqualTo(GetMemberResDto.fromGeneralUser(member));
@@ -330,6 +340,8 @@ class MemberServiceTest {
         //verify
         verify(memberRepository, times(1)).existsByNickname(postMemberInfoReqDto.getNickname());
         verify(memberRepository, times(1)).findById(authenticatedMember.getMemberId());
+        verify(termRepository, times(1)).getRequiredTerms();
+        verify(memberTermAgreementRepository, times(1)).saveAll(any());
     }
 
     @Test
@@ -344,7 +356,8 @@ class MemberServiceTest {
         given(metaDataConsumer.getMetaData(any(), any())).willReturn(new MetaData(Campus.SEOUL));
 
         //when
-        GetMemberResDto response = memberService.registerMemberInformation(authenticatedMember, postMemberInfoReqDto);
+        GetMemberResDto response = memberService
+                .registerMemberInformation(authenticatedMember.getMemberId(), postMemberInfoReqDto);
 
         //then
         assertThat(response).usingRecursiveComparison().isEqualTo(GetMemberResDto.fromSSAFYUser(member));
