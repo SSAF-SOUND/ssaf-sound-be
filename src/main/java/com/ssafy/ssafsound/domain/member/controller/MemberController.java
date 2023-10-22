@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.domain.member.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
+import com.ssafy.ssafsound.domain.auth.service.CookieProvider;
 import com.ssafy.ssafsound.domain.auth.validator.Authentication;
 import com.ssafy.ssafsound.domain.member.dto.*;
 import com.ssafy.ssafsound.domain.member.service.MemberService;
@@ -8,6 +9,7 @@ import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RestController
@@ -16,6 +18,7 @@ import javax.validation.Valid;
 public class MemberController {
 
     private final MemberService memberService;
+    private final CookieProvider cookieProvider;
 
     @GetMapping
     public EnvelopeResponse<GetMemberResDto> getMemberInformation(
@@ -165,9 +168,11 @@ public class MemberController {
     }
 
     @DeleteMapping
-    public EnvelopeResponse<Void> leaveMember(@Authentication AuthenticatedMember authenticatedMember) {
+    public EnvelopeResponse<Void> leaveMember(
+            @Authentication AuthenticatedMember authenticatedMember,
+            HttpServletResponse response) {
         memberService.leaveMember(authenticatedMember.getMemberId());
-
+        cookieProvider.setResponseWithCookies(response, null, null);
         return EnvelopeResponse.<Void>builder()
                 .build();
     }
