@@ -75,13 +75,12 @@ public class MemberService {
 
     @Transactional
     public Member saveTokenByMember(
-        AuthenticatedMember authenticatedMember,
+        Long memberId,
         CreateMemberTokensResDto createMemberTokensResDto) {
-        Member member = memberRepository.findById(authenticatedMember.getMemberId())
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-        Optional<MemberToken> memberTokenOptional = memberTokenRepository
-            .findById(authenticatedMember.getMemberId());
+        Optional<MemberToken> memberTokenOptional = memberTokenRepository.findById(memberId);
 
         memberTokenOptional.ifPresentOrElse(
             memberToken -> changeMemberTokens(memberToken, createMemberTokensResDto),

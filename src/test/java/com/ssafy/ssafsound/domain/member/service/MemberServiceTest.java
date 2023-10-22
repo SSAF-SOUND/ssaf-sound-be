@@ -138,53 +138,45 @@ class MemberServiceTest {
     void Given_Tokens_When_InitializeMember_Then_Success() {
         //given
         Member member = memberFixture.createInitializerMember();
-        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(member);
-        given(memberTokenRepository.findById(authenticatedMember.getMemberId()))
-            .willReturn(Optional.empty());
-        given(memberRepository.findById(authenticatedMember.getMemberId()))
-            .willReturn(Optional.of(member));
+        given(memberTokenRepository.findById(member.getId())).willReturn(Optional.empty());
+        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
 
         //when
-        Member response = memberService
-            .saveTokenByMember(authenticatedMember, memberFixture.createMemberTokensResDto());
+        Member response = memberService.saveTokenByMember(member.getId(), memberFixture.createMemberTokensResDto());
 
         //then
         assertAll(
-            () -> assertEquals(response.getId(), authenticatedMember.getMemberId()),
-            () -> assertEquals(response.getRole().getRoleType(), authenticatedMember.getMemberRole())
+            () -> assertEquals(response.getId(), member.getId()),
+            () -> assertEquals(response.getRole().getRoleType(), member.getRole().getRoleType())
         );
 
 
         //verify
-        verify(memberTokenRepository, times(1))
-            .findById(authenticatedMember.getMemberId());
-        verify(memberRepository, times(1))
-            .findById(authenticatedMember.getMemberId());
+        verify(memberTokenRepository, times(1)).findById(member.getId());
+        verify(memberRepository, times(1)).findById(member.getId());
     }
 
     @Test
     @DisplayName("Member가 토큰을 발급한 적이 있다면 새로운 토큰들로 저장한다.")
     void Given_Tokens_When_JoinedMember_Then_SuccessExchangeTokens() {
         //given
-        MemberToken memberToken = memberFixture.createMemberToken();
-        AuthenticatedMember authenticatedMember = AuthenticatedMember.from(memberToken.getMember());
-        given(memberRepository.findById(authenticatedMember.getMemberId()))
-                .willReturn(Optional.of(memberToken.getMember()));
-        given(memberTokenRepository.findById(authenticatedMember.getMemberId()))
-                .willReturn(Optional.of(memberToken));
+        MemberToken memberToken = memberFixture.createMemberToken(memberFixture.createGeneralMember());
+        Long memberId = memberToken.getId();
+        given(memberRepository.findById(memberId)).willReturn(Optional.of(memberToken.getMember()));
+        given(memberTokenRepository.findById(memberId)).willReturn(Optional.of(memberToken));
 
         //when
-        Member response = memberService.saveTokenByMember(authenticatedMember, memberFixture.createMemberTokensResDto());
+        Member response = memberService.saveTokenByMember(memberToken.getId(), memberFixture.createMemberTokensResDto());
 
         //then
         assertAll(
-                () -> assertEquals(response.getId(), authenticatedMember.getMemberId()),
-                () -> assertEquals(response.getRole().getRoleType(), authenticatedMember.getMemberRole())
+                () -> assertEquals(response.getId(), memberId),
+                () -> assertEquals(response.getRole().getRoleType(), memberToken.getMember().getRole().getRoleType())
         );
 
         //verify
-        verify(memberRepository, times(1)).findById(authenticatedMember.getMemberId());
-        verify(memberTokenRepository, times(1)).findById(authenticatedMember.getMemberId());
+        verify(memberRepository, times(1)).findById(memberId);
+        verify(memberTokenRepository, times(1)).findById(memberId);
     }
 
     @Test
@@ -192,11 +184,12 @@ class MemberServiceTest {
     void Given_Member_When_NotJoinedMember_Then_ThrowMemberException() {
         //given
         AuthenticatedMember authenticatedMember = AuthenticatedMember.from(memberFixture.createInitializerMember());
+        Long memberId = authenticatedMember.getMemberId();
         given(memberRepository.findById(any())).willReturn(Optional.empty());
 
         //when, then
         assertThrows(MemberException.class,
-                () -> memberService.saveTokenByMember(authenticatedMember, memberFixture.createMemberTokensResDto()));
+                () -> memberService.saveTokenByMember(memberId, memberFixture.createMemberTokensResDto()));
 
         //verify
         verify(memberRepository, times(1)).findById(authenticatedMember.getMemberId());
