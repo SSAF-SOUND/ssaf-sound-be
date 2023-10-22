@@ -22,7 +22,7 @@ import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostHotReqDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostHotSearchReqDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostMyReqDto;
-import com.ssafy.ssafsound.domain.post.dto.GetPostReqDto;
+import com.ssafy.ssafsound.domain.post.dto.GetPostCursorReqDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostSearchReqDto;
 import com.ssafy.ssafsound.domain.post.dto.ImageInfo;
@@ -61,10 +61,10 @@ public class PostService {
 	private final PostConstantProvider postConstantProvider;
 
 	@Transactional(readOnly = true)
-	public GetPostResDto findPosts(GetPostReqDto getPostReqDto) {
-		Long boardId = getPostReqDto.getBoardId();
-		Long cursor = getPostReqDto.getCursor();
-		int size = getPostReqDto.getSize();
+	public GetPostResDto findPosts(GetPostCursorReqDto getPostCursorReqDto) {
+		Long boardId = getPostCursorReqDto.getBoardId();
+		Long cursor = getPostCursorReqDto.getCursor();
+		int size = getPostCursorReqDto.getSize();
 
 		if (!boardRepository.existsById(boardId)) {
 			throw new BoardException(BoardErrorInfo.NO_BOARD);

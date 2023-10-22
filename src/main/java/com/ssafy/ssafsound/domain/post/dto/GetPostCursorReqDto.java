@@ -9,7 +9,7 @@ import javax.validation.constraints.Min;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetPostReqDto {
+public class GetPostCursorReqDto {
     private Long boardId;
 
     @Builder.Default

@@ -20,12 +20,13 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/cursor")
-    public EnvelopeResponse<GetPostResDto> findPostsByCursor(@Valid @ModelAttribute GetPostReqDto getPostReqDto) {
-        log.info(String.valueOf(getPostReqDto.getCursor()));
+    public EnvelopeResponse<GetPostResDto> findPostsByCursor(@Valid @ModelAttribute GetPostCursorReqDto getPostCursorReqDto) {
+        log.info(String.valueOf(getPostCursorReqDto.getCursor()));
         return EnvelopeResponse.<GetPostResDto>builder()
-                .data(postService.findPosts(getPostReqDto))
+                .data(postService.findPosts(getPostCursorReqDto))
                 .build();
     }
+
 
     @GetMapping("/{postId}")
     public EnvelopeResponse<GetPostDetailResDto> findPost(@PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
