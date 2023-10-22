@@ -320,10 +320,10 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public GetPostCursorResDto searchHotPostsByCursor(GetPostHotSearchReqDto getPostHotSearchReqDto) {
-        String keyword = getPostHotSearchReqDto.getKeyword();
-        Long cursor = getPostHotSearchReqDto.getCursor();
-        int size = getPostHotSearchReqDto.getSize();
+    public GetPostCursorResDto searchHotPostsByCursor(GetPostHotSearchCursorReqDto getPostHotSearchCursorReqDto) {
+        String keyword = getPostHotSearchCursorReqDto.getKeyword();
+        Long cursor = getPostHotSearchCursorReqDto.getCursor();
+        int size = getPostHotSearchCursorReqDto.getSize();
 
         List<HotPost> hotPosts = hotPostRepository.findHotPostsByKeyword(keyword.replaceAll(" ", ""), cursor, size);
         return GetPostCursorResDto.ofHotPosts(hotPosts, size);

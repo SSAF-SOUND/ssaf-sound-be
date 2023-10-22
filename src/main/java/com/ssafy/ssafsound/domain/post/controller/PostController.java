@@ -123,9 +123,9 @@ public class PostController {
     }
 
     @GetMapping("/hot/search/cursor")
-    public EnvelopeResponse<GetPostCursorResDto> searchHotPostsByCursor(@Valid @ModelAttribute GetPostHotSearchReqDto getPostHotSearchReqDto) {
+    public EnvelopeResponse<GetPostCursorResDto> searchHotPostsByCursor(@Valid @ModelAttribute GetPostHotSearchCursorReqDto getPostHotSearchCursorReqDto) {
         return EnvelopeResponse.<GetPostCursorResDto>builder()
-                .data(postService.searchHotPostsByCursor(getPostHotSearchReqDto))
+                .data(postService.searchHotPostsByCursor(getPostHotSearchCursorReqDto))
                 .build();
     }
 }

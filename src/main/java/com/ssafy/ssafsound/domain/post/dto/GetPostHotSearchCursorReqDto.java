@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetPostHotSearchReqDto {
+public class GetPostHotSearchCursorReqDto {
     @Size(min = 2)
     @NotBlank
     private String keyword;
