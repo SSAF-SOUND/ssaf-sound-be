@@ -250,12 +250,20 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public GetPostCursorResDto findHotPostsByCursor(GetPostHotReqDto getPostHotReqDto) {
-        Long cursor = getPostHotReqDto.getCursor();
-        int size = getPostHotReqDto.getSize();
+    public GetPostCursorResDto findHotPostsByCursor(GetPostHotCursorReqDto getPostHotCursorReqDto) {
+        Long cursor = getPostHotCursorReqDto.getCursor();
+        int size = getPostHotCursorReqDto.getSize();
 
         List<HotPost> hotPosts = hotPostRepository.findHotPosts(cursor, size);
         return GetPostCursorResDto.ofHotPosts(hotPosts, size);
+    }
+
+    @Transactional(readOnly = true)
+    public GetPostOffsetResDto findHotPostsByOffset(BasePageRequest basePageRequest) {
+        PageRequest pageRequest = basePageRequest.toPageRequest();
+
+        List<HotPost> hotPosts = hotPostRepository.findHotPostsByPageable(pageRequest);
+        return GetPostOffsetResDto.ofHotPosts(hotPosts);
     }
 
     @Transactional(readOnly = true)

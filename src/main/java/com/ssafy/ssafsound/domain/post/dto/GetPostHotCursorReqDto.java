@@ -9,7 +9,7 @@ import javax.validation.constraints.Min;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetPostHotReqDto {
+public class GetPostHotCursorReqDto {
     @Builder.Default
     private Long cursor = -1L;
 

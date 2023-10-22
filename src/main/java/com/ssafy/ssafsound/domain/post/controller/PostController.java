@@ -80,12 +80,19 @@ public class PostController {
     }
 
     @GetMapping("/hot/cursor")
-    public EnvelopeResponse<GetPostCursorResDto> findHotPostsByCursor(@Valid @ModelAttribute GetPostHotReqDto getPostHotReqDto) {
-        log.info(String.valueOf(getPostHotReqDto.getCursor()));
+    public EnvelopeResponse<GetPostCursorResDto> findHotPostsByCursor(@Valid @ModelAttribute GetPostHotCursorReqDto getPostHotCursorReqDto) {
         return EnvelopeResponse.<GetPostCursorResDto>builder()
-                .data(postService.findHotPostsByCursor(getPostHotReqDto))
+                .data(postService.findHotPostsByCursor(getPostHotCursorReqDto))
                 .build();
     }
+
+    @GetMapping("/hot/offset")
+    public EnvelopeResponse<GetPostOffsetResDto> findHotPostsByOffset(@Valid @ModelAttribute BasePageRequest basePageRequest) {
+        return EnvelopeResponse.<GetPostOffsetResDto>builder()
+                .data(postService.findHotPostsByOffset(basePageRequest))
+                .build();
+    }
+
 
     @GetMapping("/my/cursor")
     public EnvelopeResponse<GetPostCursorResDto> findMyPostsByCursor(@Valid @ModelAttribute GetPostMyReqDto getPostMyReqDto, @Authentication AuthenticatedMember loginMember) {
