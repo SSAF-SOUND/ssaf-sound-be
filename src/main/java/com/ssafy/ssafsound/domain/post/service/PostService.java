@@ -62,7 +62,7 @@ public class PostService {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorInfo.NO_BOARD));
 
-        List<Post> posts = postRepository.findPostsByOffset(board, pageRequest);
+        List<Post> posts = postRepository.findPostsByboardAndPageable(board, pageRequest);
         return GetPostOffsetResDto.ofPosts(posts);
     }
 
@@ -296,6 +296,19 @@ public class PostService {
         List<Post> posts = postRepository.findWithDetailsFetchByBoardIdAndKeyword(boardId, keyword.replaceAll(" ", ""),
                 cursor, size);
         return GetPostCursorResDto.ofPosts(posts, size);
+    }
+
+    @Transactional(readOnly = true)
+    public GetPostOffsetResDto searchPostsByOffset(GetPostSearchOffsetReqDto getPostSearchOffsetReqDto) {
+        PageRequest pageRequest = getPostSearchOffsetReqDto.toPageRequest();
+        Long boardId = getPostSearchOffsetReqDto.getBoardId();
+        String keyword = getPostSearchOffsetReqDto.getKeyword();
+
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new BoardException(BoardErrorInfo.NO_BOARD));
+
+        List<Post> posts = postRepository.searchPostsByBoardAndKeywordAndPageable(board, keyword, pageRequest);
+        return GetPostOffsetResDto.ofPosts(posts);
     }
 
     @Transactional(readOnly = true)
