@@ -95,14 +95,14 @@ public class PostController {
 
 
     @GetMapping("/my/cursor")
-    public EnvelopeResponse<GetPostCursorResDto> findMyPostsByCursor(@Valid @ModelAttribute GetPostMyReqDto getPostMyReqDto, @Authentication AuthenticatedMember loginMember) {
+    public EnvelopeResponse<GetPostCursorResDto> findMyPostsByCursor(@Valid @ModelAttribute GetPostMyCursorReqDto getPostMyCursorReqDto, @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<GetPostCursorResDto>builder()
-                .data(postService.findMyPostsByCursor(getPostMyReqDto, loginMember.getMemberId()))
+                .data(postService.findMyPostsByCursor(getPostMyCursorReqDto, loginMember.getMemberId()))
                 .build();
     }
 
     @GetMapping("/my-scrap/cursor")
-    public EnvelopeResponse<GetPostCursorResDto> findMyScrapPostsByCursor(@Valid @ModelAttribute GetPostMyReqDto getPostMyScrapReqDto, @Authentication AuthenticatedMember loginMember) {
+    public EnvelopeResponse<GetPostCursorResDto> findMyScrapPostsByCursor(@Valid @ModelAttribute GetPostMyCursorReqDto getPostMyScrapReqDto, @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<GetPostCursorResDto>builder()
                 .data(postService.findMyScrapPostsByCursor(getPostMyScrapReqDto, loginMember.getMemberId()))
                 .build();

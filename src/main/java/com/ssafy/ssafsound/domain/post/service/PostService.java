@@ -267,9 +267,9 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public GetPostCursorResDto findMyPostsByCursor(GetPostMyReqDto getPostMyReqDto, Long loginMemberId) {
-        Long cursor = getPostMyReqDto.getCursor();
-        int size = getPostMyReqDto.getSize();
+    public GetPostCursorResDto findMyPostsByCursor(GetPostMyCursorReqDto getPostMyCursorReqDto, Long loginMemberId) {
+        Long cursor = getPostMyCursorReqDto.getCursor();
+        int size = getPostMyCursorReqDto.getSize();
 
         Member loginMember = memberRepository.findById(loginMemberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
@@ -279,7 +279,7 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public GetPostCursorResDto findMyScrapPostsByCursor(GetPostMyReqDto getPostMyScrapReqDto, Long loginMemberId) {
+    public GetPostCursorResDto findMyScrapPostsByCursor(GetPostMyCursorReqDto getPostMyScrapReqDto, Long loginMemberId) {
         Long cursor = getPostMyScrapReqDto.getCursor();
         int size = getPostMyScrapReqDto.getSize();
 
