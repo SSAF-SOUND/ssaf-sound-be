@@ -284,9 +284,10 @@ public class MemberFixture {
             .build();
     }
 
-    public MemberToken createMemberToken() {
+    public MemberToken createMemberToken(Member member) {
         return MemberToken.builder()
-                .member(createGeneralMember())
+                .id(member.getId())
+                .member(member)
                 .accessToken(AuthFixture.accessToken)
                 .refreshToken(AuthFixture.refreshToken)
                 .build();
