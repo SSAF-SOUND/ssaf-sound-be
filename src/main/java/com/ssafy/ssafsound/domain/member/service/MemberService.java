@@ -204,6 +204,7 @@ public class MemberService {
         Member member = getMemberByMemberIdOrThrowException(memberId);
         member.setAccountStateDeleted();
         member.changeNickname("@" + member.getId());
+        memberTokenRepository.deleteById(memberId);
         applicationEventPublisher.publishEvent(new MemberLeavedEvent(member.getId()));
     }
 
