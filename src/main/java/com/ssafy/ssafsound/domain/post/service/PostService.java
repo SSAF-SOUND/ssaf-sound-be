@@ -328,4 +328,13 @@ public class PostService {
         List<HotPost> hotPosts = hotPostRepository.findHotPostsByKeyword(keyword.replaceAll(" ", ""), cursor, size);
         return GetPostCursorResDto.ofHotPosts(hotPosts, size);
     }
+
+    @Transactional(readOnly = true)
+    public GetPostOffsetResDto searchHotPostsByOffset(GetPostHotSearchOffsetReqDto getPostHotSearchOffsetReqDto) {
+        PageRequest pageRequest = getPostHotSearchOffsetReqDto.toPageRequest();
+        String keyword = getPostHotSearchOffsetReqDto.getKeyword();
+
+        List<HotPost> hotPosts = hotPostRepository.searchHotPostsByKeywordAndPageable(keyword, pageRequest);
+        return GetPostOffsetResDto.ofHotPosts(hotPosts);
+    }
 }

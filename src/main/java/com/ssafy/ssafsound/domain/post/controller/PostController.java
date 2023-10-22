@@ -128,4 +128,11 @@ public class PostController {
                 .data(postService.searchHotPostsByCursor(getPostHotSearchCursorReqDto))
                 .build();
     }
+
+    @GetMapping("/hot/search/offset")
+    public EnvelopeResponse<GetPostOffsetResDto> searchHotPostsByCursor(@Valid @ModelAttribute GetPostHotSearchOffsetReqDto getPostHotSearchOffsetReqDto) {
+        return EnvelopeResponse.<GetPostOffsetResDto>builder()
+                .data(postService.searchHotPostsByOffset(getPostHotSearchOffsetReqDto))
+                .build();
+    }
 }

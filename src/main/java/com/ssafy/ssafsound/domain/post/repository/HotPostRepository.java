@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface HotPostRepository extends JpaRepository<HotPost, Long>, HotPostCustomRepository{
+public interface HotPostRepository extends JpaRepository<HotPost, Long>, HotPostCustomRepository {
     @Modifying
     @Query("DELETE FROM hot_post h " +
             "WHERE h.id IN ( " +
@@ -25,6 +25,7 @@ public interface HotPostRepository extends JpaRepository<HotPost, Long>, HotPost
     void deleteHotPostsUnderThreshold(@Param("threshold") Long threshold);
 
     Optional<HotPost> findByPostId(Long postId);
+
     Boolean existsByPostId(Long postId);
 
     @Query("select h from hot_post h " +
@@ -33,4 +34,13 @@ public interface HotPostRepository extends JpaRepository<HotPost, Long>, HotPost
             "join fetch p.member " +
             "left join fetch p.likes ")
     List<HotPost> findHotPostsByPageable(PageRequest pageRequest);
+
+    @Query("select h from hot_post h " +
+            "join fetch h.post p " +
+            "join fetch p.board b " +
+            "join fetch p.member " +
+            "left join fetch p.likes " +
+            "where replace(p.title, ' ', '') like CONCAT('%', :keyword, '%') " +
+            "or replace(p.content, ' ', '') like CONCAT('%', :keyword, '%') ")
+    List<HotPost> searchHotPostsByKeywordAndPageable(String keyword, PageRequest pageRequest);
 }
