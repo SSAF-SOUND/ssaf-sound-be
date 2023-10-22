@@ -18,6 +18,7 @@ public class GetPostSearchReqDto {
     @NotBlank
     private String keyword;
 
+    @Builder.Default
     private Long cursor = -1L;
 
     @Min(value = 10, message = "Size가 너무 작습니다.")

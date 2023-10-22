@@ -11,6 +11,8 @@ import javax.validation.constraints.Min;
 @NoArgsConstructor
 public class GetPostReqDto {
     private Long boardId;
+
+    @Builder.Default
     private Long cursor = -1L;
 
     @Min(value = 10, message = "Size가 너무 작습니다.")

@@ -10,6 +10,7 @@ import javax.validation.constraints.Min;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetPostMyReqDto {
+    @Builder.Default
     private Long cursor = -1L;
 
     @Min(value = 10, message = "Size가 너무 작습니다.")
