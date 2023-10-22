@@ -45,9 +45,9 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
     @Override
     public Slice<Recruit> findRecruitSliceByGetRecruitsReqDto(GetRecruitsReqDto dto, Pageable pageable) {
         JPAQuery<Recruit> recruitDynamicQuery = findRecruitByGetRecruitsReqDto(dto);
-        Long cursor = dto.getNext();
+        Integer cursor = dto.getNext();
         List<Recruit> recruits = recruitDynamicQuery
-                .where(recruitIdLtThanCursor(cursor))
+                .where(recruitIdLtThanCursor(Long.valueOf(cursor)))
                 .limit(pageable.getPageSize()+1)
                 .orderBy(recruit.id.desc())
                 .fetch();

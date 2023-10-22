@@ -149,10 +149,16 @@ public class RecruitFixture {
 
     private static final RecruitElement RECRUIT_1_ELEMENT = RecruitElement.fromRecruitAndLoginMemberId(RECRUIT_1, 1L);
 
-    public static final GetRecruitsResDto GET_RECRUITS_RES_DTO = GetRecruitsResDto.builder()
+    public static final GetRecruitsCursorResDto GET_RECRUITS_CURSOR_RES_DTO = GetRecruitsCursorResDto.builder()
             .recruits(List.of(RECRUIT_1_ELEMENT))
             .nextCursor(1L)
             .isLast(true)
+            .build();
+
+    public static final GetRecruitOffsetResDto GET_RECRUITS_OFFSET_RES_DTO = GetRecruitOffsetResDto.builder()
+            .recruits(List.of(RECRUIT_1_ELEMENT))
+            .currentPage(0)
+            .totalPageCount(1)
             .build();
 
     private static final RecruitApplicationElement APPLICATION_ELEMENT = RecruitApplicationFixture.APPLICATION1_ELEMENT();
