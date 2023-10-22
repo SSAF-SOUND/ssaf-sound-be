@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.domain.post.repository;
 
 import com.ssafy.ssafsound.domain.board.domain.Board;
+import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,4 +45,11 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRep
             "or replace(p.content, ' ', '') like CONCAT('%', :keyword, '%')) " +
             "and b = :board ")
     List<Post> searchPostsByBoardAndKeywordAndPageable(Board board, String keyword, PageRequest pageRequest);
+
+    @Query("select p from post p " +
+            "join fetch p.board " +
+            "join fetch p.member m " +
+            "left join fetch p.likes " +
+            "where m = :member ")
+    List<Post> findMyPostsByMemberAndPageable(@Param("member") Member member, PageRequest pageRequest);
 }

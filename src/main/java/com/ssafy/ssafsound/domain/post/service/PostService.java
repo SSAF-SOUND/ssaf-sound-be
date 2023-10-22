@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.post.service;
 
+import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.board.domain.Board;
 import com.ssafy.ssafsound.domain.board.exception.BoardErrorInfo;
 import com.ssafy.ssafsound.domain.board.exception.BoardException;
@@ -276,6 +277,17 @@ public class PostService {
 
         List<Post> posts = postRepository.findWithDetailsByMemberId(loginMember.getId(), cursor, size);
         return GetPostCursorResDto.ofPosts(posts, size);
+    }
+
+    @Transactional(readOnly = true)
+    public GetPostOffsetResDto findMyPostsByOffset(BasePageRequest basePageRequest, AuthenticatedMember authenticatedMember) {
+        PageRequest pageRequest = basePageRequest.toPageRequest();
+
+        Member loginMember = memberRepository.findById(authenticatedMember.getMemberId())
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        List<Post> posts = postRepository.findMyPostsByMemberAndPageable(loginMember, pageRequest);
+        return GetPostOffsetResDto.ofPosts(posts);
     }
 
     @Transactional(readOnly = true)

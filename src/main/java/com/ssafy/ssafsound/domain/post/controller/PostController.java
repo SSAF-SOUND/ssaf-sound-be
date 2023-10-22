@@ -101,6 +101,14 @@ public class PostController {
                 .build();
     }
 
+    @GetMapping("/my/offset")
+    public EnvelopeResponse<GetPostOffsetResDto> findMyPostsByOffset(@Valid @ModelAttribute BasePageRequest basePageRequest,
+                                                                     @Authentication AuthenticatedMember authenticatedMember) {
+        return EnvelopeResponse.<GetPostOffsetResDto>builder()
+                .data(postService.findMyPostsByOffset(basePageRequest, authenticatedMember))
+                .build();
+    }
+
     @GetMapping("/my-scrap/cursor")
     public EnvelopeResponse<GetPostCursorResDto> findMyScrapPostsByCursor(@Valid @ModelAttribute GetPostMyCursorReqDto getPostMyScrapReqDto, @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<GetPostCursorResDto>builder()
