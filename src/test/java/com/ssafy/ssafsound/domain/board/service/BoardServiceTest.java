@@ -3,7 +3,6 @@ package com.ssafy.ssafsound.domain.board.service;
 import com.ssafy.ssafsound.domain.board.domain.Board;
 import com.ssafy.ssafsound.domain.board.dto.GetBoardResDto;
 import com.ssafy.ssafsound.domain.board.repository.BoardRepository;
-import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
 import com.ssafy.ssafsound.global.util.fixture.BoardFixture;
 
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static com.ssafy.ssafsound.global.util.fixture.BoardFixture.*;
 import static org.mockito.BDDMockito.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;

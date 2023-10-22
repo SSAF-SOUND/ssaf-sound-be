@@ -7,7 +7,7 @@ import java.util.List;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostElement;
-import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
+import com.ssafy.ssafsound.domain.post.dto.GetPostCursorResDto;
 import com.ssafy.ssafsound.domain.post.dto.ImageInfo;
 import com.ssafy.ssafsound.domain.post.dto.PostCommonLikeResDto;
 import com.ssafy.ssafsound.domain.post.dto.PostIdElement;
@@ -145,42 +145,42 @@ public class PostFixture {
 		.thumbnail("썸네일 URL")
 		.build();
 
-	public static final GetPostResDto GET_POST_RES_DTO1 = GetPostResDto.ofPosts(
+	public static final GetPostCursorResDto GET_POST_RES_DTO1 = GetPostCursorResDto.ofPosts(
 		List.of(POST_FIXTURE1,
 			POST_FIXTURE2), 10);
 
-	public static final GetPostResDto GET_POST_RES_DTO2 = GetPostResDto.ofPosts(
+	public static final GetPostCursorResDto GET_POST_RES_DTO2 = GetPostCursorResDto.ofPosts(
 		List.of(POST_FIXTURE3), 10);
 
-	public static final GetPostResDto GET_POST_RES_DTO3 = GetPostResDto.builder()
+	public static final GetPostCursorResDto GET_POST_RES_DTO3 = GetPostCursorResDto.builder()
 		.posts(List.of(GET_POST_ELEMENT1,
 			GET_POST_ELEMENT2))
 		.cursor(null)
 		.build();
 
-	public static final GetPostResDto GET_POST_RES_DTO4 = GetPostResDto.builder()
+	public static final GetPostCursorResDto GET_POST_RES_DTO4 = GetPostCursorResDto.builder()
 		.posts(List.of(GET_POST_ELEMENT3))
 		.cursor(null)
 		.build();
 
-	public static final GetPostResDto GET_POST_HOT_RES_DTO1 = GetPostResDto.builder()
+	public static final GetPostCursorResDto GET_POST_HOT_RES_DTO1 = GetPostCursorResDto.builder()
 		.posts(List.of(GET_POST_HOT_ELEMENT1,
 			GET_POST_HOT_ELEMENT2))
 		.cursor(null)
 		.build();
 
-	public static final GetPostResDto GET_POST_HOT_RES_DTO2 = GetPostResDto.builder()
+	public static final GetPostCursorResDto GET_POST_HOT_RES_DTO2 = GetPostCursorResDto.builder()
 		.posts(List.of(GET_POST_HOT_ELEMENT1))
 		.cursor(null)
 		.build();
 
-	public static final GetPostResDto GET_POST_MY_RES_DTO1 = GetPostResDto.builder()
+	public static final GetPostCursorResDto GET_POST_MY_RES_DTO1 = GetPostCursorResDto.builder()
 		.posts(List.of(GET_POST_MY_ELEMENT1,
 			GET_POST_MY_ELEMENT2))
 		.cursor(null)
 		.build();
 
-	public static final GetPostResDto GET_POST_MY_SCRAP_RES_DTO = GetPostResDto.builder()
+	public static final GetPostCursorResDto GET_POST_MY_SCRAP_RES_DTO = GetPostCursorResDto.builder()
 		.posts(List.of(GET_POST_ELEMENT2,
 			GET_POST_ELEMENT1))
 		.cursor(null)

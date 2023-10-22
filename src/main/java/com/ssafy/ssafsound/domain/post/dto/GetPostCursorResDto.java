@@ -11,11 +11,11 @@ import java.util.stream.Collectors;
 
 @Getter
 @Builder
-public class GetPostResDto {
+public class GetPostCursorResDto {
     private List<GetPostElement> posts;
     private Long cursor;
 
-    public static GetPostResDto ofPosts(List<Post> posts, int size) {
+    public static GetPostCursorResDto ofPosts(List<Post> posts, int size) {
         Long nextCursor = null;
         int pageSize = posts.size() - 1;
         if (pageSize >= size) {
@@ -23,7 +23,7 @@ public class GetPostResDto {
             nextCursor = posts.get(posts.size() - 1).getId();
         }
 
-        return GetPostResDto.builder()
+        return GetPostCursorResDto.builder()
                 .posts(posts.stream()
                         .map(GetPostElement::new)
                         .collect(Collectors.toList()))
@@ -32,7 +32,7 @@ public class GetPostResDto {
 
     }
 
-    public static GetPostResDto ofHotPosts(List<HotPost> hotPosts, int size) {
+    public static GetPostCursorResDto ofHotPosts(List<HotPost> hotPosts, int size) {
         Long nextCursor = null;
         int pageSize = hotPosts.size() - 1;
         if (pageSize >= size) {
@@ -40,7 +40,7 @@ public class GetPostResDto {
             nextCursor = hotPosts.get(hotPosts.size() - 1).getId();
         }
 
-        return GetPostResDto.builder()
+        return GetPostCursorResDto.builder()
                 .posts(hotPosts.stream()
                         .map(hotPost -> new GetPostElement(hotPost.getPost()))
                         .collect(Collectors.toList()))
@@ -48,7 +48,7 @@ public class GetPostResDto {
                 .build();
     }
 
-    public static GetPostResDto ofPostScraps(List<PostScrap> postScraps, int size) {
+    public static GetPostCursorResDto ofPostScraps(List<PostScrap> postScraps, int size) {
         Long nextCursor = null;
         int pageSize = postScraps.size() - 1;
         if (pageSize >= size) {
@@ -56,7 +56,7 @@ public class GetPostResDto {
             nextCursor = postScraps.get(postScraps.size() - 1).getId();
         }
 
-        return GetPostResDto.builder()
+        return GetPostCursorResDto.builder()
                 .posts(postScraps.stream()
                         .map(postScrap -> new GetPostElement(postScrap.getPost()))
                         .collect(Collectors.toList()))

@@ -28,7 +28,7 @@ import com.ssafy.ssafsound.domain.post.domain.PostLike;
 import com.ssafy.ssafsound.domain.post.domain.PostScrap;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
 import com.ssafy.ssafsound.domain.post.dto.GetPostCursorReqDto;
-import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
+import com.ssafy.ssafsound.domain.post.dto.GetPostCursorResDto;
 import com.ssafy.ssafsound.domain.post.dto.PostCommonLikeResDto;
 import com.ssafy.ssafsound.domain.post.dto.PostIdElement;
 import com.ssafy.ssafsound.domain.post.dto.PostPostScrapResDto;
@@ -95,11 +95,11 @@ class PostServiceTest {
 			getPostCursorReqDto.getSize())).willReturn(posts);
 
 		// when
-		GetPostResDto response = postService.findPostsByCursor(getPostCursorReqDto);
+		GetPostCursorResDto response = postService.findPostsByCursor(getPostCursorReqDto);
 
 		// then
 		assertThat(response).usingRecursiveComparison()
-			.isEqualTo(GetPostResDto.ofPosts(posts, getPostCursorReqDto.getSize()));
+			.isEqualTo(GetPostCursorResDto.ofPosts(posts, getPostCursorReqDto.getSize()));
 
 		// verify
 		verify(boardRepository, times(1)).existsById(getPostCursorReqDto.getBoardId());

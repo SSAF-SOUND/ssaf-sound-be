@@ -2,6 +2,8 @@ package com.ssafy.ssafsound.domain.post.service;
 
 import java.util.List;
 
+import com.ssafy.ssafsound.domain.post.dto.*;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,19 +20,6 @@ import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.domain.PostImage;
 import com.ssafy.ssafsound.domain.post.domain.PostLike;
 import com.ssafy.ssafsound.domain.post.domain.PostScrap;
-import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
-import com.ssafy.ssafsound.domain.post.dto.GetPostHotReqDto;
-import com.ssafy.ssafsound.domain.post.dto.GetPostHotSearchReqDto;
-import com.ssafy.ssafsound.domain.post.dto.GetPostMyReqDto;
-import com.ssafy.ssafsound.domain.post.dto.GetPostCursorReqDto;
-import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
-import com.ssafy.ssafsound.domain.post.dto.GetPostSearchReqDto;
-import com.ssafy.ssafsound.domain.post.dto.ImageInfo;
-import com.ssafy.ssafsound.domain.post.dto.PostCommonLikeResDto;
-import com.ssafy.ssafsound.domain.post.dto.PostIdElement;
-import com.ssafy.ssafsound.domain.post.dto.PostPatchUpdateReqDto;
-import com.ssafy.ssafsound.domain.post.dto.PostPostScrapResDto;
-import com.ssafy.ssafsound.domain.post.dto.PostPostWriteReqDto;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
 import com.ssafy.ssafsound.domain.post.exception.PostException;
 import com.ssafy.ssafsound.domain.post.repository.HotPostRepository;
@@ -61,7 +50,7 @@ public class PostService {
 	private final PostConstantProvider postConstantProvider;
 
 	@Transactional(readOnly = true)
-	public GetPostResDto findPostsByCursor(GetPostCursorReqDto getPostCursorReqDto) {
+	public GetPostCursorResDto findPostsByCursor(GetPostCursorReqDto getPostCursorReqDto) {
 		Long boardId = getPostCursorReqDto.getBoardId();
 		Long cursor = getPostCursorReqDto.getCursor();
 		int size = getPostCursorReqDto.getSize();
@@ -71,7 +60,15 @@ public class PostService {
 		}
 
 		List<Post> posts = postRepository.findWithDetailsByBoardId(boardId, cursor, size);
-		return GetPostResDto.ofPosts(posts, size);
+		return GetPostCursorResDto.ofPosts(posts, size);
+	}
+
+	@Transactional(readOnly = true)
+	public Void findPostsByOffset(GetPostOffsetReqDto getPostOffsetReqDto){
+		PageRequest pageRequest = getPostOffsetReqDto.toPageRequest();
+
+
+		return null;
 	}
 
 	@Transactional(readOnly = true)
@@ -258,16 +255,16 @@ public class PostService {
 	}
 
 	@Transactional(readOnly = true)
-	public GetPostResDto findHotPostsByCursor(GetPostHotReqDto getPostHotReqDto) {
+	public GetPostCursorResDto findHotPostsByCursor(GetPostHotReqDto getPostHotReqDto) {
 		Long cursor = getPostHotReqDto.getCursor();
 		int size = getPostHotReqDto.getSize();
 
 		List<HotPost> hotPosts = hotPostRepository.findHotPosts(cursor, size);
-		return GetPostResDto.ofHotPosts(hotPosts, size);
+		return GetPostCursorResDto.ofHotPosts(hotPosts, size);
 	}
 
 	@Transactional(readOnly = true)
-	public GetPostResDto findMyPostsByCursor(GetPostMyReqDto getPostMyReqDto, Long loginMemberId) {
+	public GetPostCursorResDto findMyPostsByCursor(GetPostMyReqDto getPostMyReqDto, Long loginMemberId) {
 		Long cursor = getPostMyReqDto.getCursor();
 		int size = getPostMyReqDto.getSize();
 
@@ -275,11 +272,11 @@ public class PostService {
 			.orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
 		List<Post> posts = postRepository.findWithDetailsByMemberId(loginMember.getId(), cursor, size);
-		return GetPostResDto.ofPosts(posts, size);
+		return GetPostCursorResDto.ofPosts(posts, size);
 	}
 
 	@Transactional(readOnly = true)
-	public GetPostResDto findMyScrapPostsByCursor(GetPostMyReqDto getPostMyScrapReqDto, Long loginMemberId) {
+	public GetPostCursorResDto findMyScrapPostsByCursor(GetPostMyReqDto getPostMyScrapReqDto, Long loginMemberId) {
 		Long cursor = getPostMyScrapReqDto.getCursor();
 		int size = getPostMyScrapReqDto.getSize();
 
@@ -287,11 +284,11 @@ public class PostService {
 			.orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
 		List<PostScrap> postScraps = postScrapRepository.findMyScrapPosts(loginMember.getId(), cursor, size);
-		return GetPostResDto.ofPostScraps(postScraps, size);
+		return GetPostCursorResDto.ofPostScraps(postScraps, size);
 	}
 
 	@Transactional(readOnly = true)
-	public GetPostResDto searchPostsByCursor(GetPostSearchReqDto getPostSearchReqDto) {
+	public GetPostCursorResDto searchPostsByCursor(GetPostSearchReqDto getPostSearchReqDto) {
 		Long boardId = getPostSearchReqDto.getBoardId();
 		String keyword = getPostSearchReqDto.getKeyword();
 		Long cursor = getPostSearchReqDto.getCursor();
@@ -303,16 +300,16 @@ public class PostService {
 
 		List<Post> posts = postRepository.findWithDetailsFetchByBoardIdAndKeyword(boardId, keyword.replaceAll(" ", ""),
 			cursor, size);
-		return GetPostResDto.ofPosts(posts, size);
+		return GetPostCursorResDto.ofPosts(posts, size);
 	}
 
 	@Transactional(readOnly = true)
-	public GetPostResDto searchHotPostsByCursor(GetPostHotSearchReqDto getPostHotSearchReqDto) {
+	public GetPostCursorResDto searchHotPostsByCursor(GetPostHotSearchReqDto getPostHotSearchReqDto) {
 		String keyword = getPostHotSearchReqDto.getKeyword();
 		Long cursor = getPostHotSearchReqDto.getCursor();
 		int size = getPostHotSearchReqDto.getSize();
 
 		List<HotPost> hotPosts = hotPostRepository.findHotPostsByKeyword(keyword.replaceAll(" ", ""), cursor, size);
-		return GetPostResDto.ofHotPosts(hotPosts, size);
+		return GetPostCursorResDto.ofHotPosts(hotPosts, size);
 	}
 }
