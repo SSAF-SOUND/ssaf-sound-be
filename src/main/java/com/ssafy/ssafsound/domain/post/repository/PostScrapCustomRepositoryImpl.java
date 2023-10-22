@@ -28,7 +28,7 @@ public class PostScrapCustomRepositoryImpl implements PostScrapCustomRepository 
                 .join(post.member, member).fetchJoin()
                 .where(postScrapIdLtCursor(cursor), postScrap.member.id.eq(memberId))
                 .limit(size + 1)
-                .orderBy(postScrap.id.desc())
+                .orderBy(postScrap.id.asc())
                 .fetch();
     }
 
