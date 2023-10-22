@@ -19,8 +19,9 @@ public class PostController {
 
     private final PostService postService;
 
-    @GetMapping
-    public EnvelopeResponse<GetPostResDto> findPosts(@Valid @ModelAttribute GetPostReqDto getPostReqDto) {
+    @GetMapping("/cursor")
+    public EnvelopeResponse<GetPostResDto> findPostsByCursor(@Valid @ModelAttribute GetPostReqDto getPostReqDto) {
+        log.info(String.valueOf(getPostReqDto.getCursor()));
         return EnvelopeResponse.<GetPostResDto>builder()
                 .data(postService.findPosts(getPostReqDto))
                 .build();
@@ -72,37 +73,37 @@ public class PostController {
                 .build();
     }
 
-    @GetMapping("/hot")
-    public EnvelopeResponse<GetPostResDto> findHotPosts(@Valid @ModelAttribute GetPostHotReqDto getPostHotReqDto) {
+    @GetMapping("/hot/cursor")
+    public EnvelopeResponse<GetPostResDto> findHotPostsByCursor(@Valid @ModelAttribute GetPostHotReqDto getPostHotReqDto) {
         log.info(String.valueOf(getPostHotReqDto.getCursor()));
         return EnvelopeResponse.<GetPostResDto>builder()
                 .data(postService.findHotPosts(getPostHotReqDto))
                 .build();
     }
 
-    @GetMapping("/my")
-    public EnvelopeResponse<GetPostResDto> findMyPosts(@Valid @ModelAttribute GetPostMyReqDto getPostMyReqDto, @Authentication AuthenticatedMember loginMember) {
+    @GetMapping("/my/cursor")
+    public EnvelopeResponse<GetPostResDto> findMyPostsByCursor(@Valid @ModelAttribute GetPostMyReqDto getPostMyReqDto, @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<GetPostResDto>builder()
                 .data(postService.findMyPosts(getPostMyReqDto, loginMember.getMemberId()))
                 .build();
     }
 
-    @GetMapping("/my-scrap")
-    public EnvelopeResponse<GetPostResDto> findMyScrapPosts(@Valid @ModelAttribute GetPostMyReqDto getPostMyScrapReqDto, @Authentication AuthenticatedMember loginMember) {
+    @GetMapping("/my-scrap/cursor")
+    public EnvelopeResponse<GetPostResDto> findMyScrapPostsByCursor(@Valid @ModelAttribute GetPostMyReqDto getPostMyScrapReqDto, @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<GetPostResDto>builder()
                 .data(postService.findMyScrapPosts(getPostMyScrapReqDto, loginMember.getMemberId()))
                 .build();
     }
 
-    @GetMapping("/search")
-    public EnvelopeResponse<GetPostResDto> searchPosts(@Valid @ModelAttribute GetPostSearchReqDto getPostSearchReqDto) {
+    @GetMapping("/search/cursor")
+    public EnvelopeResponse<GetPostResDto> searchPostsByCursor(@Valid @ModelAttribute GetPostSearchReqDto getPostSearchReqDto) {
         return EnvelopeResponse.<GetPostResDto>builder()
                 .data(postService.searchPosts(getPostSearchReqDto))
                 .build();
     }
 
-    @GetMapping("/hot/search")
-    public EnvelopeResponse<GetPostResDto> searchHotPosts(@Valid @ModelAttribute GetPostHotSearchReqDto getPostHotSearchReqDto) {
+    @GetMapping("/hot/search/cursor")
+    public EnvelopeResponse<GetPostResDto> searchHotPostsByCursor(@Valid @ModelAttribute GetPostHotSearchReqDto getPostHotSearchReqDto) {
         return EnvelopeResponse.<GetPostResDto>builder()
                 .data(postService.searchHotPosts(getPostHotSearchReqDto))
                 .build();

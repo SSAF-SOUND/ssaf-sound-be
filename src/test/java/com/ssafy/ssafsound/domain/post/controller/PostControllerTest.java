@@ -18,17 +18,17 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 class PostControllerTest extends ControllerTest {
 
     @Test
-    @DisplayName("게시글 목록 조회, cursor와 size를 기준으로 커서기반 페이지네이션이 수행됨.")
-    void findPosts() {
+    @DisplayName("게시글 목록 조회(Cursor), cursor와 size를 기준으로 커서기반 페이지네이션이 수행됨.")
+    void findPostsByCursor() {
         doReturn(GET_POST_RES_DTO3)
                 .when(postService)
                 .findPosts(any());
 
         restDocs.cookie(ACCESS_TOKEN)
-                .when().get("/posts?boardId={boardId}&cursor={cursor}&size={pageSize}", 1, -1, 10)
+                .when().get("/posts/cursor?boardId={boardId}&cursor={cursor}&size={pageSize}", 1, -1, 10)
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .apply(document("post/find-posts",
+                .apply(document("post/find-posts-by-cursor",
                                 requestCookieAccessTokenNeedless(),
                                 requestParameters(
                                         parameterWithName("boardId").description("조회하려는 게시글의 게시판 고유 ID"),
@@ -56,17 +56,17 @@ class PostControllerTest extends ControllerTest {
     }
 
     @Test
-    @DisplayName("게시글 검색(제목 + 내용을 기준으로 검색)")
-    void searchPosts() {
+    @DisplayName("게시글 검색(Cursor), 제목 + 내용을 기준으로 검색")
+    void searchPostsByCursor() {
         doReturn(GET_POST_RES_DTO4)
                 .when(postService)
                 .searchPosts(any());
 
         restDocs.cookie(ACCESS_TOKEN)
-                .when().get("/posts/search?boardId={boardId}&keyword={searchText}&cursor={cursor}&size={pageSize}", 1L, "안녕하세요", -1, 10)
+                .when().get("/posts/search/cursor?boardId={boardId}&keyword={searchText}&cursor={cursor}&size={pageSize}", 1L, "안녕하세요", -1, 10)
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .apply(document("post/search-posts",
+                .apply(document("post/search-posts-by-cursor",
                                 requestCookieAccessTokenNeedless(),
                                 requestParameters(
                                         parameterWithName("boardId").description("검색하려는 게시판 고유 ID"),
@@ -308,6 +308,7 @@ class PostControllerTest extends ControllerTest {
     }
 
     @Test
+    @DisplayName("게시글 수정")
     void updatePost() {
         doReturn(POST_ID_ELEMENT)
                 .when(postService)
@@ -341,17 +342,17 @@ class PostControllerTest extends ControllerTest {
     }
 
     @Test
-    @DisplayName("Hot 게시글 목록 조회")
-    void findHotPosts() {
+    @DisplayName("Hot 게시글 목록 조회(Cursor)")
+    void findHotPostsByCursor() {
         doReturn(GET_POST_HOT_RES_DTO1)
                 .when(postService)
                 .findHotPosts(any());
 
         restDocs.cookie(ACCESS_TOKEN)
-                .when().get("/posts/hot?cursor={cursor}&size={pageSize}", -1, 10)
+                .when().get("/posts/hot/cursor?cursor={cursor}&size={pageSize}", -1, 10)
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .apply(document("post/find-hot-posts",
+                .apply(document("post/find-hot-posts-by-cursor",
                                 requestCookieAccessTokenNeedless(),
                                 requestParameters(
                                         parameterWithName("cursor").description("cursor값은 다음 페이지를 가져올 마지막 페이지 번호를 의미함, 초기 cursor는 -1, 이후 cursor값은 응답 데이터로 제공되는 cursor값을 사용."),
@@ -378,17 +379,17 @@ class PostControllerTest extends ControllerTest {
     }
 
     @Test
-    @DisplayName("Hot 게시글 검색(제목 + 내용을 기준으로 검색)")
-    void searchHotPosts() {
+    @DisplayName("Hot 게시글 검색(Cursor), 제목 + 내용을 기준으로 검색")
+    void searchHotPostsByCursor() {
         doReturn(GET_POST_HOT_RES_DTO2)
                 .when(postService)
                 .searchHotPosts(any());
 
         restDocs.cookie(ACCESS_TOKEN)
-                .when().get("/posts/hot/search?&keyword={searchText}&cursor={cursor}&size={pageSize}", "취업", -1, 10)
+                .when().get("/posts/hot/search/cursor?&keyword={searchText}&cursor={cursor}&size={pageSize}", "취업", -1, 10)
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .apply(document("post/search-hot-posts",
+                .apply(document("post/search-hot-posts-by-cursor",
                                 requestCookieAccessTokenNeedless(),
                                 requestParameters(
                                         parameterWithName("keyword").description("검색하려는 게시글의 검색어, 최소 2글자"),
@@ -416,17 +417,17 @@ class PostControllerTest extends ControllerTest {
     }
 
     @Test
-    @DisplayName("내가 작성한 게시글 목록 조회")
-    void findMyPosts() {
+    @DisplayName("내가 작성한 게시글 목록 조회(Cursor)")
+    void findMyPostsByCursor() {
         doReturn(GET_POST_MY_RES_DTO1)
                 .when(postService)
                 .findMyPosts(any(), any());
 
         restDocs.cookie(ACCESS_TOKEN)
-                .when().get("/posts/my?cursor={cursor}&size={pageSize}", -1, 10)
+                .when().get("/posts/my/cursor?cursor={cursor}&size={pageSize}", -1, 10)
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .apply(document("post/find-my-posts",
+                .apply(document("post/find-my-posts-by-cursor",
                                 requestCookieAccessTokenMandatory(),
                                 requestParameters(
                                         parameterWithName("cursor").description("cursor값은 다음 페이지를 가져올 마지막 페이지 번호를 의미함, 초기 cursor는 -1, 이후 cursor값은 응답 데이터로 제공되는 cursor값을 사용."),
@@ -453,17 +454,17 @@ class PostControllerTest extends ControllerTest {
     }
 
     @Test
-    @DisplayName("나의 스크랩 게시글 목록 조회")
-    void findMyScrapPosts() {
+    @DisplayName("나의 스크랩 게시글 목록 조회(Cursor)")
+    void findMyScrapPostsByCursor() {
         doReturn(GET_POST_MY_SCRAP_RES_DTO)
                 .when(postService)
                 .findMyScrapPosts(any(), any());
 
         restDocs.cookie(ACCESS_TOKEN)
-                .when().get("/posts/my-scrap?cursor={cursor}&size={pageSize}", -1, 10)
+                .when().get("/posts/my-scrap/cursor?cursor={cursor}&size={pageSize}", -1, 10)
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .apply(document("post/find-my-scrap-posts",
+                .apply(document("post/find-my-scrap-posts-by-cursor",
                                 requestCookieAccessTokenMandatory(),
                                 requestParameters(
                                         parameterWithName("cursor").description("cursor값은 다음 페이지를 가져올 마지막 페이지 번호를 의미함, 초기 cursor는 -1, 이후 cursor값은 응답 데이터로 제공되는 cursor값을 사용."),
