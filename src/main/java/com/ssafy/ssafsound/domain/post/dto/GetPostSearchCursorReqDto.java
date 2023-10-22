@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetPostSearchReqDto {
+public class GetPostSearchCursorReqDto {
     private Long boardId;
 
     @Size(min = 2)

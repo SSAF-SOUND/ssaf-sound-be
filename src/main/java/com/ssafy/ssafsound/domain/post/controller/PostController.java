@@ -33,7 +33,6 @@ public class PostController {
                 .build();
     }
 
-
     @GetMapping("/{postId}")
     public EnvelopeResponse<GetPostDetailResDto> findPost(@PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<GetPostDetailResDto>builder()
@@ -103,9 +102,9 @@ public class PostController {
     }
 
     @GetMapping("/search/cursor")
-    public EnvelopeResponse<GetPostCursorResDto> searchPostsByCursor(@Valid @ModelAttribute GetPostSearchReqDto getPostSearchReqDto) {
+    public EnvelopeResponse<GetPostCursorResDto> searchPostsByCursor(@Valid @ModelAttribute GetPostSearchCursorReqDto getPostSearchCursorReqDto) {
         return EnvelopeResponse.<GetPostCursorResDto>builder()
-                .data(postService.searchPostsByCursor(getPostSearchReqDto))
+                .data(postService.searchPostsByCursor(getPostSearchCursorReqDto))
                 .build();
     }
 

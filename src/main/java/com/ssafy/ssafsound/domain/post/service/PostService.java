@@ -283,11 +283,11 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public GetPostCursorResDto searchPostsByCursor(GetPostSearchReqDto getPostSearchReqDto) {
-        Long boardId = getPostSearchReqDto.getBoardId();
-        String keyword = getPostSearchReqDto.getKeyword();
-        Long cursor = getPostSearchReqDto.getCursor();
-        int size = getPostSearchReqDto.getSize();
+    public GetPostCursorResDto searchPostsByCursor(GetPostSearchCursorReqDto getPostSearchCursorReqDto) {
+        Long boardId = getPostSearchCursorReqDto.getBoardId();
+        String keyword = getPostSearchCursorReqDto.getKeyword();
+        Long cursor = getPostSearchCursorReqDto.getCursor();
+        int size = getPostSearchCursorReqDto.getSize();
 
         if (!boardRepository.existsById(boardId)) {
             throw new BoardException(BoardErrorInfo.NO_BOARD);
