@@ -170,15 +170,24 @@ public class PostFixture {
             .posts(List.of(GET_POST_ELEMENT3))
             .build();
 
-    public static final GetPostCursorResDto GET_POST_HOT_RES_DTO1 = GetPostCursorResDto.builder()
+    public static final GetPostCursorResDto GET_POST_CURSOR_HOT_RES_DTO1 = GetPostCursorResDto.builder()
             .posts(List.of(GET_POST_HOT_ELEMENT1,
                     GET_POST_HOT_ELEMENT2))
             .cursor(null)
             .build();
 
-    public static final GetPostCursorResDto GET_POST_HOT_RES_DTO2 = GetPostCursorResDto.builder()
+    public static final GetPostCursorResDto GET_POST_CURSOR_HOT_RES_DTO2 = GetPostCursorResDto.builder()
             .posts(List.of(GET_POST_HOT_ELEMENT1))
             .cursor(null)
+            .build();
+
+    public static final GetPostOffsetResDto GET_POST_OFFSET_HOT_RES_DTO1 = GetPostOffsetResDto.builder()
+            .posts(List.of(GET_POST_HOT_ELEMENT1,
+                    GET_POST_HOT_ELEMENT2))
+            .build();
+
+    public static final GetPostOffsetResDto GET_POST_OFFSET_HOT_RES_DTO2 = GetPostOffsetResDto.builder()
+            .posts(List.of(GET_POST_HOT_ELEMENT1))
             .build();
 
     public static final GetPostCursorResDto GET_POST_MY_RES_DTO1 = GetPostCursorResDto.builder()
