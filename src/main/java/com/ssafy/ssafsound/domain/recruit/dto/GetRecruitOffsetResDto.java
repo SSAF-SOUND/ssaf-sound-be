@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Map;
@@ -13,11 +13,10 @@ import java.util.stream.Collectors;
 
 @Getter
 @Builder
-public class GetRecruitsCursorResDto implements AddParticipantDto {
+public class GetRecruitOffsetResDto implements AddParticipantDto {
     private List<RecruitElement> recruits;
-    private Long nextCursor;
-    private Boolean isLast;
-
+    private int currentPage;
+    private int totalPageCount;
     @JsonIgnore
     public List<Long> getRecruitsId() {
         return recruits.stream().map(RecruitElement::getRecruitId).collect(Collectors.toList());
@@ -32,17 +31,16 @@ public class GetRecruitsCursorResDto implements AddParticipantDto {
         return result;
     }
 
-    public static GetRecruitsCursorResDto fromPageAndMemberId(Slice<Recruit> sliceRecruit, Long memberId) {
-        List<RecruitElement> recruits = sliceRecruit.toList()
+    public static GetRecruitOffsetResDto fromPageAndMemberId(Page<Recruit> recruitPages, Long memberId) {
+        List<RecruitElement> recruits = recruitPages.getContent()
                 .stream()
                 .map((recruit -> RecruitElement.fromRecruitAndLoginMemberId(recruit, memberId)))
                 .collect(Collectors.toList());
-        Long nextCursor = recruits.isEmpty() ? -1L : recruits.get(recruits.size()-1).getRecruitId();
 
-        return GetRecruitsCursorResDto.builder()
+        return GetRecruitOffsetResDto.builder()
                 .recruits(recruits)
-                .nextCursor(nextCursor)
-                .isLast(sliceRecruit.isLast())
+                .currentPage(recruitPages.getNumber())
+                .totalPageCount(recruitPages.getTotalPages())
                 .build();
     }
 }
