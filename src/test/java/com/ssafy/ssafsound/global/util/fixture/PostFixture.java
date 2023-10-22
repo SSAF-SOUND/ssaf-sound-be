@@ -190,10 +190,15 @@ public class PostFixture {
             .posts(List.of(GET_POST_HOT_ELEMENT1))
             .build();
 
-    public static final GetPostCursorResDto GET_POST_MY_RES_DTO1 = GetPostCursorResDto.builder()
+    public static final GetPostCursorResDto GET_POST_CURSOR_MY_RES_DTO1 = GetPostCursorResDto.builder()
             .posts(List.of(GET_POST_MY_ELEMENT1,
                     GET_POST_MY_ELEMENT2))
             .cursor(null)
+            .build();
+
+    public static final GetPostOffsetResDto GET_POST_OFFSET_MY_RES_DTO1 = GetPostOffsetResDto.builder()
+            .posts(List.of(GET_POST_MY_ELEMENT1,
+                    GET_POST_MY_ELEMENT2))
             .build();
 
     public static final GetPostCursorResDto GET_POST_MY_SCRAP_RES_DTO = GetPostCursorResDto.builder()
