@@ -131,7 +131,7 @@ public class RecruitService {
     @Transactional(readOnly = true)
     public GetRecruitsResDto getRecruits(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable, Long loginMemberId) {
         // 페이지네이션 조건에 따라 프로젝트/스터디 글 목록을 조회한다.
-        Slice<Recruit> recruitPages = recruitRepository.findRecruitByGetRecruitsReqDto(getRecruitsReqDto, pageable);
+        Slice<Recruit> recruitPages = recruitRepository.findRecruitSliceByGetRecruitsReqDto(getRecruitsReqDto, pageable);
         GetRecruitsResDto recruitsResDto = GetRecruitsResDto.fromPageAndMemberId(recruitPages, loginMemberId);
         if(!recruitsResDto.getRecruits().isEmpty()) {
             addRecruitParticipants(recruitsResDto);

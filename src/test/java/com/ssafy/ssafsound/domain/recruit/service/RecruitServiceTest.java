@@ -177,13 +177,13 @@ class RecruitServiceTest {
         lenient().when(recruitRepository.findById(2L)).thenReturn(java.util.Optional.ofNullable(savedRecruit));
 
         lenient().when(recruitRepository
-                .findRecruitByGetRecruitsReqDto(emptyKeywordDto, pageInfo))
+                .findRecruitSliceByGetRecruitsReqDto(emptyKeywordDto, pageInfo))
                 .thenReturn(new SliceImpl<>(List.of(savedRecruit)));
 
-        lenient().when(recruitRepository.findRecruitByGetRecruitsReqDto(findTitleDto, pageInfo))
+        lenient().when(recruitRepository.findRecruitSliceByGetRecruitsReqDto(findTitleDto, pageInfo))
                 .thenReturn(new SliceImpl<>(List.of(savedRecruit)));
 
-        lenient().when(recruitRepository.findRecruitByGetRecruitsReqDto(notFindKeywordDto, pageInfo))
+        lenient().when(recruitRepository.findRecruitSliceByGetRecruitsReqDto(notFindKeywordDto, pageInfo))
                 .thenReturn(new SliceImpl<>(List.of()));
 
 
