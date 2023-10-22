@@ -95,7 +95,7 @@ class PostServiceTest {
 			getPostCursorReqDto.getSize())).willReturn(posts);
 
 		// when
-		GetPostResDto response = postService.findPosts(getPostCursorReqDto);
+		GetPostResDto response = postService.findPostsByCursor(getPostCursorReqDto);
 
 		// then
 		assertThat(response).usingRecursiveComparison()
@@ -116,7 +116,7 @@ class PostServiceTest {
 		given(boardRepository.existsById(getPostCursorReqDto.getBoardId())).willReturn(false);
 
 		// when, then
-		BoardException exception = assertThrows(BoardException.class, () -> postService.findPosts(getPostCursorReqDto));
+		BoardException exception = assertThrows(BoardException.class, () -> postService.findPostsByCursor(getPostCursorReqDto));
 		assertEquals(BoardErrorInfo.NO_BOARD, exception.getInfo());
 
 		// verify

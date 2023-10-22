@@ -22,7 +22,7 @@ class PostControllerTest extends ControllerTest {
     void findPostsByCursor() {
         doReturn(GET_POST_RES_DTO3)
                 .when(postService)
-                .findPosts(any());
+                .findPostsByCursor(any());
 
         restDocs.cookie(ACCESS_TOKEN)
                 .when().get("/posts/cursor?boardId={boardId}&cursor={cursor}&size={pageSize}", 1, -1, 10)
@@ -60,7 +60,7 @@ class PostControllerTest extends ControllerTest {
     void searchPostsByCursor() {
         doReturn(GET_POST_RES_DTO4)
                 .when(postService)
-                .searchPosts(any());
+                .searchPostsByCursor(any());
 
         restDocs.cookie(ACCESS_TOKEN)
                 .when().get("/posts/search/cursor?boardId={boardId}&keyword={searchText}&cursor={cursor}&size={pageSize}", 1L, "안녕하세요", -1, 10)
@@ -346,7 +346,7 @@ class PostControllerTest extends ControllerTest {
     void findHotPostsByCursor() {
         doReturn(GET_POST_HOT_RES_DTO1)
                 .when(postService)
-                .findHotPosts(any());
+                .findHotPostsByCursor(any());
 
         restDocs.cookie(ACCESS_TOKEN)
                 .when().get("/posts/hot/cursor?cursor={cursor}&size={pageSize}", -1, 10)
@@ -383,7 +383,7 @@ class PostControllerTest extends ControllerTest {
     void searchHotPostsByCursor() {
         doReturn(GET_POST_HOT_RES_DTO2)
                 .when(postService)
-                .searchHotPosts(any());
+                .searchHotPostsByCursor(any());
 
         restDocs.cookie(ACCESS_TOKEN)
                 .when().get("/posts/hot/search/cursor?&keyword={searchText}&cursor={cursor}&size={pageSize}", "취업", -1, 10)
@@ -421,7 +421,7 @@ class PostControllerTest extends ControllerTest {
     void findMyPostsByCursor() {
         doReturn(GET_POST_MY_RES_DTO1)
                 .when(postService)
-                .findMyPosts(any(), any());
+                .findMyPostsByCursor(any(), any());
 
         restDocs.cookie(ACCESS_TOKEN)
                 .when().get("/posts/my/cursor?cursor={cursor}&size={pageSize}", -1, 10)
@@ -458,7 +458,7 @@ class PostControllerTest extends ControllerTest {
     void findMyScrapPostsByCursor() {
         doReturn(GET_POST_MY_SCRAP_RES_DTO)
                 .when(postService)
-                .findMyScrapPosts(any(), any());
+                .findMyScrapPostsByCursor(any(), any());
 
         restDocs.cookie(ACCESS_TOKEN)
                 .when().get("/posts/my-scrap/cursor?cursor={cursor}&size={pageSize}", -1, 10)

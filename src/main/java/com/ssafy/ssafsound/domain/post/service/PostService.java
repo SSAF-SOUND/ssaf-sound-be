@@ -61,7 +61,7 @@ public class PostService {
 	private final PostConstantProvider postConstantProvider;
 
 	@Transactional(readOnly = true)
-	public GetPostResDto findPosts(GetPostCursorReqDto getPostCursorReqDto) {
+	public GetPostResDto findPostsByCursor(GetPostCursorReqDto getPostCursorReqDto) {
 		Long boardId = getPostCursorReqDto.getBoardId();
 		Long cursor = getPostCursorReqDto.getCursor();
 		int size = getPostCursorReqDto.getSize();
@@ -258,7 +258,7 @@ public class PostService {
 	}
 
 	@Transactional(readOnly = true)
-	public GetPostResDto findHotPosts(GetPostHotReqDto getPostHotReqDto) {
+	public GetPostResDto findHotPostsByCursor(GetPostHotReqDto getPostHotReqDto) {
 		Long cursor = getPostHotReqDto.getCursor();
 		int size = getPostHotReqDto.getSize();
 
@@ -267,7 +267,7 @@ public class PostService {
 	}
 
 	@Transactional(readOnly = true)
-	public GetPostResDto findMyPosts(GetPostMyReqDto getPostMyReqDto, Long loginMemberId) {
+	public GetPostResDto findMyPostsByCursor(GetPostMyReqDto getPostMyReqDto, Long loginMemberId) {
 		Long cursor = getPostMyReqDto.getCursor();
 		int size = getPostMyReqDto.getSize();
 
@@ -279,7 +279,7 @@ public class PostService {
 	}
 
 	@Transactional(readOnly = true)
-	public GetPostResDto findMyScrapPosts(GetPostMyReqDto getPostMyScrapReqDto, Long loginMemberId) {
+	public GetPostResDto findMyScrapPostsByCursor(GetPostMyReqDto getPostMyScrapReqDto, Long loginMemberId) {
 		Long cursor = getPostMyScrapReqDto.getCursor();
 		int size = getPostMyScrapReqDto.getSize();
 
@@ -291,7 +291,7 @@ public class PostService {
 	}
 
 	@Transactional(readOnly = true)
-	public GetPostResDto searchPosts(GetPostSearchReqDto getPostSearchReqDto) {
+	public GetPostResDto searchPostsByCursor(GetPostSearchReqDto getPostSearchReqDto) {
 		Long boardId = getPostSearchReqDto.getBoardId();
 		String keyword = getPostSearchReqDto.getKeyword();
 		Long cursor = getPostSearchReqDto.getCursor();
@@ -307,7 +307,7 @@ public class PostService {
 	}
 
 	@Transactional(readOnly = true)
-	public GetPostResDto searchHotPosts(GetPostHotSearchReqDto getPostHotSearchReqDto) {
+	public GetPostResDto searchHotPostsByCursor(GetPostHotSearchReqDto getPostHotSearchReqDto) {
 		String keyword = getPostHotSearchReqDto.getKeyword();
 		Long cursor = getPostHotSearchReqDto.getCursor();
 		int size = getPostHotSearchReqDto.getSize();
