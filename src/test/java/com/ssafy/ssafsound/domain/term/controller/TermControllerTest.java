@@ -1,6 +1,5 @@
 package com.ssafy.ssafsound.domain.term.controller;
 
-import com.ssafy.ssafsound.domain.term.domain.TermElement;
 import com.ssafy.ssafsound.domain.term.dto.GetTermsResDto;
 import com.ssafy.ssafsound.global.docs.ControllerTest;
 import com.ssafy.ssafsound.global.docs.snippet.CookieDescriptionSnippet;
@@ -9,11 +8,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -46,12 +40,8 @@ class TermControllerTest extends ControllerTest {
     @DisplayName("사용중인 약관들을 리스트들을 가져온다.")
     @Test
     void getUsedTerms() {
-        Set<Long> termIds = new HashSet<>(Set.of(1L, 2L, 3L));
-        List<TermElement> termElements = termFixture.createTerms(termIds).stream()
-                        .map(TermElement::from)
-                        .collect(Collectors.toList());
         given(termService.getTerms())
-                .willReturn(GetTermsResDto.fromTermElements(termElements));
+                .willReturn(GetTermsResDto.fromTermElements(termFixture.createTermElements()));
 
         restDocs
                 .when().get("/terms")
