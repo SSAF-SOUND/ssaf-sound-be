@@ -36,6 +36,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedOrigins("https://www.ssafsound.com")
                 .allowedOrigins("https://test.ssafsound.com")
                 .allowedOrigins("https://api.ssafsound.com")
+                .allowedOrigins("http://ssafsound.com")
+                .allowedOrigins("https://ssafsound.com")
                 .allowedMethods(ALLOWED_METHOD_NAMES.split(","))
                 .allowedHeaders("*")
                 .allowCredentials(true)
@@ -64,6 +66,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         config.addAllowedOrigin("https://www.ssafsound.com");
         config.addAllowedOrigin("https://test.ssafsound.com");
         config.addAllowedOrigin("http://www.ssafsound.com");
+        config.addAllowedOrigin("https://ssafsound.com");
+        config.addAllowedOrigin("http://ssafsound.com");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.setMaxAge(2629744L);
