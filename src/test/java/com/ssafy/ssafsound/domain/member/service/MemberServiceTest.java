@@ -75,7 +75,7 @@ class MemberServiceTest {
         Member member = memberFixture.createGeneralMember();
         PostMemberReqDto postMemberReqDto = memberFixture.createPostMemberReqDto();
         given(memberRepository.findByOauthIdentifier(postMemberReqDto.getOauthIdentifier()))
-                .willReturn(Optional.empty());
+                .willReturn(null);
         given(memberRoleRepository.findByRoleType("user")).willReturn(Optional.of(member.getRole()));
         given(memberRepository.save(any())).willReturn(member);
 
@@ -102,7 +102,7 @@ class MemberServiceTest {
         Member member = memberFixture.createGeneralMember();
         PostMemberReqDto postMemberReqDto = memberFixture.createPostMemberReqDto();
         given(memberRepository.findByOauthIdentifier(postMemberReqDto.getOauthIdentifier()))
-                .willReturn(Optional.of(member));
+                .willReturn(member);
         //when
         AuthenticatedMember response = memberService.createMemberByOauthIdentifier(postMemberReqDto);
 
@@ -122,7 +122,7 @@ class MemberServiceTest {
         PostMemberReqDto postMemberReqDto = memberFixture.createPostMemberReqDto();
         Member member = memberFixture.createInitializerMember();
         given(memberRepository.findByOauthIdentifier(postMemberReqDto.getOauthIdentifier()))
-                .willReturn(Optional.of(member));
+                .willReturn(member);
 
         //when, then
         assertThrows(MemberException.class,

@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -55,22 +56,20 @@ public class MemberService {
 
     @Transactional
     public AuthenticatedMember createMemberByOauthIdentifier(PostMemberReqDto postMemberReqDto) {
-        Optional<Member> optionalMember = memberRepository.findByOauthIdentifier(postMemberReqDto.getOauthIdentifier());
-        Member member;
-        if (optionalMember.isPresent()) {
-            member = optionalMember.get();
-            if (isInvalidOauthLogin(member, postMemberReqDto)) {
-                throw new MemberException(MemberErrorInfo.MEMBER_OAUTH_NOT_FOUND);
-            } else if(isDeletedMember(member)) {
-                throw new MemberException(MemberErrorInfo.MEMBER_DELETED);
-            }
-            return AuthenticatedMember.from(member);
-        } else {
+        Member member = memberRepository.findByOauthIdentifier(postMemberReqDto.getOauthIdentifier());
+
+        if (Objects.isNull(member)) {
             MemberRole memberRole = findMemberRoleByRoleName("user");
             member = postMemberReqDto.createMember();
             member.setMemberRole(memberRole);
             return AuthenticatedMember.from(memberRepository.save(member));
+        } else if (isInvalidOauthLogin(member, postMemberReqDto)) {
+            throw new MemberException(MemberErrorInfo.MEMBER_OAUTH_NOT_FOUND);
+        } else if (isDeletedMember(member)) {
+            throw new MemberException(MemberErrorInfo.MEMBER_DELETED);
         }
+
+        return AuthenticatedMember.from(member);
     }
 
     @Transactional
