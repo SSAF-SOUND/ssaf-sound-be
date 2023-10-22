@@ -528,6 +528,43 @@ class PostControllerTest extends ControllerTest {
     }
 
     @Test
+    @DisplayName("Hot 게시글 검색(Offset), 제목 + 내용을 기준으로 검색")
+    void searchHotPostsByOffset() {
+        doReturn(GET_POST_OFFSET_HOT_RES_DTO2)
+                .when(postService)
+                .searchHotPostsByOffset(any());
+
+        restDocs.cookie(ACCESS_TOKEN)
+                .when().get("/posts/hot/search/offset?&keyword={searchText}&page={page}&size={pageSize}", "취업", 1, 10)
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .apply(document("post/search-hot-posts-by-offset",
+                                requestCookieAccessTokenNeedless(),
+                                requestParameters(
+                                        parameterWithName("keyword").description("검색하려는 게시글의 검색어, 최소 2글자"),
+                                        parameterWithName("page").description("page값은 불러올 현재 페이지의 값을 의미함, 초기 page는 1(또는 첫 페이지는 1)"),
+                                        parameterWithName("size").description("현재 페이지의 게시글 개수를 의미함, 최소 size는 10")
+                                ),
+                                getEnvelopPatternWithData().andWithPrefix("data.",
+                                        fieldWithPath("posts").type(JsonFieldType.ARRAY).description("게시글 목록")
+                                ).andWithPrefix("data.posts[].",
+                                        fieldWithPath("boardId").type(JsonFieldType.NUMBER).description("게시글이 작성된 게시판 종류의 ID"),
+                                        fieldWithPath("boardTitle").type(JsonFieldType.STRING).description("게시글이 작성된 게시판의 종류, 자유 게시판 | 취업 게시판 | 맛집 게시판 | 질문 게시판 | 싸피 예비생 게시판"),
+                                        fieldWithPath("postId").type(JsonFieldType.NUMBER).description("게시글의 고유 ID"),
+                                        fieldWithPath("title").type(JsonFieldType.STRING).description("게시글의 제목"),
+                                        fieldWithPath("content").type(JsonFieldType.STRING).description("게시글의 내용"),
+                                        fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("게시글의 좋아요 개수"),
+                                        fieldWithPath("commentCount").type(JsonFieldType.NUMBER).description("게시글의 댓글 개수"),
+                                        fieldWithPath("createdAt").type(JsonFieldType.STRING).description("게시글의 작성일").optional(),
+                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("게시글 작성자의 닉네임"),
+                                        fieldWithPath("anonymity").type(JsonFieldType.BOOLEAN).description("게시글 작성자의 익명 여부인지 나타내는 필드"),
+                                        fieldWithPath("thumbnail").type(JsonFieldType.STRING).description("게시판의 썸네일, 게시글의 사진이 여러개가 있을 때 첫 번째 사진이 해당 게시글의 썸네일이 됨.").optional()
+                                )
+                        )
+                );
+    }
+
+    @Test
     @DisplayName("내가 작성한 게시글 목록 조회(Cursor)")
     void findMyPostsByCursor() {
         doReturn(GET_POST_MY_RES_DTO1)
