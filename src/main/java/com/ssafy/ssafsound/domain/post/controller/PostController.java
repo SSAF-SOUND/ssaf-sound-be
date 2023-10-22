@@ -7,8 +7,6 @@ import com.ssafy.ssafsound.domain.post.service.PostService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -22,11 +20,19 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/cursor")
-    public EnvelopeResponse<GetPostResDto> findPostsByCursor(@Valid @ModelAttribute GetPostCursorReqDto getPostCursorReqDto) {
-        return EnvelopeResponse.<GetPostResDto>builder()
+    public EnvelopeResponse<GetPostCursorResDto> findPostsByCursor(@Valid @ModelAttribute GetPostCursorReqDto getPostCursorReqDto) {
+        return EnvelopeResponse.<GetPostCursorResDto>builder()
                 .data(postService.findPostsByCursor(getPostCursorReqDto))
                 .build();
     }
+
+    @GetMapping("/offset")
+    public EnvelopeResponse<GetPostOffsetResDto> findPostsByOffset(@Valid @ModelAttribute GetPostOffsetReqDto getPostOffsetReqDto) {
+        return EnvelopeResponse.<GetPostOffsetResDto>builder()
+                .data(postService.findPostsByOffset(getPostOffsetReqDto))
+                .build();
+    }
+
 
     @GetMapping("/{postId}")
     public EnvelopeResponse<GetPostDetailResDto> findPost(@PathVariable Long postId, @Authentication AuthenticatedMember loginMember) {
@@ -75,37 +81,37 @@ public class PostController {
     }
 
     @GetMapping("/hot/cursor")
-    public EnvelopeResponse<GetPostResDto> findHotPostsByCursor(@Valid @ModelAttribute GetPostHotReqDto getPostHotReqDto) {
+    public EnvelopeResponse<GetPostCursorResDto> findHotPostsByCursor(@Valid @ModelAttribute GetPostHotReqDto getPostHotReqDto) {
         log.info(String.valueOf(getPostHotReqDto.getCursor()));
-        return EnvelopeResponse.<GetPostResDto>builder()
+        return EnvelopeResponse.<GetPostCursorResDto>builder()
                 .data(postService.findHotPostsByCursor(getPostHotReqDto))
                 .build();
     }
 
     @GetMapping("/my/cursor")
-    public EnvelopeResponse<GetPostResDto> findMyPostsByCursor(@Valid @ModelAttribute GetPostMyReqDto getPostMyReqDto, @Authentication AuthenticatedMember loginMember) {
-        return EnvelopeResponse.<GetPostResDto>builder()
+    public EnvelopeResponse<GetPostCursorResDto> findMyPostsByCursor(@Valid @ModelAttribute GetPostMyReqDto getPostMyReqDto, @Authentication AuthenticatedMember loginMember) {
+        return EnvelopeResponse.<GetPostCursorResDto>builder()
                 .data(postService.findMyPostsByCursor(getPostMyReqDto, loginMember.getMemberId()))
                 .build();
     }
 
     @GetMapping("/my-scrap/cursor")
-    public EnvelopeResponse<GetPostResDto> findMyScrapPostsByCursor(@Valid @ModelAttribute GetPostMyReqDto getPostMyScrapReqDto, @Authentication AuthenticatedMember loginMember) {
-        return EnvelopeResponse.<GetPostResDto>builder()
+    public EnvelopeResponse<GetPostCursorResDto> findMyScrapPostsByCursor(@Valid @ModelAttribute GetPostMyReqDto getPostMyScrapReqDto, @Authentication AuthenticatedMember loginMember) {
+        return EnvelopeResponse.<GetPostCursorResDto>builder()
                 .data(postService.findMyScrapPostsByCursor(getPostMyScrapReqDto, loginMember.getMemberId()))
                 .build();
     }
 
     @GetMapping("/search/cursor")
-    public EnvelopeResponse<GetPostResDto> searchPostsByCursor(@Valid @ModelAttribute GetPostSearchReqDto getPostSearchReqDto) {
-        return EnvelopeResponse.<GetPostResDto>builder()
+    public EnvelopeResponse<GetPostCursorResDto> searchPostsByCursor(@Valid @ModelAttribute GetPostSearchReqDto getPostSearchReqDto) {
+        return EnvelopeResponse.<GetPostCursorResDto>builder()
                 .data(postService.searchPostsByCursor(getPostSearchReqDto))
                 .build();
     }
 
     @GetMapping("/hot/search/cursor")
-    public EnvelopeResponse<GetPostResDto> searchHotPostsByCursor(@Valid @ModelAttribute GetPostHotSearchReqDto getPostHotSearchReqDto) {
-        return EnvelopeResponse.<GetPostResDto>builder()
+    public EnvelopeResponse<GetPostCursorResDto> searchHotPostsByCursor(@Valid @ModelAttribute GetPostHotSearchReqDto getPostHotSearchReqDto) {
+        return EnvelopeResponse.<GetPostCursorResDto>builder()
                 .data(postService.searchHotPostsByCursor(getPostHotSearchReqDto))
                 .build();
     }
