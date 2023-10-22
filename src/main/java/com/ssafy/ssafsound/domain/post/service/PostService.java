@@ -303,6 +303,17 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
+    public GetPostOffsetResDto findMyScrapPostsByOffset(GetPostMyScrapOffsetReqDto getPostMyScrapOffsetReqDto, AuthenticatedMember authenticatedMember) {
+        PageRequest pageRequest = getPostMyScrapOffsetReqDto.toPageRequest();
+
+        Member loginMember = memberRepository.findById(authenticatedMember.getMemberId())
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        List<PostScrap> postScraps = postScrapRepository.findMyScrapPostsByPageableAndMember(pageRequest, loginMember);
+        return GetPostOffsetResDto.ofPostScraps(postScraps);
+    }
+
+    @Transactional(readOnly = true)
     public GetPostCursorResDto searchPostsByCursor(GetPostSearchCursorReqDto getPostSearchCursorReqDto) {
         Long boardId = getPostSearchCursorReqDto.getBoardId();
         String keyword = getPostSearchCursorReqDto.getKeyword();

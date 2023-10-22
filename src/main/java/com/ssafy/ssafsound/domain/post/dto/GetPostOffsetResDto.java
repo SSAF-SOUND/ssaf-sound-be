@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.domain.post.dto;
 
 import com.ssafy.ssafsound.domain.post.domain.HotPost;
 import com.ssafy.ssafsound.domain.post.domain.Post;
+import com.ssafy.ssafsound.domain.post.domain.PostScrap;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -25,6 +26,14 @@ public class GetPostOffsetResDto {
         return GetPostOffsetResDto.builder()
                 .posts(hotPosts.stream()
                         .map(hotPost -> new GetPostElement(hotPost.getPost()))
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
+    public static GetPostOffsetResDto ofPostScraps(List<PostScrap> postScraps) {
+        return GetPostOffsetResDto.builder()
+                .posts(postScraps.stream()
+                        .map(postScrap -> new GetPostElement(postScrap.getPost()))
                         .collect(Collectors.toList()))
                 .build();
     }

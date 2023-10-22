@@ -95,7 +95,8 @@ public class PostController {
 
 
     @GetMapping("/my/cursor")
-    public EnvelopeResponse<GetPostCursorResDto> findMyPostsByCursor(@Valid @ModelAttribute GetPostMyCursorReqDto getPostMyCursorReqDto, @Authentication AuthenticatedMember loginMember) {
+    public EnvelopeResponse<GetPostCursorResDto> findMyPostsByCursor(@Valid @ModelAttribute GetPostMyCursorReqDto getPostMyCursorReqDto,
+                                                                     @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<GetPostCursorResDto>builder()
                 .data(postService.findMyPostsByCursor(getPostMyCursorReqDto, loginMember.getMemberId()))
                 .build();
@@ -110,9 +111,18 @@ public class PostController {
     }
 
     @GetMapping("/my-scrap/cursor")
-    public EnvelopeResponse<GetPostCursorResDto> findMyScrapPostsByCursor(@Valid @ModelAttribute GetPostMyCursorReqDto getPostMyScrapReqDto, @Authentication AuthenticatedMember loginMember) {
+    public EnvelopeResponse<GetPostCursorResDto> findMyScrapPostsByCursor(@Valid @ModelAttribute GetPostMyCursorReqDto getPostMyScrapReqDto,
+                                                                          @Authentication AuthenticatedMember loginMember) {
         return EnvelopeResponse.<GetPostCursorResDto>builder()
                 .data(postService.findMyScrapPostsByCursor(getPostMyScrapReqDto, loginMember.getMemberId()))
+                .build();
+    }
+
+    @GetMapping("/my-scrap/offset")
+    public EnvelopeResponse<GetPostOffsetResDto> findMyScrapPostsByOffset(@Valid @ModelAttribute GetPostMyScrapOffsetReqDto getPostMyScrapOffsetReqDto,
+                                                                          @Authentication AuthenticatedMember authenticatedMember) {
+        return EnvelopeResponse.<GetPostOffsetResDto>builder()
+                .data(postService.findMyScrapPostsByOffset(getPostMyScrapOffsetReqDto, authenticatedMember))
                 .build();
     }
 
