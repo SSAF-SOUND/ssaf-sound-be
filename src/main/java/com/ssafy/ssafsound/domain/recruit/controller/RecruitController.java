@@ -6,6 +6,7 @@ import com.ssafy.ssafsound.domain.recruit.dto.*;
 import com.ssafy.ssafsound.domain.recruit.service.RecruitService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,23 +58,30 @@ public class RecruitController {
         return EnvelopeResponse.<Void>builder().build();
     }
 
-    @GetMapping
-    public EnvelopeResponse<GetRecruitsResDto> getRecruits(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable, @Authentication AuthenticatedMember memberInfo) {
-        return EnvelopeResponse.<GetRecruitsResDto>builder()
-                .data(recruitService.getRecruits(getRecruitsReqDto, pageable, memberInfo.getMemberId()))
+    @GetMapping("/cursor")
+    public EnvelopeResponse<GetRecruitsCursorResDto> getRecruitsByCursor(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable, @Authentication AuthenticatedMember memberInfo) {
+        return EnvelopeResponse.<GetRecruitsCursorResDto>builder()
+                .data(recruitService.getRecruitsByCursor(getRecruitsReqDto, pageable, memberInfo.getMemberId()))
+                .build();
+    }
+
+    @GetMapping("/offset")
+    public EnvelopeResponse<GetRecruitOffsetResDto> getRecruitsByOffset(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable, @Authentication AuthenticatedMember memberInfo) {
+        return EnvelopeResponse.<GetRecruitOffsetResDto>builder()
+                .data(recruitService.getRecruitsByOffset(getRecruitsReqDto, pageable, memberInfo.getMemberId()))
                 .build();
     }
 
     @GetMapping("/my-scrap")
-    public EnvelopeResponse<GetRecruitsResDto> getScrapedRecruits(Long cursor, Pageable pageable, @Authentication AuthenticatedMember memberInfo) {
-        return EnvelopeResponse.<GetRecruitsResDto>builder()
+    public EnvelopeResponse<GetRecruitsCursorResDto> getScrapedRecruits(Long cursor, Pageable pageable, @Authentication AuthenticatedMember memberInfo) {
+        return EnvelopeResponse.<GetRecruitsCursorResDto>builder()
                 .data(recruitService.getScrapedRecruits(memberInfo.getMemberId(), cursor, pageable))
                 .build();
     }
 
     @GetMapping("/joined")
-    public  EnvelopeResponse<GetRecruitsResDto> getMemberJoinedRecruits(GetMemberJoinRecruitsReqDto getMemberJoinRecruitsReqDto, @Authentication AuthenticatedMember memberInfo) {
-        return EnvelopeResponse.<GetRecruitsResDto>builder()
+    public  EnvelopeResponse<GetRecruitsCursorResDto> getMemberJoinedRecruits(GetMemberJoinRecruitsReqDto getMemberJoinRecruitsReqDto, @Authentication AuthenticatedMember memberInfo) {
+        return EnvelopeResponse.<GetRecruitsCursorResDto>builder()
                 .data(recruitService.getMemberJoinRecruits(getMemberJoinRecruitsReqDto, memberInfo.getMemberId()))
                 .build();
     }

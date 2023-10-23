@@ -17,9 +17,8 @@ import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.domain.*;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -44,61 +43,98 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Slice<Recruit> findRecruitByGetRecruitsReqDto(GetRecruitsReqDto dto, Pageable pageable) {
-        // cursor base pagination (value -1 or null ignore search condition)
-        Long cursor = dto.getCursor();
-
-        // recruit category (STUDY | PROJECT)
-        BooleanExpression categoryEq = dto.getCategory() == null ? null : recruit.category.eq(Category.valueOf(dto.getCategory().toUpperCase()));
-
-        // recruit title contains search keyword
-        String keyword = dto.getKeyword();
-        BooleanExpression titleEq = StringUtils.hasText(keyword) ? recruit.title.contains(keyword) : null;
-
-        JPAQuery<Recruit> recruitDynamicQuery = jpaQueryFactory.selectFrom(recruit)
-                .where(recruitIdLtThanCursor(cursor), categoryEq, titleEq);
-
-        // recruit skill
-        List<String> skills = dto.getSkills();
-        if(skills!=null && skills.size() > 0) {
-            String metaDataType = MetaDataType.SKILL.name();
-            List<MetaData> containSkills = skills.stream()
-                    .map(skillName->metaDataConsumer.getMetaData(metaDataType, skillName))
-                    .collect(Collectors.toList());
-
-            JPQLQuery<Long> recruitSkillContainRecruitIds = JPAExpressions
-                    .select(recruitSkill.recruit.id)
-                    .from(recruitSkill)
-                    .innerJoin(recruitSkill.recruit, recruit)
-                    .where(recruitSkill.skill.in(containSkills));
-
-            recruitDynamicQuery.where(recruit.id.in(recruitSkillContainRecruitIds));
-        }
-
-        // recruit types limitation
-        List<String> recruitTypes = dto.getRecruitTypes();
-        if(dto.getCategory() != null && dto.getCategory().toUpperCase().equals(Category.PROJECT.name()) && recruitTypes!=null && !recruitTypes.isEmpty()) {
-            String metaDataType = MetaDataType.RECRUIT_TYPE.name();
-            List<MetaData> containRecruitTypes = recruitTypes.stream()
-                    .map(recruitType->metaDataConsumer.getMetaData(metaDataType, recruitType))
-                    .collect(Collectors.toList());
-
-            JPQLQuery<Long> limitationContainRecruitIds = JPAExpressions
-                    .select(recruitLimitation.recruit.id)
-                    .from(recruitLimitation)
-                    .innerJoin(recruitLimitation.recruit, recruit)
-                    .where(recruitLimitation.type.in(containRecruitTypes));
-
-            recruitDynamicQuery.where(recruit.id.in(limitationContainRecruitIds));
-        }
-
+    public Slice<Recruit> findRecruitSliceByGetRecruitsReqDto(GetRecruitsReqDto dto, Pageable pageable) {
+        JPAQuery<Recruit> recruitDynamicQuery = findRecruitByGetRecruitsReqDto(dto);
+        Integer cursor = dto.getNext();
         List<Recruit> recruits = recruitDynamicQuery
-                .where(recruit.finishedRecruit.eq(dto.isFinished()))
+                .where(recruitIdLtThanCursor(Long.valueOf(cursor)))
                 .limit(pageable.getPageSize()+1)
                 .orderBy(recruit.id.desc())
                 .fetch();
         boolean hasNext = pageable.isPaged() && recruits.size() > pageable.getPageSize();
         return new SliceImpl<>(hasNext ? recruits.subList(0, pageable.getPageSize()) : recruits, pageable, hasNext);
+    }
+
+    @Override
+    public Page<Recruit> findRecruitPageByGetRecruitsReqDto(GetRecruitsReqDto dto, Pageable pageable) {
+        JPAQuery<Recruit> recruitDynamicQuery = findRecruitByGetRecruitsReqDto(dto);
+        List<Recruit> recruits = recruitDynamicQuery
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(recruit.id.desc())
+                .fetch();
+
+        JPAQuery<Long> countQuery = jpaQueryFactory
+                .select(recruit.count())
+                .from(recruit)
+                .where(
+                        recruitCategoryEq(dto.getCategory()),
+                        recruitTitleEq(dto.getKeyword()),
+                        recruit.finishedRecruit.eq(dto.isFinished()),
+                        recruitTypeContains(dto.getCategory(), dto.getRecruitTypes()),
+                        recruitSkillContains(dto.getSkills())
+                );
+
+        return PageableExecutionUtils.getPage(recruits, pageable, countQuery::fetchOne);
+    }
+
+    private JPAQuery<Recruit> findRecruitByGetRecruitsReqDto(GetRecruitsReqDto dto) {
+        JPAQuery<Recruit> recruitDynamicQuery = jpaQueryFactory.selectFrom(recruit);
+        recruitDynamicQuery
+                .where(
+                        recruitCategoryEq(dto.getCategory()),
+                        recruitTitleEq(dto.getKeyword()),
+                        recruit.finishedRecruit.eq(dto.isFinished()),
+                        recruitTypeContains(dto.getCategory(), dto.getRecruitTypes()),
+                        recruitSkillContains(dto.getSkills())
+                );
+        return recruitDynamicQuery;
+    }
+
+    private BooleanExpression recruitCategoryEq(String category) {
+        return category == null ? null : recruit.category.eq(Category.valueOf(category.toUpperCase()));
+    }
+    private BooleanExpression recruitTitleEq(String keyword) {
+        return StringUtils.hasText(keyword) ? recruit.title.contains(keyword) : null;
+    }
+    private BooleanExpression recruitTypeContains(String category, List<String> recruitTypes) {
+        boolean isNotProject = category == null || category.toUpperCase().equals(Category.PROJECT.name());
+        boolean isEmpty = recruitTypes == null || recruitTypes.isEmpty();
+        if(isNotProject || isEmpty) {
+            return null;
+        }
+
+        String metaDataType = MetaDataType.RECRUIT_TYPE.name();
+        List<MetaData> containRecruitTypes = recruitTypes.stream()
+                .map(recruitType->metaDataConsumer.getMetaData(metaDataType, recruitType))
+                .collect(Collectors.toList());
+
+        JPQLQuery<Long> limitationContainRecruitIds = JPAExpressions
+                .select(recruitLimitation.recruit.id)
+                .from(recruitLimitation)
+                .innerJoin(recruitLimitation.recruit, recruit)
+                .where(recruitLimitation.type.in(containRecruitTypes));
+
+        return recruit.id.in(limitationContainRecruitIds);
+    }
+
+    private BooleanExpression recruitSkillContains(List<String> skills) {
+        boolean isEmpty = skills==null || skills.isEmpty();
+        if(isEmpty) {
+            return null;
+        }
+
+        String metaDataType = MetaDataType.SKILL.name();
+        List<MetaData> containSkills = skills.stream()
+                .map(skillName->metaDataConsumer.getMetaData(metaDataType, skillName))
+                .collect(Collectors.toList());
+
+        JPQLQuery<Long> recruitSkillContainRecruitIds = JPAExpressions
+                .select(recruitSkill.recruit.id)
+                .from(recruitSkill)
+                .innerJoin(recruitSkill.recruit, recruit)
+                .where(recruitSkill.skill.in(containSkills));
+        return recruit.id.in(recruitSkillContainRecruitIds);
     }
 
     @Override

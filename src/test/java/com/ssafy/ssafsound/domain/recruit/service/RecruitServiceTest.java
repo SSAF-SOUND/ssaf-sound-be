@@ -177,13 +177,13 @@ class RecruitServiceTest {
         lenient().when(recruitRepository.findById(2L)).thenReturn(java.util.Optional.ofNullable(savedRecruit));
 
         lenient().when(recruitRepository
-                .findRecruitByGetRecruitsReqDto(emptyKeywordDto, pageInfo))
+                .findRecruitSliceByGetRecruitsReqDto(emptyKeywordDto, pageInfo))
                 .thenReturn(new SliceImpl<>(List.of(savedRecruit)));
 
-        lenient().when(recruitRepository.findRecruitByGetRecruitsReqDto(findTitleDto, pageInfo))
+        lenient().when(recruitRepository.findRecruitSliceByGetRecruitsReqDto(findTitleDto, pageInfo))
                 .thenReturn(new SliceImpl<>(List.of(savedRecruit)));
 
-        lenient().when(recruitRepository.findRecruitByGetRecruitsReqDto(notFindKeywordDto, pageInfo))
+        lenient().when(recruitRepository.findRecruitSliceByGetRecruitsReqDto(notFindKeywordDto, pageInfo))
                 .thenReturn(new SliceImpl<>(List.of()));
 
 
@@ -348,15 +348,15 @@ class RecruitServiceTest {
     @DisplayName("키워드를 입력하지 않은 리크루트 목록 검색")
     @Test
     void Given_NotIncludeKeyword_When_GetPagingRecruits_Then_Success() {
-        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(emptyKeywordDto, pageInfo, null);
-        assertEquals(1, getRecruitsResDto.getRecruits().size());
+        GetRecruitsCursorResDto getRecruitsCursorResDto = recruitService.getRecruitsByCursor(emptyKeywordDto, pageInfo, null);
+        assertEquals(1, getRecruitsCursorResDto.getRecruits().size());
     }
 
     @DisplayName("키워드를 입력한 리크루트 목록 검색 (검색 결과 O)")
     @Test
     void Given_IncludeKeyword_When_GetPagingRecruits_Then_Success() {
-        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(findTitleDto, pageInfo, null);
-        assertEquals(1, getRecruitsResDto.getRecruits().size());
+        GetRecruitsCursorResDto getRecruitsCursorResDto = recruitService.getRecruitsByCursor(findTitleDto, pageInfo, null);
+        assertEquals(1, getRecruitsCursorResDto.getRecruits().size());
     }
 
     @DisplayName("인원제한이 설정된 모집군과 등록자의 모집군이 일치하는 리크루트 목록 검색")
@@ -364,19 +364,19 @@ class RecruitServiceTest {
     void Given_IncludeKeywordAndIncludeRegisterRecruitType_When_GetPagingRecruits_Then_Success() {
         savedRecruit.setRegisterRecruitType(new MetaData(RecruitType.DESIGN));
 
-        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(findTitleDto, pageInfo, null);
-        assertEquals(1, getRecruitsResDto.getRecruits().size());
-        assertEquals(1, getRecruitsResDto.getRecruits().get(0).getParticipants().size());
-        assertEquals(3, getRecruitsResDto.getRecruits().get(0).getParticipants().get(0).getLimit());
-        assertEquals(2, getRecruitsResDto.getRecruits().get(0).getParticipants().get(0).getMembers().size());
+        GetRecruitsCursorResDto getRecruitsCursorResDto = recruitService.getRecruitsByCursor(findTitleDto, pageInfo, null);
+        assertEquals(1, getRecruitsCursorResDto.getRecruits().size());
+        assertEquals(1, getRecruitsCursorResDto.getRecruits().get(0).getParticipants().size());
+        assertEquals(3, getRecruitsCursorResDto.getRecruits().get(0).getParticipants().get(0).getLimit());
+        assertEquals(2, getRecruitsCursorResDto.getRecruits().get(0).getParticipants().get(0).getMembers().size());
     }
 
 
     @DisplayName("키워드를 입력한 리크루트 목록 검색 (검색 결과 X)")
     @Test
     void Given_IncludeKeyword_When_GetPagingRecruits_Then_EmptySet() {
-        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(notFindKeywordDto, pageInfo, null);
-        assertEquals(0, getRecruitsResDto.getRecruits().size());
+        GetRecruitsCursorResDto getRecruitsCursorResDto = recruitService.getRecruitsByCursor(notFindKeywordDto, pageInfo, null);
+        assertEquals(0, getRecruitsCursorResDto.getRecruits().size());
     }
 
     @DisplayName("등록자 리크루트 완료 성공")
