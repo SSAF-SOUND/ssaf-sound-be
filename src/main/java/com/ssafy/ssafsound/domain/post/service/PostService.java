@@ -18,6 +18,7 @@ import com.ssafy.ssafsound.infra.exception.InfraException;
 import com.ssafy.ssafsound.infra.storage.service.AwsS3StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,7 +64,7 @@ public class PostService {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorInfo.NO_BOARD));
 
-        List<Post> posts = postRepository.findPostsByboardAndPageable(board, pageRequest);
+        Page<Post> posts = postRepository.findPostsByboardAndPageable(board, pageRequest);
         return GetPostOffsetResDto.ofPosts(posts);
     }
 
@@ -263,7 +264,7 @@ public class PostService {
     public GetPostOffsetResDto findHotPostsByOffset(BasePageRequest basePageRequest) {
         PageRequest pageRequest = basePageRequest.toPageRequest();
 
-        List<HotPost> hotPosts = hotPostRepository.findHotPostsByPageable(pageRequest);
+        Page<HotPost> hotPosts = hotPostRepository.findHotPostsByPageable(pageRequest);
         return GetPostOffsetResDto.ofHotPosts(hotPosts);
     }
 
@@ -286,7 +287,7 @@ public class PostService {
         Member loginMember = memberRepository.findById(authenticatedMember.getMemberId())
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-        List<Post> posts = postRepository.findMyPostsByMemberAndPageable(loginMember, pageRequest);
+        Page<Post> posts = postRepository.findMyPostsByMemberAndPageable(loginMember, pageRequest);
         return GetPostOffsetResDto.ofPosts(posts);
     }
 
@@ -309,7 +310,7 @@ public class PostService {
         Member loginMember = memberRepository.findById(authenticatedMember.getMemberId())
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-        List<PostScrap> postScraps = postScrapRepository.findMyScrapPostsByPageableAndMember(pageRequest, loginMember);
+        Page<PostScrap> postScraps = postScrapRepository.findMyScrapPostsByPageableAndMember(pageRequest, loginMember);
         return GetPostOffsetResDto.ofPostScraps(postScraps);
     }
 
@@ -338,7 +339,7 @@ public class PostService {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorInfo.NO_BOARD));
 
-        List<Post> posts = postRepository.searchPostsByBoardAndKeywordAndPageable(board, keyword, pageRequest);
+        Page<Post> posts = postRepository.searchPostsByBoardAndKeywordAndPageable(board, keyword, pageRequest);
         return GetPostOffsetResDto.ofPosts(posts);
     }
 
@@ -357,7 +358,7 @@ public class PostService {
         PageRequest pageRequest = getPostHotSearchOffsetReqDto.toPageRequest();
         String keyword = getPostHotSearchOffsetReqDto.getKeyword();
 
-        List<HotPost> hotPosts = hotPostRepository.searchHotPostsByKeywordAndPageable(keyword, pageRequest);
+        Page<HotPost> hotPosts = hotPostRepository.searchHotPostsByKeywordAndPageable(keyword, pageRequest);
         return GetPostOffsetResDto.ofHotPosts(hotPosts);
     }
 }

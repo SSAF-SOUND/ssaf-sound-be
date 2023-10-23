@@ -1,7 +1,9 @@
 package com.ssafy.ssafsound.domain.post.repository;
 
 import com.ssafy.ssafsound.domain.post.domain.HotPost;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -28,19 +30,14 @@ public interface HotPostRepository extends JpaRepository<HotPost, Long>, HotPost
 
     Boolean existsByPostId(Long postId);
 
-    @Query("select h from hot_post h " +
-            "join fetch h.post p " +
-            "join fetch p.board " +
-            "join fetch p.member " +
-            "left join fetch p.likes ")
-    List<HotPost> findHotPostsByPageable(PageRequest pageRequest);
 
+    @EntityGraph(attributePaths = {"post", "post.board", "post.member", "post.likes"})
+    @Query("select h from hot_post h")
+    Page<HotPost> findHotPostsByPageable(PageRequest pageRequest);
+
+    @EntityGraph(attributePaths = {"post", "post.board", "post.member", "post.likes"})
     @Query("select h from hot_post h " +
-            "join fetch h.post p " +
-            "join fetch p.board b " +
-            "join fetch p.member " +
-            "left join fetch p.likes " +
-            "where replace(p.title, ' ', '') like CONCAT('%', :keyword, '%') " +
-            "or replace(p.content, ' ', '') like CONCAT('%', :keyword, '%') ")
-    List<HotPost> searchHotPostsByKeywordAndPageable(String keyword, PageRequest pageRequest);
+            "where replace(h.post.title, ' ', '') like CONCAT('%', :keyword, '%') " +
+            "or replace(h.post.content, ' ', '') like CONCAT('%', :keyword, '%') ")
+    Page<HotPost> searchHotPostsByKeywordAndPageable(String keyword, PageRequest pageRequest);
 }

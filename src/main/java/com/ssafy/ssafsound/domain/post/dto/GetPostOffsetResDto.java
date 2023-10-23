@@ -5,6 +5,7 @@ import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.domain.PostScrap;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,28 +14,36 @@ import java.util.stream.Collectors;
 @Builder
 public class GetPostOffsetResDto {
     private List<GetPostElement> posts;
+    private Integer currentPage;
+    private Integer totalPageCount;
 
-    public static GetPostOffsetResDto ofPosts(List<Post> posts) {
+    public static GetPostOffsetResDto ofPosts(Page<Post> posts) {
         return GetPostOffsetResDto.builder()
-                .posts(posts.stream()
+                .posts(posts.getContent().stream()
                         .map(GetPostElement::new)
                         .collect(Collectors.toList()))
+                .currentPage(posts.getNumber())
+                .totalPageCount(posts.getTotalPages())
                 .build();
     }
 
-    public static GetPostOffsetResDto ofHotPosts(List<HotPost> hotPosts) {
+    public static GetPostOffsetResDto ofHotPosts(Page<HotPost> hotPosts) {
         return GetPostOffsetResDto.builder()
-                .posts(hotPosts.stream()
+                .posts(hotPosts.getContent().stream()
                         .map(hotPost -> new GetPostElement(hotPost.getPost()))
                         .collect(Collectors.toList()))
+                .currentPage(hotPosts.getNumber())
+                .totalPageCount(hotPosts.getTotalPages())
                 .build();
     }
 
-    public static GetPostOffsetResDto ofPostScraps(List<PostScrap> postScraps) {
+    public static GetPostOffsetResDto ofPostScraps(Page<PostScrap> postScraps) {
         return GetPostOffsetResDto.builder()
-                .posts(postScraps.stream()
+                .posts(postScraps.getContent().stream()
                         .map(postScrap -> new GetPostElement(postScrap.getPost()))
                         .collect(Collectors.toList()))
+                .currentPage(postScraps.getNumber())
+                .totalPageCount(postScraps.getTotalPages())
                 .build();
     }
 }
