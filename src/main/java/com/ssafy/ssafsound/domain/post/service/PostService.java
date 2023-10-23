@@ -303,8 +303,8 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public GetPostOffsetResDto findMyScrapPostsByOffset(GetPostMyScrapOffsetReqDto getPostMyScrapOffsetReqDto, AuthenticatedMember authenticatedMember) {
-        PageRequest pageRequest = getPostMyScrapOffsetReqDto.toPageRequest();
+    public GetPostOffsetResDto findMyScrapPostsByOffset(BasePageRequest basePageRequest, AuthenticatedMember authenticatedMember) {
+        PageRequest pageRequest = basePageRequest.toPageRequest();
 
         Member loginMember = memberRepository.findById(authenticatedMember.getMemberId())
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));

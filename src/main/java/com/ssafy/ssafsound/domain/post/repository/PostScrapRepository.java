@@ -21,8 +21,8 @@ public interface PostScrapRepository extends JpaRepository<PostScrap, Long>, Pos
     @Query("select s from post_scrap s " +
             "join fetch s.post p " +
             "join fetch p.board " +
-            "join fetch p.member m " +
+            "join fetch p.member " +
             "left join fetch p.likes " +
-            "where m = :member ")
+            "where s.member = :member ")
     List<PostScrap> findMyScrapPostsByPageableAndMember(PageRequest pageRequest, @Param("member") Member member);
 }

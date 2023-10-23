@@ -119,10 +119,10 @@ public class PostController {
     }
 
     @GetMapping("/my-scrap/offset")
-    public EnvelopeResponse<GetPostOffsetResDto> findMyScrapPostsByOffset(@Valid @ModelAttribute GetPostMyScrapOffsetReqDto getPostMyScrapOffsetReqDto,
+    public EnvelopeResponse<GetPostOffsetResDto> findMyScrapPostsByOffset(@Valid @ModelAttribute BasePageRequest basePageRequest,
                                                                           @Authentication AuthenticatedMember authenticatedMember) {
         return EnvelopeResponse.<GetPostOffsetResDto>builder()
-                .data(postService.findMyScrapPostsByOffset(getPostMyScrapOffsetReqDto, authenticatedMember))
+                .data(postService.findMyScrapPostsByOffset(basePageRequest, authenticatedMember))
                 .build();
     }
 
