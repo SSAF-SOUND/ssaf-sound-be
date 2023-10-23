@@ -19,10 +19,17 @@ public class PostController {
 
     private final PostService postService;
 
-    @GetMapping
-    public EnvelopeResponse<GetPostResDto> findPosts(@Valid @ModelAttribute GetPostReqDto getPostReqDto) {
-        return EnvelopeResponse.<GetPostResDto>builder()
-                .data(postService.findPosts(getPostReqDto))
+    @GetMapping("/cursor")
+    public EnvelopeResponse<GetPostCursorResDto> findPostsByCursor(@Valid @ModelAttribute GetPostCursorReqDto getPostCursorReqDto) {
+        return EnvelopeResponse.<GetPostCursorResDto>builder()
+                .data(postService.findPostsByCursor(getPostCursorReqDto))
+                .build();
+    }
+
+    @GetMapping("/offset")
+    public EnvelopeResponse<GetPostOffsetResDto> findPostsByOffset(@Valid @ModelAttribute GetPostOffsetReqDto getPostOffsetReqDto) {
+        return EnvelopeResponse.<GetPostOffsetResDto>builder()
+                .data(postService.findPostsByOffset(getPostOffsetReqDto))
                 .build();
     }
 
@@ -72,39 +79,78 @@ public class PostController {
                 .build();
     }
 
-    @GetMapping("/hot")
-    public EnvelopeResponse<GetPostResDto> findHotPosts(@Valid @ModelAttribute GetPostHotReqDto getPostHotReqDto) {
-        log.info(String.valueOf(getPostHotReqDto.getCursor()));
-        return EnvelopeResponse.<GetPostResDto>builder()
-                .data(postService.findHotPosts(getPostHotReqDto))
+    @GetMapping("/hot/cursor")
+    public EnvelopeResponse<GetPostCursorResDto> findHotPostsByCursor(@Valid @ModelAttribute GetPostHotCursorReqDto getPostHotCursorReqDto) {
+        return EnvelopeResponse.<GetPostCursorResDto>builder()
+                .data(postService.findHotPostsByCursor(getPostHotCursorReqDto))
                 .build();
     }
 
-    @GetMapping("/my")
-    public EnvelopeResponse<GetPostResDto> findMyPosts(@Valid @ModelAttribute GetPostMyReqDto getPostMyReqDto, @Authentication AuthenticatedMember loginMember) {
-        return EnvelopeResponse.<GetPostResDto>builder()
-                .data(postService.findMyPosts(getPostMyReqDto, loginMember.getMemberId()))
+    @GetMapping("/hot/offset")
+    public EnvelopeResponse<GetPostOffsetResDto> findHotPostsByOffset(@Valid @ModelAttribute BasePageRequest basePageRequest) {
+        return EnvelopeResponse.<GetPostOffsetResDto>builder()
+                .data(postService.findHotPostsByOffset(basePageRequest))
                 .build();
     }
 
-    @GetMapping("/my-scrap")
-    public EnvelopeResponse<GetPostResDto> findMyScrapPosts(@Valid @ModelAttribute GetPostMyReqDto getPostMyScrapReqDto, @Authentication AuthenticatedMember loginMember) {
-        return EnvelopeResponse.<GetPostResDto>builder()
-                .data(postService.findMyScrapPosts(getPostMyScrapReqDto, loginMember.getMemberId()))
+
+    @GetMapping("/my/cursor")
+    public EnvelopeResponse<GetPostCursorResDto> findMyPostsByCursor(@Valid @ModelAttribute GetPostMyCursorReqDto getPostMyCursorReqDto,
+                                                                     @Authentication AuthenticatedMember loginMember) {
+        return EnvelopeResponse.<GetPostCursorResDto>builder()
+                .data(postService.findMyPostsByCursor(getPostMyCursorReqDto, loginMember.getMemberId()))
                 .build();
     }
 
-    @GetMapping("/search")
-    public EnvelopeResponse<GetPostResDto> searchPosts(@Valid @ModelAttribute GetPostSearchReqDto getPostSearchReqDto) {
-        return EnvelopeResponse.<GetPostResDto>builder()
-                .data(postService.searchPosts(getPostSearchReqDto))
+    @GetMapping("/my/offset")
+    public EnvelopeResponse<GetPostOffsetResDto> findMyPostsByOffset(@Valid @ModelAttribute BasePageRequest basePageRequest,
+                                                                     @Authentication AuthenticatedMember authenticatedMember) {
+        return EnvelopeResponse.<GetPostOffsetResDto>builder()
+                .data(postService.findMyPostsByOffset(basePageRequest, authenticatedMember))
                 .build();
     }
 
-    @GetMapping("/hot/search")
-    public EnvelopeResponse<GetPostResDto> searchHotPosts(@Valid @ModelAttribute GetPostHotSearchReqDto getPostHotSearchReqDto) {
-        return EnvelopeResponse.<GetPostResDto>builder()
-                .data(postService.searchHotPosts(getPostHotSearchReqDto))
+    @GetMapping("/my-scrap/cursor")
+    public EnvelopeResponse<GetPostCursorResDto> findMyScrapPostsByCursor(@Valid @ModelAttribute GetPostMyCursorReqDto getPostMyScrapReqDto,
+                                                                          @Authentication AuthenticatedMember loginMember) {
+        return EnvelopeResponse.<GetPostCursorResDto>builder()
+                .data(postService.findMyScrapPostsByCursor(getPostMyScrapReqDto, loginMember.getMemberId()))
+                .build();
+    }
+
+    @GetMapping("/my-scrap/offset")
+    public EnvelopeResponse<GetPostOffsetResDto> findMyScrapPostsByOffset(@Valid @ModelAttribute BasePageRequest basePageRequest,
+                                                                          @Authentication AuthenticatedMember authenticatedMember) {
+        return EnvelopeResponse.<GetPostOffsetResDto>builder()
+                .data(postService.findMyScrapPostsByOffset(basePageRequest, authenticatedMember))
+                .build();
+    }
+
+    @GetMapping("/search/cursor")
+    public EnvelopeResponse<GetPostCursorResDto> searchPostsByCursor(@Valid @ModelAttribute GetPostSearchCursorReqDto getPostSearchCursorReqDto) {
+        return EnvelopeResponse.<GetPostCursorResDto>builder()
+                .data(postService.searchPostsByCursor(getPostSearchCursorReqDto))
+                .build();
+    }
+
+    @GetMapping("/search/offset")
+    public EnvelopeResponse<GetPostOffsetResDto> searchPostsByOffset(@Valid @ModelAttribute GetPostSearchOffsetReqDto getPostSearchOffsetReqDto) {
+        return EnvelopeResponse.<GetPostOffsetResDto>builder()
+                .data(postService.searchPostsByOffset(getPostSearchOffsetReqDto))
+                .build();
+    }
+
+    @GetMapping("/hot/search/cursor")
+    public EnvelopeResponse<GetPostCursorResDto> searchHotPostsByCursor(@Valid @ModelAttribute GetPostHotSearchCursorReqDto getPostHotSearchCursorReqDto) {
+        return EnvelopeResponse.<GetPostCursorResDto>builder()
+                .data(postService.searchHotPostsByCursor(getPostHotSearchCursorReqDto))
+                .build();
+    }
+
+    @GetMapping("/hot/search/offset")
+    public EnvelopeResponse<GetPostOffsetResDto> searchHotPostsByCursor(@Valid @ModelAttribute GetPostHotSearchOffsetReqDto getPostHotSearchOffsetReqDto) {
+        return EnvelopeResponse.<GetPostOffsetResDto>builder()
+                .data(postService.searchHotPostsByOffset(getPostHotSearchOffsetReqDto))
                 .build();
     }
 }

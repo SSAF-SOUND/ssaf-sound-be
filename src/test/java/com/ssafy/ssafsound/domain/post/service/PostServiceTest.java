@@ -1,6 +1,5 @@
 package com.ssafy.ssafsound.domain.post.service;
 
-import static com.ssafy.ssafsound.domain.member.domain.QMember.*;
 import static com.ssafy.ssafsound.global.util.fixture.PostFixture.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,8 +27,8 @@ import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.domain.PostLike;
 import com.ssafy.ssafsound.domain.post.domain.PostScrap;
 import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
-import com.ssafy.ssafsound.domain.post.dto.GetPostReqDto;
-import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
+import com.ssafy.ssafsound.domain.post.dto.GetPostCursorReqDto;
+import com.ssafy.ssafsound.domain.post.dto.GetPostCursorResDto;
 import com.ssafy.ssafsound.domain.post.dto.PostCommonLikeResDto;
 import com.ssafy.ssafsound.domain.post.dto.PostIdElement;
 import com.ssafy.ssafsound.domain.post.dto.PostPostScrapResDto;
@@ -87,41 +86,41 @@ class PostServiceTest {
 	@DisplayName("유효한 boardId, cursor, size가 주어졌다면 게시글 목록 조회가 성공합니다.")
 	void Given_BoardIdAndCursorAndSize_When_findPosts_Then_Success() {
 		// given
-		GetPostReqDto getPostReqDto = GetPostReqDto.builder().boardId(1L).cursor(-1L).size(10).build();
+		GetPostCursorReqDto getPostCursorReqDto = GetPostCursorReqDto.builder().boardId(1L).cursor(-1L).size(10).build();
 
 		List<Post> posts = List.of(POST_FIXTURE1, POST_FIXTURE2);
 
-		given(boardRepository.existsById(getPostReqDto.getBoardId())).willReturn(true);
-		given(postRepository.findWithDetailsByBoardId(getPostReqDto.getBoardId(), getPostReqDto.getCursor(),
-			getPostReqDto.getSize())).willReturn(posts);
+		given(boardRepository.existsById(getPostCursorReqDto.getBoardId())).willReturn(true);
+		given(postRepository.findWithDetailsByBoardId(getPostCursorReqDto.getBoardId(), getPostCursorReqDto.getCursor(),
+			getPostCursorReqDto.getSize())).willReturn(posts);
 
 		// when
-		GetPostResDto response = postService.findPosts(getPostReqDto);
+		GetPostCursorResDto response = postService.findPostsByCursor(getPostCursorReqDto);
 
 		// then
 		assertThat(response).usingRecursiveComparison()
-			.isEqualTo(GetPostResDto.ofPosts(posts, getPostReqDto.getSize()));
+			.isEqualTo(GetPostCursorResDto.ofPosts(posts, getPostCursorReqDto.getSize()));
 
 		// verify
-		verify(boardRepository, times(1)).existsById(getPostReqDto.getBoardId());
-		verify(postRepository, times(1)).findWithDetailsByBoardId(getPostReqDto.getBoardId(), getPostReqDto.getCursor(),
-			getPostReqDto.getSize());
+		verify(boardRepository, times(1)).existsById(getPostCursorReqDto.getBoardId());
+		verify(postRepository, times(1)).findWithDetailsByBoardId(getPostCursorReqDto.getBoardId(), getPostCursorReqDto.getCursor(),
+			getPostCursorReqDto.getSize());
 	}
 
 	@Test
 	@DisplayName("유효하지 않은 boardId가 주어졌다면 게시글 목록 조회에 예외를 발생합니다.")
 	void Given_BoardId_When_findPosts_Then_ThrowException() {
 		// given
-		GetPostReqDto getPostReqDto = GetPostReqDto.builder().boardId(100L).cursor(-1L).size(10).build();
+		GetPostCursorReqDto getPostCursorReqDto = GetPostCursorReqDto.builder().boardId(100L).cursor(-1L).size(10).build();
 
-		given(boardRepository.existsById(getPostReqDto.getBoardId())).willReturn(false);
+		given(boardRepository.existsById(getPostCursorReqDto.getBoardId())).willReturn(false);
 
 		// when, then
-		BoardException exception = assertThrows(BoardException.class, () -> postService.findPosts(getPostReqDto));
+		BoardException exception = assertThrows(BoardException.class, () -> postService.findPostsByCursor(getPostCursorReqDto));
 		assertEquals(BoardErrorInfo.NO_BOARD, exception.getInfo());
 
 		// verify
-		verify(boardRepository, times(1)).existsById(getPostReqDto.getBoardId());
+		verify(boardRepository, times(1)).existsById(getPostCursorReqDto.getBoardId());
 	}
 
 	@Test
