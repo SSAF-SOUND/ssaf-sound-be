@@ -854,7 +854,7 @@ Content-Length: 987
       "content" : "저도 싸피에서 교육들으면 개발실력 엄청 오르겠죠?",
       "likeCount" : 11,
       "commentCount" : 29,
-      "createdAt" : "2023-10-23T01:34:06.4111754",
+      "createdAt" : "2023-10-23T13:09:17.2014161",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
@@ -866,7 +866,7 @@ Content-Length: 987
       "content" : "역시 B형 특강을 열심히 듣는게 맞나요?",
       "likeCount" : 5,
       "commentCount" : 14,
-      "createdAt" : "2023-10-23T01:34:06.4111754",
+      "createdAt" : "2023-10-23T13:09:17.2014161",
       "nickname" : "익명",
       "anonymity" : true,
       "thumbnail" : "썸네일 URL"
@@ -1048,7 +1048,7 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 965
+Content-Length: 1016
 
 {
   "code" : "200",
@@ -1062,7 +1062,7 @@ Content-Length: 965
       "content" : "저도 싸피에서 교육들으면 개발실력 엄청 오르겠죠?",
       "likeCount" : 11,
       "commentCount" : 29,
-      "createdAt" : "2023-10-23T01:34:06.4111754",
+      "createdAt" : "2023-10-23T13:09:17.2014161",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
@@ -1074,11 +1074,13 @@ Content-Length: 965
       "content" : "역시 B형 특강을 열심히 듣는게 맞나요?",
       "likeCount" : 5,
       "commentCount" : 14,
-      "createdAt" : "2023-10-23T01:34:06.4111754",
+      "createdAt" : "2023-10-23T13:09:17.2014161",
       "nickname" : "익명",
       "anonymity" : true,
       "thumbnail" : "썸네일 URL"
-    } ]
+    } ],
+    "currentPage" : 1,
+    "totalPageCount" : 1
   }
 }</code></pre>
 </div>
@@ -1169,6 +1171,16 @@ Content-Length: 965
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">게시글 목록</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.currentPage</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지 번호</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.totalPageCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">전체 페이지 수</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].boardId</code></p></td>
@@ -1819,7 +1831,7 @@ Content-Length: 511
       "content" : "SSAFY 9기 합격했습니다!!",
       "likeCount" : 3,
       "commentCount" : 2,
-      "createdAt" : "2023-10-23T01:34:06.4111754",
+      "createdAt" : "2023-10-23T13:09:17.2014161",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
@@ -2005,7 +2017,7 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 489
+Content-Length: 540
 
 {
   "code" : "200",
@@ -2019,11 +2031,13 @@ Content-Length: 489
       "content" : "SSAFY 9기 합격했습니다!!",
       "likeCount" : 3,
       "commentCount" : 2,
-      "createdAt" : "2023-10-23T01:34:06.4111754",
+      "createdAt" : "2023-10-23T13:09:17.2014161",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
-    } ]
+    } ],
+    "currentPage" : 1,
+    "totalPageCount" : 1
   }
 }</code></pre>
 </div>
@@ -2118,6 +2132,16 @@ Content-Length: 489
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">게시글 목록</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.currentPage</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지 번호</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.totalPageCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">전체 페이지 수</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].boardId</code></p></td>
@@ -2922,7 +2946,7 @@ Content-Length: 942
       "content" : "열심히 SSAFY 9기를 수료하시면 취업에 성공하실겁니다.",
       "likeCount" : 102,
       "commentCount" : 33,
-      "createdAt" : "2023-10-23T01:34:06.4111754",
+      "createdAt" : "2023-10-23T13:09:17.2014161",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
@@ -2934,7 +2958,7 @@ Content-Length: 942
       "content" : "은 실력입니다.",
       "likeCount" : 202,
       "commentCount" : 54,
-      "createdAt" : "2023-10-23T01:34:06.4111754",
+      "createdAt" : "2023-10-23T13:09:17.2014161",
       "nickname" : "익명",
       "anonymity" : true,
       "thumbnail" : "썸네일 URL"
@@ -3112,7 +3136,7 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 920
+Content-Length: 971
 
 {
   "code" : "200",
@@ -3126,7 +3150,7 @@ Content-Length: 920
       "content" : "열심히 SSAFY 9기를 수료하시면 취업에 성공하실겁니다.",
       "likeCount" : 102,
       "commentCount" : 33,
-      "createdAt" : "2023-10-23T01:34:06.4111754",
+      "createdAt" : "2023-10-23T13:09:17.2014161",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
@@ -3138,11 +3162,13 @@ Content-Length: 920
       "content" : "은 실력입니다.",
       "likeCount" : 202,
       "commentCount" : 54,
-      "createdAt" : "2023-10-23T01:34:06.4111754",
+      "createdAt" : "2023-10-23T13:09:17.2014161",
       "nickname" : "익명",
       "anonymity" : true,
       "thumbnail" : "썸네일 URL"
-    } ]
+    } ],
+    "currentPage" : 1,
+    "totalPageCount" : 1
   }
 }</code></pre>
 </div>
@@ -3229,6 +3255,16 @@ Content-Length: 920
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">게시글 목록</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.currentPage</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지 번호</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.totalPageCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">전체 페이지 수</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].boardId</code></p></td>
@@ -3324,7 +3360,7 @@ Content-Length: 553
       "content" : "열심히 SSAFY 9기를 수료하시면 취업에 성공하실겁니다.",
       "likeCount" : 102,
       "commentCount" : 33,
-      "createdAt" : "2023-10-23T01:34:06.4111754",
+      "createdAt" : "2023-10-23T13:09:17.2014161",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
@@ -3506,7 +3542,7 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 531
+Content-Length: 582
 
 {
   "code" : "200",
@@ -3520,11 +3556,13 @@ Content-Length: 531
       "content" : "열심히 SSAFY 9기를 수료하시면 취업에 성공하실겁니다.",
       "likeCount" : 102,
       "commentCount" : 33,
-      "createdAt" : "2023-10-23T01:34:06.4111754",
+      "createdAt" : "2023-10-23T13:09:17.2014161",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
-    } ]
+    } ],
+    "currentPage" : 1,
+    "totalPageCount" : 1
   }
 }</code></pre>
 </div>
@@ -3615,6 +3653,16 @@ Content-Length: 531
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">게시글 목록</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.currentPage</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지 번호</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.totalPageCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">전체 페이지 수</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].boardId</code></p></td>
@@ -3710,7 +3758,7 @@ Content-Length: 956
       "content" : "SSAFY 9기 합격했습니다!!",
       "likeCount" : 3,
       "commentCount" : 2,
-      "createdAt" : "2023-10-23T01:34:06.4111754",
+      "createdAt" : "2023-10-23T13:09:17.2014161",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
@@ -3722,7 +3770,7 @@ Content-Length: 956
       "content" : "열심히 SSAFY 9기를 수료하시면 취업에 성공하실겁니다.",
       "likeCount" : 102,
       "commentCount" : 33,
-      "createdAt" : "2023-10-23T01:34:06.4111754",
+      "createdAt" : "2023-10-23T13:09:17.2014161",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
@@ -3900,7 +3948,7 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 934
+Content-Length: 985
 
 {
   "code" : "200",
@@ -3914,7 +3962,7 @@ Content-Length: 934
       "content" : "SSAFY 9기 합격했습니다!!",
       "likeCount" : 3,
       "commentCount" : 2,
-      "createdAt" : "2023-10-23T01:34:06.4111754",
+      "createdAt" : "2023-10-23T13:09:17.2014161",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
@@ -3926,11 +3974,13 @@ Content-Length: 934
       "content" : "열심히 SSAFY 9기를 수료하시면 취업에 성공하실겁니다.",
       "likeCount" : 102,
       "commentCount" : 33,
-      "createdAt" : "2023-10-23T01:34:06.4111754",
+      "createdAt" : "2023-10-23T13:09:17.2014161",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
-    } ]
+    } ],
+    "currentPage" : 1,
+    "totalPageCount" : 1
   }
 }</code></pre>
 </div>
@@ -4017,6 +4067,16 @@ Content-Length: 934
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">게시글 목록</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.currentPage</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지 번호</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.totalPageCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">전체 페이지 수</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].boardId</code></p></td>
@@ -4112,7 +4172,7 @@ Content-Length: 987
       "content" : "역시 B형 특강을 열심히 듣는게 맞나요?",
       "likeCount" : 5,
       "commentCount" : 14,
-      "createdAt" : "2023-10-23T01:34:06.4111754",
+      "createdAt" : "2023-10-23T13:09:17.2014161",
       "nickname" : "익명",
       "anonymity" : true,
       "thumbnail" : "썸네일 URL"
@@ -4124,7 +4184,7 @@ Content-Length: 987
       "content" : "저도 싸피에서 교육들으면 개발실력 엄청 오르겠죠?",
       "likeCount" : 11,
       "commentCount" : 29,
-      "createdAt" : "2023-10-23T01:34:06.4111754",
+      "createdAt" : "2023-10-23T13:09:17.2014161",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
@@ -4302,7 +4362,7 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 965
+Content-Length: 1016
 
 {
   "code" : "200",
@@ -4316,7 +4376,7 @@ Content-Length: 965
       "content" : "역시 B형 특강을 열심히 듣는게 맞나요?",
       "likeCount" : 5,
       "commentCount" : 14,
-      "createdAt" : "2023-10-23T01:34:06.4111754",
+      "createdAt" : "2023-10-23T13:09:17.2014161",
       "nickname" : "익명",
       "anonymity" : true,
       "thumbnail" : "썸네일 URL"
@@ -4328,11 +4388,13 @@ Content-Length: 965
       "content" : "저도 싸피에서 교육들으면 개발실력 엄청 오르겠죠?",
       "likeCount" : 11,
       "commentCount" : 29,
-      "createdAt" : "2023-10-23T01:34:06.4111754",
+      "createdAt" : "2023-10-23T13:09:17.2014161",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
-    } ]
+    } ],
+    "currentPage" : 1,
+    "totalPageCount" : 1
   }
 }</code></pre>
 </div>
@@ -4421,6 +4483,16 @@ Content-Length: 965
 <td class="tableblock halign-left valign-top"><p class="tableblock">게시글 목록</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.currentPage</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지 번호</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.totalPageCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">전체 페이지 수</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].boardId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">게시글이 작성된 게시판 종류의 ID</p></td>
@@ -4505,7 +4577,7 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 1282
+Content-Length: 1283
 
 {
   "code" : "200",
@@ -4515,7 +4587,7 @@ Content-Length: 1282
       "commentId" : 1,
       "content" : "반가워요",
       "likeCount" : 3,
-      "createdAt" : "2023-10-23T01:34:06.4051964",
+      "createdAt" : "2023-10-23T13:09:17.1964326",
       "anonymity" : true,
       "modified" : false,
       "liked" : true,
@@ -4533,7 +4605,7 @@ Content-Length: 1282
         "commentId" : 1,
         "content" : "안녕하세요",
         "likeCount" : 10,
-        "createdAt" : "2023-10-23T01:34:06.403202",
+        "createdAt" : "2023-10-23T13:09:17.1954368",
         "anonymity" : false,
         "modified" : false,
         "liked" : false,
@@ -5986,8 +6058,8 @@ Host: api.ssafsound.com
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-Set-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/; Domain=ssafsound.com; Max-Age=2629744; Expires=Wed, 22 Nov 2023 03:03:09 GMT; Secure; HttpOnly
-Set-Cookie: refreshToken=syJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IsdfserwetweSflKxwRJeSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/auth/reissue; Domain=ssafsound.com; Max-Age=2629744; Expires=Wed, 22 Nov 2023 03:03:09 GMT; Secure; HttpOnly
+Set-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/; Domain=ssafsound.com; Max-Age=2629744; Expires=Wed, 22 Nov 2023 14:38:20 GMT; Secure; HttpOnly
+Set-Cookie: refreshToken=syJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IsdfserwetweSflKxwRJeSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/auth/reissue; Domain=ssafsound.com; Max-Age=2629744; Expires=Wed, 22 Nov 2023 14:38:20 GMT; Secure; HttpOnly
 Content-Type: application/json
 Content-Length: 422
 
@@ -6024,8 +6096,8 @@ Cookie: refreshToken=refreshTokenValue</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-Set-Cookie: accessToken=; Path=/; Max-Age=0; Expires=Thu, 1 Jan 1970 00:00:00 GMT; Secure; HttpOnly
-Set-Cookie: refreshToken=; Path=/; Max-Age=0; Expires=Thu, 1 Jan 1970 00:00:00 GMT; Secure; HttpOnly
+Set-Cookie: accessToken=; Path=/; Domain=ssafsound.com; Max-Age=0; Expires=Thu, 1 Jan 1970 00:00:00 GMT; Secure; HttpOnly
+Set-Cookie: refreshToken=; Path=/; Domain=ssafsound.com; Max-Age=0; Expires=Thu, 1 Jan 1970 00:00:00 GMT; Secure; HttpOnly
 Content-Type: application/json
 Content-Length: 66
 
@@ -6091,8 +6163,8 @@ Host: api.ssafsound.com</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-Set-Cookie: accessToken=; Path=/; Max-Age=0; Expires=Thu, 1 Jan 1970 00:00:00 GMT; Secure; HttpOnly
-Set-Cookie: refreshToken=; Path=/; Max-Age=0; Expires=Thu, 1 Jan 1970 00:00:00 GMT; Secure; HttpOnly
+Set-Cookie: accessToken=; Path=/; Domain=ssafsound.com; Max-Age=0; Expires=Thu, 1 Jan 1970 00:00:00 GMT; Secure; HttpOnly
+Set-Cookie: refreshToken=; Path=/; Domain=ssafsound.com; Max-Age=0; Expires=Thu, 1 Jan 1970 00:00:00 GMT; Secure; HttpOnly
 Content-Type: application/json
 Content-Length: 66
 
@@ -7340,13 +7412,13 @@ Content-Length: 395
   "data" : {
     "portfolioElement" : {
       "selfIntroduction" : "자기소개 하겠습니다.",
-      "skills" : [ "Java", "Android" ],
+      "skills" : [ "Android", "Java" ],
       "memberLinks" : [ {
-        "linkName" : "velog",
-        "path" : "http://test-link1"
-      }, {
         "linkName" : "t-story",
         "path" : "http://test-link2"
+      }, {
+        "linkName" : "velog",
+        "path" : "http://test-link1"
       } ]
     }
   }
@@ -10698,7 +10770,7 @@ Content-Length: 1013
       } ],
       "mine" : false,
       "matchStatus" : "PENDING",
-      "appliedAt" : "2023-10-23T01:34:10.1012861"
+      "appliedAt" : "2023-10-23T13:09:20.0050854"
     } ],
     "nextCursor" : 1,
     "isLast" : true
@@ -11869,7 +11941,7 @@ Content-Length: 1029
         "limit" : 4,
         "members" : [ {
           "recruitApplicationId" : -1,
-          "joinedAt" : "2023-10-23T01:34:10.0832223",
+          "joinedAt" : "2023-10-23T13:09:19.9874431",
           "memberId" : 99,
           "nickname" : "KIM",
           "isMajor" : true,
@@ -11885,7 +11957,7 @@ Content-Length: 1029
         "limit" : 3,
         "members" : [ {
           "recruitApplicationId" : 1,
-          "joinedAt" : "2023-10-23T01:34:10.0982963",
+          "joinedAt" : "2023-10-23T13:09:20.0030914",
           "memberId" : 99,
           "nickname" : "KIM",
           "isMajor" : true,
@@ -12080,7 +12152,7 @@ Content-Length: 922
         "reply" : "취업 준비를 위해서 신청하게되었습니다.",
         "question" : "프로젝트에 참여하고자 하는 동기가 무엇인가요?",
         "liked" : false,
-        "appliedAt" : "2023-10-23T01:34:10.0962969"
+        "appliedAt" : "2023-10-23T13:09:20.0001012"
       } ]
     }
   }
@@ -12419,7 +12491,7 @@ Content-Length: 751
     "reply" : "취업 준비를 위해서 신청하게되었습니다.",
     "question" : "프로젝트에 참여하고자 하는 동기가 무엇인가요?",
     "liked" : false,
-    "appliedAt" : "2023-10-23T01:34:10.0962969"
+    "appliedAt" : "2023-10-23T13:09:20.0001012"
   }
 }</code></pre>
 </div>
@@ -12635,7 +12707,7 @@ Content-Length: 820
       "reply" : "취업 준비를 위해서 신청하게되었습니다.",
       "question" : "프로젝트에 참여하고자 하는 동기가 무엇인가요?",
       "liked" : false,
-      "appliedAt" : "2023-10-23T01:34:10.0962969"
+      "appliedAt" : "2023-10-23T13:09:20.0001012"
     } ]
   }
 }</code></pre>
@@ -12851,7 +12923,7 @@ Content-Length: 751
     "reply" : "취업 준비를 위해서 신청하게되었습니다.",
     "question" : "프로젝트에 참여하고자 하는 동기가 무엇인가요?",
     "liked" : false,
-    "appliedAt" : "2023-10-23T01:34:10.0962969"
+    "appliedAt" : "2023-10-23T13:09:20.0001012"
   }
 }</code></pre>
 </div>
@@ -13571,7 +13643,7 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 771
+Content-Length: 772
 
 {
   "code" : "200",
@@ -13584,7 +13656,7 @@ Content-Length: 771
       "likeCount" : 0,
       "liked" : false,
       "mine" : false,
-      "createdAt" : "2023-10-23T01:34:11.155514",
+      "createdAt" : "2023-10-23T13:09:20.8019301",
       "deletedComment" : false,
       "modified" : false,
       "author" : {
