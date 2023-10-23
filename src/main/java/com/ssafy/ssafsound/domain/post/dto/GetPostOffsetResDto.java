@@ -22,7 +22,7 @@ public class GetPostOffsetResDto {
                 .posts(posts.getContent().stream()
                         .map(GetPostElement::new)
                         .collect(Collectors.toList()))
-                .currentPage(posts.getNumber())
+                .currentPage(posts.getNumber()+1)
                 .totalPageCount(posts.getTotalPages())
                 .build();
     }
@@ -32,7 +32,7 @@ public class GetPostOffsetResDto {
                 .posts(hotPosts.getContent().stream()
                         .map(hotPost -> new GetPostElement(hotPost.getPost()))
                         .collect(Collectors.toList()))
-                .currentPage(hotPosts.getNumber())
+                .currentPage(hotPosts.getNumber()+1)
                 .totalPageCount(hotPosts.getTotalPages())
                 .build();
     }
@@ -42,7 +42,7 @@ public class GetPostOffsetResDto {
                 .posts(postScraps.getContent().stream()
                         .map(postScrap -> new GetPostElement(postScrap.getPost()))
                         .collect(Collectors.toList()))
-                .currentPage(postScraps.getNumber())
+                .currentPage(postScraps.getNumber()+1)
                 .totalPageCount(postScraps.getTotalPages())
                 .build();
     }

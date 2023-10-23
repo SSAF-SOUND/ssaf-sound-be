@@ -21,6 +21,7 @@ import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicati
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -129,10 +130,9 @@ public class RecruitService {
     }
 
     @Transactional(readOnly = true)
-    public GetRecruitsResDto getRecruits(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable, Long loginMemberId) {
-        // 페이지네이션 조건에 따라 프로젝트/스터디 글 목록을 조회한다.
-        Slice<Recruit> recruitPages = recruitRepository.findRecruitByGetRecruitsReqDto(getRecruitsReqDto, pageable);
-        GetRecruitsResDto recruitsResDto = GetRecruitsResDto.fromPageAndMemberId(recruitPages, loginMemberId);
+    public GetRecruitsCursorResDto getRecruitsByCursor(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable, Long loginMemberId) {
+        Slice<Recruit> recruitPages = recruitRepository.findRecruitSliceByGetRecruitsReqDto(getRecruitsReqDto, pageable);
+        GetRecruitsCursorResDto recruitsResDto = GetRecruitsCursorResDto.fromPageAndMemberId(recruitPages, loginMemberId);
         if(!recruitsResDto.getRecruits().isEmpty()) {
             addRecruitParticipants(recruitsResDto);
         }
@@ -140,9 +140,22 @@ public class RecruitService {
     }
 
     @Transactional(readOnly = true)
-    public GetRecruitsResDto getScrapedRecruits(Long memberId, Long cursor, Pageable pageable) {
+    public GetRecruitOffsetResDto getRecruitsByOffset(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable, Long loginMemberId) {
+        Integer pageOffset = getRecruitsReqDto.getNext();
+
+        PageRequest pageRequest = PageRequest.of(pageOffset== null || pageOffset <= 0 ? 0 : pageOffset, pageable.getPageSize()-1);
+        Page<Recruit> recruitPages = recruitRepository.findRecruitPageByGetRecruitsReqDto(getRecruitsReqDto, pageRequest);
+        GetRecruitOffsetResDto recruitsResDto = GetRecruitOffsetResDto.fromPageAndMemberId(recruitPages, loginMemberId);
+        if(!recruitsResDto.getRecruits().isEmpty()) {
+            addRecruitParticipants(recruitsResDto);
+        }
+        return recruitsResDto;
+    }
+
+    @Transactional(readOnly = true)
+    public GetRecruitsCursorResDto getScrapedRecruits(Long memberId, Long cursor, Pageable pageable) {
         Slice<Recruit> recruitPages = recruitRepository.findMemberScrapRecruits(memberId, cursor, pageable);
-        GetRecruitsResDto recruitsResDto = GetRecruitsResDto.fromPageAndMemberId(recruitPages, memberId);
+        GetRecruitsCursorResDto recruitsResDto = GetRecruitsCursorResDto.fromPageAndMemberId(recruitPages, memberId);
         return recruitsResDto;
     }
 
@@ -158,7 +171,7 @@ public class RecruitService {
     }
 
     @Transactional(readOnly = true)
-    public GetRecruitsResDto getMemberJoinRecruits(GetMemberJoinRecruitsReqDto recruitsReqDto, Long loginMemberId) {
+    public GetRecruitsCursorResDto getMemberJoinRecruits(GetMemberJoinRecruitsReqDto recruitsReqDto, Long loginMemberId) {
         Long memberId = recruitsReqDto.getMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
@@ -167,7 +180,7 @@ public class RecruitService {
         }
 
         Slice<Recruit> recruitPages = recruitRepository.findMemberJoinRecruitWithCursorAndPageable(memberId, recruitsReqDto.getCategory(), recruitsReqDto.getCursor(), PageRequest.ofSize(recruitsReqDto.getSize()));
-        GetRecruitsResDto recruitsResDto = GetRecruitsResDto.fromPageAndMemberId(recruitPages, loginMemberId);
+        GetRecruitsCursorResDto recruitsResDto = GetRecruitsCursorResDto.fromPageAndMemberId(recruitPages, loginMemberId);
         if(!recruitsResDto.getRecruits().isEmpty()) {
             addRecruitParticipants(recruitsResDto);
         }

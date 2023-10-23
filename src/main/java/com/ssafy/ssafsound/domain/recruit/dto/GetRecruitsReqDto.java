@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Builder
 public class GetRecruitsReqDto {
-    private Long cursor;
+    private Integer next;
 
     @NotBlank
     private String category;
