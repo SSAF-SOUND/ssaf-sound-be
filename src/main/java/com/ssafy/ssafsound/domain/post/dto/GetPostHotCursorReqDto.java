@@ -9,9 +9,11 @@ import javax.validation.constraints.Min;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetPostHotReqDto {
+public class GetPostHotCursorReqDto {
+    @Builder.Default
     private Long cursor = -1L;
 
     @Min(value = 10, message = "Size가 너무 작습니다.")
-    private int size;
+    @Builder.Default
+    private int size = 10;
 }
