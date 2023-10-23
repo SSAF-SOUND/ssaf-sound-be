@@ -143,7 +143,7 @@ public class RecruitService {
     public GetRecruitOffsetResDto getRecruitsByOffset(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable, Long loginMemberId) {
         Integer pageOffset = getRecruitsReqDto.getNext();
 
-        PageRequest pageRequest = PageRequest.of(pageOffset== null || pageOffset == -1 ? 0 : pageOffset, pageable.getPageSize());
+        PageRequest pageRequest = PageRequest.of(pageOffset== null || pageOffset <= 0 ? 0 : pageOffset, pageable.getPageSize()-1);
         Page<Recruit> recruitPages = recruitRepository.findRecruitPageByGetRecruitsReqDto(getRecruitsReqDto, pageRequest);
         GetRecruitOffsetResDto recruitsResDto = GetRecruitOffsetResDto.fromPageAndMemberId(recruitPages, loginMemberId);
         if(!recruitsResDto.getRecruits().isEmpty()) {

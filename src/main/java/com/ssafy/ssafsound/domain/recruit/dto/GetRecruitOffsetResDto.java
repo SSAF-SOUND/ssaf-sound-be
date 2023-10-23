@@ -39,7 +39,7 @@ public class GetRecruitOffsetResDto implements AddParticipantDto {
 
         return GetRecruitOffsetResDto.builder()
                 .recruits(recruits)
-                .currentPage(recruitPages.getNumber())
+                .currentPage(recruitPages.getNumber()+1)
                 .totalPageCount(recruitPages.getTotalPages())
                 .build();
     }
