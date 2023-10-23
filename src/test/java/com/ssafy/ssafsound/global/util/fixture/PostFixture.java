@@ -137,37 +137,28 @@ public class PostFixture {
             .thumbnail("썸네일 URL")
             .build();
 
-    public static final GetPostCursorResDto GET_POST_CURSOR_RES_DTO1 = GetPostCursorResDto.ofPosts(
-            List.of(POST_FIXTURE1,
-                    POST_FIXTURE2), 10);
-
-    public static final GetPostCursorResDto GET_POST_CURSOR_RES_DTO2 = GetPostCursorResDto.ofPosts(
-            List.of(POST_FIXTURE3), 10);
-
-    public static final GetPostCursorResDto GET_POST_CURSOR_RES_DTO3 = GetPostCursorResDto.builder()
+    public static final GetPostCursorResDto GET_POST_CURSOR_RES_DTO1 = GetPostCursorResDto.builder()
             .posts(List.of(GET_POST_ELEMENT1,
                     GET_POST_ELEMENT2))
             .cursor(null)
             .build();
 
-    public static final GetPostCursorResDto GET_POST_CURSOR_RES_DTO4 = GetPostCursorResDto.builder()
+    public static final GetPostCursorResDto GET_POST_CURSOR_RES_DTO2 = GetPostCursorResDto.builder()
             .posts(List.of(GET_POST_ELEMENT3))
             .cursor(null)
             .build();
 
-    public static final GetPostOffsetResDto GET_POST_OFFSET_RES_DTO1 = GetPostOffsetResDto.ofPosts(
-            List.of(POST_FIXTURE1, POST_FIXTURE2));
-
-    public static final GetPostOffsetResDto GET_POST_OFFSET_RES_DTO2 = GetPostOffsetResDto.ofPosts(
-            List.of(POST_FIXTURE3));
-
-    public static final GetPostOffsetResDto GET_POST_OFFSET_RES_DTO3 = GetPostOffsetResDto.builder()
+    public static final GetPostOffsetResDto GET_POST_OFFSET_RES_DTO1 = GetPostOffsetResDto.builder()
             .posts(List.of(GET_POST_ELEMENT1,
                     GET_POST_ELEMENT2))
+            .currentPage(1)
+            .totalPageCount(1)
             .build();
 
-    public static final GetPostOffsetResDto GET_POST_OFFSET_RES_DTO4 = GetPostOffsetResDto.builder()
+    public static final GetPostOffsetResDto GET_POST_OFFSET_RES_DTO2 = GetPostOffsetResDto.builder()
             .posts(List.of(GET_POST_ELEMENT3))
+            .currentPage(1)
+            .totalPageCount(1)
             .build();
 
     public static final GetPostCursorResDto GET_POST_HOT_CURSOR_RES_DTO1 = GetPostCursorResDto.builder()
@@ -184,10 +175,14 @@ public class PostFixture {
     public static final GetPostOffsetResDto GET_POST_HOT_OFFSET_RES_DTO1 = GetPostOffsetResDto.builder()
             .posts(List.of(GET_POST_HOT_ELEMENT1,
                     GET_POST_HOT_ELEMENT2))
+            .currentPage(1)
+            .totalPageCount(1)
             .build();
 
     public static final GetPostOffsetResDto GET_POST_HOT_OFFSET_RES_DTO2 = GetPostOffsetResDto.builder()
             .posts(List.of(GET_POST_HOT_ELEMENT1))
+            .currentPage(1)
+            .totalPageCount(1)
             .build();
 
     public static final GetPostCursorResDto GET_POST_MY_CURSOR_RES_DTO1 = GetPostCursorResDto.builder()
@@ -199,6 +194,8 @@ public class PostFixture {
     public static final GetPostOffsetResDto GET_POST_MY_OFFSET_RES_DTO1 = GetPostOffsetResDto.builder()
             .posts(List.of(GET_POST_MY_ELEMENT1,
                     GET_POST_MY_ELEMENT2))
+            .currentPage(1)
+            .totalPageCount(1)
             .build();
 
     public static final GetPostCursorResDto GET_POST_MY_SCRAP_CURSOR_RES_DTO = GetPostCursorResDto.builder()
@@ -210,6 +207,8 @@ public class PostFixture {
     public static final GetPostOffsetResDto GET_POST_MY_SCRAP_OFFSET_RES_DTO = GetPostOffsetResDto.builder()
             .posts(List.of(GET_POST_ELEMENT2,
                     GET_POST_ELEMENT1))
+            .currentPage(1)
+            .totalPageCount(1)
             .build();
 
     public static final GetPostDetailResDto GET_POST_DETAIL_RES_DTO1 = GetPostDetailResDto.of(

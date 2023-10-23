@@ -21,7 +21,7 @@ class PostControllerTest extends ControllerTest {
     @Test
     @DisplayName("게시글 목록 조회(Cursor), cursor와 size를 기준으로 커서 기반 페이지네이션이 수행됨.")
     void findPostsByCursor() {
-        doReturn(GET_POST_CURSOR_RES_DTO3)
+        doReturn(GET_POST_CURSOR_RES_DTO1)
                 .when(postService)
                 .findPostsByCursor(any());
 
@@ -59,7 +59,7 @@ class PostControllerTest extends ControllerTest {
     @Test
     @DisplayName("게시글 목록 조회(Offset), page와 size를 기준으로 오프셋 기반 페이지네이션이 수행됨.")
     void findPostsByOffset() {
-        doReturn(GET_POST_OFFSET_RES_DTO3)
+        doReturn(GET_POST_OFFSET_RES_DTO1)
                 .when(postService)
                 .findPostsByOffset(any());
 
@@ -75,7 +75,9 @@ class PostControllerTest extends ControllerTest {
                                         parameterWithName("size").description("현재 페이지의 게시글 개수를 의미함, 최소 size는 10")
                                 ),
                                 getEnvelopPatternWithData().andWithPrefix("data.",
-                                        fieldWithPath("posts").type(JsonFieldType.ARRAY).description("게시글 목록")
+                                        fieldWithPath("posts").type(JsonFieldType.ARRAY).description("게시글 목록"),
+                                        fieldWithPath("currentPage").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
+                                        fieldWithPath("totalPageCount").type(JsonFieldType.NUMBER).description("전체 페이지 수")
                                 ).andWithPrefix("data.posts[].",
                                         fieldWithPath("boardId").type(JsonFieldType.NUMBER).description("게시글이 작성된 게시판 종류의 ID"),
                                         fieldWithPath("boardTitle").type(JsonFieldType.STRING).description("게시글이 작성된 게시판의 종류, 자유 게시판 | 취업 게시판 | 맛집 게시판 | 질문 게시판 | 싸피 예비생 게시판"),
@@ -96,7 +98,7 @@ class PostControllerTest extends ControllerTest {
     @Test
     @DisplayName("게시글 검색(Cursor), 제목 + 내용을 기준으로 검색")
     void searchPostsByCursor() {
-        doReturn(GET_POST_CURSOR_RES_DTO4)
+        doReturn(GET_POST_CURSOR_RES_DTO2)
                 .when(postService)
                 .searchPostsByCursor(any());
 
@@ -135,7 +137,7 @@ class PostControllerTest extends ControllerTest {
     @Test
     @DisplayName("게시글 검색(Offset), 제목 + 내용을 기준으로 검색")
     void searchPostsByOffset() {
-        doReturn(GET_POST_OFFSET_RES_DTO4)
+        doReturn(GET_POST_OFFSET_RES_DTO2)
                 .when(postService)
                 .searchPostsByOffset(any());
 
@@ -152,7 +154,9 @@ class PostControllerTest extends ControllerTest {
                                         parameterWithName("size").description("현재 페이지의 게시글 개수를 의미함, 최소 size는 10")
                                 ),
                                 getEnvelopPatternWithData().andWithPrefix("data.",
-                                        fieldWithPath("posts").type(JsonFieldType.ARRAY).description("게시글 목록")
+                                        fieldWithPath("posts").type(JsonFieldType.ARRAY).description("게시글 목록"),
+                                        fieldWithPath("currentPage").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
+                                        fieldWithPath("totalPageCount").type(JsonFieldType.NUMBER).description("전체 페이지 수")
                                 ).andWithPrefix("data.posts[].",
                                         fieldWithPath("boardId").type(JsonFieldType.NUMBER).description("게시글이 작성된 게시판 종류의 ID"),
                                         fieldWithPath("boardTitle").type(JsonFieldType.STRING).description("게시글이 작성된 게시판의 종류, 자유 게시판 | 취업 게시판 | 맛집 게시판 | 질문 게시판 | 싸피 예비생 게시판"),
@@ -472,7 +476,9 @@ class PostControllerTest extends ControllerTest {
                                         parameterWithName("size").description("현재 페이지의 게시글 개수를 의미함, 최소 size는 10")
                                 ),
                                 getEnvelopPatternWithData().andWithPrefix("data.",
-                                        fieldWithPath("posts").type(JsonFieldType.ARRAY).description("게시글 목록")
+                                        fieldWithPath("posts").type(JsonFieldType.ARRAY).description("게시글 목록"),
+                                        fieldWithPath("currentPage").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
+                                        fieldWithPath("totalPageCount").type(JsonFieldType.NUMBER).description("전체 페이지 수")
                                 ).andWithPrefix("data.posts[].",
                                         fieldWithPath("boardId").type(JsonFieldType.NUMBER).description("게시글이 작성된 게시판 종류의 ID"),
                                         fieldWithPath("boardTitle").type(JsonFieldType.STRING).description("게시글이 작성된 게시판의 종류, 자유 게시판 | 취업 게시판 | 맛집 게시판 | 질문 게시판 | 싸피 예비생 게시판"),
@@ -547,7 +553,9 @@ class PostControllerTest extends ControllerTest {
                                         parameterWithName("size").description("현재 페이지의 게시글 개수를 의미함, 최소 size는 10")
                                 ),
                                 getEnvelopPatternWithData().andWithPrefix("data.",
-                                        fieldWithPath("posts").type(JsonFieldType.ARRAY).description("게시글 목록")
+                                        fieldWithPath("posts").type(JsonFieldType.ARRAY).description("게시글 목록"),
+                                        fieldWithPath("currentPage").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
+                                        fieldWithPath("totalPageCount").type(JsonFieldType.NUMBER).description("전체 페이지 수")
                                 ).andWithPrefix("data.posts[].",
                                         fieldWithPath("boardId").type(JsonFieldType.NUMBER).description("게시글이 작성된 게시판 종류의 ID"),
                                         fieldWithPath("boardTitle").type(JsonFieldType.STRING).description("게시글이 작성된 게시판의 종류, 자유 게시판 | 취업 게시판 | 맛집 게시판 | 질문 게시판 | 싸피 예비생 게시판"),
@@ -620,7 +628,9 @@ class PostControllerTest extends ControllerTest {
                                         parameterWithName("size").description("현재 페이지의 게시글 개수를 의미함, 최소 size는 10")
                                 ),
                                 getEnvelopPatternWithData().andWithPrefix("data.",
-                                        fieldWithPath("posts").type(JsonFieldType.ARRAY).description("게시글 목록")
+                                        fieldWithPath("posts").type(JsonFieldType.ARRAY).description("게시글 목록"),
+                                        fieldWithPath("currentPage").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
+                                        fieldWithPath("totalPageCount").type(JsonFieldType.NUMBER).description("전체 페이지 수")
                                 ).andWithPrefix("data.posts[].",
                                         fieldWithPath("boardId").type(JsonFieldType.NUMBER).description("게시글이 작성된 게시판 종류의 ID"),
                                         fieldWithPath("boardTitle").type(JsonFieldType.STRING).description("게시글이 작성된 게시판의 종류, 자유 게시판 | 취업 게시판 | 맛집 게시판 | 질문 게시판 | 싸피 예비생 게시판"),
@@ -693,7 +703,9 @@ class PostControllerTest extends ControllerTest {
                                         parameterWithName("size").description("현재 페이지의 게시글 개수를 의미함, 최소 size는 10")
                                 ),
                                 getEnvelopPatternWithData().andWithPrefix("data.",
-                                        fieldWithPath("posts").type(JsonFieldType.ARRAY).description("게시글 목록")
+                                        fieldWithPath("posts").type(JsonFieldType.ARRAY).description("게시글 목록"),
+                                        fieldWithPath("currentPage").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
+                                        fieldWithPath("totalPageCount").type(JsonFieldType.NUMBER).description("전체 페이지 수")
                                 ).andWithPrefix("data.posts[].",
                                         fieldWithPath("boardId").type(JsonFieldType.NUMBER).description("게시글이 작성된 게시판 종류의 ID"),
                                         fieldWithPath("boardTitle").type(JsonFieldType.STRING).description("게시글이 작성된 게시판의 종류, 자유 게시판 | 취업 게시판 | 맛집 게시판 | 질문 게시판 | 싸피 예비생 게시판"),
