@@ -20,5 +20,6 @@ public class GetPostHotSearchCursorReqDto {
     private Long cursor = -1L;
 
     @Min(value = 10, message = "Size가 너무 작습니다.")
-    private int size;
+    @Builder.Default
+    private int size = 10;
 }

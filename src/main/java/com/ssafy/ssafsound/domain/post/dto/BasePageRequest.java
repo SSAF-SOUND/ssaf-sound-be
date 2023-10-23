@@ -17,7 +17,8 @@ public class BasePageRequest {
     private Integer page = 1;
 
     @Min(value = 10, message = "Size가 너무 작습니다.")
-    private Integer size;
+    @Builder.Default
+    private Integer size = 10;
 
     public void setPage(Integer page) {
         if (page <= 0) {
