@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.domain.recruit.repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -12,7 +13,9 @@ import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.domain.recruit.domain.Category;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import com.ssafy.ssafsound.domain.recruit.dto.AppliedRecruit;
-import com.ssafy.ssafsound.domain.recruit.dto.GetRecruitsReqDto;
+import com.ssafy.ssafsound.domain.recruit.dto.GetRecruitsCursorReqDto;
+import com.ssafy.ssafsound.domain.recruit.dto.GetRecruitsOffsetReqDto;
+import com.ssafy.ssafsound.domain.recruit.dto.RecruitPaging;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import lombok.RequiredArgsConstructor;
 
@@ -43,20 +46,20 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Slice<Recruit> findRecruitSliceByGetRecruitsReqDto(GetRecruitsReqDto dto, Pageable pageable) {
+    public Slice<Recruit> findRecruitSliceByGetRecruitsReqDto(GetRecruitsCursorReqDto dto, Pageable pageable) {
         JPAQuery<Recruit> recruitDynamicQuery = findRecruitByGetRecruitsReqDto(dto);
-        Integer cursor = dto.getNext();
+        Long cursor = dto.getNextPaging();
         List<Recruit> recruits = recruitDynamicQuery
-                .where(recruitIdLtThanCursor(Long.valueOf(cursor)))
+                .where(recruitIdLtThanCursor(cursor))
                 .limit(pageable.getPageSize()+1)
                 .orderBy(recruit.id.desc())
                 .fetch();
-        boolean hasNext = pageable.isPaged() && recruits.size() > pageable.getPageSize();
+        boolean hasNext = recruits.size() > pageable.getPageSize();
         return new SliceImpl<>(hasNext ? recruits.subList(0, pageable.getPageSize()) : recruits, pageable, hasNext);
     }
 
     @Override
-    public Page<Recruit> findRecruitPageByGetRecruitsReqDto(GetRecruitsReqDto dto, Pageable pageable) {
+    public Page<Recruit> findRecruitPageByGetRecruitsReqDto(GetRecruitsOffsetReqDto dto, Pageable pageable) {
         JPAQuery<Recruit> recruitDynamicQuery = findRecruitByGetRecruitsReqDto(dto);
         List<Recruit> recruits = recruitDynamicQuery
                 .offset(pageable.getOffset())
@@ -78,7 +81,7 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
         return PageableExecutionUtils.getPage(recruits, pageable, countQuery::fetchOne);
     }
 
-    private JPAQuery<Recruit> findRecruitByGetRecruitsReqDto(GetRecruitsReqDto dto) {
+    private JPAQuery<Recruit> findRecruitByGetRecruitsReqDto(RecruitPaging<? extends Number> dto) {
         JPAQuery<Recruit> recruitDynamicQuery = jpaQueryFactory.selectFrom(recruit);
         recruitDynamicQuery
                 .where(
@@ -139,27 +142,64 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
 
     @Override
     public Slice<Recruit> findMemberJoinRecruitWithCursorAndPageable(Long memberId, String category, Long cursor, Pageable pageable) {
-        BooleanExpression applicationRecruitCategoryEq =
-                category == null ? null :
-                recruitApplication.recruit.category.eq(Category.valueOf(category.toUpperCase()));
+        List<Long> memberJoinRecruitIds = getMemberJoinRecruitIds(memberId, category);
 
-        List<Long> memberJoinRecruitIds = jpaQueryFactory.select(recruitApplication.recruit.id)
+        List<Recruit> recruits = getMemberJoinRecruits(memberId, category, memberJoinRecruitIds)
+                .where(recruitIdLtThanCursor(cursor))
+                .limit(pageable.getPageSize()+1)
+                .orderBy(recruit.id.desc())
+                .fetch();
+
+        boolean hasNext = pageable.isPaged() && recruits.size() > pageable.getPageSize();
+        return new SliceImpl<>(hasNext ? recruits.subList(0, pageable.getPageSize()) : recruits, pageable, hasNext);
+    }
+
+    @Override
+    public Page<Recruit> findMemberJoinRecruitWithPageable(Long memberId, String category, Pageable pageable) {
+        List<Long> memberJoinRecruitIds = getMemberJoinRecruitIds(memberId, category);
+
+        List<Recruit> recruits = getMemberJoinRecruits(memberId, category, memberJoinRecruitIds)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(recruit.id.desc())
+                .fetch();
+
+        JPAQuery<Long> countQuery = jpaQueryFactory
+                .select(Wildcard.count)
+                .from(recruit)
+                .innerJoin(recruit.member, member)
+                .where(recruit.id.in(memberJoinRecruitIds).or(recruit.member.id.eq(memberId)),
+                        recruitCategoryEq(category));
+
+        return PageableExecutionUtils.getPage(recruits, pageable, countQuery::fetchOne);
+    }
+    private JPAQuery<Recruit> getMemberJoinRecruits(Long memberId, String category, List<Long> memberJoinRecruitIds) {
+        return jpaQueryFactory.selectFrom(recruit)
+                .innerJoin(recruit.member, member)
+                .where(recruit.id.in(memberJoinRecruitIds).or(recruit.member.id.eq(memberId)),
+                        recruitCategoryEq(category));
+    }
+
+    private List<Long> getMemberJoinRecruitIds(Long memberId, String category) {
+        return jpaQueryFactory.select(recruitApplication.recruit.id)
                 .from(recruitApplication)
                 .innerJoin(recruitApplication.recruit, recruit)
                 .innerJoin(recruitApplication.member, member)
                 .where(recruitApplication.member.id.eq(memberId),
                         recruitApplication.matchStatus.eq(MatchStatus.DONE),
-                        applicationRecruitCategoryEq)
+                        applicationRecruitCategoryEq(category))
                 .fetch();
+    }
 
+    private static BooleanExpression applicationRecruitCategoryEq(String category) {
+        return category == null ? null :
+                recruitApplication.recruit.category.eq(Category.valueOf(category.toUpperCase()));
+    }
 
-        BooleanExpression categoryEq = category == null ? null : recruit.category.eq(Category.valueOf(category.toUpperCase()));
-
-        List<Recruit> recruits = jpaQueryFactory.selectFrom(recruit)
-                .innerJoin(recruit.member, member)
-                .where(recruitIdLtThanCursor(cursor),
-                        recruit.id.in(memberJoinRecruitIds).or(recruit.member.id.eq(memberId)),
-                        categoryEq)
+    @Override
+    public Slice<Recruit> findMemberScrapRecruitsByCursor(Long memberId, Long cursor, Pageable pageable) {
+        List<Recruit> recruits = findScrapedMemberByMemberId(memberId)
+                .where(recruitIdLtThanCursor(cursor))
                 .limit(pageable.getPageSize()+1)
                 .orderBy(recruit.id.desc())
                 .fetch();
@@ -169,14 +209,37 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
     }
 
     @Override
-    public Slice<Recruit> findMemberScrapRecruits(Long memberId, Long cursor, Pageable pageable) {
-        List<Recruit> recruits = jpaQueryFactory.select(recruitScrap.recruit)
+    public Page<Recruit> findMemberScrapRecruitsByPage(Long memberId, Pageable pageable) {
+        List<Recruit> recruits = findScrapedMemberByMemberId(memberId)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(recruit.id.desc())
+                .fetch();
+
+        JPAQuery<Long> countQuery = jpaQueryFactory
+                .select(recruitScrap.count())
                 .from(recruitScrap)
                 .innerJoin(recruitScrap.recruit, recruit)
                 .innerJoin(recruitScrap.member, member)
-                .where(recruitIdLtThanCursor(cursor), recruitScrap.member.id.eq(memberId))
-                .limit(pageable.getPageSize()+1)
-                .orderBy(recruit.id.desc())
+                .where(recruitScrap.member.id.eq(memberId));
+
+        return PageableExecutionUtils.getPage(recruits, pageable, countQuery::fetchOne);
+    }
+
+    private JPAQuery<Recruit> findScrapedMemberByMemberId(Long memberId) {
+        return jpaQueryFactory.select(recruitScrap.recruit)
+                .from(recruitScrap)
+                .innerJoin(recruitScrap.recruit, recruit)
+                .innerJoin(recruitScrap.member, member)
+                .where(recruitScrap.member.id.eq(memberId));
+    }
+
+    @Override
+    public Slice<AppliedRecruit> findMemberAppliedRecruitsByCursor(Long memberId, Long cursor, String category, String matchStatus, Pageable pageable) {
+        List<AppliedRecruit> recruits = findMemberAppliedRecruits(memberId, category, matchStatus)
+                .where(recruitIdLtThanCursor(cursor))
+                .limit(pageable.getPageSize() + 1)
+                .orderBy(recruitApplication.id.desc())
                 .fetch();
 
         boolean hasNext = pageable.isPaged() && recruits.size() > pageable.getPageSize();
@@ -184,11 +247,26 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
     }
 
     @Override
-    public Slice<AppliedRecruit> findMemberAppliedRecruits(Long memberId, Long cursor, String category, String matchStatus, Pageable pageable) {
-        BooleanExpression categoryEq = (category == null) ? null : recruit.category.eq(Category.valueOf(category.toUpperCase()));
-        BooleanExpression matchStatusEq = (matchStatus == null) ? null : recruitApplication.matchStatus.eq(MatchStatus.valueOf(matchStatus.toUpperCase()));
+    public Page<AppliedRecruit> findMemberAppliedRecruitsByPage(Long memberId, String category, String matchStatus, Pageable pageable) {
+        List<AppliedRecruit> recruits = findMemberAppliedRecruits(memberId, category, matchStatus)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(recruitApplication.id.desc())
+                .fetch();
 
-        List<AppliedRecruit> recruits = jpaQueryFactory.select(
+        JPAQuery<Long> countQuery = jpaQueryFactory.select(Wildcard.count)
+                .from(recruitApplication)
+                .innerJoin(recruitApplication.recruit, recruit)
+                .innerJoin(recruitApplication.member, member)
+                .where(recruitApplication.member.id.eq(memberId),
+                        recruitCategoryEq(category),
+                        matchStatusEq(matchStatus),
+                        recruitApplication.matchStatus.notIn(MatchStatus.CANCEL));
+        return PageableExecutionUtils.getPage(recruits, pageable, countQuery::fetchOne);
+    }
+
+    private JPAQuery<AppliedRecruit> findMemberAppliedRecruits(Long memberId, String category, String matchStatus) {
+        return jpaQueryFactory.select(
                         Projections.constructor(
                                 AppliedRecruit.class,
                                 recruit,
@@ -199,17 +277,14 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
                 .from(recruitApplication)
                 .innerJoin(recruitApplication.recruit, recruit)
                 .innerJoin(recruitApplication.member, member)
-                .where(recruitIdLtThanCursor(cursor),
-                        recruitApplication.member.id.eq(memberId),
-                        categoryEq,
-                        matchStatusEq,
-                        recruitApplication.matchStatus.notIn(MatchStatus.CANCEL))
-                .limit(pageable.getPageSize() + 1)
-                .orderBy(recruitApplication.id.desc())
-                .fetch();
+                .where(recruitApplication.member.id.eq(memberId),
+                        recruitCategoryEq(category),
+                        matchStatusEq(matchStatus),
+                        recruitApplication.matchStatus.notIn(MatchStatus.CANCEL));
+    }
 
-        boolean hasNext = pageable.isPaged() && recruits.size() > pageable.getPageSize();
-        return new SliceImpl<>(hasNext ? recruits.subList(0, pageable.getPageSize()) : recruits, pageable, hasNext);
+    private static BooleanExpression matchStatusEq(String matchStatus) {
+        return (matchStatus == null) ? null : recruitApplication.matchStatus.eq(MatchStatus.valueOf(matchStatus.toUpperCase()));
     }
 
     private BooleanExpression recruitIdLtThanCursor(Long cursor) {

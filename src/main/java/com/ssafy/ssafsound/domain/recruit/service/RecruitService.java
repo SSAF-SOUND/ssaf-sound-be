@@ -130,8 +130,8 @@ public class RecruitService {
     }
 
     @Transactional(readOnly = true)
-    public GetRecruitsCursorResDto getRecruitsByCursor(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable, Long loginMemberId) {
-        Slice<Recruit> recruitPages = recruitRepository.findRecruitSliceByGetRecruitsReqDto(getRecruitsReqDto, pageable);
+    public GetRecruitsCursorResDto getRecruitsByCursor(GetRecruitsCursorReqDto getRecruitsCursorReqDto, Long loginMemberId) {
+        Slice<Recruit> recruitPages = recruitRepository.findRecruitSliceByGetRecruitsReqDto(getRecruitsCursorReqDto, PageRequest.ofSize(getRecruitsCursorReqDto.getSize()));
         GetRecruitsCursorResDto recruitsResDto = GetRecruitsCursorResDto.fromPageAndMemberId(recruitPages, loginMemberId);
         if(!recruitsResDto.getRecruits().isEmpty()) {
             addRecruitParticipants(recruitsResDto);
@@ -140,11 +140,11 @@ public class RecruitService {
     }
 
     @Transactional(readOnly = true)
-    public GetRecruitOffsetResDto getRecruitsByOffset(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable, Long loginMemberId) {
-        Integer pageOffset = getRecruitsReqDto.getNext();
+    public GetRecruitOffsetResDto getRecruitsByOffset(GetRecruitsOffsetReqDto getRecruitsOffsetReqDto, Long loginMemberId) {
+        Integer pageOffset = getRecruitsOffsetReqDto.getNextPaging();
 
-        PageRequest pageRequest = PageRequest.of(pageOffset== null || pageOffset <= 0 ? 0 : pageOffset, pageable.getPageSize()-1);
-        Page<Recruit> recruitPages = recruitRepository.findRecruitPageByGetRecruitsReqDto(getRecruitsReqDto, pageRequest);
+        PageRequest pageRequest = PageRequest.of(pageOffset== null || pageOffset <= 0 ? 0 : pageOffset-1, getRecruitsOffsetReqDto.getSize());
+        Page<Recruit> recruitPages = recruitRepository.findRecruitPageByGetRecruitsReqDto(getRecruitsOffsetReqDto, pageRequest);
         GetRecruitOffsetResDto recruitsResDto = GetRecruitOffsetResDto.fromPageAndMemberId(recruitPages, loginMemberId);
         if(!recruitsResDto.getRecruits().isEmpty()) {
             addRecruitParticipants(recruitsResDto);
@@ -153,10 +153,15 @@ public class RecruitService {
     }
 
     @Transactional(readOnly = true)
-    public GetRecruitsCursorResDto getScrapedRecruits(Long memberId, Long cursor, Pageable pageable) {
-        Slice<Recruit> recruitPages = recruitRepository.findMemberScrapRecruits(memberId, cursor, pageable);
-        GetRecruitsCursorResDto recruitsResDto = GetRecruitsCursorResDto.fromPageAndMemberId(recruitPages, memberId);
-        return recruitsResDto;
+    public GetRecruitsCursorResDto getScrapedRecruitsByCursor(Long memberId, Long cursor, Pageable pageable) {
+        Slice<Recruit> recruitPages = recruitRepository.findMemberScrapRecruitsByCursor(memberId, cursor, pageable);
+        return GetRecruitsCursorResDto.fromPageAndMemberId(recruitPages, memberId);
+    }
+
+    @Transactional(readOnly = true)
+    public GetRecruitsPageResDto getScrapedRecruitsByPage(Long memberId, Pageable pageable) {
+        Page<Recruit> recruitPages = recruitRepository.findMemberScrapRecruitsByPage(memberId, pageable);
+        return GetRecruitsPageResDto.fromPageAndMemberId(recruitPages, memberId);
     }
 
     @Transactional
@@ -171,7 +176,7 @@ public class RecruitService {
     }
 
     @Transactional(readOnly = true)
-    public GetRecruitsCursorResDto getMemberJoinRecruits(GetMemberJoinRecruitsReqDto recruitsReqDto, Long loginMemberId) {
+    public GetRecruitsCursorResDto getMemberJoinRecruitsByCursor(GetMemberJoinRecruitsReqDto recruitsReqDto, Long loginMemberId) {
         Long memberId = recruitsReqDto.getMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
@@ -187,17 +192,51 @@ public class RecruitService {
         return recruitsResDto;
     }
 
+    @Transactional(readOnly = true)
+    public GetRecruitsPageResDto getMemberJoinRecruitsByPage(GetMemberJoinOffsetRecruitReqDto recruitsReqDto, Long loginMemberId) {
+        Long memberId = recruitsReqDto.getMemberId();
+        Member member = memberRepository.findById(memberId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+
+        if(!memberId.equals(loginMemberId) && !member.getPublicProfile()) {
+            throw new MemberException(MemberErrorInfo.MEMBER_PROFILE_SECRET);
+        }
+
+        Page<Recruit> recruitPages = recruitRepository.findMemberJoinRecruitWithPageable(memberId, recruitsReqDto.getCategory(), PageRequest.of(recruitsReqDto.getPage(), recruitsReqDto.getSize()));
+
+        GetRecruitsPageResDto recruitsResDto = GetRecruitsPageResDto.fromPageAndMemberId(recruitPages, loginMemberId);
+        if(!recruitsResDto.getRecruits().isEmpty()) {
+            addRecruitParticipants(recruitsResDto);
+        }
+        return recruitsResDto;
+    }
+
     @Transactional
-    public GetMemberAppliedRecruitsResDto getMemberAppliedRecruits(GetMemberAppliedRecruitsReqDto recruitsReqDto, Long memberId) {
+    public GetMemberAppliedRecruitsCursorResDto getMemberAppliedRecruitsCursor(GetMemberAppliedRecruitsCursorReqDto recruitsReqDto, Long memberId) {
         memberRepository.findById(memberId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
-        Slice<AppliedRecruit> appliedRecruitSlice = recruitRepository.findMemberAppliedRecruits(memberId,
+        Slice<AppliedRecruit> appliedRecruitSlice = recruitRepository.findMemberAppliedRecruitsByCursor(memberId,
                 recruitsReqDto.getCursor(),
                 recruitsReqDto.getCategory(),
                 recruitsReqDto.getMatchStatus(),
                 Pageable.ofSize(recruitsReqDto.getSize()));
 
-        GetMemberAppliedRecruitsResDto recruitsResDto = GetMemberAppliedRecruitsResDto.fromPageAndMemberId(appliedRecruitSlice, memberId);
+        GetMemberAppliedRecruitsCursorResDto recruitsResDto = GetMemberAppliedRecruitsCursorResDto.fromPageAndMemberId(appliedRecruitSlice, memberId);
+        if(!recruitsResDto.getRecruits().isEmpty()) {
+            addRecruitParticipants(recruitsResDto);
+        }
+        return recruitsResDto;
+    }
+
+    @Transactional
+    public GetMemberAppliedRecruitsOffsetResDto getMemberAppliedRecruitsByOffset(GetMemberAppliedRecruitOffsetReqDto recruitsReqDto, Long memberId) {
+        memberRepository.findById(memberId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+
+        Page<AppliedRecruit> appliedRecruitSlice = recruitRepository.findMemberAppliedRecruitsByPage(memberId,
+                recruitsReqDto.getCategory(),
+                recruitsReqDto.getMatchStatus(),
+                PageRequest.of(recruitsReqDto.getPage(), recruitsReqDto.getSize()));
+
+        GetMemberAppliedRecruitsOffsetResDto recruitsResDto = GetMemberAppliedRecruitsOffsetResDto.fromPageAndMemberId(appliedRecruitSlice, memberId);
         if(!recruitsResDto.getRecruits().isEmpty()) {
             addRecruitParticipants(recruitsResDto);
         }
