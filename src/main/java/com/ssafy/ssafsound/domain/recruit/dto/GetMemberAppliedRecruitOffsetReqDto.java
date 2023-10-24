@@ -5,9 +5,9 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class GetMemberAppliedRecruitsReqDto {
+public class GetMemberAppliedRecruitOffsetReqDto {
     private String category;
     private String matchStatus;
-    private Long cursor;
+    private Integer page;
     private Integer size;
 }

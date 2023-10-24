@@ -193,16 +193,32 @@ public class RecruitService {
     }
 
     @Transactional
-    public GetMemberAppliedRecruitsResDto getMemberAppliedRecruits(GetMemberAppliedRecruitsReqDto recruitsReqDto, Long memberId) {
+    public GetMemberAppliedRecruitsCursorResDto getMemberAppliedRecruitsCursor(GetMemberAppliedRecruitsCursorReqDto recruitsReqDto, Long memberId) {
         memberRepository.findById(memberId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
-        Slice<AppliedRecruit> appliedRecruitSlice = recruitRepository.findMemberAppliedRecruits(memberId,
+        Slice<AppliedRecruit> appliedRecruitSlice = recruitRepository.findMemberAppliedRecruitsByCursor(memberId,
                 recruitsReqDto.getCursor(),
                 recruitsReqDto.getCategory(),
                 recruitsReqDto.getMatchStatus(),
                 Pageable.ofSize(recruitsReqDto.getSize()));
 
-        GetMemberAppliedRecruitsResDto recruitsResDto = GetMemberAppliedRecruitsResDto.fromPageAndMemberId(appliedRecruitSlice, memberId);
+        GetMemberAppliedRecruitsCursorResDto recruitsResDto = GetMemberAppliedRecruitsCursorResDto.fromPageAndMemberId(appliedRecruitSlice, memberId);
+        if(!recruitsResDto.getRecruits().isEmpty()) {
+            addRecruitParticipants(recruitsResDto);
+        }
+        return recruitsResDto;
+    }
+
+    @Transactional
+    public GetMemberAppliedRecruitsOffsetResDto getMemberAppliedRecruitsByOffset(GetMemberAppliedRecruitOffsetReqDto recruitsReqDto, Long memberId) {
+        memberRepository.findById(memberId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+
+        Page<AppliedRecruit> appliedRecruitSlice = recruitRepository.findMemberAppliedRecruitsByPage(memberId,
+                recruitsReqDto.getCategory(),
+                recruitsReqDto.getMatchStatus(),
+                PageRequest.of(recruitsReqDto.getPage(), recruitsReqDto.getSize()));
+
+        GetMemberAppliedRecruitsOffsetResDto recruitsResDto = GetMemberAppliedRecruitsOffsetResDto.fromPageAndMemberId(appliedRecruitSlice, memberId);
         if(!recruitsResDto.getRecruits().isEmpty()) {
             addRecruitParticipants(recruitsResDto);
         }

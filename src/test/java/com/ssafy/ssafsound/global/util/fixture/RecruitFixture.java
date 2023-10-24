@@ -175,9 +175,15 @@ public class RecruitFixture {
             .build();
     private static final AppliedRecruitElement APPLIED_RECRUIT_ELEMENT = AppliedRecruitElement.fromRecruitAndLoginMemberId(APPLIED_RECRUIT, 100L);
 
-    public static final GetMemberAppliedRecruitsResDto GET_MEMBER_APPLIED_RECRUITS_RES_DTO = GetMemberAppliedRecruitsResDto.builder()
+    public static final GetMemberAppliedRecruitsCursorResDto GET_MEMBER_APPLIED_RECRUITS_RES_DTO = GetMemberAppliedRecruitsCursorResDto.builder()
             .recruits(List.of(APPLIED_RECRUIT_ELEMENT))
             .nextCursor(1L)
             .isLast(true)
+            .build();
+
+    public static final GetMemberAppliedRecruitsOffsetResDto GET_MEMBER_APPLIED_RECRUITS_OFFSET_RES_DTO = GetMemberAppliedRecruitsOffsetResDto.builder()
+            .recruits(List.of(APPLIED_RECRUIT_ELEMENT))
+            .currentPage(1)
+            .totalPageCount(1)
             .build();
 }

@@ -94,10 +94,17 @@ public class RecruitController {
                 .build();
     }
 
-    @GetMapping("/applied")
-    public EnvelopeResponse<GetMemberAppliedRecruitsResDto> getMemberAppliedRecruits(GetMemberAppliedRecruitsReqDto recruitsReqDto, @Authentication AuthenticatedMember memberInfo) {
-        return EnvelopeResponse.<GetMemberAppliedRecruitsResDto>builder()
-                .data(recruitService.getMemberAppliedRecruits(recruitsReqDto, memberInfo.getMemberId()))
+    @GetMapping("/applied/cursor")
+    public EnvelopeResponse<GetMemberAppliedRecruitsCursorResDto> getMemberAppliedRecruitsByCursor(GetMemberAppliedRecruitsCursorReqDto recruitsReqDto, @Authentication AuthenticatedMember memberInfo) {
+        return EnvelopeResponse.<GetMemberAppliedRecruitsCursorResDto>builder()
+                .data(recruitService.getMemberAppliedRecruitsCursor(recruitsReqDto, memberInfo.getMemberId()))
+                .build();
+    }
+
+    @GetMapping("/applied/offset")
+    public EnvelopeResponse<GetMemberAppliedRecruitsOffsetResDto> getMemberAppliedRecruitsByOffset(GetMemberAppliedRecruitOffsetReqDto recruitsReqDto, @Authentication AuthenticatedMember memberInfo) {
+        return EnvelopeResponse.<GetMemberAppliedRecruitsOffsetResDto>builder()
+                .data(recruitService.getMemberAppliedRecruitsByOffset(recruitsReqDto, memberInfo.getMemberId()))
                 .build();
     }
 }

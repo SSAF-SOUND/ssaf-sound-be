@@ -437,20 +437,20 @@ public class RecruitControllerTest extends ControllerTest {
                 );
     }
 
-    @DisplayName("내가 신청한 리크루트 상태별 목록 조회")
+    @DisplayName("내가 신청한 리크루트 상태별 목록 조회(Cursor)")
     @Test
-    void getAppiedRecruits() {
+    void getAppiedRecruitsByCursor() {
         doReturn(RecruitFixture.GET_MEMBER_APPLIED_RECRUITS_RES_DTO)
                 .when(recruitService)
-                .getMemberAppliedRecruits(any(), any());
+                .getMemberAppliedRecruitsCursor(any(), any());
 
         restDocs
                 .cookie(ACCESS_TOKEN)
-                .when().get("/recruits/applied?size=10&category=project")
+                .when().get("/recruits/applied/cursor?size=10&category=project")
                 .then().log().all()
                 .assertThat()
                 .statusCode(HttpStatus.OK.value())
-                .apply(document("recruit/applied-recruits",
+                .apply(document("recruit/applied-recruits/cursor",
                                 requestCookieAccessTokenMandatory(),
                                 requestParameters(
                                         parameterWithName("cursor").optional().description("다음 조회 커서 default(초기화면)에서는 미포함"),
@@ -461,6 +461,55 @@ public class RecruitControllerTest extends ControllerTest {
                                 getEnvelopPatternWithData().andWithPrefix("data.",
                                         fieldWithPath("nextCursor").type(JsonFieldType.NUMBER).description("다음 조회할 커서 번호"),
                                         fieldWithPath("isLast").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부")
+                                ).andWithPrefix("data.recruits[].",
+                                        fieldWithPath("recruitId").type(JsonFieldType.NUMBER).description("리크루트 id"),
+                                        fieldWithPath("category").type(JsonFieldType.STRING).description("카테고리 project|study"),
+                                        fieldWithPath("mine").type(JsonFieldType.BOOLEAN).description("내가 쓴 글 여부(토큰 기준)"),
+                                        fieldWithPath("title").type(JsonFieldType.STRING).description("리크루트 모집글 제목, 글자 수 제한 50자"),
+                                        fieldWithPath("matchStatus").type(JsonFieldType.STRING).description("사용자 리크루트 매칭 상태"),
+                                        fieldWithPath("appliedAt").type(JsonFieldType.STRING).description("사용자 리크루트 신청일"),
+                                        fieldWithPath("content").type(JsonFieldType.STRING).description("리크루트 본문 요약본 최대 50자"),
+                                        fieldWithPath("recruitEnd").type(JsonFieldType.STRING).description("yyyy-MM-dd 모집 종료 일자"),
+                                        fieldWithPath("finishedRecruit").type(JsonFieldType.BOOLEAN).description("리크루트 종료 여부"),
+                                        fieldWithPath("participants[].members[]").type(JsonFieldType.ARRAY).description("리크루트 참여 멤버 ").optional()
+                                ).andWithPrefix("data.recruits[].skills[].",
+                                        fieldWithPath("skillId").type(JsonFieldType.NUMBER).description("스킬 id 미사용"),
+                                        fieldWithPath("name").type(JsonFieldType.STRING).description("리크루트와 연관된 기술 스택명, 메타데이터-스킬 목록 조회 참고")
+                                ).andWithPrefix("data.recruits[].participants[].",
+                                        fieldWithPath("recruitType").type(JsonFieldType.STRING).description("리크루트 모집파트, 메타데이터-리크루트 목록 조회 참고"),
+                                        fieldWithPath("limit").type(JsonFieldType.NUMBER).description("리크루트 모집 인원 제한 1명이상 10명 이하")
+                                ).andWithPrefix("data.recruits[].participants[].members[].",
+                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("리크루트 참여자 닉네임"),
+                                        fieldWithPath("isMajor").type(JsonFieldType.BOOLEAN).description("리크루트 참여자 전공 여부")
+                                )
+                        )
+                );
+    }
+
+    @DisplayName("내가 신청한 리크루트 상태별 목록 조회(Offset)")
+    @Test
+    void getAppiedRecruitsByOffset() {
+        doReturn(RecruitFixture.GET_MEMBER_APPLIED_RECRUITS_OFFSET_RES_DTO)
+                .when(recruitService)
+                .getMemberAppliedRecruitsByOffset(any(), any());
+
+        restDocs
+                .cookie(ACCESS_TOKEN)
+                .when().get("/recruits/applied/offset?size=10&category=project")
+                .then().log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
+                .apply(document("recruit/applied-recruits/cursor",
+                                requestCookieAccessTokenMandatory(),
+                                requestParameters(
+                                        parameterWithName("offset").optional().description("다음 페이지 네이션"),
+                                        parameterWithName("size").description("페이징 사이즈"),
+                                        parameterWithName("category").description("카테고리 project|study"),
+                                        parameterWithName("matchStatus").optional().description("리크루트 매칭 상태")
+                                ),
+                                getEnvelopPatternWithData().andWithPrefix("data.",
+                                        fieldWithPath("currentPage").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
+                                        fieldWithPath("totalPageCount").type(JsonFieldType.NUMBER).description("총 페이지 갯수")
                                 ).andWithPrefix("data.recruits[].",
                                         fieldWithPath("recruitId").type(JsonFieldType.NUMBER).description("리크루트 id"),
                                         fieldWithPath("category").type(JsonFieldType.STRING).description("카테고리 project|study"),
