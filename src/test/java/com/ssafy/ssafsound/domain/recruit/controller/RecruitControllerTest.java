@@ -390,23 +390,23 @@ public class RecruitControllerTest extends ControllerTest {
                 );
     }
 
-    @DisplayName("사용자 참여 확정 리크루트 목록 조회")
+    @DisplayName("사용자 참여 확정 리크루트 목록 조회(Cursor)")
     @Test
-    void getMemberJoinedRecruits() {
+    void getMemberJoinedRecruitsByCursor() {
         doReturn(RecruitFixture.GET_RECRUITS_CURSOR_RES_DTO)
                 .when(recruitService)
-                .getMemberJoinRecruits(any(), any());
+                .getMemberJoinRecruitsByCursor(any(), any());
 
         restDocs
                 .cookie(ACCESS_TOKEN)
-                .when().get("/recruits/joined?memberId=1&category=PROJECT&size=10")
+                .when().get("/recruits/joined/cursor?memberId=1&category=PROJECT&size=10")
                 .then().log().all()
                 .assertThat()
                 .statusCode(HttpStatus.OK.value())
-                .apply(document("recruit/joined",
+                .apply(document("recruit/joined/cursor",
                                 requestCookieAccessTokenOptional(),
                                 requestParameters(
-                                        parameterWithName("cursor").optional().description("다음 조회 커서 default(초기화면)에서는 미포함"),
+                                        parameterWithName("cursor").optional().description("조회할 커서 default(초기화면)에서는 미포함"),
                                         parameterWithName("size").description("페이징 사이즈"),
                                         parameterWithName("category").description("카테고리 project|study"),
                                         parameterWithName("memberId").description("사용자 프로필 - 참여중인 리크루트 목록 조회 시 사용될 사용자의 Id")
@@ -414,6 +414,53 @@ public class RecruitControllerTest extends ControllerTest {
                                 getEnvelopPatternWithData().andWithPrefix("data.",
                                         fieldWithPath("nextCursor").type(JsonFieldType.NUMBER).description("다음 조회할 커서 번호"),
                                         fieldWithPath("isLast").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부")
+                                ).andWithPrefix("data.recruits[].",
+                                        fieldWithPath("recruitId").type(JsonFieldType.NUMBER).description("리크루트 id"),
+                                        fieldWithPath("category").type(JsonFieldType.STRING).description("카테고리 project|study"),
+                                        fieldWithPath("mine").type(JsonFieldType.BOOLEAN).description("내가 쓴 글 여부(토큰 기준)"),
+                                        fieldWithPath("title").type(JsonFieldType.STRING).description("리크루트 모집글 제목, 글자 수 제한 50자"),
+                                        fieldWithPath("content").type(JsonFieldType.STRING).description("리크루트 본문 요약본 최대 50자"),
+                                        fieldWithPath("recruitEnd").type(JsonFieldType.STRING).description("yyyy-MM-dd 모집 종료 일자"),
+                                        fieldWithPath("finishedRecruit").type(JsonFieldType.BOOLEAN).description("리크루트 종료 여부"),
+                                        fieldWithPath("participants[].members[]").type(JsonFieldType.ARRAY).description("리크루트 참여 멤버 ").optional()
+                                ).andWithPrefix("data.recruits[].skills[].",
+                                        fieldWithPath("skillId").type(JsonFieldType.NUMBER).description("스킬 id 미사용"),
+                                        fieldWithPath("name").type(JsonFieldType.STRING).description("리크루트와 연관된 기술 스택명, 메타데이터-스킬 목록 조회 참고")
+                                ).andWithPrefix("data.recruits[].participants[].",
+                                        fieldWithPath("recruitType").type(JsonFieldType.STRING).description("리크루트 모집파트, 메타데이터-리크루트 목록 조회 참고"),
+                                        fieldWithPath("limit").type(JsonFieldType.NUMBER).description("리크루트 모집 인원 제한 1명이상 10명 이하")
+                                ).andWithPrefix("data.recruits[].participants[].members[].",
+                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("리크루트 참여자 닉네임"),
+                                        fieldWithPath("isMajor").type(JsonFieldType.BOOLEAN).description("리크루트 참여자 전공 여부")
+                                )
+                        )
+                );
+    }
+
+    @DisplayName("사용자 참여 확정 리크루트 목록 조회(Offset)")
+    @Test
+    void getMemberJoinedRecruitsByOffset() {
+        doReturn(RecruitFixture.GET_RECRUITS_PAGE_RES_DTO)
+                .when(recruitService)
+                .getMemberJoinRecruitsByPage(any(), any());
+
+        restDocs
+                .cookie(ACCESS_TOKEN)
+                .when().get("/recruits/joined/offset?memberId=1&category=PROJECT&size=10")
+                .then().log().all()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
+                .apply(document("recruit/joined/offset",
+                                requestCookieAccessTokenOptional(),
+                                requestParameters(
+                                        parameterWithName("page").optional().description("조회할 페이지"),
+                                        parameterWithName("size").description("페이징 사이즈"),
+                                        parameterWithName("category").description("카테고리 project|study"),
+                                        parameterWithName("memberId").description("사용자 프로필 - 참여중인 리크루트 목록 조회 시 사용될 사용자의 Id")
+                                ),
+                                getEnvelopPatternWithData().andWithPrefix("data.",
+                                        fieldWithPath("currentPage").type(JsonFieldType.NUMBER).description("현재 조회중 페이징 번호"),
+                                        fieldWithPath("totalPageCount").type(JsonFieldType.NUMBER).description("전체 페이지 갯수")
                                 ).andWithPrefix("data.recruits[].",
                                         fieldWithPath("recruitId").type(JsonFieldType.NUMBER).description("리크루트 id"),
                                         fieldWithPath("category").type(JsonFieldType.STRING).description("카테고리 project|study"),

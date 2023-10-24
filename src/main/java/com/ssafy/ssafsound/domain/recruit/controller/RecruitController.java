@@ -87,10 +87,17 @@ public class RecruitController {
                 .build();
     }
 
-    @GetMapping("/joined")
-    public  EnvelopeResponse<GetRecruitsCursorResDto> getMemberJoinedRecruits(GetMemberJoinRecruitsReqDto getMemberJoinRecruitsReqDto, @Authentication AuthenticatedMember memberInfo) {
+    @GetMapping("/joined/cursor")
+    public  EnvelopeResponse<GetRecruitsCursorResDto> getMemberJoinedRecruitsByCursor(GetMemberJoinRecruitsReqDto getMemberJoinRecruitsReqDto, @Authentication AuthenticatedMember memberInfo) {
         return EnvelopeResponse.<GetRecruitsCursorResDto>builder()
-                .data(recruitService.getMemberJoinRecruits(getMemberJoinRecruitsReqDto, memberInfo.getMemberId()))
+                .data(recruitService.getMemberJoinRecruitsByCursor(getMemberJoinRecruitsReqDto, memberInfo.getMemberId()))
+                .build();
+    }
+
+    @GetMapping("/joined/offset")
+    public  EnvelopeResponse<GetRecruitsPageResDto> getMemberJoinedRecruitsByOffset(GetMemberJoinOffsetRecruitReqDto getMemberJoinRecruitsReqDto, @Authentication AuthenticatedMember memberInfo) {
+        return EnvelopeResponse.<GetRecruitsPageResDto>builder()
+                .data(recruitService.getMemberJoinRecruitsByPage(getMemberJoinRecruitsReqDto, memberInfo.getMemberId()))
                 .build();
     }
 

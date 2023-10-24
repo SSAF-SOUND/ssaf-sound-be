@@ -176,7 +176,7 @@ public class RecruitService {
     }
 
     @Transactional(readOnly = true)
-    public GetRecruitsCursorResDto getMemberJoinRecruits(GetMemberJoinRecruitsReqDto recruitsReqDto, Long loginMemberId) {
+    public GetRecruitsCursorResDto getMemberJoinRecruitsByCursor(GetMemberJoinRecruitsReqDto recruitsReqDto, Long loginMemberId) {
         Long memberId = recruitsReqDto.getMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
@@ -186,6 +186,24 @@ public class RecruitService {
 
         Slice<Recruit> recruitPages = recruitRepository.findMemberJoinRecruitWithCursorAndPageable(memberId, recruitsReqDto.getCategory(), recruitsReqDto.getCursor(), PageRequest.ofSize(recruitsReqDto.getSize()));
         GetRecruitsCursorResDto recruitsResDto = GetRecruitsCursorResDto.fromPageAndMemberId(recruitPages, loginMemberId);
+        if(!recruitsResDto.getRecruits().isEmpty()) {
+            addRecruitParticipants(recruitsResDto);
+        }
+        return recruitsResDto;
+    }
+
+    @Transactional(readOnly = true)
+    public GetRecruitsPageResDto getMemberJoinRecruitsByPage(GetMemberJoinOffsetRecruitReqDto recruitsReqDto, Long loginMemberId) {
+        Long memberId = recruitsReqDto.getMemberId();
+        Member member = memberRepository.findById(memberId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+
+        if(!memberId.equals(loginMemberId) && !member.getPublicProfile()) {
+            throw new MemberException(MemberErrorInfo.MEMBER_PROFILE_SECRET);
+        }
+
+        Page<Recruit> recruitPages = recruitRepository.findMemberJoinRecruitWithPageable(memberId, recruitsReqDto.getCategory(), PageRequest.of(recruitsReqDto.getPage(), recruitsReqDto.getSize()));
+
+        GetRecruitsPageResDto recruitsResDto = GetRecruitsPageResDto.fromPageAndMemberId(recruitPages, loginMemberId);
         if(!recruitsResDto.getRecruits().isEmpty()) {
             addRecruitParticipants(recruitsResDto);
         }

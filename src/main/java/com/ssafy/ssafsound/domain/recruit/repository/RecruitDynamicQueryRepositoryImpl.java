@@ -142,33 +142,58 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
 
     @Override
     public Slice<Recruit> findMemberJoinRecruitWithCursorAndPageable(Long memberId, String category, Long cursor, Pageable pageable) {
-        BooleanExpression applicationRecruitCategoryEq =
-                category == null ? null :
-                recruitApplication.recruit.category.eq(Category.valueOf(category.toUpperCase()));
+        List<Long> memberJoinRecruitIds = getMemberJoinRecruitIds(memberId, category);
 
-        List<Long> memberJoinRecruitIds = jpaQueryFactory.select(recruitApplication.recruit.id)
-                .from(recruitApplication)
-                .innerJoin(recruitApplication.recruit, recruit)
-                .innerJoin(recruitApplication.member, member)
-                .where(recruitApplication.member.id.eq(memberId),
-                        recruitApplication.matchStatus.eq(MatchStatus.DONE),
-                        applicationRecruitCategoryEq)
-                .fetch();
-
-
-        BooleanExpression categoryEq = category == null ? null : recruit.category.eq(Category.valueOf(category.toUpperCase()));
-
-        List<Recruit> recruits = jpaQueryFactory.selectFrom(recruit)
-                .innerJoin(recruit.member, member)
-                .where(recruitIdLtThanCursor(cursor),
-                        recruit.id.in(memberJoinRecruitIds).or(recruit.member.id.eq(memberId)),
-                        categoryEq)
+        List<Recruit> recruits = getMemberJoinRecruits(memberId, category, memberJoinRecruitIds)
+                .where(recruitIdLtThanCursor(cursor))
                 .limit(pageable.getPageSize()+1)
                 .orderBy(recruit.id.desc())
                 .fetch();
 
         boolean hasNext = pageable.isPaged() && recruits.size() > pageable.getPageSize();
         return new SliceImpl<>(hasNext ? recruits.subList(0, pageable.getPageSize()) : recruits, pageable, hasNext);
+    }
+
+    @Override
+    public Page<Recruit> findMemberJoinRecruitWithPageable(Long memberId, String category, Pageable pageable) {
+        List<Long> memberJoinRecruitIds = getMemberJoinRecruitIds(memberId, category);
+
+        List<Recruit> recruits = getMemberJoinRecruits(memberId, category, memberJoinRecruitIds)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(recruit.id.desc())
+                .fetch();
+
+        JPAQuery<Long> countQuery = jpaQueryFactory
+                .select(Wildcard.count)
+                .from(recruit)
+                .innerJoin(recruit.member, member)
+                .where(recruit.id.in(memberJoinRecruitIds).or(recruit.member.id.eq(memberId)),
+                        recruitCategoryEq(category));
+
+        return PageableExecutionUtils.getPage(recruits, pageable, countQuery::fetchOne);
+    }
+    private JPAQuery<Recruit> getMemberJoinRecruits(Long memberId, String category, List<Long> memberJoinRecruitIds) {
+        return jpaQueryFactory.selectFrom(recruit)
+                .innerJoin(recruit.member, member)
+                .where(recruit.id.in(memberJoinRecruitIds).or(recruit.member.id.eq(memberId)),
+                        recruitCategoryEq(category));
+    }
+
+    private List<Long> getMemberJoinRecruitIds(Long memberId, String category) {
+        return jpaQueryFactory.select(recruitApplication.recruit.id)
+                .from(recruitApplication)
+                .innerJoin(recruitApplication.recruit, recruit)
+                .innerJoin(recruitApplication.member, member)
+                .where(recruitApplication.member.id.eq(memberId),
+                        recruitApplication.matchStatus.eq(MatchStatus.DONE),
+                        applicationRecruitCategoryEq(category))
+                .fetch();
+    }
+
+    private static BooleanExpression applicationRecruitCategoryEq(String category) {
+        return category == null ? null :
+                recruitApplication.recruit.category.eq(Category.valueOf(category.toUpperCase()));
     }
 
     @Override
