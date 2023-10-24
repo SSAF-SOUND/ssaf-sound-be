@@ -499,7 +499,7 @@ public class RecruitControllerTest extends ControllerTest {
                 .then().log().all()
                 .assertThat()
                 .statusCode(HttpStatus.OK.value())
-                .apply(document("recruit/applied-recruits/cursor",
+                .apply(document("recruit/applied-recruits/offset",
                                 requestCookieAccessTokenMandatory(),
                                 requestParameters(
                                         parameterWithName("offset").optional().description("다음 페이지 네이션"),

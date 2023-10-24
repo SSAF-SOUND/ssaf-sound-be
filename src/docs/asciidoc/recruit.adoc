@@ -30,8 +30,11 @@ operation::recruit/recruits-cursor[snippets='http-request,request-parameters,htt
 === 리크루트 목록 조회(Offset)
 operation::recruit/recruits-page[snippets='http-request,request-parameters,http-response,response-fields']
 
-=== 사용자 지원 리크루트 목록 조회
-operation::recruit/applied-recruits[snippets='http-request,cookie,request-parameters,http-response,response-fields']
+=== 사용자 지원 리크루트 목록 조회(Cursor)
+operation::recruit/applied-recruits/cursor[snippets='http-request,cookie,request-parameters,http-response,response-fields']
+
+=== 사용자 지원 리크루트 목록 조회(Offset)
+operation::recruit/applied-recruits/offset[snippets='http-request,cookie,request-parameters,http-response,response-fields']
 
 === 사용자 참여중 리크루트 목록 조회
 operation::recruit/joined[snippets='http-request,cookie,request-parameters,http-response,response-fields']
