@@ -59,16 +59,16 @@ public class RecruitController {
     }
 
     @GetMapping("/cursor")
-    public EnvelopeResponse<GetRecruitsCursorResDto> getRecruitsByCursor(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable, @Authentication AuthenticatedMember memberInfo) {
+    public EnvelopeResponse<GetRecruitsCursorResDto> getRecruitsByCursor(GetRecruitsCursorReqDto getRecruitsCursorReqDto, @Authentication AuthenticatedMember memberInfo) {
         return EnvelopeResponse.<GetRecruitsCursorResDto>builder()
-                .data(recruitService.getRecruitsByCursor(getRecruitsReqDto, pageable, memberInfo.getMemberId()))
+                .data(recruitService.getRecruitsByCursor(getRecruitsCursorReqDto, memberInfo.getMemberId()))
                 .build();
     }
 
     @GetMapping("/offset")
-    public EnvelopeResponse<GetRecruitOffsetResDto> getRecruitsByOffset(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable, @Authentication AuthenticatedMember memberInfo) {
+    public EnvelopeResponse<GetRecruitOffsetResDto> getRecruitsByOffset(GetRecruitsOffsetReqDto getRecruitsCursorReqDto, @Authentication AuthenticatedMember memberInfo) {
         return EnvelopeResponse.<GetRecruitOffsetResDto>builder()
-                .data(recruitService.getRecruitsByOffset(getRecruitsReqDto, pageable, memberInfo.getMemberId()))
+                .data(recruitService.getRecruitsByOffset(getRecruitsCursorReqDto, memberInfo.getMemberId()))
                 .build();
     }
 

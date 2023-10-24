@@ -130,8 +130,8 @@ public class RecruitService {
     }
 
     @Transactional(readOnly = true)
-    public GetRecruitsCursorResDto getRecruitsByCursor(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable, Long loginMemberId) {
-        Slice<Recruit> recruitPages = recruitRepository.findRecruitSliceByGetRecruitsReqDto(getRecruitsReqDto, pageable);
+    public GetRecruitsCursorResDto getRecruitsByCursor(GetRecruitsCursorReqDto getRecruitsCursorReqDto, Long loginMemberId) {
+        Slice<Recruit> recruitPages = recruitRepository.findRecruitSliceByGetRecruitsReqDto(getRecruitsCursorReqDto, PageRequest.ofSize(getRecruitsCursorReqDto.getSize()));
         GetRecruitsCursorResDto recruitsResDto = GetRecruitsCursorResDto.fromPageAndMemberId(recruitPages, loginMemberId);
         if(!recruitsResDto.getRecruits().isEmpty()) {
             addRecruitParticipants(recruitsResDto);
@@ -140,11 +140,11 @@ public class RecruitService {
     }
 
     @Transactional(readOnly = true)
-    public GetRecruitOffsetResDto getRecruitsByOffset(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable, Long loginMemberId) {
-        Integer pageOffset = getRecruitsReqDto.getNext();
+    public GetRecruitOffsetResDto getRecruitsByOffset(GetRecruitsOffsetReqDto getRecruitsOffsetReqDto, Long loginMemberId) {
+        Integer pageOffset = getRecruitsOffsetReqDto.getNextPaging();
 
-        PageRequest pageRequest = PageRequest.of(pageOffset== null || pageOffset <= 0 ? 0 : pageOffset, pageable.getPageSize()-1);
-        Page<Recruit> recruitPages = recruitRepository.findRecruitPageByGetRecruitsReqDto(getRecruitsReqDto, pageRequest);
+        PageRequest pageRequest = PageRequest.of(pageOffset== null || pageOffset <= 0 ? 0 : pageOffset-1, getRecruitsOffsetReqDto.getSize());
+        Page<Recruit> recruitPages = recruitRepository.findRecruitPageByGetRecruitsReqDto(getRecruitsOffsetReqDto, pageRequest);
         GetRecruitOffsetResDto recruitsResDto = GetRecruitOffsetResDto.fromPageAndMemberId(recruitPages, loginMemberId);
         if(!recruitsResDto.getRecruits().isEmpty()) {
             addRecruitParticipants(recruitsResDto);

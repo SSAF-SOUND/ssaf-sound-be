@@ -12,7 +12,9 @@ import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
 import com.ssafy.ssafsound.domain.recruit.domain.Category;
 import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import com.ssafy.ssafsound.domain.recruit.dto.AppliedRecruit;
-import com.ssafy.ssafsound.domain.recruit.dto.GetRecruitsReqDto;
+import com.ssafy.ssafsound.domain.recruit.dto.GetRecruitsCursorReqDto;
+import com.ssafy.ssafsound.domain.recruit.dto.GetRecruitsOffsetReqDto;
+import com.ssafy.ssafsound.domain.recruit.dto.RecruitPaging;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import lombok.RequiredArgsConstructor;
 
@@ -43,20 +45,20 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Slice<Recruit> findRecruitSliceByGetRecruitsReqDto(GetRecruitsReqDto dto, Pageable pageable) {
+    public Slice<Recruit> findRecruitSliceByGetRecruitsReqDto(GetRecruitsCursorReqDto dto, Pageable pageable) {
         JPAQuery<Recruit> recruitDynamicQuery = findRecruitByGetRecruitsReqDto(dto);
-        Integer cursor = dto.getNext();
+        Long cursor = dto.getNextPaging();
         List<Recruit> recruits = recruitDynamicQuery
-                .where(recruitIdLtThanCursor(Long.valueOf(cursor)))
+                .where(recruitIdLtThanCursor(cursor))
                 .limit(pageable.getPageSize()+1)
                 .orderBy(recruit.id.desc())
                 .fetch();
-        boolean hasNext = pageable.isPaged() && recruits.size() > pageable.getPageSize();
+        boolean hasNext = recruits.size() > pageable.getPageSize();
         return new SliceImpl<>(hasNext ? recruits.subList(0, pageable.getPageSize()) : recruits, pageable, hasNext);
     }
 
     @Override
-    public Page<Recruit> findRecruitPageByGetRecruitsReqDto(GetRecruitsReqDto dto, Pageable pageable) {
+    public Page<Recruit> findRecruitPageByGetRecruitsReqDto(GetRecruitsOffsetReqDto dto, Pageable pageable) {
         JPAQuery<Recruit> recruitDynamicQuery = findRecruitByGetRecruitsReqDto(dto);
         List<Recruit> recruits = recruitDynamicQuery
                 .offset(pageable.getOffset())
@@ -78,7 +80,7 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
         return PageableExecutionUtils.getPage(recruits, pageable, countQuery::fetchOne);
     }
 
-    private JPAQuery<Recruit> findRecruitByGetRecruitsReqDto(GetRecruitsReqDto dto) {
+    private JPAQuery<Recruit> findRecruitByGetRecruitsReqDto(RecruitPaging<? extends Number> dto) {
         JPAQuery<Recruit> recruitDynamicQuery = jpaQueryFactory.selectFrom(recruit);
         recruitDynamicQuery
                 .where(

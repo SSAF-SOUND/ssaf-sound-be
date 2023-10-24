@@ -205,7 +205,7 @@ public class RecruitControllerTest extends ControllerTest {
     void getRecruitsByCursor() {
         doReturn(RecruitFixture.GET_RECRUITS_CURSOR_RES_DTO)
                 .when(recruitService)
-                .getRecruitsByCursor(any(), any(), any());
+                .getRecruitsByCursor(any(), any());
 
         restDocs
                 .cookie(ACCESS_TOKEN)
@@ -255,7 +255,7 @@ public class RecruitControllerTest extends ControllerTest {
     void getRecruitsByOffset() {
         doReturn(RecruitFixture.GET_RECRUITS_OFFSET_RES_DTO)
                 .when(recruitService)
-                .getRecruitsByOffset(any(), any(), any());
+                .getRecruitsByOffset(any(), any());
 
         restDocs
                 .cookie(ACCESS_TOKEN)
