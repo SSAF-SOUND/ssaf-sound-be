@@ -12,6 +12,7 @@ public interface RecruitDynamicQueryRepository {
     Slice<Recruit> findRecruitSliceByGetRecruitsReqDto(GetRecruitsCursorReqDto dto, Pageable pageable);
     Page<Recruit> findRecruitPageByGetRecruitsReqDto(GetRecruitsOffsetReqDto dto, Pageable pageable);
     Slice<Recruit> findMemberJoinRecruitWithCursorAndPageable(Long memberId, String category, Long cursorId, Pageable pageable);
-    Slice<Recruit> findMemberScrapRecruits(Long memberId, Long cursorId, Pageable pageable);
+    Slice<Recruit> findMemberScrapRecruitsByCursor(Long memberId, Long cursorId, Pageable pageable);
+    Page<Recruit> findMemberScrapRecruitsByPage(Long memberId, Pageable pageable);
     Slice<AppliedRecruit> findMemberAppliedRecruits(Long memberId, Long cursor, String category, String matchStatus, Pageable pageable);
 }

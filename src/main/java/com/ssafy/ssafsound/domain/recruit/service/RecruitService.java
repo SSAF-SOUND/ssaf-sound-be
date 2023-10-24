@@ -153,10 +153,15 @@ public class RecruitService {
     }
 
     @Transactional(readOnly = true)
-    public GetRecruitsCursorResDto getScrapedRecruits(Long memberId, Long cursor, Pageable pageable) {
-        Slice<Recruit> recruitPages = recruitRepository.findMemberScrapRecruits(memberId, cursor, pageable);
-        GetRecruitsCursorResDto recruitsResDto = GetRecruitsCursorResDto.fromPageAndMemberId(recruitPages, memberId);
-        return recruitsResDto;
+    public GetRecruitsCursorResDto getScrapedRecruitsByCursor(Long memberId, Long cursor, Pageable pageable) {
+        Slice<Recruit> recruitPages = recruitRepository.findMemberScrapRecruitsByCursor(memberId, cursor, pageable);
+        return GetRecruitsCursorResDto.fromPageAndMemberId(recruitPages, memberId);
+    }
+
+    @Transactional(readOnly = true)
+    public GetRecruitsPageResDto getScrapedRecruitsByPage(Long memberId, Pageable pageable) {
+        Page<Recruit> recruitPages = recruitRepository.findMemberScrapRecruitsByPage(memberId, pageable);
+        return GetRecruitsPageResDto.fromPageAndMemberId(recruitPages, memberId);
     }
 
     @Transactional

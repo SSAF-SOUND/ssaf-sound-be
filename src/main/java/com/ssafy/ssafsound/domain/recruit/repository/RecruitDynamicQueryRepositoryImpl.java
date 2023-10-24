@@ -171,7 +171,7 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
     }
 
     @Override
-    public Slice<Recruit> findMemberScrapRecruits(Long memberId, Long cursor, Pageable pageable) {
+    public Slice<Recruit> findMemberScrapRecruitsByCursor(Long memberId, Long cursor, Pageable pageable) {
         List<Recruit> recruits = jpaQueryFactory.select(recruitScrap.recruit)
                 .from(recruitScrap)
                 .innerJoin(recruitScrap.recruit, recruit)
@@ -183,6 +183,11 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
 
         boolean hasNext = pageable.isPaged() && recruits.size() > pageable.getPageSize();
         return new SliceImpl<>(hasNext ? recruits.subList(0, pageable.getPageSize()) : recruits, pageable, hasNext);
+    }
+
+    @Override
+    public Page<Recruit> findMemberScrapRecruitsByPage(Long memberId, Pageable pageable) {
+        return null;
     }
 
     @Override

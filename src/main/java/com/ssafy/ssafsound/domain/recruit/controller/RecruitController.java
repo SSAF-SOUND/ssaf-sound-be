@@ -8,6 +8,7 @@ import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -72,10 +73,17 @@ public class RecruitController {
                 .build();
     }
 
-    @GetMapping("/my-scrap")
-    public EnvelopeResponse<GetRecruitsCursorResDto> getScrapedRecruits(Long cursor, Pageable pageable, @Authentication AuthenticatedMember memberInfo) {
+    @GetMapping("/my-scrap/cursor")
+    public EnvelopeResponse<GetRecruitsCursorResDto> getScrapedRecruitsByCursor(Long cursor, Pageable pageable, @Authentication AuthenticatedMember memberInfo) {
         return EnvelopeResponse.<GetRecruitsCursorResDto>builder()
-                .data(recruitService.getScrapedRecruits(memberInfo.getMemberId(), cursor, pageable))
+                .data(recruitService.getScrapedRecruitsByCursor(memberInfo.getMemberId(), cursor, pageable))
+                .build();
+    }
+
+    @GetMapping("/my-scrap/offset")
+    public EnvelopeResponse<GetRecruitsPageResDto> getScrapedRecruitsByOffset(@PageableDefault Pageable pageable, @Authentication AuthenticatedMember memberInfo) {
+        return EnvelopeResponse.<GetRecruitsPageResDto>builder()
+                .data(recruitService.getScrapedRecruitsByPage(memberInfo.getMemberId(), pageable))
                 .build();
     }
 

@@ -155,6 +155,12 @@ public class RecruitFixture {
             .isLast(true)
             .build();
 
+    public static final GetRecruitsPageResDto GET_RECRUITS_PAGE_RES_DTO = GetRecruitsPageResDto.builder()
+            .recruits(List.of(RECRUIT_1_ELEMENT))
+            .currentPage(1)
+            .totalPageCount(1)
+            .build();
+
     public static final GetRecruitOffsetResDto GET_RECRUITS_OFFSET_RES_DTO = GetRecruitOffsetResDto.builder()
             .recruits(List.of(RECRUIT_1_ELEMENT))
             .currentPage(0)
