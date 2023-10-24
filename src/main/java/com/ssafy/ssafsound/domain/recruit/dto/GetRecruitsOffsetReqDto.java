@@ -9,8 +9,9 @@ import java.util.List;
 
 @Getter
 @Builder
-public class GetRecruitsReqDto {
-    private Integer next;
+public class GetRecruitsOffsetReqDto implements RecruitPaging<Integer> {
+    private Integer page;
+    private Integer size;
 
     @NotBlank
     private String category;
@@ -20,4 +21,9 @@ public class GetRecruitsReqDto {
     @NotEmpty
     private List<String> recruitTypes;
     private List<String> skills;
+
+    @Override
+    public Integer getNextPaging() {
+        return this.page;
+    }
 }
