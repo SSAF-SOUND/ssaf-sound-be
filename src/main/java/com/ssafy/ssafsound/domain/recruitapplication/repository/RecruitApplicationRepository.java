@@ -50,6 +50,11 @@ public interface RecruitApplicationRepository extends JpaRepository<RecruitAppli
     RecruitApplication findTopByRecruitIdAndMemberIdOrderByIdDesc(Long recruitId, Long memberId);
 
     @Modifying
-    @Query(value = "update recruit_application ra set ra.matchStatus = com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus.CANCEL where ra.member.id = :memberId")
+    @Query(value = "update recruit_application ra "
+        + "set ra.matchStatus = com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus.CANCEL "
+        + "where ra.member.id = :memberId "
+        + "  or ra.recruit.id in ("
+        + "                        select r.id from recruit r where r.member.id = :memberId"
+        + "                      )")
     void cancelAllByMemberId(Long memberId);
 }
