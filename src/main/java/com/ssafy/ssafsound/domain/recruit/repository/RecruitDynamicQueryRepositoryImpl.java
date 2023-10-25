@@ -73,12 +73,16 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
                 .where(
                         recruitCategoryEq(dto.getCategory()),
                         recruitTitleEq(dto.getKeyword()),
-                        recruit.finishedRecruit.eq(dto.isFinished()),
+                        notFinishedRecruit(dto.isFinished()),
                         recruitTypeContains(dto.getCategory(), dto.getRecruitTypes()),
                         recruitSkillContains(dto.getSkills())
                 );
 
         return PageableExecutionUtils.getPage(recruits, pageable, countQuery::fetchOne);
+    }
+
+    private static BooleanExpression notFinishedRecruit(boolean isFinished) {
+        return isFinished ? null : recruit.finishedRecruit.eq(false);
     }
 
     private JPAQuery<Recruit> findRecruitByGetRecruitsReqDto(RecruitPaging<? extends Number> dto) {
@@ -87,7 +91,7 @@ public class RecruitDynamicQueryRepositoryImpl implements RecruitDynamicQueryRep
                 .where(
                         recruitCategoryEq(dto.getCategory()),
                         recruitTitleEq(dto.getKeyword()),
-                        recruit.finishedRecruit.eq(dto.isFinished()),
+                        notFinishedRecruit(dto.isFinished()),
                         recruitTypeContains(dto.getCategory(), dto.getRecruitTypes()),
                         recruitSkillContains(dto.getSkills())
                 );
