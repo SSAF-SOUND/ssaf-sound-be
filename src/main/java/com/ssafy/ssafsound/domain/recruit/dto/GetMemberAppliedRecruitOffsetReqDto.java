@@ -5,9 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class GetMemberAppliedRecruitOffsetReqDto {
+public class GetMemberAppliedRecruitOffsetReqDto extends RecruitOffsetPagingRequestDto {
     private String category;
     private String matchStatus;
-    private Integer page;
-    private Integer size;
 }

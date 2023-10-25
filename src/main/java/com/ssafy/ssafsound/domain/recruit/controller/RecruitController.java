@@ -81,9 +81,9 @@ public class RecruitController {
     }
 
     @GetMapping("/my-scrap/offset")
-    public EnvelopeResponse<GetRecruitsPageResDto> getScrapedRecruitsByOffset(@PageableDefault Pageable pageable, @Authentication AuthenticatedMember memberInfo) {
+    public EnvelopeResponse<GetRecruitsPageResDto> getScrapedRecruitsByOffset(RecruitOffsetPagingRequestDto pagingRequestDto, @Authentication AuthenticatedMember memberInfo) {
         return EnvelopeResponse.<GetRecruitsPageResDto>builder()
-                .data(recruitService.getScrapedRecruitsByPage(memberInfo.getMemberId(), pageable))
+                .data(recruitService.getScrapedRecruitsByPage(memberInfo.getMemberId(), pagingRequestDto))
                 .build();
     }
 
