@@ -4,6 +4,7 @@ import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -26,4 +27,8 @@ public interface RecruitRepository extends JpaRepository<Recruit, Long>, Recruit
     @Modifying
     @Query(value = "update recruit r set r.finishedRecruit = true where r.endDateTime < :todayMaxTime")
     int expiredTimeOutRecruits(LocalDateTime todayMaxTime);
+
+    @Modifying
+    @Query(value = "update recruit r set r.deletedRecruit = true where r.member.id = :memberId")
+    void deleteAllByMemberId(Long memberId);
 }

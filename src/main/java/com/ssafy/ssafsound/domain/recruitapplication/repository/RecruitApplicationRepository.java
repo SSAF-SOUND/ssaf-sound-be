@@ -6,6 +6,7 @@ import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -47,4 +48,8 @@ public interface RecruitApplicationRepository extends JpaRepository<RecruitAppli
     void deleteByTypeNotIn(List<MetaData> recruitTypes);
 
     RecruitApplication findTopByRecruitIdAndMemberIdOrderByIdDesc(Long recruitId, Long memberId);
+
+    @Modifying
+    @Query(value = "update recruit_application ra set ra.matchStatus = com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus.CANCEL where ra.member.id = :memberId")
+    void cancelAllByMemberId(Long memberId);
 }
