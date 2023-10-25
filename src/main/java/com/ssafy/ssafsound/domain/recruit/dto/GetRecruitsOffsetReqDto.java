@@ -9,10 +9,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class GetRecruitsOffsetReqDto implements RecruitPaging<Integer> {
-    private Integer page;
-    private Integer size;
-
+public class GetRecruitsOffsetReqDto extends RecruitOffsetPagingRequestDto implements RecruitPaging<Integer> {
     @NotBlank
     private String category;
     private String keyword;
