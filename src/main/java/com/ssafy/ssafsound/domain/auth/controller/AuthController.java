@@ -57,7 +57,7 @@ public class AuthController {
                 .build();
     }
 
-    @GetMapping("/reissue")
+    @PostMapping("/reissue")
     public EnvelopeResponse<CreateMemberAccessTokenResDto> reissue(
             @CookieValue("refreshToken") String refreshToken,
             HttpServletResponse response) {

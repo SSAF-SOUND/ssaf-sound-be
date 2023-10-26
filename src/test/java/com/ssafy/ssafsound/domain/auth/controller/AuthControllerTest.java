@@ -96,7 +96,7 @@ class AuthControllerTest extends ControllerTest {
 
         restDocs
                 .cookie(REFRESH_TOKEN)
-                .when().get("/auth/reissue")
+                .when().post("/auth/reissue")
                 .then().log().all()
                 .assertThat()
                 .apply(document("oauth/reissue",
