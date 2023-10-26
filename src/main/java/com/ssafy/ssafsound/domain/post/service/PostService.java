@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.post.service;
 
+import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.board.domain.Board;
 import com.ssafy.ssafsound.domain.board.exception.BoardErrorInfo;
 import com.ssafy.ssafsound.domain.board.exception.BoardException;
@@ -9,17 +10,16 @@ import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.post.domain.*;
-import com.ssafy.ssafsound.domain.post.dto.GetPostDetailResDto;
-import com.ssafy.ssafsound.domain.post.dto.GetPostResDto;
+import com.ssafy.ssafsound.domain.post.dto.*;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
 import com.ssafy.ssafsound.domain.post.exception.PostException;
 import com.ssafy.ssafsound.domain.post.repository.*;
-import com.ssafy.ssafsound.domain.post.dto.*;
 import com.ssafy.ssafsound.infra.exception.InfraException;
 import com.ssafy.ssafsound.infra.storage.service.AwsS3StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,8 +29,6 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class PostService {
-    @Value("${spring.constant.post.HOT_POST_LIKES_THRESHOLD}")
-    private Long HOT_POST_LIKES_THRESHOLD;
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
@@ -41,19 +39,33 @@ public class PostService {
     private final PostScrapRepository postScrapRepository;
     private final PostImageRepository postImageRepository;
     private final AwsS3StorageService awsS3StorageService;
+    private final PostConstantProvider postConstantProvider;
 
     @Transactional(readOnly = true)
-    public GetPostResDto findPosts(GetPostReqDto getPostReqDto) {
-        Long boardId = getPostReqDto.getBoardId();
-        Long cursor = getPostReqDto.getCursor();
-        int size = getPostReqDto.getSize();
+    public GetPostCursorResDto findPostsByCursor(GetPostCursorReqDto getPostCursorReqDto) {
+        Long boardId = getPostCursorReqDto.getBoardId();
+        Long cursor = getPostCursorReqDto.getCursor();
+        int size = getPostCursorReqDto.getSize();
 
         if (!boardRepository.existsById(boardId)) {
             throw new BoardException(BoardErrorInfo.NO_BOARD);
         }
 
         List<Post> posts = postRepository.findWithDetailsByBoardId(boardId, cursor, size);
-        return GetPostResDto.ofPosts(posts, size);
+        return GetPostCursorResDto.ofPosts(posts, size);
+    }
+
+    @Transactional(readOnly = true)
+    public GetPostOffsetResDto findPostsByOffset(GetPostOffsetReqDto getPostOffsetReqDto) {
+        PageRequest pageRequest = getPostOffsetReqDto.toPageRequest();
+
+        Long boardId = getPostOffsetReqDto.getBoardId();
+
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new BoardException(BoardErrorInfo.NO_BOARD));
+
+        Page<Post> posts = postRepository.findPostsByboardAndPageable(board, pageRequest);
+        return GetPostOffsetResDto.ofPosts(posts);
     }
 
     @Transactional(readOnly = true)
@@ -75,31 +87,31 @@ public class PostService {
         Member loginMember = memberRepository.findById(loginMemberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-        PostLike postLike = postLikeRepository.findByPostIdAndMemberId(postId, loginMember.getId())
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
+
+        PostLike postLike = postLikeRepository.findByPostIdAndMemberId(post.getId(), loginMember.getId())
                 .orElse(null);
 
-        Integer likeCount = postLikeRepository.countByPostId(postId);
-        return togglePostLike(likeCount, postId, loginMember, postLike);
+        Integer likeCount = postLikeRepository.countByPostId(post.getId());
+        return togglePostLike(likeCount, post, loginMember, postLike);
     }
 
-    private PostCommonLikeResDto togglePostLike(Integer likeCount, Long postId, Member loginMember, PostLike postLike) {
+    private PostCommonLikeResDto togglePostLike(Integer likeCount, Post post, Member loginMember, PostLike postLike) {
         if (postLike != null) {
             deleteLike(postLike);
             return new PostCommonLikeResDto(likeCount - 1, false);
         }
 
-        saveLike(postId, loginMember);
-        if (isSelectedHotPost(postId)) {
-            saveHotPost(postId);
+        saveLike(post, loginMember);
+        if (isSelectedHotPost(likeCount, post)) {
+            saveHotPost(post);
         }
         return new PostCommonLikeResDto(likeCount + 1, true);
     }
 
-    private void saveLike(Long postId, Member loginMember) {
-        PostLike postLike = PostLike.builder()
-                .post(postRepository.getReferenceById(postId))
-                .member(loginMember)
-                .build();
+    private void saveLike(Post post, Member loginMember) {
+        PostLike postLike = PostLike.of(post, loginMember);
         postLikeRepository.save(postLike);
     }
 
@@ -107,16 +119,13 @@ public class PostService {
         postLikeRepository.delete(postLike);
     }
 
-
-    private boolean isSelectedHotPost(Long postId) {
-        return postLikeRepository.countByPostId(postId) >= HOT_POST_LIKES_THRESHOLD;
+    private boolean isSelectedHotPost(Integer likeCount, Post post) {
+        return likeCount + 1 == postConstantProvider.getHOT_POST_LIKES_THRESHOLD() &&
+                !hotPostRepository.existsByPostId(post.getId());
     }
 
-    private void saveHotPost(Long postId) {
-        HotPost hotPost = HotPost.builder()
-                .post(postRepository.findById(postId).
-                        orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST)))
-                .build();
+    private void saveHotPost(Post post) {
+        HotPost hotPost = HotPost.from(post);
         hotPostRepository.save(hotPost);
     }
 
@@ -130,27 +139,28 @@ public class PostService {
         Member loginMember = memberRepository.findById(loginMemberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-        PostScrap postScrap = postScrapRepository.findByPostIdAndMemberId(postId, loginMember.getId())
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
+
+        PostScrap postScrap = postScrapRepository.findByPostIdAndMemberId(post.getId(), loginMember.getId())
                 .orElse(null);
 
-        Integer scrapCount = postScrapRepository.countByPostId(postId);
-        return togglePostScrap(scrapCount, postId, loginMember, postScrap);
+        Integer scrapCount = postScrapRepository.countByPostId(post.getId());
+        return togglePostScrap(scrapCount, post, loginMember, postScrap);
     }
 
-    private PostPostScrapResDto togglePostScrap(Integer scrapCount, Long postId, Member loginMember, PostScrap postScrap) {
+    private PostPostScrapResDto togglePostScrap(Integer scrapCount, Post post, Member loginMember,
+                                                PostScrap postScrap) {
         if (postScrap != null) {
             deleteScrapIfAlreadyExists(postScrap);
             return new PostPostScrapResDto(scrapCount - 1, false);
         }
-        saveScrap(postId, loginMember);
+        saveScrap(post, loginMember);
         return new PostPostScrapResDto(scrapCount + 1, true);
     }
 
-    private void saveScrap(Long postId, Member loginMember) {
-        PostScrap postScrap = PostScrap.builder()
-                .post(postRepository.getReferenceById(postId))
-                .member(loginMember)
-                .build();
+    private void saveScrap(Post post, Member loginMember) {
+        PostScrap postScrap = PostScrap.of(post, loginMember);
         postScrapRepository.save(postScrap);
     }
 
@@ -168,26 +178,17 @@ public class PostService {
 
         List<ImageInfo> images = postPostWriteReqDto.getImages();
 
-        Post post = Post.builder()
-                .board(board)
-                .member(loginMember)
-                .title(postPostWriteReqDto.getTitle())
-                .content(postPostWriteReqDto.getContent())
-                .anonymity(postPostWriteReqDto.isAnonymity())
-                .build();
-        postRepository.save(post);
+        Post post = Post.of(board, loginMember, postPostWriteReqDto.getTitle(), postPostWriteReqDto.getContent(),
+                postPostWriteReqDto.isAnonymity());
+        Long postId = postRepository.save(post).getId();
 
         if (images.size() > 0) {
             for (ImageInfo image : images) {
-                PostImage postImage = PostImage.builder()
-                        .post(post)
-                        .imagePath(image.getImagePath())
-                        .imageUrl(image.getImageUrl())
-                        .build();
+                PostImage postImage = PostImage.of(post, image.getImagePath(), image.getImageUrl());
                 postImageRepository.save(postImage);
             }
         }
-        return new PostIdElement(post.getId());
+        return new PostIdElement(postId);
     }
 
     @Transactional
@@ -232,7 +233,8 @@ public class PostService {
             throw new PostException(PostErrorInfo.UNAUTHORIZED_UPDATE_POST);
         }
 
-        post.updatePost(postPatchUpdateReqDto.getTitle(), postPatchUpdateReqDto.getContent(), postPatchUpdateReqDto.isAnonymity());
+        post.updatePost(postPatchUpdateReqDto.getTitle(), postPatchUpdateReqDto.getContent(),
+                postPatchUpdateReqDto.isAnonymity());
         postImageRepository.deleteAllInBatch(post.getImages());
 
         List<ImageInfo> images = postPatchUpdateReqDto.getImages();
@@ -249,30 +251,48 @@ public class PostService {
         return new PostIdElement(post.getId());
     }
 
-
     @Transactional(readOnly = true)
-    public GetPostResDto findHotPosts(GetPostHotReqDto getPostHotReqDto) {
-        Long cursor = getPostHotReqDto.getCursor();
-        int size = getPostHotReqDto.getSize();
+    public GetPostCursorResDto findHotPostsByCursor(GetPostHotCursorReqDto getPostHotCursorReqDto) {
+        Long cursor = getPostHotCursorReqDto.getCursor();
+        int size = getPostHotCursorReqDto.getSize();
 
         List<HotPost> hotPosts = hotPostRepository.findHotPosts(cursor, size);
-        return GetPostResDto.ofHotPosts(hotPosts, size);
+        return GetPostCursorResDto.ofHotPosts(hotPosts, size);
     }
 
     @Transactional(readOnly = true)
-    public GetPostResDto findMyPosts(GetPostMyReqDto getPostMyReqDto, Long loginMemberId) {
-        Long cursor = getPostMyReqDto.getCursor();
-        int size = getPostMyReqDto.getSize();
+    public GetPostOffsetResDto findHotPostsByOffset(BasePageRequest basePageRequest) {
+        PageRequest pageRequest = basePageRequest.toPageRequest();
+
+        Page<HotPost> hotPosts = hotPostRepository.findHotPostsByPageable(pageRequest);
+        return GetPostOffsetResDto.ofHotPosts(hotPosts);
+    }
+
+    @Transactional(readOnly = true)
+    public GetPostCursorResDto findMyPostsByCursor(GetPostMyCursorReqDto getPostMyCursorReqDto, Long loginMemberId) {
+        Long cursor = getPostMyCursorReqDto.getCursor();
+        int size = getPostMyCursorReqDto.getSize();
 
         Member loginMember = memberRepository.findById(loginMemberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
         List<Post> posts = postRepository.findWithDetailsByMemberId(loginMember.getId(), cursor, size);
-        return GetPostResDto.ofPosts(posts, size);
+        return GetPostCursorResDto.ofPosts(posts, size);
     }
 
     @Transactional(readOnly = true)
-    public GetPostResDto findMyScrapPosts(GetPostMyReqDto getPostMyScrapReqDto, Long loginMemberId) {
+    public GetPostOffsetResDto findMyPostsByOffset(BasePageRequest basePageRequest, AuthenticatedMember authenticatedMember) {
+        PageRequest pageRequest = basePageRequest.toPageRequest();
+
+        Member loginMember = memberRepository.findById(authenticatedMember.getMemberId())
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        Page<Post> posts = postRepository.findMyPostsByMemberAndPageable(loginMember, pageRequest);
+        return GetPostOffsetResDto.ofPosts(posts);
+    }
+
+    @Transactional(readOnly = true)
+    public GetPostCursorResDto findMyScrapPostsByCursor(GetPostMyCursorReqDto getPostMyScrapReqDto, Long loginMemberId) {
         Long cursor = getPostMyScrapReqDto.getCursor();
         int size = getPostMyScrapReqDto.getSize();
 
@@ -280,31 +300,65 @@ public class PostService {
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
         List<PostScrap> postScraps = postScrapRepository.findMyScrapPosts(loginMember.getId(), cursor, size);
-        return GetPostResDto.ofPostScraps(postScraps, size);
+        return GetPostCursorResDto.ofPostScraps(postScraps, size);
     }
 
     @Transactional(readOnly = true)
-    public GetPostResDto searchPosts(GetPostSearchReqDto getPostSearchReqDto) {
-        Long boardId = getPostSearchReqDto.getBoardId();
-        String keyword = getPostSearchReqDto.getKeyword();
-        Long cursor = getPostSearchReqDto.getCursor();
-        int size = getPostSearchReqDto.getSize();
+    public GetPostOffsetResDto findMyScrapPostsByOffset(BasePageRequest basePageRequest, AuthenticatedMember authenticatedMember) {
+        PageRequest pageRequest = basePageRequest.toPageRequest();
+
+        Member loginMember = memberRepository.findById(authenticatedMember.getMemberId())
+                .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        Page<PostScrap> postScraps = postScrapRepository.findMyScrapPostsByPageableAndMember(pageRequest, loginMember);
+        return GetPostOffsetResDto.ofPostScraps(postScraps);
+    }
+
+    @Transactional(readOnly = true)
+    public GetPostCursorResDto searchPostsByCursor(GetPostSearchCursorReqDto getPostSearchCursorReqDto) {
+        Long boardId = getPostSearchCursorReqDto.getBoardId();
+        String keyword = getPostSearchCursorReqDto.getKeyword();
+        Long cursor = getPostSearchCursorReqDto.getCursor();
+        int size = getPostSearchCursorReqDto.getSize();
 
         if (!boardRepository.existsById(boardId)) {
             throw new BoardException(BoardErrorInfo.NO_BOARD);
         }
 
-        List<Post> posts = postRepository.findWithDetailsFetchByBoardIdAndKeyword(boardId, keyword.replaceAll(" ", ""), cursor, size);
-        return GetPostResDto.ofPosts(posts, size);
+        List<Post> posts = postRepository.findWithDetailsFetchByBoardIdAndKeyword(boardId, keyword.replaceAll(" ", ""),
+                cursor, size);
+        return GetPostCursorResDto.ofPosts(posts, size);
     }
 
     @Transactional(readOnly = true)
-    public GetPostResDto searchHotPosts(GetPostHotSearchReqDto getPostHotSearchReqDto) {
-        String keyword = getPostHotSearchReqDto.getKeyword();
-        Long cursor = getPostHotSearchReqDto.getCursor();
-        int size = getPostHotSearchReqDto.getSize();
+    public GetPostOffsetResDto searchPostsByOffset(GetPostSearchOffsetReqDto getPostSearchOffsetReqDto) {
+        PageRequest pageRequest = getPostSearchOffsetReqDto.toPageRequest();
+        Long boardId = getPostSearchOffsetReqDto.getBoardId();
+        String keyword = getPostSearchOffsetReqDto.getKeyword();
+
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new BoardException(BoardErrorInfo.NO_BOARD));
+
+        Page<Post> posts = postRepository.searchPostsByBoardAndKeywordAndPageable(board, keyword, pageRequest);
+        return GetPostOffsetResDto.ofPosts(posts);
+    }
+
+    @Transactional(readOnly = true)
+    public GetPostCursorResDto searchHotPostsByCursor(GetPostHotSearchCursorReqDto getPostHotSearchCursorReqDto) {
+        String keyword = getPostHotSearchCursorReqDto.getKeyword();
+        Long cursor = getPostHotSearchCursorReqDto.getCursor();
+        int size = getPostHotSearchCursorReqDto.getSize();
 
         List<HotPost> hotPosts = hotPostRepository.findHotPostsByKeyword(keyword.replaceAll(" ", ""), cursor, size);
-        return GetPostResDto.ofHotPosts(hotPosts, size);
+        return GetPostCursorResDto.ofHotPosts(hotPosts, size);
+    }
+
+    @Transactional(readOnly = true)
+    public GetPostOffsetResDto searchHotPostsByOffset(GetPostHotSearchOffsetReqDto getPostHotSearchOffsetReqDto) {
+        PageRequest pageRequest = getPostHotSearchOffsetReqDto.toPageRequest();
+        String keyword = getPostHotSearchOffsetReqDto.getKeyword();
+
+        Page<HotPost> hotPosts = hotPostRepository.searchHotPostsByKeywordAndPageable(keyword, pageRequest);
+        return GetPostOffsetResDto.ofHotPosts(hotPosts);
     }
 }

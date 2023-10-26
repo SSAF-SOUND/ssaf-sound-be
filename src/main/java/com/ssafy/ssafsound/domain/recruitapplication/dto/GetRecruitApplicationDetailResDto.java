@@ -4,6 +4,8 @@ import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @NoArgsConstructor
 public class GetRecruitApplicationDetailResDto {
@@ -15,6 +17,7 @@ public class GetRecruitApplicationDetailResDto {
     private String reply;
     private String question;
     private Boolean liked;
+    private LocalDateTime appliedAt;
 
     public GetRecruitApplicationDetailResDto(RecruitApplicationElement recruitApplicationElement) {
         this.recruitId = recruitApplicationElement.getRecruitId();
@@ -25,5 +28,6 @@ public class GetRecruitApplicationDetailResDto {
         this.reply = recruitApplicationElement.getReply();
         this.question = recruitApplicationElement.getQuestion();
         this.liked = recruitApplicationElement.getLiked();
+        this.appliedAt = recruitApplicationElement.getCreatedAt();
     }
 }

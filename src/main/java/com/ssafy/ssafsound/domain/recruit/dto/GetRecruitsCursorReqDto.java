@@ -9,8 +9,10 @@ import java.util.List;
 
 @Getter
 @Builder
-public class GetRecruitsReqDto {
+public class GetRecruitsCursorReqDto implements RecruitPaging<Long>{
     private Long cursor;
+    private Integer size;
+
     @NotBlank
     private String category;
     private String keyword;
@@ -19,4 +21,9 @@ public class GetRecruitsReqDto {
     @NotEmpty
     private List<String> recruitTypes;
     private List<String> skills;
+
+    @Override
+    public Long getNextPaging() {
+        return this.cursor;
+    }
 }

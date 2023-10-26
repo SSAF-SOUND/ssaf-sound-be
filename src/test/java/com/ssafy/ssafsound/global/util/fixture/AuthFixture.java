@@ -1,4 +1,4 @@
-package com.ssafy.ssafsound.domain.auth.fixture;
+package com.ssafy.ssafsound.global.util.fixture;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.dto.CreateMemberAccessTokenResDto;

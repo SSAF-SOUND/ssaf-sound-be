@@ -12,8 +12,6 @@ import com.ssafy.ssafsound.domain.member.domain.MemberToken;
 import com.ssafy.ssafsound.domain.member.dto.PostMemberReqDto;
 import com.ssafy.ssafsound.domain.member.service.MemberService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -24,6 +22,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
@@ -46,18 +47,17 @@ public class AuthController {
     }
 
     @DeleteMapping("/logout")
-    public EnvelopeResponse<Void> logout(@CookieValue(value = "accessToken", defaultValue = "") String accessToken,
-                                   @CookieValue(value = "refreshToken", defaultValue = "") String refreshToken,
-                                   HttpServletResponse response) {
-
-        if (!accessToken.equals("") || !refreshToken.equals("")) {
-            authService.deleteTokens(accessToken, refreshToken);
-            cookieProvider.setResponseWithCookies(response, null, null);
-        }
-        return EnvelopeResponse.<Void>builder().build();
+    public EnvelopeResponse<Void> logout(
+            @CookieValue(value = "accessToken", defaultValue = "") String accessToken,
+            @CookieValue(value = "refreshToken", defaultValue = "") String refreshToken,
+            HttpServletResponse response) {
+        authService.deleteTokens(accessToken, refreshToken);
+        cookieProvider.setResponseWithCookies(response, null, null);
+        return EnvelopeResponse.<Void>builder()
+                .build();
     }
 
-    @GetMapping("/reissue")
+    @PostMapping("/reissue")
     public EnvelopeResponse<CreateMemberAccessTokenResDto> reissue(
             @CookieValue("refreshToken") String refreshToken,
             HttpServletResponse response) {
@@ -81,10 +81,7 @@ public class AuthController {
         AuthenticatedMember authenticatedMember = memberService.createMemberByOauthIdentifier(postMemberReqDto);
         CreateMemberTokensResDto createMemberTokensResDto = authService.createToken(authenticatedMember);
 
-        Member member = memberService.saveTokenByMember(
-                authenticatedMember,
-                createMemberTokensResDto.getAccessToken(),
-                createMemberTokensResDto.getRefreshToken());
+        Member member = memberService.saveTokenByMember(authenticatedMember.getMemberId(), createMemberTokensResDto);
 
         cookieProvider.setResponseWithCookies(
                 response,

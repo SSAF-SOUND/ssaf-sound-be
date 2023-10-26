@@ -1,12 +1,17 @@
 package com.ssafy.ssafsound.domain.auth.service.token;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
-import com.ssafy.ssafsound.domain.auth.exception.AuthException;
 import com.ssafy.ssafsound.domain.auth.exception.AuthErrorInfo;
-import io.jsonwebtoken.*;
+import com.ssafy.ssafsound.domain.auth.exception.AuthException;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import io.jsonwebtoken.security.Keys;
+
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
@@ -64,21 +69,26 @@ public class JwtTokenProvider {
                     .getBody();
         } catch (ExpiredJwtException e) {
             throw new AuthException(AuthErrorInfo.AUTH_TOKEN_EXPIRED);
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new AuthException(AuthErrorInfo.AUTH_TOKEN_INVALID);
         }
         return claims.get("memberId", Long.class);
     }
 
-    public AuthenticatedMember getParsedClaims(String token) {
+    public AuthenticatedMember getParsedClaimsByAccessToken(String accessToken) {
         Claims claims;
         try {
             claims = Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
-                    .parseClaimsJws(token)
+                    .parseClaimsJws(accessToken)
                     .getBody();
         } catch (ExpiredJwtException e) {
             throw new AuthException(AuthErrorInfo.AUTH_TOKEN_EXPIRED);
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new AuthException(AuthErrorInfo.AUTH_TOKEN_INVALID);
         }
+
         Long memberId = claims.get("memberId", Long.class);
         String memberRole = claims.get("memberRole", String.class);
 

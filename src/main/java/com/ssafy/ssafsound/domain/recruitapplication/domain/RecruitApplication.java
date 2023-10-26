@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.recruitapplication.domain;
 
+import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.meta.converter.RecruitTypeConverter;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
@@ -8,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
@@ -16,7 +18,8 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecruitApplication {
+@Where(clause = "match_status != 'CANCEL'")
+public class RecruitApplication extends BaseTimeEntity {
 
     @Id
     @Column(name = "recruit_application_id")

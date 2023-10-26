@@ -14,12 +14,16 @@ import java.util.Map;
 public class GetRecruitApplicationsResDto {
     private String category;
     private Long recruitId;
-    private Map<String, List<RecruitApplicationElement>> recruitApplications;
+    private Map<String, List<RecruitApplicationResElement>> recruitApplications;
 
     public GetRecruitApplicationsResDto(Recruit recruit, List<RecruitApplicationElement> recruitApplications) {
         this.category = recruit.getCategory().name();
         this.recruitId = recruit.getId();
         this.recruitApplications = new HashMap<>();
+
+        recruit.getLimitations().forEach(recruitLimitation ->
+                this.recruitApplications.put(recruitLimitation.getType().getName(), new ArrayList<>()));
+
         recruitApplications.sort((r1, r2)->{
             if(r1.getLiked().equals(r2.getLiked())) {
                 return r1.getRecruitApplicationId().compareTo(r2.getRecruitApplicationId());
@@ -28,9 +32,9 @@ public class GetRecruitApplicationsResDto {
         });
 
         recruitApplications.forEach(recruitApplicationElement -> {
-            List<RecruitApplicationElement> applications = this.recruitApplications
+            List<RecruitApplicationResElement> applications = this.recruitApplications
                     .getOrDefault(recruitApplicationElement.getRecruitType(), new ArrayList<>());
-            applications.add(recruitApplicationElement);
+            applications.add(new RecruitApplicationResElement(recruitApplicationElement));
             this.recruitApplications.put(recruitApplicationElement.getRecruitType(), applications);
         });
     }

@@ -1,5 +1,7 @@
 package com.ssafy.ssafsound.domain.recruitapplication.service;
 
+import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
+import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
@@ -8,6 +10,7 @@ import com.ssafy.ssafsound.domain.recruit.domain.Recruit;
 import com.ssafy.ssafsound.domain.recruit.domain.RecruitLimitation;
 import com.ssafy.ssafsound.domain.recruit.domain.RecruitQuestion;
 import com.ssafy.ssafsound.domain.recruit.domain.RecruitQuestionReply;
+import com.ssafy.ssafsound.domain.recruit.dto.GetRejectedRecruitApplicationsResDto;
 import com.ssafy.ssafsound.domain.recruit.dto.PatchRecruitApplicationStatusResDto;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitErrorInfo;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
@@ -17,12 +20,14 @@ import com.ssafy.ssafsound.domain.recruit.repository.RecruitRepository;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.*;
+import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicationComplexQueryRepository;
 import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicationRepository;
 import com.ssafy.ssafsound.domain.recruitapplication.validator.RecruitApplicationValidator;
 import com.ssafy.ssafsound.domain.recruitcomment.dto.PostRecruitApplicationLikeResDto;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -37,6 +42,7 @@ public class RecruitApplicationService {
     private final RecruitRepository recruitRepository;
     private final RecruitQuestionReplyRepository recruitQuestionReplyRepository;
     private final RecruitApplicationRepository recruitApplicationRepository;
+    private final RecruitApplicationComplexQueryRepository recruitApplicationComplexQueryRepository;
     private final RecruitLimitationRepository recruitLimitationRepository;
     private final MemberRepository memberRepository;
     private final MetaDataConsumer metaDataConsumer;
@@ -60,8 +66,11 @@ public class RecruitApplicationService {
                 metaDataConsumer.getMetaData(MetaDataType.RECRUIT_TYPE.name(), recruitType));
         List<RecruitQuestionReply> participantAnswers = makeRecruitQuestionReplies(postRecruitApplicationReqDto, recruit, recruitApplication);
         recruitApplicationRepository.save(recruitApplication);
-        recruitQuestionReplyRepository.saveAll(participantAnswers);
-        return new PatchRecruitApplicationStatusResDto(recruitApplication.getId(), MatchStatus.WAITING_REGISTER_APPROVE.name());
+
+        if(participantAnswers.size() != 0) {
+            recruitQuestionReplyRepository.saveAll(participantAnswers);
+        }
+        return new PatchRecruitApplicationStatusResDto(recruitApplication.getId(), MatchStatus.PENDING.name());
     }
 
     @Transactional
@@ -69,11 +78,12 @@ public class RecruitApplicationService {
         RecruitApplication recruitApplication = recruitApplicationRepository.findByIdFetchRecruitWriter(recruitApplicationId)
                 .orElseThrow(() -> new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
 
-        getNotFullRecruitLimitation(recruitApplication.getRecruit(), recruitApplication.getType());
+        RecruitLimitation recruitLimitation = getNotFullRecruitLimitation(recruitApplication.getRecruit(), recruitApplication.getType());
+        recruitLimitation.increaseCurrentNumber();
         return changeRecruitApplicationState(recruitApplication, memberId, status,
                 (entity, mid) -> {
                     boolean isNotRegister = !entity.getRecruit().getMember().getId().equals(mid);
-                    boolean isNotValidMatchStatus = !entity.getMatchStatus().equals(MatchStatus.WAITING_REGISTER_APPROVE);
+                    boolean isNotValidMatchStatus = !entity.getMatchStatus().equals(MatchStatus.PENDING);
                     return isNotRegister || isNotValidMatchStatus;
                 });
     }
@@ -85,7 +95,7 @@ public class RecruitApplicationService {
 
         return changeRecruitApplicationState(recruitApplication, memberId, status,
                 (entity, mid)-> {
-                    boolean isNotValidRegisterAndState = (!entity.getRecruit().getMember().getId().equals(mid) || !entity.getMatchStatus().equals(MatchStatus.WAITING_REGISTER_APPROVE));
+                    boolean isNotValidRegisterAndState = (!entity.getRecruit().getMember().getId().equals(mid) || !entity.getMatchStatus().equals(MatchStatus.PENDING));
                     return isNotValidRegisterAndState;
                 });
     }
@@ -98,7 +108,7 @@ public class RecruitApplicationService {
         return changeRecruitApplicationState(recruitApplication, memberId, status,
                 (entity, mid)-> {
                     boolean isNotValidParticipantCancel = (!entity.getMember().getId().equals(memberId)
-                            || (entity.getMatchStatus() != MatchStatus.WAITING_REGISTER_APPROVE));
+                            || (entity.getMatchStatus() != MatchStatus.PENDING));
                     boolean isNotValidRegisterCancel = (!entity.getRecruit().getMember().getId().equals(memberId) ||
                             entity.getMatchStatus() != MatchStatus.DONE);
                     return isNotValidParticipantCancel && isNotValidRegisterCancel;
@@ -121,7 +131,7 @@ public class RecruitApplicationService {
     @Transactional(readOnly = true)
     public GetRecruitApplicationsResDto getRecruitApplications(Long recruitId, Long memberId) {
         Recruit recruit = recruitRepository.findById(recruitId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
-        return new GetRecruitApplicationsResDto(recruit, recruitApplicationRepository.findByRecruitIdAndRegisterMemberIdWithQuestionReply(recruitId, memberId));
+        return new GetRecruitApplicationsResDto(recruit, recruitApplicationRepository.findByRecruitIdAndRegisterMemberAndMatchStatusIdWithQuestionReply(recruitId, memberId, MatchStatus.PENDING));
     }
 
     @Transactional
@@ -137,14 +147,36 @@ public class RecruitApplicationService {
 
     @Transactional(readOnly = true)
     public GetRecruitApplicationDetailResDto getRecruitApplicationByIdAndRegisterId(Long recruitApplicationId, Long registerId) {
-        return new GetRecruitApplicationDetailResDto(recruitApplicationRepository.findByRecruitApplicationIdAndRegisterId(recruitApplicationId, registerId));
+        RecruitApplicationElement recruitApplicationElement = recruitApplicationRepository.findByRecruitApplicationIdAndRegisterId(recruitApplicationId, registerId);
+        if(recruitApplicationElement == null) {
+            throw new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND);
+        }
+        return new GetRecruitApplicationDetailResDto(recruitApplicationElement);
+    }
+
+    @Transactional(readOnly = true)
+    public GetRejectedRecruitApplicationsResDto getRejectedRecruitApplicationByRecruitId(Long recruitId, Long memberId) {
+        Recruit recruit = recruitRepository.findByIdFetchJoinRegister(recruitId);
+
+        if(recruit==null || !recruit.getMember().getId().equals(memberId)) {
+            throw new RecruitException(RecruitErrorInfo.NOT_VALID_REGISTER_READ_REJECT_REQUEST);
+        }
+
+        List<RecruitApplicationElement> rejectedApplications = recruitApplicationRepository.findByRecruitIdAndRegisterMemberAndMatchStatusIdWithQuestionReply(recruitId, memberId, MatchStatus.REJECT);
+        return new GetRejectedRecruitApplicationsResDto(recruit, rejectedApplications);
+    }
+
+    @Transactional(readOnly = true)
+    public GetRecruitApplicationDetailResDto getRecentPendingRecruitApplicationByRecruitId(Long recruitId, Long memberId) {
+        memberRepository.findById(memberId).orElseThrow(()->new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+        return new GetRecruitApplicationDetailResDto(recruitApplicationComplexQueryRepository.findTopByRecruitIdAndMemberId(recruitId, memberId));
     }
 
     private boolean isPrevExistWaitingOrDoneMember(Long recruitId, Long memberId) {
         RecruitApplication recentRecruitApplication = recruitApplicationRepository.findTopByRecruitIdAndMemberIdOrderByIdDesc(recruitId, memberId);
         if(recentRecruitApplication == null) return false;
 
-        boolean prevWaitingMember = recentRecruitApplication.getMatchStatus().equals(MatchStatus.WAITING_REGISTER_APPROVE);
+        boolean prevWaitingMember = recentRecruitApplication.getMatchStatus().equals(MatchStatus.PENDING);
         boolean prevDoneMember = recentRecruitApplication.getMatchStatus().equals(MatchStatus.DONE);
         return (prevWaitingMember || prevDoneMember);
     }
@@ -187,7 +219,7 @@ public class RecruitApplicationService {
         List<String> answers = dto.getContents();
 
         int len = recruitQuestion.size();
-        if(answers.size() != len) {
+        if(len!=0 && answers.size() != len) {
             throw new RecruitException(RecruitErrorInfo.NOT_SAME_LENGTH_RECRUIT_QUESTION_ANSWER);
         }
 
@@ -200,7 +232,7 @@ public class RecruitApplicationService {
                     RecruitQuestionReply.builder()
                             .application(recruitApplication)
                             .question(recruitQuestion.get(i))
-                            .content(dto.getContents().get(i))
+                            .content(answers.get(i))
                             .build()
             );
         }

@@ -1,6 +1,8 @@
 package com.ssafy.ssafsound.domain.recruit.service;
 
 import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
+import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
@@ -19,6 +21,8 @@ import com.ssafy.ssafsound.domain.recruitapplication.repository.RecruitApplicati
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
 import com.ssafy.ssafsound.global.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -42,7 +46,7 @@ public class RecruitService {
     private final MetaDataConsumer metaDataConsumer;
 
     @Transactional
-    public Recruit saveRecruit(Long memberId, PostRecruitReqDto postRecruitReqDto) {
+    public PostRecruitResDto saveRecruit(Long memberId, PostRecruitReqDto postRecruitReqDto) {
         Recruit recruit = postRecruitReqDto.to();
         Member register = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
         // 등록자는 자신이 속한 역할군을 1가지 선택할 수 있어야한다.
@@ -54,7 +58,7 @@ public class RecruitService {
         recruitRepository.save(recruit);
 
         recruitLimitationRepository.saveAll(createRecruitLimitations(recruit, postRecruitReqDto.getLimitations()));
-        return recruit;
+        return new PostRecruitResDto(recruit.getId());
     }
 
     @Transactional
@@ -72,8 +76,11 @@ public class RecruitService {
                 .orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
         long scrapCount = recruitScrapRepository.countByRecruitId(recruitId);
         Boolean scraped = recruitScrapRepository.existsByRecruitIdAndMemberId(recruitId, memberId);
+        Boolean mine = recruit.getMember().getId().equals(memberId);
+
+        RecruitApplication recruitApplication = recruitApplicationRepository.findTopByRecruitIdAndMemberIdOrderByIdDesc(recruitId, memberId);
         recruit.increaseView();
-        return GetRecruitDetailResDto.of(recruit, scrapCount, scraped);
+        return GetRecruitDetailResDto.of(recruit, scrapCount, scraped, mine, recruitApplication);
     }
 
     @Transactional
@@ -123,14 +130,35 @@ public class RecruitService {
     }
 
     @Transactional(readOnly = true)
-    public GetRecruitsResDto getRecruits(GetRecruitsReqDto getRecruitsReqDto, Pageable pageable) {
-        // 페이지네이션 조건에 따라 프로젝트/스터디 글 목록을 조회한다.
-        Slice<Recruit> recruitPages = recruitRepository.findRecruitByGetRecruitsReqDto(getRecruitsReqDto, pageable);
-        GetRecruitsResDto recruitsResDto = GetRecruitsResDto.fromPage(recruitPages);
+    public GetRecruitsCursorResDto getRecruitsByCursor(GetRecruitsCursorReqDto getRecruitsCursorReqDto, Long loginMemberId) {
+        Slice<Recruit> recruitPages = recruitRepository.findRecruitSliceByGetRecruitsReqDto(getRecruitsCursorReqDto, PageRequest.ofSize(getRecruitsCursorReqDto.getSize()));
+        GetRecruitsCursorResDto recruitsResDto = GetRecruitsCursorResDto.fromPageAndMemberId(recruitPages, loginMemberId);
         if(!recruitsResDto.getRecruits().isEmpty()) {
             addRecruitParticipants(recruitsResDto);
         }
         return recruitsResDto;
+    }
+
+    @Transactional(readOnly = true)
+    public GetRecruitOffsetResDto getRecruitsByOffset(GetRecruitsOffsetReqDto getRecruitsOffsetReqDto, Long loginMemberId) {
+        Page<Recruit> recruitPages = recruitRepository.findRecruitPageByGetRecruitsReqDto(getRecruitsOffsetReqDto, getRecruitsOffsetReqDto.getPageRequest());
+        GetRecruitOffsetResDto recruitsResDto = GetRecruitOffsetResDto.fromPageAndMemberId(recruitPages, loginMemberId);
+        if(!recruitsResDto.getRecruits().isEmpty()) {
+            addRecruitParticipants(recruitsResDto);
+        }
+        return recruitsResDto;
+    }
+
+    @Transactional(readOnly = true)
+    public GetRecruitsCursorResDto getScrapedRecruitsByCursor(Long memberId, Long cursor, Pageable pageable) {
+        Slice<Recruit> recruitPages = recruitRepository.findMemberScrapRecruitsByCursor(memberId, cursor, pageable);
+        return GetRecruitsCursorResDto.fromPageAndMemberId(recruitPages, memberId);
+    }
+
+    @Transactional(readOnly = true)
+    public GetRecruitsPageResDto getScrapedRecruitsByPage(Long memberId, RecruitOffsetPagingRequestDto pagingRequestDto) {
+        Page<Recruit> recruitPages = recruitRepository.findMemberScrapRecruitsByPage(memberId, pagingRequestDto.getPageRequest());
+        return GetRecruitsPageResDto.fromPageAndMemberId(recruitPages, memberId);
     }
 
     @Transactional
@@ -144,7 +172,75 @@ public class RecruitService {
         recruit.expired();
     }
 
-    private void addRecruitParticipants(GetRecruitsResDto recruitsResDto) {
+    @Transactional(readOnly = true)
+    public GetRecruitsCursorResDto getMemberJoinRecruitsByCursor(GetMemberJoinRecruitsReqDto recruitsReqDto, Long loginMemberId) {
+        Long memberId = recruitsReqDto.getMemberId();
+        Member member = memberRepository.findById(memberId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+
+        if(!memberId.equals(loginMemberId) && !member.getPublicProfile()) {
+            throw new MemberException(MemberErrorInfo.MEMBER_PROFILE_SECRET);
+        }
+
+        Slice<Recruit> recruitPages = recruitRepository.findMemberJoinRecruitWithCursorAndPageable(memberId, recruitsReqDto.getCategory(), recruitsReqDto.getCursor(), PageRequest.ofSize(recruitsReqDto.getSize()));
+        GetRecruitsCursorResDto recruitsResDto = GetRecruitsCursorResDto.fromPageAndMemberId(recruitPages, loginMemberId);
+        if(!recruitsResDto.getRecruits().isEmpty()) {
+            addRecruitParticipants(recruitsResDto);
+        }
+        return recruitsResDto;
+    }
+
+    @Transactional(readOnly = true)
+    public GetRecruitsPageResDto getMemberJoinRecruitsByPage(GetMemberJoinOffsetRecruitReqDto recruitsReqDto, Long loginMemberId) {
+        Long memberId = recruitsReqDto.getMemberId();
+        Member member = memberRepository.findById(memberId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+
+        if(!memberId.equals(loginMemberId) && !member.getPublicProfile()) {
+            throw new MemberException(MemberErrorInfo.MEMBER_PROFILE_SECRET);
+        }
+
+        Page<Recruit> recruitPages = recruitRepository.findMemberJoinRecruitWithPageable(memberId, recruitsReqDto.getCategory(), recruitsReqDto.getPageRequest());
+
+        GetRecruitsPageResDto recruitsResDto = GetRecruitsPageResDto.fromPageAndMemberId(recruitPages, loginMemberId);
+        if(!recruitsResDto.getRecruits().isEmpty()) {
+            addRecruitParticipants(recruitsResDto);
+        }
+        return recruitsResDto;
+    }
+
+    @Transactional
+    public GetMemberAppliedRecruitsCursorResDto getMemberAppliedRecruitsCursor(GetMemberAppliedRecruitsCursorReqDto recruitsReqDto, Long memberId) {
+        memberRepository.findById(memberId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+
+        Slice<AppliedRecruit> appliedRecruitSlice = recruitRepository.findMemberAppliedRecruitsByCursor(memberId,
+                recruitsReqDto.getCursor(),
+                recruitsReqDto.getCategory(),
+                recruitsReqDto.getMatchStatus(),
+                Pageable.ofSize(recruitsReqDto.getSize()));
+
+        GetMemberAppliedRecruitsCursorResDto recruitsResDto = GetMemberAppliedRecruitsCursorResDto.fromPageAndMemberId(appliedRecruitSlice, memberId);
+        if(!recruitsResDto.getRecruits().isEmpty()) {
+            addRecruitParticipants(recruitsResDto);
+        }
+        return recruitsResDto;
+    }
+
+    @Transactional
+    public GetMemberAppliedRecruitsOffsetResDto getMemberAppliedRecruitsByOffset(GetMemberAppliedRecruitOffsetReqDto recruitsReqDto, Long memberId) {
+        memberRepository.findById(memberId).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
+
+        Page<AppliedRecruit> appliedRecruitSlice = recruitRepository.findMemberAppliedRecruitsByPage(memberId,
+                recruitsReqDto.getCategory(),
+                recruitsReqDto.getMatchStatus(),
+                recruitsReqDto.getPageRequest());
+
+        GetMemberAppliedRecruitsOffsetResDto recruitsResDto = GetMemberAppliedRecruitsOffsetResDto.fromPageAndMemberId(appliedRecruitSlice, memberId);
+        if(!recruitsResDto.getRecruits().isEmpty()) {
+            addRecruitParticipants(recruitsResDto);
+        }
+        return recruitsResDto;
+    }
+
+    private void addRecruitParticipants(AddParticipantDto recruitsResDto) {
         // Recruit Id, Recruit Type 두 depth로 이루어진 Map으로 리크루트별 참여자 목록을 가공한다.
         Map<Long, Map<String, RecruitParticipant>> participantsMap = recruitsResDto.getRecruitParticipantMapByRecruitIdAndRecruitType();
 

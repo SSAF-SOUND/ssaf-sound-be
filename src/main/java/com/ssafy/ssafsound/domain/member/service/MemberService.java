@@ -1,24 +1,42 @@
 package com.ssafy.ssafsound.domain.member.service;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
-import com.ssafy.ssafsound.domain.auth.service.AuthService;
-import com.ssafy.ssafsound.domain.auth.util.ClientUtils;
-import com.ssafy.ssafsound.domain.member.domain.*;
+import com.ssafy.ssafsound.domain.auth.dto.CreateMemberTokensResDto;
+import com.ssafy.ssafsound.domain.event.MemberLeavedEvent;
+import com.ssafy.ssafsound.domain.member.domain.AccountState;
+import com.ssafy.ssafsound.domain.member.domain.AuthenticationStatus;
+import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.member.domain.MemberProfile;
+import com.ssafy.ssafsound.domain.member.domain.MemberRole;
+import com.ssafy.ssafsound.domain.member.domain.MemberToken;
+import com.ssafy.ssafsound.domain.member.domain.OAuthType;
 import com.ssafy.ssafsound.domain.member.dto.*;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
-import com.ssafy.ssafsound.domain.member.repository.*;
+import com.ssafy.ssafsound.domain.member.repository.MemberLinkRepository;
+import com.ssafy.ssafsound.domain.member.repository.MemberProfileRepository;
+import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
+import com.ssafy.ssafsound.domain.member.repository.MemberRoleRepository;
+import com.ssafy.ssafsound.domain.member.repository.MemberSkillRepository;
+import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.MetaDataType;
 import com.ssafy.ssafsound.domain.meta.service.MetaDataConsumer;
+import com.ssafy.ssafsound.domain.term.domain.MemberTermAgreement;
+import com.ssafy.ssafsound.domain.term.domain.Term;
+import com.ssafy.ssafsound.domain.term.repository.MemberTermAgreementRepository;
+import com.ssafy.ssafsound.domain.term.repository.TermRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -30,46 +48,59 @@ public class MemberService {
     private final MemberProfileRepository memberProfileRepository;
     private final MemberSkillRepository memberSkillRepository;
     private final MemberLinkRepository memberLinkRepository;
+    private final TermRepository termRepository;
+    private final MemberTermAgreementRepository memberTermAgreementRepository;
     private final MetaDataConsumer metaDataConsumer;
     private final MemberConstantProvider memberConstantProvider;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public AuthenticatedMember createMemberByOauthIdentifier(PostMemberReqDto postMemberReqDto) {
-        Optional<Member> optionalMember = memberRepository.findByOauthIdentifier(postMemberReqDto.getOauthIdentifier());
-        Member member;
-        if (optionalMember.isPresent()) {
-            member = optionalMember.get();
-            if (isInvalidOauthLogin(member, postMemberReqDto)) throw new MemberException(MemberErrorInfo.MEMBER_OAUTH_NOT_FOUND);
-            return AuthenticatedMember.from(member);
-        } else {
+        Member member = memberRepository.findByOauthIdentifier(postMemberReqDto.getOauthIdentifier());
+
+        if (Objects.isNull(member)) {
             MemberRole memberRole = findMemberRoleByRoleName("user");
             member = postMemberReqDto.createMember();
             member.setMemberRole(memberRole);
             return AuthenticatedMember.from(memberRepository.save(member));
+        } else if (isInvalidOauthLogin(member, postMemberReqDto)) {
+            throw new MemberException(MemberErrorInfo.MEMBER_OAUTH_NOT_FOUND);
+        } else if (isDeletedMember(member)) {
+            throw new MemberException(MemberErrorInfo.MEMBER_DELETED);
         }
+
+        return AuthenticatedMember.from(member);
     }
 
     @Transactional
-    public Member saveTokenByMember(AuthenticatedMember authenticatedMember, String accessToken, String refreshToken) {
-        Member member = memberRepository.findById(authenticatedMember.getMemberId())
+    public Member saveTokenByMember(
+        Long memberId,
+        CreateMemberTokensResDto createMemberTokensResDto) {
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-        Optional<MemberToken> memberTokenOptional = memberTokenRepository.findById(authenticatedMember.getMemberId());
+        Optional<MemberToken> memberTokenOptional = memberTokenRepository.findById(memberId);
 
-        memberTokenOptional.ifPresentOrElse(memberToken -> changeMemberTokens(memberToken, accessToken, refreshToken),
-                () -> createMemberToken(member, accessToken, refreshToken));
+        memberTokenOptional.ifPresentOrElse(
+            memberToken -> changeMemberTokens(memberToken, createMemberTokensResDto),
+                () -> createMemberToken(member, createMemberTokensResDto));
 
         return member;
     }
 
     @Transactional
-    public GetMemberResDto registerMemberInformation(AuthenticatedMember authenticatedMember, PostMemberInfoReqDto postMemberInfoReqDto) {
+    public GetMemberResDto registerMemberInformation(
+            Long memberId,
+            PostMemberInfoReqDto postMemberInfoReqDto) {
         boolean existNickname = memberRepository.existsByNickname(postMemberInfoReqDto.getNickname());
-
-        if(existNickname) throw new MemberException(MemberErrorInfo.MEMBER_NICKNAME_DUPLICATION);
-
-        Member member = memberRepository.findById(authenticatedMember.getMemberId())
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        if(existNickname) {
+            throw new MemberException(MemberErrorInfo.MEMBER_NICKNAME_DUPLICATION);
+        } else if (isNotAgreedRequiredTerms(member, postMemberInfoReqDto.getTermIds())) {
+            throw new MemberException(MemberErrorInfo.MEMBER_INPUT_INFORMATION_FAIL);
+        }
 
         return member.registerMemberInformation(postMemberInfoReqDto, metaDataConsumer);
     }
@@ -166,6 +197,15 @@ public class MemberService {
         member.setMajorTrack(metaDataConsumer.getMetaData(MetaDataType.MAJOR_TRACK.name(), majorTrack));
     }
 
+    @Transactional
+    public void leaveMember(Long memberId) {
+        Member member = getMemberByMemberIdOrThrowException(memberId);
+        member.setAccountStateDeleted();
+        member.changeNickname("@" + member.getId());
+        memberTokenRepository.deleteById(memberId);
+        applicationEventPublisher.publishEvent(new MemberLeavedEvent(member.getId()));
+    }
+
     @Transactional(readOnly = true)
     public GetMemberPortfolioResDto getMyPortfolio(Long memberId) {
         Member member = memberRepository.findWithMemberLinksAndMemberSkills(memberId)
@@ -220,6 +260,8 @@ public class MemberService {
 
         if (isPrivateOfMemberProfile(member)) {
             throw new MemberException(MemberErrorInfo.MEMBER_PROFILE_SECRET);
+        } else if (isDeletedMember(member)) {
+            throw new MemberException(MemberErrorInfo.MEMBER_DELETED);
         }
         MemberProfile memberProfile = memberProfileRepository.findMemberProfileByMember(member).orElseGet(MemberProfile::new);
 
@@ -287,7 +329,8 @@ public class MemberService {
     }
 
     private boolean isSSAFYMemberInformation(Member member) {
-        return member.getSsafyMember() && member.getNickname() != null && member.getMajor() != null;
+        return member.getSsafyMember() && member.getNickname() != null && member.getMajor() != null
+                && member.getSemester() != null && member.getCampus() != null && member.getCertificationState() != null;
     }
 
     private Member getMemberByMemberIdOrThrowException(Long memberId) {
@@ -295,17 +338,41 @@ public class MemberService {
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
     }
 
-    private void changeMemberTokens(MemberToken memberToken, String accessToken, String refreshToken) {
-        memberToken.changeAccessTokenByLogin(accessToken);
-        memberToken.changeRefreshTokenByLogin(refreshToken);
+    private boolean isDeletedMember(Member member) {
+        return member.getAccountState() == AccountState.DELETED;
     }
 
-    private void createMemberToken(Member member, String accessToken, String refreshToken) {
+    private void changeMemberTokens(
+        MemberToken memberToken,
+        CreateMemberTokensResDto createMemberTokensResDto) {
+        memberToken.changeAccessTokenByLogin(createMemberTokensResDto.getAccessToken());
+        memberToken.changeRefreshTokenByLogin(createMemberTokensResDto.getRefreshToken());
+    }
+
+    private void createMemberToken(
+        Member member,
+        CreateMemberTokensResDto createMemberTokensResDto) {
         MemberToken memberToken = MemberToken.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
+                .accessToken(createMemberTokensResDto.getAccessToken())
+                .refreshToken(createMemberTokensResDto.getRefreshToken())
                 .member(member)
                 .build();
         memberTokenRepository.save(memberToken);
+    }
+
+    private boolean isNotAgreedRequiredTerms(Member member, Set<Long> termIds) {
+        List<Term> terms = termRepository.getRequiredTerms();
+        boolean allIdsExistInTermSequences = terms.stream()
+                .map(Term::getId)
+                .allMatch(termIds::contains);
+
+        if (terms.size() != termIds.size()) {
+            return true;
+        } else if (!allIdsExistInTermSequences) {
+            return true;
+        } else {
+            memberTermAgreementRepository.saveAll(MemberTermAgreement.ofMemberAndTerms(member, terms));
+            return false;
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.batch.config;
 
 import com.ssafy.ssafsound.batch.tasklet.PostTasklet;
+import com.ssafy.ssafsound.domain.post.service.PostConstantProvider;
 import com.ssafy.ssafsound.domain.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ public class PostBatchConfig {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
     private final PostService postService;
+    private final PostConstantProvider postConstantProvider;
 
 
     @Bean
@@ -40,6 +42,6 @@ public class PostBatchConfig {
 
     @Bean
     public Tasklet deleteHotPostTasklet() {
-        return new PostTasklet(postService);
+        return new PostTasklet(postService, postConstantProvider);
     }
 }

@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.domain.recruitapplication.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.validator.Authentication;
+import com.ssafy.ssafsound.domain.recruit.dto.GetRejectedRecruitApplicationsResDto;
 import com.ssafy.ssafsound.domain.recruit.dto.PatchRecruitApplicationStatusResDto;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.*;
@@ -71,6 +72,20 @@ public class RecruitApplicationController {
     public EnvelopeResponse<GetRecruitApplicationDetailResDto> getRecruitApplicationByIdAndRegisterId(@PathVariable Long recruitApplicationId, @Authentication AuthenticatedMember authenticatedMember) {
         return EnvelopeResponse.<GetRecruitApplicationDetailResDto>builder()
                 .data(recruitApplicationService.getRecruitApplicationByIdAndRegisterId(recruitApplicationId, authenticatedMember.getMemberId()))
+                .build();
+    }
+
+    @GetMapping("/recruit-applications/rejected")
+    public EnvelopeResponse<GetRejectedRecruitApplicationsResDto> getRejectedRecruitApplicationByRecruitId(Long recruitId, @Authentication AuthenticatedMember authenticatedMember) {
+        return EnvelopeResponse.<GetRejectedRecruitApplicationsResDto>builder()
+                .data(recruitApplicationService.getRejectedRecruitApplicationByRecruitId(recruitId, authenticatedMember.getMemberId()))
+                .build();
+    }
+
+    @GetMapping("/recruit-applications/mine")
+    public EnvelopeResponse<GetRecruitApplicationDetailResDto> getRecentPendingRecruitApplicationByRecruitId(Long recruitId, @Authentication AuthenticatedMember authenticatedMember) {
+        return EnvelopeResponse.<GetRecruitApplicationDetailResDto>builder()
+                .data(recruitApplicationService.getRecentPendingRecruitApplicationByRecruitId(recruitId, authenticatedMember.getMemberId()))
                 .build();
     }
 }

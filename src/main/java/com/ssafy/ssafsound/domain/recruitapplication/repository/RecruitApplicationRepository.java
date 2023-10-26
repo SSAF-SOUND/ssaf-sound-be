@@ -4,7 +4,9 @@ import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
 import com.ssafy.ssafsound.domain.recruitapplication.domain.RecruitApplication;
 import com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -24,18 +26,18 @@ public interface RecruitApplicationRepository extends JpaRepository<RecruitAppli
     @Query("SELECT r FROM recruit_application r left join fetch r.member as m where r.recruit.id = :recruitId and r.matchStatus = :matchStatus")
     List<RecruitApplication> findByRecruitIdAndMatchStatusFetchMember(Long recruitId, MatchStatus matchStatus);
 
-    @Query("SELECT new com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement(r.recruit.id, r.id, r.type, r.matchStatus, m, rp.content, rq.content, r.isLike) from recruit_application r  " +
+    @Query("SELECT new com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement(r.recruit.id, r.id, r.type, r.matchStatus, m, rp.content, rq.content, r.isLike, r.createdAt, r.modifiedAt) from recruit_application r  " +
             "inner join r.member as m " +
             "left outer join recruit_question_reply as rp on r.id = rp.application.id " +
             "left outer join rp.question as rq " +
-            "where r.recruit.id = :recruitId and r.recruit.member.id = :registerId and r.matchStatus = com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus.WAITING_REGISTER_APPROVE")
-    List<RecruitApplicationElement> findByRecruitIdAndRegisterMemberIdWithQuestionReply(Long recruitId, Long registerId);
+            "where r.recruit.id = :recruitId and r.recruit.member.id = :registerId and r.matchStatus = :matchStatus")
+    List<RecruitApplicationElement> findByRecruitIdAndRegisterMemberAndMatchStatusIdWithQuestionReply(Long recruitId, Long registerId, MatchStatus matchStatus);
 
-    @Query("SELECT new com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement(r.recruit.id, r.id, r.type, r.matchStatus, m, rp.content, rq.content, r.isLike) from recruit_application r  " +
+    @Query("SELECT new com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement(r.recruit.id, r.id, r.type, r.matchStatus, m, rp.content, rq.content, r.isLike, r.createdAt, r.modifiedAt) from recruit_application r  " +
             "inner join r.member as m " +
             "left outer join recruit_question_reply as rp on r.id = rp.application.id " +
             "left outer join rp.question as rq " +
-            "where r.id = :recruitApplicationId and r.recruit.member.id = :registerId and r.matchStatus = com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus.WAITING_REGISTER_APPROVE")
+            "where r.id = :recruitApplicationId and r.recruit.member.id = :registerId")
     RecruitApplicationElement findByRecruitApplicationIdAndRegisterId(Long recruitApplicationId, Long registerId);
 
     @Query("SELECT ra FROM recruit_application ra join fetch ra.recruit as r join fetch ra.member where r.id in (:recruitId) and ra.matchStatus = com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus.DONE")
@@ -46,4 +48,13 @@ public interface RecruitApplicationRepository extends JpaRepository<RecruitAppli
     void deleteByTypeNotIn(List<MetaData> recruitTypes);
 
     RecruitApplication findTopByRecruitIdAndMemberIdOrderByIdDesc(Long recruitId, Long memberId);
+
+    @Modifying
+    @Query(value = "update recruit_application ra "
+        + "set ra.matchStatus = com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus.CANCEL "
+        + "where ra.member.id = :memberId "
+        + "  or ra.recruit.id in ("
+        + "                        select r.id from recruit r where r.member.id = :memberId"
+        + "                      )")
+    void cancelAllByMemberId(Long memberId);
 }

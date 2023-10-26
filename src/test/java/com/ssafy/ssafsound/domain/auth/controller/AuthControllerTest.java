@@ -1,6 +1,6 @@
 package com.ssafy.ssafsound.domain.auth.controller;
 
-import com.ssafy.ssafsound.domain.auth.fixture.AuthFixture;
+import com.ssafy.ssafsound.global.util.fixture.AuthFixture;
 import com.ssafy.ssafsound.global.docs.ControllerTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -96,7 +96,7 @@ class AuthControllerTest extends ControllerTest {
 
         restDocs
                 .cookie(REFRESH_TOKEN)
-                .when().get("/auth/reissue")
+                .when().post("/auth/reissue")
                 .then().log().all()
                 .assertThat()
                 .apply(document("oauth/reissue",

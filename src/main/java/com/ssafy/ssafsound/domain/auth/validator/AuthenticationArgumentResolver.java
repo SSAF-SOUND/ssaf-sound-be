@@ -24,11 +24,11 @@ public class AuthenticationArgumentResolver implements HandlerMethodArgumentReso
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-        String token = AuthorizationExtractor.extractToken("accessToken", request);
-        if (token == null && request.getMethod().equals("GET")) {
+        String accessToken = AuthorizationExtractor.extractToken("accessToken", request);
+        if (accessToken == null && request.getMethod().equals("GET")) {
             return AuthenticatedMember.builder().build();
         }
 
-        return jwtTokenProvider.getParsedClaims(token);
+        return jwtTokenProvider.getParsedClaimsByAccessToken(accessToken);
     }
 }

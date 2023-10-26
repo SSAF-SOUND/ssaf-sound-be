@@ -99,7 +99,7 @@ class RecruitApplicationServiceTest {
     RecruitApplication recruitApplication = RecruitApplication.builder()
             .id(1L)
             .isLike(false)
-            .matchStatus(MatchStatus.WAITING_REGISTER_APPROVE)
+            .matchStatus(MatchStatus.PENDING)
             .recruit(recruit)
             .type(new MetaData(RecruitType.DESIGN))
             .member(participant)
@@ -302,5 +302,17 @@ class RecruitApplicationServiceTest {
         assertThrows(RecruitException.class,
                 ()-> recruitApplicationService.toggleRecruitApplicationLike(1L, 2L)
         );
+    }
+
+    @DisplayName("등록자 리크루트 거절 목록 조회")
+    @Test
+    void GivenRecruitIdAndRegisterToken_When_GetRejectedRecruitApplicationThen_Success() {
+        // TODO
+    }
+
+    @DisplayName("사용자 리크루트 신청 상세 조회")
+    @Test
+    void GivenRecruitIdAndMemberToken_When_GetRecentPendingRecruitApplicationThen_Success() {
+        // TODO
     }
 }

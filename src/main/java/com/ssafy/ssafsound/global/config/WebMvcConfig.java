@@ -5,7 +5,6 @@ import com.ssafy.ssafsound.global.interceptor.AuthInterceptor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -13,6 +12,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 import java.util.List;
 
 
@@ -36,6 +36,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedOrigins("https://www.ssafsound.com")
                 .allowedOrigins("https://test.ssafsound.com")
                 .allowedOrigins("https://api.ssafsound.com")
+                .allowedOrigins("http://ssafsound.com")
+                .allowedOrigins("https://ssafsound.com")
                 .allowedMethods(ALLOWED_METHOD_NAMES.split(","))
                 .allowedHeaders("*")
                 .allowCredentials(true)
@@ -47,6 +49,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(authInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/auth/callback")
+                .excludePathPatterns("/auth/logout")
                 .excludePathPatterns("/members/nickname")
                 .excludePathPatterns("/boards");
     }
@@ -63,6 +66,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         config.addAllowedOrigin("https://www.ssafsound.com");
         config.addAllowedOrigin("https://test.ssafsound.com");
         config.addAllowedOrigin("http://www.ssafsound.com");
+        config.addAllowedOrigin("https://ssafsound.com");
+        config.addAllowedOrigin("http://ssafsound.com");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.setMaxAge(2629744L);

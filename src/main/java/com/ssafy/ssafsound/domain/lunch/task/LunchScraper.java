@@ -31,7 +31,7 @@ public class LunchScraper {
     private final ScrapInfoProviderFactory scrapInfoProviderFactory;
 
     // 토 ~ 수요일 동안 03:00에 이틀 뒤의 웰스토리 메뉴를 스크래핑
-    @Scheduled(cron = "0 0 3 ? * SAT,SUN,MON,THU,WED")
+    @Scheduled(cron = "0 0 3 ? * SAT,SUN,MON,TUE,WED")
     public void scrapWelstory(){
 
         WelstoryInfoProvider welstoryInfoProvider = (WelstoryInfoProvider) scrapInfoProviderFactory.getProviderFrom("welstory");

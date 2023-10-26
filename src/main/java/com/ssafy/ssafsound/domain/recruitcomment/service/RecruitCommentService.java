@@ -39,13 +39,19 @@ public class RecruitCommentService {
     public PostRecruitCommentResDto saveRecruitComment(Long recruitId, AuthenticatedMember userInfo, PostRecruitCommentReqDto dto) {
         RecruitComment recruitComment = dto.toEntity();
         Member writer = memberRepository.findById(userInfo.getMemberId()).orElseThrow(()->new ResourceNotFoundException(GlobalErrorInfo.NOT_FOUND));
-        RecruitComment commentGroup = (dto.getCommentGroup() == -1) ? recruitComment : recruitCommentRepository.getReferenceById(dto.getCommentGroup());
-
-        recruitComment.setCommentGroup(commentGroup);
+        Long commentGroupId = dto.getCommentGroup();
+        if(commentGroupId != -1) {
+            recruitComment.setCommentGroup(recruitCommentRepository.getReferenceById(dto.getCommentGroup()));
+        }
         recruitComment.setRecruit(recruitRepository.getReferenceById(recruitId));
         recruitComment.setWriter(writer);
         recruitCommentRepository.save(recruitComment);
-        return PostRecruitCommentResDto.from(recruitComment);
+
+        if(commentGroupId == -1) {
+            commentGroupId = recruitComment.getId();
+            recruitCommentRepository.updateCommentGroup(commentGroupId);
+        }
+        return PostRecruitCommentResDto.to(recruitComment, commentGroupId);
     }
 
     @Transactional

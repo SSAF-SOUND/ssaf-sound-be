@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity(name="member")
-@Table(indexes = @Index(name = "nickname_index", columnList = "nickname", unique = true))
+@Table(indexes = @Index(name = "nickname_index", columnList = "nickname"))
 @Getter
 @Builder
 @NoArgsConstructor
@@ -187,4 +187,6 @@ public class Member extends BaseTimeEntity {
     public void changeMajorStatus(Boolean isMajor) {
         this.major = isMajor;
     }
+
+    public void setAccountStateDeleted() { this.accountState = AccountState.DELETED; }
 }

@@ -7,5 +7,5 @@ import lombok.Getter;
 @Builder
 public class Participant {
     private String nickname;
-    private boolean isMajor;
+    private Boolean isMajor;
 }

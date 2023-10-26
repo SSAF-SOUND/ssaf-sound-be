@@ -16,6 +16,7 @@ public class CookieProvider {
             .httpOnly(true)
             .maxAge(2629744)
             .secure(true)
+            .domain("ssafsound.com")
             .path("/auth/reissue")
             .build();
     }
@@ -25,6 +26,7 @@ public class CookieProvider {
             .httpOnly(true)
             .maxAge(2629744)
             .secure(true)
+            .domain("ssafsound.com")
             .path("/")
             .build();
     }
@@ -45,6 +47,7 @@ public class CookieProvider {
                 .httpOnly(true)
                 .maxAge(0)
                 .secure(true)
+                .domain("ssafsound.com")
                 .path("/")
                 .build();
     }

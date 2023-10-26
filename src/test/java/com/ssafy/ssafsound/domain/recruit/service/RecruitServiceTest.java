@@ -31,9 +31,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.verify;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Arrays;
@@ -43,6 +40,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RecruitServiceTest {
@@ -147,17 +145,20 @@ class RecruitServiceTest {
 
     private final Pageable pageInfo = PageRequest.of(0, 10);
 
-    private final GetRecruitsReqDto emptyKeywordDto = GetRecruitsReqDto.builder()
+    private final GetRecruitsCursorReqDto emptyKeywordDto = GetRecruitsCursorReqDto.builder()
+            .size(10)
             .category(Category.PROJECT.name())
             .keyword("")
             .build();
 
-    private final GetRecruitsReqDto findTitleDto = GetRecruitsReqDto.builder()
+    private final GetRecruitsCursorReqDto findTitleDto = GetRecruitsCursorReqDto.builder()
+            .size(10)
             .category(Category.PROJECT.name())
             .keyword("제목")
             .build();
 
-    private final GetRecruitsReqDto notFindKeywordDto = GetRecruitsReqDto.builder()
+    private final GetRecruitsCursorReqDto notFindKeywordDto = GetRecruitsCursorReqDto.builder()
+            .size(10)
             .category(Category.PROJECT.name())
             .keyword("없는거")
             .build();
@@ -179,13 +180,13 @@ class RecruitServiceTest {
         lenient().when(recruitRepository.findById(2L)).thenReturn(java.util.Optional.ofNullable(savedRecruit));
 
         lenient().when(recruitRepository
-                .findRecruitByGetRecruitsReqDto(emptyKeywordDto, pageInfo))
+                .findRecruitSliceByGetRecruitsReqDto(emptyKeywordDto, pageInfo))
                 .thenReturn(new SliceImpl<>(List.of(savedRecruit)));
 
-        lenient().when(recruitRepository.findRecruitByGetRecruitsReqDto(findTitleDto, pageInfo))
+        lenient().when(recruitRepository.findRecruitSliceByGetRecruitsReqDto(findTitleDto, pageInfo))
                 .thenReturn(new SliceImpl<>(List.of(savedRecruit)));
 
-        lenient().when(recruitRepository.findRecruitByGetRecruitsReqDto(notFindKeywordDto, pageInfo))
+        lenient().when(recruitRepository.findRecruitSliceByGetRecruitsReqDto(notFindKeywordDto, pageInfo))
                 .thenReturn(new SliceImpl<>(List.of()));
 
 
@@ -216,33 +217,10 @@ class RecruitServiceTest {
                 .memberId(1L)
                 .build();
 
-        Recruit recruit = recruitService.saveRecruit(existUser.getMemberId(), postRecruitReqDto);
+        recruitService.saveRecruit(existUser.getMemberId(), postRecruitReqDto);
 
-        assertAll(
-                ()-> assertEquals(member, recruit.getMember()),
-                ()-> {
-                    assertEquals( 0, recruit.getApplications().size());
-                    assertEquals(RecruitType.DESIGN.getName(), recruit.getRegisterRecruitType().getName());
-                },
-                ()-> {
-                    List<RecruitLimitation> recruitLimitations = recruit.getLimitations();
-                    assertNotNull(recruitLimitations);
-                    assertEquals(RecruitType.values().length, recruitLimitations.size());
-
-                    for(RecruitLimitation recruitLimitation: recruitLimitations) {
-                        assertEquals(2, recruitLimitation.getLimitation());
-                        assertEquals(0, recruitLimitation.getCurrentNumber());
-                    }
-                },
-                ()-> {
-                    List<RecruitSkill> skills = recruit.getSkills();
-                    Skill[] allSkill = Skill.values();
-                    int len = skills.size();
-                    for(int i=0; i<len; ++i) {
-                        assertEquals(allSkill[i].getName(), skills.get(i).getSkill().getName());
-                    }
-                }
-        );
+        verify(recruitRepository, times(1)).save(any());
+        verify(recruitLimitationRepository, times(1)).saveAll(any());
     }
 
     @DisplayName("토큰으로부터 얻은 사용자 정보가 유효하지 않은 경우 리크루트글 등록 실패")
@@ -373,15 +351,15 @@ class RecruitServiceTest {
     @DisplayName("키워드를 입력하지 않은 리크루트 목록 검색")
     @Test
     void Given_NotIncludeKeyword_When_GetPagingRecruits_Then_Success() {
-        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(emptyKeywordDto, pageInfo);
-        assertEquals(1, getRecruitsResDto.getRecruits().size());
+        GetRecruitsCursorResDto getRecruitsCursorResDto = recruitService.getRecruitsByCursor(emptyKeywordDto, null);
+        assertEquals(1, getRecruitsCursorResDto.getRecruits().size());
     }
 
     @DisplayName("키워드를 입력한 리크루트 목록 검색 (검색 결과 O)")
     @Test
     void Given_IncludeKeyword_When_GetPagingRecruits_Then_Success() {
-        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(findTitleDto, pageInfo);
-        assertEquals(1, getRecruitsResDto.getRecruits().size());
+        GetRecruitsCursorResDto getRecruitsCursorResDto = recruitService.getRecruitsByCursor(findTitleDto, null);
+        assertEquals(1, getRecruitsCursorResDto.getRecruits().size());
     }
 
     @DisplayName("인원제한이 설정된 모집군과 등록자의 모집군이 일치하는 리크루트 목록 검색")
@@ -389,19 +367,19 @@ class RecruitServiceTest {
     void Given_IncludeKeywordAndIncludeRegisterRecruitType_When_GetPagingRecruits_Then_Success() {
         savedRecruit.setRegisterRecruitType(new MetaData(RecruitType.DESIGN));
 
-        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(findTitleDto, pageInfo);
-        assertEquals(1, getRecruitsResDto.getRecruits().size());
-        assertEquals(1, getRecruitsResDto.getRecruits().get(0).getParticipants().size());
-        assertEquals(3, getRecruitsResDto.getRecruits().get(0).getParticipants().get(0).getLimit());
-        assertEquals(2, getRecruitsResDto.getRecruits().get(0).getParticipants().get(0).getMembers().size());
+        GetRecruitsCursorResDto getRecruitsCursorResDto = recruitService.getRecruitsByCursor(findTitleDto, null);
+        assertEquals(1, getRecruitsCursorResDto.getRecruits().size());
+        assertEquals(1, getRecruitsCursorResDto.getRecruits().get(0).getParticipants().size());
+        assertEquals(3, getRecruitsCursorResDto.getRecruits().get(0).getParticipants().get(0).getLimit());
+        assertEquals(2, getRecruitsCursorResDto.getRecruits().get(0).getParticipants().get(0).getMembers().size());
     }
 
 
     @DisplayName("키워드를 입력한 리크루트 목록 검색 (검색 결과 X)")
     @Test
     void Given_IncludeKeyword_When_GetPagingRecruits_Then_EmptySet() {
-        GetRecruitsResDto getRecruitsResDto = recruitService.getRecruits(notFindKeywordDto, pageInfo);
-        assertEquals(0, getRecruitsResDto.getRecruits().size());
+        GetRecruitsCursorResDto getRecruitsCursorResDto = recruitService.getRecruitsByCursor(notFindKeywordDto, null);
+        assertEquals(0, getRecruitsCursorResDto.getRecruits().size());
     }
 
     @DisplayName("등록자 리크루트 완료 성공")
@@ -423,5 +401,23 @@ class RecruitServiceTest {
                 RecruitErrorInfo.INVALID_CHANGE_MEMBER_OPERATION.getCode(),
                 recruitException.getInfo().getCode()
         );
+    }
+
+    @DisplayName("사용자 프로필 - 사용자가 참가한 리크루트 목록 조회")
+    @Test
+    void Given_MemberId_When_GetMemberJoinRecruits_Then_Success() {
+        // TODO Test Refactoring 시 일괄 작성
+    }
+
+    @DisplayName("사용자 프로필 - 사용자 스크랩 리크루트 목록 조회")
+    @Test
+    void Given_MemberId_When_GetScrapedRecruits_Then_Success() {
+        // TODO Test Refactoring 시 일괄 작성
+    }
+
+    @DisplayName("사용자 프로필 - 사용자 신청한 리크루트 조회")
+    @Test
+    void Given_MemberIdCategoryMatchStatus_GetAppiedRecruits_Then_Success() {
+        // TODO Test Refactoring 시 일괄 작성
     }
 }

@@ -4,21 +4,21 @@ import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.dto.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
-import static com.ssafy.ssafsound.global.util.fixture.BoardFixture.BOARD_FIXTURE1;
-import static com.ssafy.ssafsound.global.util.fixture.BoardFixture.BOARD_FIXTURE2;
-import static com.ssafy.ssafsound.global.util.fixture.MemberFixture.*;
-
 public class PostFixture {
+
+    private static final MemberFixture memberFixture = new MemberFixture();
+    private static final BoardFixture boardFixture = new BoardFixture();
 
     public static final Post POST_FIXTURE1 = Post.builder()
             .id(1L)
             .title("싸탈하고 싶다.")
             .content("싸탈하고 싶은 밤이네요")
             .anonymity(false)
-            .board(BOARD_FIXTURE1)
-            .member(MEMBER_KIM)
+            .board(boardFixture.getFreeBoard())
+            .member(memberFixture.createMember())
             .build();
 
     public static final Post POST_FIXTURE2 = Post.builder()
@@ -26,8 +26,8 @@ public class PostFixture {
             .title("삼성 B형을 봤는데")
             .content("결과가 암울해")
             .anonymity(true)
-            .board(BOARD_FIXTURE1)
-            .member(MEMBER_YONG)
+            .board(boardFixture.getFreeBoard())
+            .member(memberFixture.createMember())
             .build();
 
     public static final Post POST_FIXTURE3 = Post.builder()
@@ -35,8 +35,8 @@ public class PostFixture {
             .title("안녕하세요 취업 게시판의 첫 글이네요")
             .content("취업이 뭐죠??")
             .anonymity(true)
-            .board(BOARD_FIXTURE2)
-            .member(MEMBER_YONG)
+            .board(boardFixture.getJobBoard())
+            .member(memberFixture.createMember())
             .build();
 
     public static final GetPostElement GET_POST_ELEMENT1 = GetPostElement.builder()
@@ -137,53 +137,85 @@ public class PostFixture {
             .thumbnail("썸네일 URL")
             .build();
 
-
-    public static final GetPostResDto GET_POST_RES_DTO1 = GetPostResDto.ofPosts(
-            List.of(POST_FIXTURE1,
-                    POST_FIXTURE2), 10);
-
-    public static final GetPostResDto GET_POST_RES_DTO2 = GetPostResDto.ofPosts(
-            List.of(POST_FIXTURE3), 10);
-
-    public static final GetPostResDto GET_POST_RES_DTO3 = GetPostResDto.builder()
+    public static final GetPostCursorResDto GET_POST_CURSOR_RES_DTO1 = GetPostCursorResDto.builder()
             .posts(List.of(GET_POST_ELEMENT1,
                     GET_POST_ELEMENT2))
             .cursor(null)
             .build();
 
-    public static final GetPostResDto GET_POST_RES_DTO4 = GetPostResDto.builder()
+    public static final GetPostCursorResDto GET_POST_CURSOR_RES_DTO2 = GetPostCursorResDto.builder()
             .posts(List.of(GET_POST_ELEMENT3))
             .cursor(null)
             .build();
 
-    public static final GetPostResDto GET_POST_HOT_RES_DTO1 = GetPostResDto.builder()
+    public static final GetPostOffsetResDto GET_POST_OFFSET_RES_DTO1 = GetPostOffsetResDto.builder()
+            .posts(List.of(GET_POST_ELEMENT1,
+                    GET_POST_ELEMENT2))
+            .currentPage(1)
+            .totalPageCount(1)
+            .build();
+
+    public static final GetPostOffsetResDto GET_POST_OFFSET_RES_DTO2 = GetPostOffsetResDto.builder()
+            .posts(List.of(GET_POST_ELEMENT3))
+            .currentPage(1)
+            .totalPageCount(1)
+            .build();
+
+    public static final GetPostCursorResDto GET_POST_HOT_CURSOR_RES_DTO1 = GetPostCursorResDto.builder()
             .posts(List.of(GET_POST_HOT_ELEMENT1,
                     GET_POST_HOT_ELEMENT2))
             .cursor(null)
             .build();
 
-    public static final GetPostResDto GET_POST_HOT_RES_DTO2 = GetPostResDto.builder()
+    public static final GetPostCursorResDto GET_POST_HOT_CURSOR_RES_DTO2 = GetPostCursorResDto.builder()
             .posts(List.of(GET_POST_HOT_ELEMENT1))
             .cursor(null)
             .build();
 
-    public static final GetPostResDto GET_POST_MY_RES_DTO1 = GetPostResDto.builder()
+    public static final GetPostOffsetResDto GET_POST_HOT_OFFSET_RES_DTO1 = GetPostOffsetResDto.builder()
+            .posts(List.of(GET_POST_HOT_ELEMENT1,
+                    GET_POST_HOT_ELEMENT2))
+            .currentPage(1)
+            .totalPageCount(1)
+            .build();
+
+    public static final GetPostOffsetResDto GET_POST_HOT_OFFSET_RES_DTO2 = GetPostOffsetResDto.builder()
+            .posts(List.of(GET_POST_HOT_ELEMENT1))
+            .currentPage(1)
+            .totalPageCount(1)
+            .build();
+
+    public static final GetPostCursorResDto GET_POST_MY_CURSOR_RES_DTO1 = GetPostCursorResDto.builder()
             .posts(List.of(GET_POST_MY_ELEMENT1,
                     GET_POST_MY_ELEMENT2))
             .cursor(null)
             .build();
 
-    public static final GetPostResDto GET_POST_MY_SCRAP_RES_DTO = GetPostResDto.builder()
+    public static final GetPostOffsetResDto GET_POST_MY_OFFSET_RES_DTO1 = GetPostOffsetResDto.builder()
+            .posts(List.of(GET_POST_MY_ELEMENT1,
+                    GET_POST_MY_ELEMENT2))
+            .currentPage(1)
+            .totalPageCount(1)
+            .build();
+
+    public static final GetPostCursorResDto GET_POST_MY_SCRAP_CURSOR_RES_DTO = GetPostCursorResDto.builder()
             .posts(List.of(GET_POST_ELEMENT2,
                     GET_POST_ELEMENT1))
             .cursor(null)
+            .build();
+
+    public static final GetPostOffsetResDto GET_POST_MY_SCRAP_OFFSET_RES_DTO = GetPostOffsetResDto.builder()
+            .posts(List.of(GET_POST_ELEMENT2,
+                    GET_POST_ELEMENT1))
+            .currentPage(1)
+            .totalPageCount(1)
             .build();
 
     public static final GetPostDetailResDto GET_POST_DETAIL_RES_DTO1 = GetPostDetailResDto.of(
             POST_FIXTURE1, null);
 
     public static final GetPostDetailResDto GET_POST_DETAIL_RES_DTO2 = GetPostDetailResDto.of(
-            POST_FIXTURE2, MEMBER_YONG);
+            POST_FIXTURE2, memberFixture.createMember());
 
     public static final PostPostWriteReqDto POST_POST_WRITE_REQ_DTO1 = PostPostWriteReqDto.builder()
             .title("안녕하세요 첫 글이네요")
@@ -212,4 +244,15 @@ public class PostFixture {
             .scrapCount(9)
             .scraped(false)
             .build();
+
+    public static List<ImageInfo> createImageInfos(int size) {
+        List<ImageInfo> imageInfos = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            imageInfos.add(ImageInfo.builder()
+                    .imagePath("imagePath" + i)
+                    .imageUrl("imageUrl" + i)
+                    .build());
+        }
+        return imageInfos;
+    }
 }

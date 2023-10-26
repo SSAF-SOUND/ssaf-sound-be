@@ -1,7 +1,6 @@
 package com.ssafy.ssafsound.domain.post.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -9,13 +8,20 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-public class GetPostHotSearchReqDto {
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class GetPostSearchCursorReqDto {
+    private Long boardId;
+
     @Size(min = 2)
     @NotBlank
     private String keyword;
 
-    private Long cursor;
+    @Builder.Default
+    private Long cursor = -1L;
 
     @Min(value = 10, message = "Size가 너무 작습니다.")
-    private int size;
+    @Builder.Default
+    private int size = 10;
 }

@@ -1,19 +1,25 @@
 package com.ssafy.ssafsound.global.util.fixture;
 
+import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.member.dto.AuthorElement;
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import com.ssafy.ssafsound.domain.meta.domain.RecruitType;
 import com.ssafy.ssafsound.domain.meta.domain.Skill;
 import com.ssafy.ssafsound.domain.recruit.domain.*;
 import com.ssafy.ssafsound.domain.recruit.dto.*;
+import com.ssafy.ssafsound.domain.recruitapplication.domain.MatchStatus;
+import com.ssafy.ssafsound.domain.recruitapplication.dto.RecruitApplicationElement;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class RecruitFixture {
 
+    private static final MemberFixture memberFixture = new MemberFixture();
     private static String CONTACT_URI = "https://open.kakao.com/o/sA8Kb83b";
     private static String RECRUIT_TITLE = "[사이드 프로젝트] 공모전 레퍼런스 웹 플랫폼 개발 프로젝트 팀원을 모집합니다.";
     private static String RECRUIT_CONTENT = "<p>[프로젝트 소개]</p>\n" +
@@ -49,9 +55,13 @@ public class RecruitFixture {
             .finishedRecruit(false)
             .registerRecruitType(new MetaData(RecruitType.BACK_END))
             .contactURI(CONTACT_URI)
-            .member(MemberFixture.MEMBER_KIM)
+            .member(memberFixture.createMember())
             .build();
 
+    static {
+        ReflectionTestUtils.setField(RECRUIT_1, BaseTimeEntity.class,"createdAt", LocalDateTime.now(), LocalDateTime.class);
+        ReflectionTestUtils.setField(RECRUIT_1, BaseTimeEntity.class,"modifiedAt", LocalDateTime.now(), LocalDateTime.class);
+    }
     public static final RecruitQuestion RECRUIT_QUESTION_1 = RecruitQuestion.builder()
             .id(1L)
             .content(RECRUIT_QUESTION)
@@ -85,7 +95,6 @@ public class RecruitFixture {
             .recruit(RECRUIT_1)
             .type(new MetaData(RecruitType.FRONT_END))
             .build();
-
     public static final List<RecruitSkillElement> RECRUIT_1_SKILL_DTO = List.of(
             RecruitSkillElement.builder().skillId(Skill.SPRING.getId()).name(Skill.SPRING.getName()).build(),
             RecruitSkillElement.builder().skillId(Skill.REACT.getId()).name(Skill.REACT.getName()).build());
@@ -109,9 +118,11 @@ public class RecruitFixture {
             .skills(RECRUIT_1_SKILL_DTO)
             .limits(RECRUIT_1_LIMIT_DETAIL)
             .questions(List.of(RECRUIT_QUESTION))
-            .author(new AuthorElement(MemberFixture.MEMBER_KIM, false))
+            .author(new AuthorElement(memberFixture.createMember(), false))
             .scrapCount(1L)
             .scraped(true)
+            .mine(true)
+            .matchStatus(MatchStatus.INITIAL.name())
             .build();
 
     private static final List<RecruitLimitElement> RECRUIT_1_UPDATE_LIMIT = List.of(
@@ -136,11 +147,43 @@ public class RecruitFixture {
         RECRUIT_1.setRecruitLimitations(List.of(RECRUIT_1_BE_LIMIT_3, RECRUIT_1_FE_LIMIT_3));
     }
 
-    private static final RecruitElement RECRUIT_1_ELEMENT = RecruitElement.from(RECRUIT_1);
+    private static final RecruitElement RECRUIT_1_ELEMENT = RecruitElement.fromRecruitAndLoginMemberId(RECRUIT_1, 1L);
 
-    public static final GetRecruitsResDto GET_RECRUITS_RES_DTO = GetRecruitsResDto.builder()
+    public static final GetRecruitsCursorResDto GET_RECRUITS_CURSOR_RES_DTO = GetRecruitsCursorResDto.builder()
             .recruits(List.of(RECRUIT_1_ELEMENT))
             .nextCursor(1L)
             .isLast(true)
+            .build();
+
+    public static final GetRecruitsPageResDto GET_RECRUITS_PAGE_RES_DTO = GetRecruitsPageResDto.builder()
+            .recruits(List.of(RECRUIT_1_ELEMENT))
+            .currentPage(1)
+            .totalPageCount(1)
+            .build();
+
+    public static final GetRecruitOffsetResDto GET_RECRUITS_OFFSET_RES_DTO = GetRecruitOffsetResDto.builder()
+            .recruits(List.of(RECRUIT_1_ELEMENT))
+            .currentPage(0)
+            .totalPageCount(1)
+            .build();
+
+    private static final RecruitApplicationElement APPLICATION_ELEMENT = RecruitApplicationFixture.APPLICATION1_ELEMENT();
+    private static final AppliedRecruit APPLIED_RECRUIT = AppliedRecruit.builder()
+            .recruit(RECRUIT_1)
+            .appliedAt(APPLICATION_ELEMENT.getCreatedAt())
+            .matchStatus(APPLICATION_ELEMENT.getMatchStatus())
+            .build();
+    private static final AppliedRecruitElement APPLIED_RECRUIT_ELEMENT = AppliedRecruitElement.fromRecruitAndLoginMemberId(APPLIED_RECRUIT, 100L);
+
+    public static final GetMemberAppliedRecruitsCursorResDto GET_MEMBER_APPLIED_RECRUITS_RES_DTO = GetMemberAppliedRecruitsCursorResDto.builder()
+            .recruits(List.of(APPLIED_RECRUIT_ELEMENT))
+            .nextCursor(1L)
+            .isLast(true)
+            .build();
+
+    public static final GetMemberAppliedRecruitsOffsetResDto GET_MEMBER_APPLIED_RECRUITS_OFFSET_RES_DTO = GetMemberAppliedRecruitsOffsetResDto.builder()
+            .recruits(List.of(APPLIED_RECRUIT_ELEMENT))
+            .currentPage(1)
+            .totalPageCount(1)
             .build();
 }
