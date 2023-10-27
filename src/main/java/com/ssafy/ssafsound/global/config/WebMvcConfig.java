@@ -50,6 +50,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns("/auth/callback")
                 .excludePathPatterns("/auth/logout")
+                .excludePathPatterns("/auth/reissue")
                 .excludePathPatterns("/members/nickname")
                 .excludePathPatterns("/boards");
     }
