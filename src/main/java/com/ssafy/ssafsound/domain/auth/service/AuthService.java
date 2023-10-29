@@ -20,12 +20,9 @@ import com.ssafy.ssafsound.domain.member.repository.MemberTokenRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-
 import javax.servlet.http.HttpServletResponse;
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Service
 @Slf4j
@@ -71,26 +68,6 @@ public class AuthService {
                 .accessToken(jwtTokenProvider.createAccessToken(authenticatedMember))
                 .refreshToken(jwtTokenProvider.createRefreshToken(authenticatedMember))
                 .build();
-    }
-
-    @Transactional
-    public void deleteTokens(String accessToken, String refreshToken) {
-        Long memberId = null;
-
-        try {
-            if (StringUtils.hasText(accessToken)) {
-                AuthenticatedMember authenticatedMember = jwtTokenProvider.getParsedClaimsByAccessToken(accessToken);
-                memberId = authenticatedMember.getMemberId();
-            } else if (StringUtils.hasText(refreshToken)) {
-                memberId = jwtTokenProvider.getMemberIdByRefreshToken(refreshToken);
-            }
-
-            if (Objects.nonNull(memberId)) {
-                memberTokenRepository.deleteById(memberId);
-            }
-        } catch (AuthException e) {
-            log.debug("유효하지 않은 토큰입니다.");
-        }
     }
 
     @Transactional(readOnly = true)

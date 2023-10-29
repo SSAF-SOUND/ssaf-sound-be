@@ -111,8 +111,10 @@ public class RecruitService {
         }
 
         recruitLimitationRepository.deleteAllByRecruit(recruit);
-        recruit.setRecruitLimitations(recruitLimitations);
+
         recruit.update(recruitReqDto);
+        recruit.setRecruitLimitations(recruitLimitations);
+        recruitLimitationRepository.saveAll(recruitLimitations);
 
         List<MetaData> recruitTypes = recruitLimitations.stream()
                 .map(RecruitLimitation::getType)
