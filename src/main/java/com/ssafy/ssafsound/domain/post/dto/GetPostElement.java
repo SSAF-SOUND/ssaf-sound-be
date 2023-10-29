@@ -38,11 +38,16 @@ public class GetPostElement {
         this.title = post.getTitle();
         this.content = post.getContent();
         this.likeCount = post.getLikes().size();
-        this.commentCount = post.getComments().size();
+        this.commentCount = getCommentSize(post);
         this.createdAt = post.getCreatedAt();
         this.nickname = anonymity ? "익명" : post.getMember().getNickname();
         this.anonymity = anonymity;
         this.thumbnail = findThumbnailUrl(post);
+    }
+
+    private int getCommentSize(Post post) {
+        return (int) post.getComments().stream()
+                .filter(comment -> !comment.getDeletedComment()).count();
     }
 
     private String findThumbnailUrl(Post post) {
