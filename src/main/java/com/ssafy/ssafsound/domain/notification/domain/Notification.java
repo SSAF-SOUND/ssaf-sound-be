@@ -13,5 +13,6 @@ public class Notification {
     @Id
     private String id;
 
-    private Integer owne;
+    private Integer owner;
+
 }
