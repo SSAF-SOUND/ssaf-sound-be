@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.domain.post.dto;
 
 import com.ssafy.ssafsound.domain.board.domain.Board;
+import com.ssafy.ssafsound.domain.comment.domain.Comment;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.domain.PostImage;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Builder
@@ -38,11 +40,18 @@ public class GetPostElement {
         this.title = post.getTitle();
         this.content = post.getContent();
         this.likeCount = post.getLikes().size();
-        this.commentCount = post.getComments().size();
+        this.commentCount = getCommentSize(post);
         this.createdAt = post.getCreatedAt();
         this.nickname = anonymity ? "익명" : post.getMember().getNickname();
         this.anonymity = anonymity;
         this.thumbnail = findThumbnailUrl(post);
+    }
+
+    private int getCommentSize(Post post) {
+        List<Comment> comments = post.getComments();
+
+        return (int) comments.stream()
+                .filter(comment -> !comment.getDeletedComment()).count();
     }
 
     private String findThumbnailUrl(Post post) {
