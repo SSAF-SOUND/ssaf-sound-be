@@ -15,16 +15,6 @@ import java.util.Optional;
 
 @Repository
 public interface HotPostRepository extends JpaRepository<HotPost, Long>, HotPostCustomRepository {
-    @Modifying
-    @Query("DELETE FROM hot_post h " +
-            "WHERE h.id IN ( " +
-            "  SELECT h.id " +
-            "  FROM hot_post h LEFT JOIN post_like p " +
-            "  ON h.post.id = p.post.id " +
-            "  GROUP BY h.id " +
-            "  HAVING COUNT(p.id) < :threshold " +
-            ")")
-    void deleteHotPostsUnderThreshold(@Param("threshold") Long threshold);
 
     Optional<HotPost> findByPostId(Long postId);
 
