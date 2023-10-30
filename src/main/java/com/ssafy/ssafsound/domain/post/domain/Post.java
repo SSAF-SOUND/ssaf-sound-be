@@ -85,7 +85,7 @@ public class Post extends BaseTimeEntity {
                 .build();
     }
 
-    public int getCommentCount() {
+    public int countComment() {
         return (int) this.getComments().stream()
                 .filter(comment -> !comment.getDeletedComment()).count();
     }

@@ -38,7 +38,7 @@ public class GetPostElement {
         this.title = post.getTitle();
         this.content = post.getContent();
         this.likeCount = post.getLikes().size();
-        this.commentCount = post.getCommentCount();
+        this.commentCount = post.countComment();
         this.createdAt = post.getCreatedAt();
         this.nickname = anonymity ? "익명" : post.getMember().getNickname();
         this.anonymity = anonymity;
