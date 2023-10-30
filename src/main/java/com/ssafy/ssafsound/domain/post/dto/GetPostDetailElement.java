@@ -47,7 +47,7 @@ public class GetPostDetailElement {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .likeCount(post.getLikes().size())
-                .commentCount(post.getComments().size())
+                .commentCount(post.countComment())
                 .scrapCount(post.getScraps().size())
                 .createdAt(post.getCreatedAt())
                 .anonymity(post.getAnonymity())

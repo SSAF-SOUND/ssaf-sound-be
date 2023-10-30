@@ -8,4 +8,8 @@ public interface HotPostCustomRepository {
     List<HotPost> findHotPosts(Long cursor, int size);
 
     List<HotPost> findHotPostsByKeyword(String keyword, Long cursor, int size);
+
+    void deleteHotPostsUnderThreshold(Long threshold);
+
+
 }

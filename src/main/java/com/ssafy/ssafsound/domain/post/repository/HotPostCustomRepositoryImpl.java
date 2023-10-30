@@ -12,10 +12,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.ssafy.ssafsound.domain.post.domain.QHotPost.hotPost;
-import static com.ssafy.ssafsound.domain.post.domain.QPost.post;
 import static com.ssafy.ssafsound.domain.board.domain.QBoard.board;
 import static com.ssafy.ssafsound.domain.member.domain.QMember.member;
+import static com.ssafy.ssafsound.domain.post.domain.QHotPost.hotPost;
+import static com.ssafy.ssafsound.domain.post.domain.QPost.post;
+import static com.ssafy.ssafsound.domain.post.domain.QPostLike.postLike;
 
 
 @Repository
@@ -56,6 +57,21 @@ public class HotPostCustomRepositoryImpl implements HotPostCustomRepository {
         return tuples.stream()
                 .map(tuple -> tuple.get(hotPost))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteHotPostsUnderThreshold(Long threshold) {
+        jpaQueryFactory.delete(hotPost)
+                .where(hotPost.in(
+                        jpaQueryFactory.select(hotPost)
+                                .from(hotPost)
+                                .leftJoin(postLike)
+                                .on(hotPost.post.eq(postLike.post))
+                                .groupBy(hotPost.id)
+                                .having(hotPost.id.count().lt(threshold))
+                                .fetch())
+                )
+                .execute();
     }
 
     private BooleanExpression postIdLtCursor(Long cursor) {
