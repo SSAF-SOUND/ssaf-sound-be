@@ -69,7 +69,7 @@ public class PostFixture {
 
     public static final GetPostElement GET_POST_ELEMENT3 = GetPostElement.builder()
             .boardId(1L)
-            .boardTitle("자유 게시판")
+            .boardTitle("취업 게시판")
             .postId(6L)
             .title("안녕하세요 반갑습니다.")
             .content("SSAFY 9기 합격했습니다!!")
@@ -157,6 +157,13 @@ public class PostFixture {
 
     public static final GetPostOffsetResDto GET_POST_OFFSET_RES_DTO2 = GetPostOffsetResDto.builder()
             .posts(List.of(GET_POST_ELEMENT3))
+            .currentPage(1)
+            .totalPageCount(1)
+            .build();
+
+    public static final GetPostOffsetResDto GET_POST_OFFSET_RES_DTO3 = GetPostOffsetResDto.builder()
+            .posts(List.of(GET_POST_ELEMENT1,
+                    GET_POST_ELEMENT3))
             .currentPage(1)
             .totalPageCount(1)
             .build();
