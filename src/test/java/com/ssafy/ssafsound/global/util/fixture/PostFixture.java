@@ -12,6 +12,8 @@ public class PostFixture {
     private static final MemberFixture memberFixture = new MemberFixture();
     private static final BoardFixture boardFixture = new BoardFixture();
 
+    public static final Long HOT_POST_LIKES_THRESHOLD = 5L;
+
     public static final Post POST_FIXTURE1 = Post.builder()
             .id(1L)
             .title("싸탈하고 싶다.")
