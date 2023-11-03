@@ -32,6 +32,6 @@ public class AuthorElement {
         this.memberRole = anonymity? null : member.getRole().getRoleType();
         this.ssafyMember = anonymity? null : member.getSsafyMember();
         this.isMajor = anonymity? null : member.getMajor();
-        this.ssafyInfo = anonymity? null : SSAFYInfo.from(member);
+        this.ssafyInfo = (anonymity || !member.getSsafyMember())? null : SSAFYInfo.from(member);
     }
 }
