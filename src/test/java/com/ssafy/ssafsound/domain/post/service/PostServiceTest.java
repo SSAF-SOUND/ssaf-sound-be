@@ -205,13 +205,13 @@ class PostServiceTest {
 		// given
 		Post post = POST_FIXTURE1;
 		Member member = memberFixture.createGeneralMember();
-		int likeCount = 4;
+		int likeCount = 2;
 
 		given(postRepository.findById(post.getId())).willReturn(Optional.of(post));
 		given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
 		given(postLikeRepository.findByPostIdAndMemberId(post.getId(), member.getId())).willReturn(Optional.empty());
 		given(postLikeRepository.countByPostId(post.getId())).willReturn(likeCount);
-		given(postConstantProvider.getHOT_POST_LIKES_THRESHOLD()).willReturn(10L);
+		given(postConstantProvider.getHOT_POST_LIKES_THRESHOLD()).willReturn(HOT_POST_LIKES_THRESHOLD);
 
 		// when
 		PostCommonLikeResDto response = postService.likePost(post.getId(), member.getId());
@@ -265,13 +265,13 @@ class PostServiceTest {
 		// given
 		Post post = POST_FIXTURE1;
 		Member member = memberFixture.createGeneralMember();
-		int likeCount = 9;
+		int likeCount = 4;
 
 		given(postRepository.findById(post.getId())).willReturn(Optional.of(post));
 		given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
 		given(postLikeRepository.findByPostIdAndMemberId(post.getId(), member.getId())).willReturn(Optional.empty());
 		given(postLikeRepository.countByPostId(post.getId())).willReturn(likeCount);
-		given(postConstantProvider.getHOT_POST_LIKES_THRESHOLD()).willReturn(10L);
+		given(postConstantProvider.getHOT_POST_LIKES_THRESHOLD()).willReturn(HOT_POST_LIKES_THRESHOLD);
 		given(hotPostRepository.existsByPostId(post.getId())).willReturn(false);
 
 		// when
@@ -296,13 +296,13 @@ class PostServiceTest {
 		// given
 		Post post = POST_FIXTURE1;
 		Member member = memberFixture.createGeneralMember();
-		int likeCount = 9;
+		int likeCount = 4;
 
 		given(postRepository.findById(post.getId())).willReturn(Optional.of(post));
 		given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
 		given(postLikeRepository.findByPostIdAndMemberId(post.getId(), member.getId())).willReturn(Optional.empty());
 		given(postLikeRepository.countByPostId(post.getId())).willReturn(likeCount);
-		given(postConstantProvider.getHOT_POST_LIKES_THRESHOLD()).willReturn(10L);
+		given(postConstantProvider.getHOT_POST_LIKES_THRESHOLD()).willReturn(HOT_POST_LIKES_THRESHOLD);
 		given(hotPostRepository.existsByPostId(post.getId())).willReturn(true);
 
 		// when

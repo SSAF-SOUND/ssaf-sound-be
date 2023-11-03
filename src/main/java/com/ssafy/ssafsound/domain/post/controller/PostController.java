@@ -19,6 +19,13 @@ public class PostController {
 
     private final PostService postService;
 
+    @GetMapping("/all/offset")
+    public EnvelopeResponse<GetPostOffsetResDto> findAllPostsByOffset(@Valid @ModelAttribute BasePageRequest basePageRequest) {
+        return EnvelopeResponse.<GetPostOffsetResDto>builder()
+                .data(postService.findAllPostsByOffset(basePageRequest))
+                .build();
+    }
+
     @GetMapping("/cursor")
     public EnvelopeResponse<GetPostCursorResDto> findPostsByCursor(@Valid @ModelAttribute GetPostCursorReqDto getPostCursorReqDto) {
         return EnvelopeResponse.<GetPostCursorResDto>builder()
