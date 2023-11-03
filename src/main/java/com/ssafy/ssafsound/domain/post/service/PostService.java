@@ -362,4 +362,13 @@ public class PostService {
         Page<HotPost> hotPosts = hotPostRepository.searchHotPostsByKeywordAndPageable(keyword, pageRequest);
         return GetPostOffsetResDto.ofHotPosts(hotPosts);
     }
+
+    @Transactional(readOnly = true)
+    public GetPostOffsetResDto findAllPostsByOffset(BasePageRequest basePageRequest) {
+        PageRequest pageRequest = basePageRequest.toPageRequest();
+
+        Page<Post> posts = postRepository.findAllWithPageable(pageRequest);
+        return GetPostOffsetResDto.ofPosts(posts);
+
+    }
 }

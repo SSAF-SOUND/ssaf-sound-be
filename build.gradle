@@ -126,13 +126,6 @@ dependencies {
 //	Spring Cloud AWS
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
-// 	Spring Boot Batch
-    implementation 'org.springframework.boot:spring-boot-starter-batch'
-    implementation 'org.springframework.boot:spring-boot-starter-quartz'
-
-// apache tika(파일 분석 라이브러리)
-    implementation 'org.apache.tika:tika-parsers:1.28'
-
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     compileOnly 'org.projectlombok:lombok'
