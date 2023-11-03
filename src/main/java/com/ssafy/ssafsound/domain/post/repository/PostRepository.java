@@ -12,12 +12,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRepository {
-    boolean existsByIdAndMemberId(Long id, Long memberId);
 
     @Query("SELECT p FROM post p JOIN FETCH p.member WHERE p.id = :id")
     Optional<Post> findByIdWithMember(@Param("id") Long id);
@@ -48,4 +46,8 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRep
     @Query("select p from post p " +
             "where p.member = :member ")
     Page<Post> findMyPostsByMemberAndPageable(@Param("member") Member member, PageRequest pageRequest);
+
+    @EntityGraph(attributePaths = {"board", "member", "likes"})
+    @Query(value = "select p from post p ")
+    Page<Post> findAllWithPageable(Pageable pageable);
 }

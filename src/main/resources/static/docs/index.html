@@ -457,25 +457,26 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_익명_게시판">4. 익명 게시판</a>
 <ul class="sectlevel2">
-<li><a href="#_게시글_목록_조회cursor">4.1. 게시글 목록 조회(Cursor)</a></li>
-<li><a href="#_게시글_목록_조회offset">4.2. 게시글 목록 조회(Offset)</a></li>
-<li><a href="#_게시글_상세_보기실명">4.3. 게시글 상세 보기(실명)</a></li>
-<li><a href="#_게시글_상세_보기익명">4.4. 게시글 상세 보기(익명)</a></li>
-<li><a href="#_게시글_검색cursor">4.5. 게시글 검색(Cursor)</a></li>
-<li><a href="#_게시글_검색offset">4.6. 게시글 검색(Offset)</a></li>
-<li><a href="#_게시글_작성">4.7. 게시글 작성</a></li>
-<li><a href="#_게시글_수정">4.8. 게시글 수정</a></li>
-<li><a href="#_게시글_삭제">4.9. 게시글 삭제</a></li>
-<li><a href="#_게시글_좋아요">4.10. 게시글 좋아요</a></li>
-<li><a href="#_게시글_스크랩">4.11. 게시글 스크랩</a></li>
-<li><a href="#_hot_게시글_목록_조회cursor">4.12. Hot 게시글 목록 조회(Cursor)</a></li>
-<li><a href="#_hot_게시글_목록_조회offset">4.13. Hot 게시글 목록 조회(Offset)</a></li>
-<li><a href="#_hot_게시글_검색cursor">4.14. Hot 게시글 검색(Cursor)</a></li>
-<li><a href="#_hot_게시글_검색offset">4.15. Hot 게시글 검색(Offset)</a></li>
-<li><a href="#_나의_게시글_목록_조회cursor">4.16. 나의 게시글 목록 조회(Cursor)</a></li>
-<li><a href="#_나의_게시글_목록_조회offset">4.17. 나의 게시글 목록 조회(Offset)</a></li>
-<li><a href="#_나의_스크랩_게시글_목록_조회cursor">4.18. 나의 스크랩 게시글 목록 조회(Cursor)</a></li>
-<li><a href="#_나의_스크랩_게시글_목록_조회offset">4.19. 나의 스크랩 게시글 목록 조회(Offset)</a></li>
+<li><a href="#_전체_게시글_목록_조회offset">4.1. 전체 게시글 목록 조회(Offset)</a></li>
+<li><a href="#_게시글_목록_조회cursor">4.2. 게시글 목록 조회(Cursor)</a></li>
+<li><a href="#_게시글_목록_조회offset">4.3. 게시글 목록 조회(Offset)</a></li>
+<li><a href="#_게시글_상세_보기실명">4.4. 게시글 상세 보기(실명)</a></li>
+<li><a href="#_게시글_상세_보기익명">4.5. 게시글 상세 보기(익명)</a></li>
+<li><a href="#_게시글_검색cursor">4.6. 게시글 검색(Cursor)</a></li>
+<li><a href="#_게시글_검색offset">4.7. 게시글 검색(Offset)</a></li>
+<li><a href="#_게시글_작성">4.8. 게시글 작성</a></li>
+<li><a href="#_게시글_수정">4.9. 게시글 수정</a></li>
+<li><a href="#_게시글_삭제">4.10. 게시글 삭제</a></li>
+<li><a href="#_게시글_좋아요">4.11. 게시글 좋아요</a></li>
+<li><a href="#_게시글_스크랩">4.12. 게시글 스크랩</a></li>
+<li><a href="#_hot_게시글_목록_조회cursor">4.13. Hot 게시글 목록 조회(Cursor)</a></li>
+<li><a href="#_hot_게시글_목록_조회offset">4.14. Hot 게시글 목록 조회(Offset)</a></li>
+<li><a href="#_hot_게시글_검색cursor">4.15. Hot 게시글 검색(Cursor)</a></li>
+<li><a href="#_hot_게시글_검색offset">4.16. Hot 게시글 검색(Offset)</a></li>
+<li><a href="#_나의_게시글_목록_조회cursor">4.17. 나의 게시글 목록 조회(Cursor)</a></li>
+<li><a href="#_나의_게시글_목록_조회offset">4.18. 나의 게시글 목록 조회(Offset)</a></li>
+<li><a href="#_나의_스크랩_게시글_목록_조회cursor">4.19. 나의 스크랩 게시글 목록 조회(Cursor)</a></li>
+<li><a href="#_나의_스크랩_게시글_목록_조회offset">4.20. 나의 스크랩 게시글 목록 조회(Offset)</a></li>
 </ul>
 </li>
 <li><a href="#_게시판_댓글">5. 게시판 댓글</a>
@@ -824,19 +825,19 @@ Content-Length: 482
 <h2 id="_익명_게시판"><a class="link" href="#_익명_게시판">4. 익명 게시판</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_게시글_목록_조회cursor"><a class="link" href="#_게시글_목록_조회cursor">4.1. 게시글 목록 조회(Cursor)</a></h3>
+<h3 id="_전체_게시글_목록_조회offset"><a class="link" href="#_전체_게시글_목록_조회offset">4.1. 전체 게시글 목록 조회(Offset)</a></h3>
 <div class="sect3">
-<h4 id="_게시글_목록_조회cursor_http_request"><a class="link" href="#_게시글_목록_조회cursor_http_request">4.1.1. HTTP request</a></h4>
+<h4 id="_전체_게시글_목록_조회offset_http_request"><a class="link" href="#_전체_게시글_목록_조회offset_http_request">4.1.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts/cursor?boardId=1&amp;cursor=-1&amp;size=10 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts/all/offset?page=1&amp;size=10 HTTP/1.1
 Host: api.ssafsound.com
 Cookie: accessToken=accessTokenValue</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_게시글_목록_조회cursor_http_response"><a class="link" href="#_게시글_목록_조회cursor_http_response">4.1.2. HTTP response</a></h4>
+<h4 id="_전체_게시글_목록_조회offset_http_response"><a class="link" href="#_전체_게시글_목록_조회offset_http_response">4.1.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -844,7 +845,7 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 987
+Content-Length: 970
 
 {
   "code" : "200",
@@ -858,229 +859,21 @@ Content-Length: 987
       "content" : "저도 싸피에서 교육들으면 개발실력 엄청 오르겠죠?",
       "likeCount" : 11,
       "commentCount" : 29,
-      "createdAt" : "2023-10-26T13:04:50.5518783",
+      "createdAt" : "2023-11-02T19:22:10.819607",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
     }, {
       "boardId" : 1,
-      "boardTitle" : "자유 게시판",
-      "postId" : 5,
-      "title" : "삼성 B형 시험을 준비하려면 뭘 해야할까요?",
-      "content" : "역시 B형 특강을 열심히 듣는게 맞나요?",
-      "likeCount" : 5,
-      "commentCount" : 14,
-      "createdAt" : "2023-10-26T13:04:50.5518783",
-      "nickname" : "익명",
-      "anonymity" : true,
-      "thumbnail" : "썸네일 URL"
-    } ],
-    "cursor" : null
-  }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_게시글_목록_조회cursor_cookie"><a class="link" href="#_게시글_목록_조회cursor_cookie">4.1.3. Cookie</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Cookie</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">accessToken</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">액세스 토큰 불필요</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_게시글_목록_조회cursor_request_parameters"><a class="link" href="#_게시글_목록_조회cursor_request_parameters">4.1.4. Request parameters</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>boardId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">조회하려는 게시글의 게시판 고유 ID</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cursor</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">cursor값은 다음 페이지를 가져올 마지막 페이지 번호를 의미함, 초기 cursor는 -1, 이후 cursor값은 응답 데이터로 제공되는 cursor값을 사용.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">cursor를 기준으로 다음에 불러올 페이지의 size를 의미, 최소 size는 10</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_게시글_목록_조회cursor_response_fields"><a class="link" href="#_게시글_목록_조회cursor_response_fields">4.1.5. Response fields</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 목록</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.cursor</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">다음에 요청할 cursor값, 응답되는 cursor값이 null이면 다음 페이지는 없음을 의미</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].boardId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글이 작성된 게시판 종류의 ID</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].boardTitle</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글이 작성된 게시판의 종류, 자유 게시판 | 취업 게시판 | 맛집 게시판 | 질문 게시판 | 싸피 예비생 게시판</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].postId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 고유 ID</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].title</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 제목</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].content</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 내용</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].likeCount</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 좋아요 개수</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].commentCount</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 댓글 개수</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].createdAt</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 작성일</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].nickname</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 작성자의 닉네임</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].anonymity</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 작성자의 익명 여부인지 나타내는 필드</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].thumbnail</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시판의 썸네일, 게시글의 사진이 여러개가 있을 때 첫 번째 사진이 해당 게시글의 썸네일이 됨.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_게시글_목록_조회offset"><a class="link" href="#_게시글_목록_조회offset">4.2. 게시글 목록 조회(Offset)</a></h3>
-<div class="sect3">
-<h4 id="_게시글_목록_조회offset_http_request"><a class="link" href="#_게시글_목록_조회offset_http_request">4.2.1. HTTP request</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts/offset?boardId=1&amp;page=1&amp;size=10 HTTP/1.1
-Host: api.ssafsound.com
-Cookie: accessToken=accessTokenValue</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_게시글_목록_조회offset_http_response"><a class="link" href="#_게시글_목록_조회offset_http_response">4.2.2. HTTP response</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
-Vary: Origin
-Vary: Access-Control-Request-Method
-Vary: Access-Control-Request-Headers
-Content-Type: application/json
-Content-Length: 1016
-
-{
-  "code" : "200",
-  "message" : "success",
-  "data" : {
-    "posts" : [ {
-      "boardId" : 1,
-      "boardTitle" : "자유 게시판",
-      "postId" : 4,
-      "title" : "싸피 어떤가요??",
-      "content" : "저도 싸피에서 교육들으면 개발실력 엄청 오르겠죠?",
-      "likeCount" : 11,
-      "commentCount" : 29,
-      "createdAt" : "2023-10-26T13:04:50.5518783",
+      "boardTitle" : "취업 게시판",
+      "postId" : 6,
+      "title" : "안녕하세요 반갑습니다.",
+      "content" : "SSAFY 9기 합격했습니다!!",
+      "likeCount" : 3,
+      "commentCount" : 2,
+      "createdAt" : "2023-11-02T19:22:10.819607",
       "nickname" : "이용준",
       "anonymity" : false,
-      "thumbnail" : "썸네일 URL"
-    }, {
-      "boardId" : 1,
-      "boardTitle" : "자유 게시판",
-      "postId" : 5,
-      "title" : "삼성 B형 시험을 준비하려면 뭘 해야할까요?",
-      "content" : "역시 B형 특강을 열심히 듣는게 맞나요?",
-      "likeCount" : 5,
-      "commentCount" : 14,
-      "createdAt" : "2023-10-26T13:04:50.5518783",
-      "nickname" : "익명",
-      "anonymity" : true,
       "thumbnail" : "썸네일 URL"
     } ],
     "currentPage" : 1,
@@ -1091,7 +884,7 @@ Content-Length: 1016
 </div>
 </div>
 <div class="sect3">
-<h4 id="_게시글_목록_조회offset_cookie"><a class="link" href="#_게시글_목록_조회offset_cookie">4.2.3. Cookie</a></h4>
+<h4 id="_전체_게시글_목록_조회offset_cookie"><a class="link" href="#_전체_게시글_목록_조회offset_cookie">4.1.3. Cookie</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -1112,7 +905,7 @@ Content-Length: 1016
 </table>
 </div>
 <div class="sect3">
-<h4 id="_게시글_목록_조회offset_request_parameters"><a class="link" href="#_게시글_목록_조회offset_request_parameters">4.2.4. Request parameters</a></h4>
+<h4 id="_전체_게시글_목록_조회offset_request_parameters"><a class="link" href="#_전체_게시글_목록_조회offset_request_parameters">4.1.4. Request parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -1125,10 +918,6 @@ Content-Length: 1016
 </tr>
 </thead>
 <tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>boardId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">조회하려는 게시글의 게시판 고유 ID</p></td>
-</tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">page값은 불러올 현재 페이지의 값을 의미함, 초기 page는 1(또는 첫 페이지는 1)</p></td>
@@ -1141,7 +930,7 @@ Content-Length: 1016
 </table>
 </div>
 <div class="sect3">
-<h4 id="_게시글_목록_조회offset_response_fields"><a class="link" href="#_게시글_목록_조회offset_response_fields">4.2.5. Response fields</a></h4>
+<h4 id="_전체_게시글_목록_조회offset_response_fields"><a class="link" href="#_전체_게시글_목록_조회offset_response_fields">4.1.5. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1246,9 +1035,431 @@ Content-Length: 1016
 </div>
 </div>
 <div class="sect2">
-<h3 id="_게시글_상세_보기실명"><a class="link" href="#_게시글_상세_보기실명">4.3. 게시글 상세 보기(실명)</a></h3>
+<h3 id="_게시글_목록_조회cursor"><a class="link" href="#_게시글_목록_조회cursor">4.2. 게시글 목록 조회(Cursor)</a></h3>
 <div class="sect3">
-<h4 id="_게시글_상세_보기실명_http_request"><a class="link" href="#_게시글_상세_보기실명_http_request">4.3.1. HTTP request</a></h4>
+<h4 id="_게시글_목록_조회cursor_http_request"><a class="link" href="#_게시글_목록_조회cursor_http_request">4.2.1. HTTP request</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts/cursor?boardId=1&amp;cursor=-1&amp;size=10 HTTP/1.1
+Host: api.ssafsound.com
+Cookie: accessToken=accessTokenValue</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_게시글_목록_조회cursor_http_response"><a class="link" href="#_게시글_목록_조회cursor_http_response">4.2.2. HTTP response</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+Content-Length: 985
+
+{
+  "code" : "200",
+  "message" : "success",
+  "data" : {
+    "posts" : [ {
+      "boardId" : 1,
+      "boardTitle" : "자유 게시판",
+      "postId" : 4,
+      "title" : "싸피 어떤가요??",
+      "content" : "저도 싸피에서 교육들으면 개발실력 엄청 오르겠죠?",
+      "likeCount" : 11,
+      "commentCount" : 29,
+      "createdAt" : "2023-11-02T19:22:10.819607",
+      "nickname" : "이용준",
+      "anonymity" : false,
+      "thumbnail" : "썸네일 URL"
+    }, {
+      "boardId" : 1,
+      "boardTitle" : "자유 게시판",
+      "postId" : 5,
+      "title" : "삼성 B형 시험을 준비하려면 뭘 해야할까요?",
+      "content" : "역시 B형 특강을 열심히 듣는게 맞나요?",
+      "likeCount" : 5,
+      "commentCount" : 14,
+      "createdAt" : "2023-11-02T19:22:10.819607",
+      "nickname" : "익명",
+      "anonymity" : true,
+      "thumbnail" : "썸네일 URL"
+    } ],
+    "cursor" : null
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_게시글_목록_조회cursor_cookie"><a class="link" href="#_게시글_목록_조회cursor_cookie">4.2.3. Cookie</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Cookie</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">accessToken</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">액세스 토큰 불필요</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_게시글_목록_조회cursor_request_parameters"><a class="link" href="#_게시글_목록_조회cursor_request_parameters">4.2.4. Request parameters</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>boardId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회하려는 게시글의 게시판 고유 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cursor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cursor값은 다음 페이지를 가져올 마지막 페이지 번호를 의미함, 초기 cursor는 -1, 이후 cursor값은 응답 데이터로 제공되는 cursor값을 사용.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cursor를 기준으로 다음에 불러올 페이지의 size를 의미, 최소 size는 10</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_게시글_목록_조회cursor_response_fields"><a class="link" href="#_게시글_목록_조회cursor_response_fields">4.2.5. Response fields</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 목록</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.cursor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">다음에 요청할 cursor값, 응답되는 cursor값이 null이면 다음 페이지는 없음을 의미</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].boardId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글이 작성된 게시판 종류의 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].boardTitle</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글이 작성된 게시판의 종류, 자유 게시판 | 취업 게시판 | 맛집 게시판 | 질문 게시판 | 싸피 예비생 게시판</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].postId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 고유 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].title</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 제목</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].content</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 내용</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].likeCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 좋아요 개수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].commentCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 댓글 개수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].createdAt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 작성일</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].nickname</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 작성자의 닉네임</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].anonymity</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 작성자의 익명 여부인지 나타내는 필드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].thumbnail</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시판의 썸네일, 게시글의 사진이 여러개가 있을 때 첫 번째 사진이 해당 게시글의 썸네일이 됨.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_게시글_목록_조회offset"><a class="link" href="#_게시글_목록_조회offset">4.3. 게시글 목록 조회(Offset)</a></h3>
+<div class="sect3">
+<h4 id="_게시글_목록_조회offset_http_request"><a class="link" href="#_게시글_목록_조회offset_http_request">4.3.1. HTTP request</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts/offset?boardId=1&amp;page=1&amp;size=10 HTTP/1.1
+Host: api.ssafsound.com
+Cookie: accessToken=accessTokenValue</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_게시글_목록_조회offset_http_response"><a class="link" href="#_게시글_목록_조회offset_http_response">4.3.2. HTTP response</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+Content-Length: 1014
+
+{
+  "code" : "200",
+  "message" : "success",
+  "data" : {
+    "posts" : [ {
+      "boardId" : 1,
+      "boardTitle" : "자유 게시판",
+      "postId" : 4,
+      "title" : "싸피 어떤가요??",
+      "content" : "저도 싸피에서 교육들으면 개발실력 엄청 오르겠죠?",
+      "likeCount" : 11,
+      "commentCount" : 29,
+      "createdAt" : "2023-11-02T19:22:10.819607",
+      "nickname" : "이용준",
+      "anonymity" : false,
+      "thumbnail" : "썸네일 URL"
+    }, {
+      "boardId" : 1,
+      "boardTitle" : "자유 게시판",
+      "postId" : 5,
+      "title" : "삼성 B형 시험을 준비하려면 뭘 해야할까요?",
+      "content" : "역시 B형 특강을 열심히 듣는게 맞나요?",
+      "likeCount" : 5,
+      "commentCount" : 14,
+      "createdAt" : "2023-11-02T19:22:10.819607",
+      "nickname" : "익명",
+      "anonymity" : true,
+      "thumbnail" : "썸네일 URL"
+    } ],
+    "currentPage" : 1,
+    "totalPageCount" : 1
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_게시글_목록_조회offset_cookie"><a class="link" href="#_게시글_목록_조회offset_cookie">4.3.3. Cookie</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Cookie</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">accessToken</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">액세스 토큰 불필요</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_게시글_목록_조회offset_request_parameters"><a class="link" href="#_게시글_목록_조회offset_request_parameters">4.3.4. Request parameters</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>boardId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회하려는 게시글의 게시판 고유 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">page값은 불러올 현재 페이지의 값을 의미함, 초기 page는 1(또는 첫 페이지는 1)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지의 게시글 개수를 의미함, 최소 size는 10</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_게시글_목록_조회offset_response_fields"><a class="link" href="#_게시글_목록_조회offset_response_fields">4.3.5. Response fields</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 목록</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.currentPage</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지 번호</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.totalPageCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">전체 페이지 수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].boardId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글이 작성된 게시판 종류의 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].boardTitle</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글이 작성된 게시판의 종류, 자유 게시판 | 취업 게시판 | 맛집 게시판 | 질문 게시판 | 싸피 예비생 게시판</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].postId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 고유 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].title</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 제목</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].content</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 내용</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].likeCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 좋아요 개수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].commentCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 댓글 개수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].createdAt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 작성일</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].nickname</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 작성자의 닉네임</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].anonymity</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 작성자의 익명 여부인지 나타내는 필드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].thumbnail</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시판의 썸네일, 게시글의 사진이 여러개가 있을 때 첫 번째 사진이 해당 게시글의 썸네일이 됨.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_게시글_상세_보기실명"><a class="link" href="#_게시글_상세_보기실명">4.4. 게시글 상세 보기(실명)</a></h3>
+<div class="sect3">
+<h4 id="_게시글_상세_보기실명_http_request"><a class="link" href="#_게시글_상세_보기실명_http_request">4.4.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts/1 HTTP/1.1
@@ -1258,7 +1469,7 @@ Cookie: accessToken=accessTokenValue</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_게시글_상세_보기실명_http_response"><a class="link" href="#_게시글_상세_보기실명_http_response">4.3.2. HTTP response</a></h4>
+<h4 id="_게시글_상세_보기실명_http_response"><a class="link" href="#_게시글_상세_보기실명_http_response">4.4.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -1308,7 +1519,7 @@ Content-Length: 875
 </div>
 </div>
 <div class="sect3">
-<h4 id="_게시글_상세_보기실명_cookie"><a class="link" href="#_게시글_상세_보기실명_cookie">4.3.3. Cookie</a></h4>
+<h4 id="_게시글_상세_보기실명_cookie"><a class="link" href="#_게시글_상세_보기실명_cookie">4.4.3. Cookie</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -1329,7 +1540,7 @@ Content-Length: 875
 </table>
 </div>
 <div class="sect3">
-<h4 id="_게시글_상세_보기실명_path_parameters"><a class="link" href="#_게시글_상세_보기실명_path_parameters">4.3.4. Path parameters</a></h4>
+<h4 id="_게시글_상세_보기실명_path_parameters"><a class="link" href="#_게시글_상세_보기실명_path_parameters">4.4.4. Path parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. /posts/{postId}</caption>
 <colgroup>
@@ -1351,7 +1562,7 @@ Content-Length: 875
 </table>
 </div>
 <div class="sect3">
-<h4 id="_게시글_상세_보기실명_response_fields"><a class="link" href="#_게시글_상세_보기실명_response_fields">4.3.5. Response fields</a></h4>
+<h4 id="_게시글_상세_보기실명_response_fields"><a class="link" href="#_게시글_상세_보기실명_response_fields">4.4.5. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1526,9 +1737,9 @@ Content-Length: 875
 </div>
 </div>
 <div class="sect2">
-<h3 id="_게시글_상세_보기익명"><a class="link" href="#_게시글_상세_보기익명">4.4. 게시글 상세 보기(익명)</a></h3>
+<h3 id="_게시글_상세_보기익명"><a class="link" href="#_게시글_상세_보기익명">4.5. 게시글 상세 보기(익명)</a></h3>
 <div class="sect3">
-<h4 id="_게시글_상세_보기익명_http_request"><a class="link" href="#_게시글_상세_보기익명_http_request">4.4.1. HTTP request</a></h4>
+<h4 id="_게시글_상세_보기익명_http_request"><a class="link" href="#_게시글_상세_보기익명_http_request">4.5.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts/2 HTTP/1.1
@@ -1538,7 +1749,7 @@ Cookie: accessToken=accessTokenValue</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_게시글_상세_보기익명_http_response"><a class="link" href="#_게시글_상세_보기익명_http_response">4.4.2. HTTP response</a></h4>
+<h4 id="_게시글_상세_보기익명_http_response"><a class="link" href="#_게시글_상세_보기익명_http_response">4.5.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -1583,7 +1794,7 @@ Content-Length: 718
 </div>
 </div>
 <div class="sect3">
-<h4 id="_게시글_상세_보기익명_cookie"><a class="link" href="#_게시글_상세_보기익명_cookie">4.4.3. Cookie</a></h4>
+<h4 id="_게시글_상세_보기익명_cookie"><a class="link" href="#_게시글_상세_보기익명_cookie">4.5.3. Cookie</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -1604,7 +1815,7 @@ Content-Length: 718
 </table>
 </div>
 <div class="sect3">
-<h4 id="_게시글_상세_보기익명_path_parameters"><a class="link" href="#_게시글_상세_보기익명_path_parameters">4.4.4. Path parameters</a></h4>
+<h4 id="_게시글_상세_보기익명_path_parameters"><a class="link" href="#_게시글_상세_보기익명_path_parameters">4.5.4. Path parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. /posts/{postId}</caption>
 <colgroup>
@@ -1626,7 +1837,7 @@ Content-Length: 718
 </table>
 </div>
 <div class="sect3">
-<h4 id="_게시글_상세_보기익명_response_fields"><a class="link" href="#_게시글_상세_보기익명_response_fields">4.4.5. Response fields</a></h4>
+<h4 id="_게시글_상세_보기익명_response_fields"><a class="link" href="#_게시글_상세_보기익명_response_fields">4.5.5. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1801,9 +2012,9 @@ Content-Length: 718
 </div>
 </div>
 <div class="sect2">
-<h3 id="_게시글_검색cursor"><a class="link" href="#_게시글_검색cursor">4.5. 게시글 검색(Cursor)</a></h3>
+<h3 id="_게시글_검색cursor"><a class="link" href="#_게시글_검색cursor">4.6. 게시글 검색(Cursor)</a></h3>
 <div class="sect3">
-<h4 id="_게시글_검색cursor_http_request"><a class="link" href="#_게시글_검색cursor_http_request">4.5.1. HTTP request</a></h4>
+<h4 id="_게시글_검색cursor_http_request"><a class="link" href="#_게시글_검색cursor_http_request">4.6.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts/search/cursor?boardId=1&amp;keyword=%EC%95%88%EB%85%95%ED%95%98%EC%84%B8%EC%9A%94&amp;cursor=-1&amp;size=10 HTTP/1.1
@@ -1813,7 +2024,7 @@ Cookie: accessToken=accessTokenValue</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_게시글_검색cursor_http_response"><a class="link" href="#_게시글_검색cursor_http_response">4.5.2. HTTP response</a></h4>
+<h4 id="_게시글_검색cursor_http_response"><a class="link" href="#_게시글_검색cursor_http_response">4.6.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -1821,7 +2032,7 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 511
+Content-Length: 510
 
 {
   "code" : "200",
@@ -1829,13 +2040,13 @@ Content-Length: 511
   "data" : {
     "posts" : [ {
       "boardId" : 1,
-      "boardTitle" : "자유 게시판",
+      "boardTitle" : "취업 게시판",
       "postId" : 6,
       "title" : "안녕하세요 반갑습니다.",
       "content" : "SSAFY 9기 합격했습니다!!",
       "likeCount" : 3,
       "commentCount" : 2,
-      "createdAt" : "2023-10-26T13:04:50.5518783",
+      "createdAt" : "2023-11-02T19:22:10.819607",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
@@ -1847,7 +2058,7 @@ Content-Length: 511
 </div>
 </div>
 <div class="sect3">
-<h4 id="_게시글_검색cursor_cookie"><a class="link" href="#_게시글_검색cursor_cookie">4.5.3. Cookie</a></h4>
+<h4 id="_게시글_검색cursor_cookie"><a class="link" href="#_게시글_검색cursor_cookie">4.6.3. Cookie</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -1868,7 +2079,7 @@ Content-Length: 511
 </table>
 </div>
 <div class="sect3">
-<h4 id="_게시글_검색cursor_request_parameters"><a class="link" href="#_게시글_검색cursor_request_parameters">4.5.4. Request parameters</a></h4>
+<h4 id="_게시글_검색cursor_request_parameters"><a class="link" href="#_게시글_검색cursor_request_parameters">4.6.4. Request parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -1901,7 +2112,7 @@ Content-Length: 511
 </table>
 </div>
 <div class="sect3">
-<h4 id="_게시글_검색cursor_response_fields"><a class="link" href="#_게시글_검색cursor_response_fields">4.5.5. Response fields</a></h4>
+<h4 id="_게시글_검색cursor_response_fields"><a class="link" href="#_게시글_검색cursor_response_fields">4.6.5. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -2001,9 +2212,9 @@ Content-Length: 511
 </div>
 </div>
 <div class="sect2">
-<h3 id="_게시글_검색offset"><a class="link" href="#_게시글_검색offset">4.6. 게시글 검색(Offset)</a></h3>
+<h3 id="_게시글_검색offset"><a class="link" href="#_게시글_검색offset">4.7. 게시글 검색(Offset)</a></h3>
 <div class="sect3">
-<h4 id="_게시글_검색offset_http_request"><a class="link" href="#_게시글_검색offset_http_request">4.6.1. HTTP request</a></h4>
+<h4 id="_게시글_검색offset_http_request"><a class="link" href="#_게시글_검색offset_http_request">4.7.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts/search/offset?boardId=1&amp;keyword=%EC%95%88%EB%85%95%ED%95%98%EC%84%B8%EC%9A%94&amp;page=1&amp;size=10 HTTP/1.1
@@ -2013,7 +2224,7 @@ Cookie: accessToken=accessTokenValue</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_게시글_검색offset_http_response"><a class="link" href="#_게시글_검색offset_http_response">4.6.2. HTTP response</a></h4>
+<h4 id="_게시글_검색offset_http_response"><a class="link" href="#_게시글_검색offset_http_response">4.7.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -2021,7 +2232,7 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 540
+Content-Length: 539
 
 {
   "code" : "200",
@@ -2029,13 +2240,13 @@ Content-Length: 540
   "data" : {
     "posts" : [ {
       "boardId" : 1,
-      "boardTitle" : "자유 게시판",
+      "boardTitle" : "취업 게시판",
       "postId" : 6,
       "title" : "안녕하세요 반갑습니다.",
       "content" : "SSAFY 9기 합격했습니다!!",
       "likeCount" : 3,
       "commentCount" : 2,
-      "createdAt" : "2023-10-26T13:04:50.5518783",
+      "createdAt" : "2023-11-02T19:22:10.819607",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
@@ -2048,7 +2259,7 @@ Content-Length: 540
 </div>
 </div>
 <div class="sect3">
-<h4 id="_게시글_검색offset_cookie"><a class="link" href="#_게시글_검색offset_cookie">4.6.3. Cookie</a></h4>
+<h4 id="_게시글_검색offset_cookie"><a class="link" href="#_게시글_검색offset_cookie">4.7.3. Cookie</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -2069,7 +2280,7 @@ Content-Length: 540
 </table>
 </div>
 <div class="sect3">
-<h4 id="_게시글_검색offset_request_parameters"><a class="link" href="#_게시글_검색offset_request_parameters">4.6.4. Request parameters</a></h4>
+<h4 id="_게시글_검색offset_request_parameters"><a class="link" href="#_게시글_검색offset_request_parameters">4.7.4. Request parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -2102,7 +2313,7 @@ Content-Length: 540
 </table>
 </div>
 <div class="sect3">
-<h4 id="_게시글_검색offset_response_fields"><a class="link" href="#_게시글_검색offset_response_fields">4.6.5. Response fields</a></h4>
+<h4 id="_게시글_검색offset_response_fields"><a class="link" href="#_게시글_검색offset_response_fields">4.7.5. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -2207,9 +2418,9 @@ Content-Length: 540
 </div>
 </div>
 <div class="sect2">
-<h3 id="_게시글_작성"><a class="link" href="#_게시글_작성">4.7. 게시글 작성</a></h3>
+<h3 id="_게시글_작성"><a class="link" href="#_게시글_작성">4.8. 게시글 작성</a></h3>
 <div class="sect3">
-<h4 id="_게시글_작성_http_request"><a class="link" href="#_게시글_작성_http_request">4.7.1. HTTP request</a></h4>
+<h4 id="_게시글_작성_http_request"><a class="link" href="#_게시글_작성_http_request">4.8.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /posts?boardId=1 HTTP/1.1
@@ -2229,7 +2440,7 @@ Cookie: accessToken=accessTokenValue
 </div>
 </div>
 <div class="sect3">
-<h4 id="_게시글_작성_http_response"><a class="link" href="#_게시글_작성_http_response">4.7.2. HTTP response</a></h4>
+<h4 id="_게시글_작성_http_response"><a class="link" href="#_게시글_작성_http_response">4.8.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -2250,7 +2461,7 @@ Content-Length: 86
 </div>
 </div>
 <div class="sect3">
-<h4 id="_게시글_작성_cookie"><a class="link" href="#_게시글_작성_cookie">4.7.3. Cookie</a></h4>
+<h4 id="_게시글_작성_cookie"><a class="link" href="#_게시글_작성_cookie">4.8.3. Cookie</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -2271,7 +2482,7 @@ Content-Length: 86
 </table>
 </div>
 <div class="sect3">
-<h4 id="_게시글_작성_request_parameters"><a class="link" href="#_게시글_작성_request_parameters">4.7.4. Request parameters</a></h4>
+<h4 id="_게시글_작성_request_parameters"><a class="link" href="#_게시글_작성_request_parameters">4.8.4. Request parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -2292,7 +2503,7 @@ Content-Length: 86
 </table>
 </div>
 <div class="sect3">
-<h4 id="_게시글_작성_request_fields"><a class="link" href="#_게시글_작성_request_fields">4.7.5. Request fields</a></h4>
+<h4 id="_게시글_작성_request_fields"><a class="link" href="#_게시글_작성_request_fields">4.8.5. Request fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -2341,7 +2552,7 @@ Content-Length: 86
 </table>
 </div>
 <div class="sect3">
-<h4 id="_게시글_작성_response_fields"><a class="link" href="#_게시글_작성_response_fields">4.7.6. Response fields</a></h4>
+<h4 id="_게시글_작성_response_fields"><a class="link" href="#_게시글_작성_response_fields">4.8.6. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -2381,9 +2592,9 @@ Content-Length: 86
 </div>
 </div>
 <div class="sect2">
-<h3 id="_게시글_수정"><a class="link" href="#_게시글_수정">4.8. 게시글 수정</a></h3>
+<h3 id="_게시글_수정"><a class="link" href="#_게시글_수정">4.9. 게시글 수정</a></h3>
 <div class="sect3">
-<h4 id="_게시글_수정_http_request"><a class="link" href="#_게시글_수정_http_request">4.8.1. HTTP request</a></h4>
+<h4 id="_게시글_수정_http_request"><a class="link" href="#_게시글_수정_http_request">4.9.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">PATCH /posts/1 HTTP/1.1
@@ -2403,7 +2614,7 @@ Cookie: accessToken=accessTokenValue
 </div>
 </div>
 <div class="sect3">
-<h4 id="_게시글_수정_http_response"><a class="link" href="#_게시글_수정_http_response">4.8.2. HTTP response</a></h4>
+<h4 id="_게시글_수정_http_response"><a class="link" href="#_게시글_수정_http_response">4.9.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -2424,7 +2635,7 @@ Content-Length: 86
 </div>
 </div>
 <div class="sect3">
-<h4 id="_게시글_수정_cookie"><a class="link" href="#_게시글_수정_cookie">4.8.3. Cookie</a></h4>
+<h4 id="_게시글_수정_cookie"><a class="link" href="#_게시글_수정_cookie">4.9.3. Cookie</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -2445,7 +2656,7 @@ Content-Length: 86
 </table>
 </div>
 <div class="sect3">
-<h4 id="_게시글_수정_path_parameters"><a class="link" href="#_게시글_수정_path_parameters">4.8.4. Path parameters</a></h4>
+<h4 id="_게시글_수정_path_parameters"><a class="link" href="#_게시글_수정_path_parameters">4.9.4. Path parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. /posts/{postId}</caption>
 <colgroup>
@@ -2467,7 +2678,7 @@ Content-Length: 86
 </table>
 </div>
 <div class="sect3">
-<h4 id="_게시글_수정_request_fields"><a class="link" href="#_게시글_수정_request_fields">4.8.5. Request fields</a></h4>
+<h4 id="_게시글_수정_request_fields"><a class="link" href="#_게시글_수정_request_fields">4.9.5. Request fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -2516,7 +2727,7 @@ Content-Length: 86
 </table>
 </div>
 <div class="sect3">
-<h4 id="_게시글_수정_response_fields"><a class="link" href="#_게시글_수정_response_fields">4.8.6. Response fields</a></h4>
+<h4 id="_게시글_수정_response_fields"><a class="link" href="#_게시글_수정_response_fields">4.9.6. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -2556,9 +2767,9 @@ Content-Length: 86
 </div>
 </div>
 <div class="sect2">
-<h3 id="_게시글_삭제"><a class="link" href="#_게시글_삭제">4.9. 게시글 삭제</a></h3>
+<h3 id="_게시글_삭제"><a class="link" href="#_게시글_삭제">4.10. 게시글 삭제</a></h3>
 <div class="sect3">
-<h4 id="_게시글_삭제_http_request"><a class="link" href="#_게시글_삭제_http_request">4.9.1. HTTP request</a></h4>
+<h4 id="_게시글_삭제_http_request"><a class="link" href="#_게시글_삭제_http_request">4.10.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">DELETE /posts/1 HTTP/1.1
@@ -2568,7 +2779,7 @@ Cookie: accessToken=accessTokenValue</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_게시글_삭제_http_response"><a class="link" href="#_게시글_삭제_http_response">4.9.2. HTTP response</a></h4>
+<h4 id="_게시글_삭제_http_response"><a class="link" href="#_게시글_삭제_http_response">4.10.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -2589,7 +2800,7 @@ Content-Length: 86
 </div>
 </div>
 <div class="sect3">
-<h4 id="_게시글_삭제_cookie"><a class="link" href="#_게시글_삭제_cookie">4.9.3. Cookie</a></h4>
+<h4 id="_게시글_삭제_cookie"><a class="link" href="#_게시글_삭제_cookie">4.10.3. Cookie</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -2610,7 +2821,7 @@ Content-Length: 86
 </table>
 </div>
 <div class="sect3">
-<h4 id="_게시글_삭제_path_parameters"><a class="link" href="#_게시글_삭제_path_parameters">4.9.4. Path parameters</a></h4>
+<h4 id="_게시글_삭제_path_parameters"><a class="link" href="#_게시글_삭제_path_parameters">4.10.4. Path parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. /posts/{postId}</caption>
 <colgroup>
@@ -2632,7 +2843,7 @@ Content-Length: 86
 </table>
 </div>
 <div class="sect3">
-<h4 id="_게시글_삭제_response_fields"><a class="link" href="#_게시글_삭제_response_fields">4.9.5. Response fields</a></h4>
+<h4 id="_게시글_삭제_response_fields"><a class="link" href="#_게시글_삭제_response_fields">4.10.5. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -2672,9 +2883,9 @@ Content-Length: 86
 </div>
 </div>
 <div class="sect2">
-<h3 id="_게시글_좋아요"><a class="link" href="#_게시글_좋아요">4.10. 게시글 좋아요</a></h3>
+<h3 id="_게시글_좋아요"><a class="link" href="#_게시글_좋아요">4.11. 게시글 좋아요</a></h3>
 <div class="sect3">
-<h4 id="_게시글_좋아요_http_request"><a class="link" href="#_게시글_좋아요_http_request">4.10.1. HTTP request</a></h4>
+<h4 id="_게시글_좋아요_http_request"><a class="link" href="#_게시글_좋아요_http_request">4.11.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /posts/1/like HTTP/1.1
@@ -2684,7 +2895,7 @@ Cookie: accessToken=accessTokenValue</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_게시글_좋아요_http_response"><a class="link" href="#_게시글_좋아요_http_response">4.10.2. HTTP response</a></h4>
+<h4 id="_게시글_좋아요_http_response"><a class="link" href="#_게시글_좋아요_http_response">4.11.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -2706,7 +2917,7 @@ Content-Length: 111
 </div>
 </div>
 <div class="sect3">
-<h4 id="_게시글_좋아요_cookie"><a class="link" href="#_게시글_좋아요_cookie">4.10.3. Cookie</a></h4>
+<h4 id="_게시글_좋아요_cookie"><a class="link" href="#_게시글_좋아요_cookie">4.11.3. Cookie</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -2727,7 +2938,7 @@ Content-Length: 111
 </table>
 </div>
 <div class="sect3">
-<h4 id="_게시글_좋아요_path_parameters"><a class="link" href="#_게시글_좋아요_path_parameters">4.10.4. Path parameters</a></h4>
+<h4 id="_게시글_좋아요_path_parameters"><a class="link" href="#_게시글_좋아요_path_parameters">4.11.4. Path parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. /posts/{postId}/like</caption>
 <colgroup>
@@ -2749,7 +2960,7 @@ Content-Length: 111
 </table>
 </div>
 <div class="sect3">
-<h4 id="_게시글_좋아요_response_fields"><a class="link" href="#_게시글_좋아요_response_fields">4.10.5. Response fields</a></h4>
+<h4 id="_게시글_좋아요_response_fields"><a class="link" href="#_게시글_좋아요_response_fields">4.11.5. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -2794,9 +3005,9 @@ Content-Length: 111
 </div>
 </div>
 <div class="sect2">
-<h3 id="_게시글_스크랩"><a class="link" href="#_게시글_스크랩">4.11. 게시글 스크랩</a></h3>
+<h3 id="_게시글_스크랩"><a class="link" href="#_게시글_스크랩">4.12. 게시글 스크랩</a></h3>
 <div class="sect3">
-<h4 id="_게시글_스크랩_http_request"><a class="link" href="#_게시글_스크랩_http_request">4.11.1. HTTP request</a></h4>
+<h4 id="_게시글_스크랩_http_request"><a class="link" href="#_게시글_스크랩_http_request">4.12.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">POST /posts/1/scrap HTTP/1.1
@@ -2806,7 +3017,7 @@ Cookie: accessToken=accessTokenValue</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_게시글_스크랩_http_response"><a class="link" href="#_게시글_스크랩_http_response">4.11.2. HTTP response</a></h4>
+<h4 id="_게시글_스크랩_http_response"><a class="link" href="#_게시글_스크랩_http_response">4.12.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -2828,7 +3039,7 @@ Content-Length: 114
 </div>
 </div>
 <div class="sect3">
-<h4 id="_게시글_스크랩_cookie"><a class="link" href="#_게시글_스크랩_cookie">4.11.3. Cookie</a></h4>
+<h4 id="_게시글_스크랩_cookie"><a class="link" href="#_게시글_스크랩_cookie">4.12.3. Cookie</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -2849,7 +3060,7 @@ Content-Length: 114
 </table>
 </div>
 <div class="sect3">
-<h4 id="_게시글_스크랩_path_parameters"><a class="link" href="#_게시글_스크랩_path_parameters">4.11.4. Path parameters</a></h4>
+<h4 id="_게시글_스크랩_path_parameters"><a class="link" href="#_게시글_스크랩_path_parameters">4.12.4. Path parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. /posts/{postId}/scrap</caption>
 <colgroup>
@@ -2871,7 +3082,7 @@ Content-Length: 114
 </table>
 </div>
 <div class="sect3">
-<h4 id="_게시글_스크랩_response_fields"><a class="link" href="#_게시글_스크랩_response_fields">4.11.5. Response fields</a></h4>
+<h4 id="_게시글_스크랩_response_fields"><a class="link" href="#_게시글_스크랩_response_fields">4.12.5. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -2916,9 +3127,9 @@ Content-Length: 114
 </div>
 </div>
 <div class="sect2">
-<h3 id="_hot_게시글_목록_조회cursor"><a class="link" href="#_hot_게시글_목록_조회cursor">4.12. Hot 게시글 목록 조회(Cursor)</a></h3>
+<h3 id="_hot_게시글_목록_조회cursor"><a class="link" href="#_hot_게시글_목록_조회cursor">4.13. Hot 게시글 목록 조회(Cursor)</a></h3>
 <div class="sect3">
-<h4 id="_hot_게시글_목록_조회cursor_http_request"><a class="link" href="#_hot_게시글_목록_조회cursor_http_request">4.12.1. HTTP request</a></h4>
+<h4 id="_hot_게시글_목록_조회cursor_http_request"><a class="link" href="#_hot_게시글_목록_조회cursor_http_request">4.13.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts/hot/cursor?cursor=-1&amp;size=10 HTTP/1.1
@@ -2928,7 +3139,7 @@ Cookie: accessToken=accessTokenValue</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_hot_게시글_목록_조회cursor_http_response"><a class="link" href="#_hot_게시글_목록_조회cursor_http_response">4.12.2. HTTP response</a></h4>
+<h4 id="_hot_게시글_목록_조회cursor_http_response"><a class="link" href="#_hot_게시글_목록_조회cursor_http_response">4.13.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -2936,7 +3147,7 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 942
+Content-Length: 940
 
 {
   "code" : "200",
@@ -2950,7 +3161,7 @@ Content-Length: 942
       "content" : "열심히 SSAFY 9기를 수료하시면 취업에 성공하실겁니다.",
       "likeCount" : 102,
       "commentCount" : 33,
-      "createdAt" : "2023-10-26T13:04:50.5518783",
+      "createdAt" : "2023-11-02T19:22:10.819607",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
@@ -2962,7 +3173,7 @@ Content-Length: 942
       "content" : "은 실력입니다.",
       "likeCount" : 202,
       "commentCount" : 54,
-      "createdAt" : "2023-10-26T13:04:50.5518783",
+      "createdAt" : "2023-11-02T19:22:10.819607",
       "nickname" : "익명",
       "anonymity" : true,
       "thumbnail" : "썸네일 URL"
@@ -2974,7 +3185,7 @@ Content-Length: 942
 </div>
 </div>
 <div class="sect3">
-<h4 id="_hot_게시글_목록_조회cursor_cookie"><a class="link" href="#_hot_게시글_목록_조회cursor_cookie">4.12.3. Cookie</a></h4>
+<h4 id="_hot_게시글_목록_조회cursor_cookie"><a class="link" href="#_hot_게시글_목록_조회cursor_cookie">4.13.3. Cookie</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -2995,7 +3206,7 @@ Content-Length: 942
 </table>
 </div>
 <div class="sect3">
-<h4 id="_hot_게시글_목록_조회cursor_request_parameters"><a class="link" href="#_hot_게시글_목록_조회cursor_request_parameters">4.12.4. Request parameters</a></h4>
+<h4 id="_hot_게시글_목록_조회cursor_request_parameters"><a class="link" href="#_hot_게시글_목록_조회cursor_request_parameters">4.13.4. Request parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -3020,7 +3231,7 @@ Content-Length: 942
 </table>
 </div>
 <div class="sect3">
-<h4 id="_hot_게시글_목록_조회cursor_response_fields"><a class="link" href="#_hot_게시글_목록_조회cursor_response_fields">4.12.5. Response fields</a></h4>
+<h4 id="_hot_게시글_목록_조회cursor_response_fields"><a class="link" href="#_hot_게시글_목록_조회cursor_response_fields">4.13.5. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -3120,9 +3331,9 @@ Content-Length: 942
 </div>
 </div>
 <div class="sect2">
-<h3 id="_hot_게시글_목록_조회offset"><a class="link" href="#_hot_게시글_목록_조회offset">4.13. Hot 게시글 목록 조회(Offset)</a></h3>
+<h3 id="_hot_게시글_목록_조회offset"><a class="link" href="#_hot_게시글_목록_조회offset">4.14. Hot 게시글 목록 조회(Offset)</a></h3>
 <div class="sect3">
-<h4 id="_hot_게시글_목록_조회offset_http_request"><a class="link" href="#_hot_게시글_목록_조회offset_http_request">4.13.1. HTTP request</a></h4>
+<h4 id="_hot_게시글_목록_조회offset_http_request"><a class="link" href="#_hot_게시글_목록_조회offset_http_request">4.14.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts/hot/offset?page=1&amp;size=10 HTTP/1.1
@@ -3132,7 +3343,7 @@ Cookie: accessToken=accessTokenValue</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_hot_게시글_목록_조회offset_http_response"><a class="link" href="#_hot_게시글_목록_조회offset_http_response">4.13.2. HTTP response</a></h4>
+<h4 id="_hot_게시글_목록_조회offset_http_response"><a class="link" href="#_hot_게시글_목록_조회offset_http_response">4.14.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -3140,7 +3351,7 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 971
+Content-Length: 969
 
 {
   "code" : "200",
@@ -3154,7 +3365,7 @@ Content-Length: 971
       "content" : "열심히 SSAFY 9기를 수료하시면 취업에 성공하실겁니다.",
       "likeCount" : 102,
       "commentCount" : 33,
-      "createdAt" : "2023-10-26T13:04:50.5518783",
+      "createdAt" : "2023-11-02T19:22:10.819607",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
@@ -3166,7 +3377,7 @@ Content-Length: 971
       "content" : "은 실력입니다.",
       "likeCount" : 202,
       "commentCount" : 54,
-      "createdAt" : "2023-10-26T13:04:50.5518783",
+      "createdAt" : "2023-11-02T19:22:10.819607",
       "nickname" : "익명",
       "anonymity" : true,
       "thumbnail" : "썸네일 URL"
@@ -3179,7 +3390,7 @@ Content-Length: 971
 </div>
 </div>
 <div class="sect3">
-<h4 id="_hot_게시글_목록_조회offset_cookie"><a class="link" href="#_hot_게시글_목록_조회offset_cookie">4.13.3. Cookie</a></h4>
+<h4 id="_hot_게시글_목록_조회offset_cookie"><a class="link" href="#_hot_게시글_목록_조회offset_cookie">4.14.3. Cookie</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -3200,7 +3411,7 @@ Content-Length: 971
 </table>
 </div>
 <div class="sect3">
-<h4 id="_hot_게시글_목록_조회offset_request_parameters"><a class="link" href="#_hot_게시글_목록_조회offset_request_parameters">4.13.4. Request parameters</a></h4>
+<h4 id="_hot_게시글_목록_조회offset_request_parameters"><a class="link" href="#_hot_게시글_목록_조회offset_request_parameters">4.14.4. Request parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -3225,7 +3436,7 @@ Content-Length: 971
 </table>
 </div>
 <div class="sect3">
-<h4 id="_hot_게시글_목록_조회offset_response_fields"><a class="link" href="#_hot_게시글_목록_조회offset_response_fields">4.13.5. Response fields</a></h4>
+<h4 id="_hot_게시글_목록_조회offset_response_fields"><a class="link" href="#_hot_게시글_목록_조회offset_response_fields">4.14.5. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -3330,9 +3541,9 @@ Content-Length: 971
 </div>
 </div>
 <div class="sect2">
-<h3 id="_hot_게시글_검색cursor"><a class="link" href="#_hot_게시글_검색cursor">4.14. Hot 게시글 검색(Cursor)</a></h3>
+<h3 id="_hot_게시글_검색cursor"><a class="link" href="#_hot_게시글_검색cursor">4.15. Hot 게시글 검색(Cursor)</a></h3>
 <div class="sect3">
-<h4 id="_hot_게시글_검색cursor_http_request"><a class="link" href="#_hot_게시글_검색cursor_http_request">4.14.1. HTTP request</a></h4>
+<h4 id="_hot_게시글_검색cursor_http_request"><a class="link" href="#_hot_게시글_검색cursor_http_request">4.15.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts/hot/search/cursor?keyword=%EC%B7%A8%EC%97%85&amp;cursor=-1&amp;size=10 HTTP/1.1
@@ -3342,7 +3553,7 @@ Cookie: accessToken=accessTokenValue</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_hot_게시글_검색cursor_http_response"><a class="link" href="#_hot_게시글_검색cursor_http_response">4.14.2. HTTP response</a></h4>
+<h4 id="_hot_게시글_검색cursor_http_response"><a class="link" href="#_hot_게시글_검색cursor_http_response">4.15.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -3350,7 +3561,7 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 553
+Content-Length: 552
 
 {
   "code" : "200",
@@ -3364,7 +3575,7 @@ Content-Length: 553
       "content" : "열심히 SSAFY 9기를 수료하시면 취업에 성공하실겁니다.",
       "likeCount" : 102,
       "commentCount" : 33,
-      "createdAt" : "2023-10-26T13:04:50.5518783",
+      "createdAt" : "2023-11-02T19:22:10.819607",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
@@ -3376,7 +3587,7 @@ Content-Length: 553
 </div>
 </div>
 <div class="sect3">
-<h4 id="_hot_게시글_검색cursor_cookie"><a class="link" href="#_hot_게시글_검색cursor_cookie">4.14.3. Cookie</a></h4>
+<h4 id="_hot_게시글_검색cursor_cookie"><a class="link" href="#_hot_게시글_검색cursor_cookie">4.15.3. Cookie</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -3397,7 +3608,7 @@ Content-Length: 553
 </table>
 </div>
 <div class="sect3">
-<h4 id="_hot_게시글_검색cursor_request_parameters"><a class="link" href="#_hot_게시글_검색cursor_request_parameters">4.14.4. Request parameters</a></h4>
+<h4 id="_hot_게시글_검색cursor_request_parameters"><a class="link" href="#_hot_게시글_검색cursor_request_parameters">4.15.4. Request parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -3426,7 +3637,7 @@ Content-Length: 553
 </table>
 </div>
 <div class="sect3">
-<h4 id="_hot_게시글_검색cursor_response_fields"><a class="link" href="#_hot_게시글_검색cursor_response_fields">4.14.5. Response fields</a></h4>
+<h4 id="_hot_게시글_검색cursor_response_fields"><a class="link" href="#_hot_게시글_검색cursor_response_fields">4.15.5. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -3526,9 +3737,9 @@ Content-Length: 553
 </div>
 </div>
 <div class="sect2">
-<h3 id="_hot_게시글_검색offset"><a class="link" href="#_hot_게시글_검색offset">4.15. Hot 게시글 검색(Offset)</a></h3>
+<h3 id="_hot_게시글_검색offset"><a class="link" href="#_hot_게시글_검색offset">4.16. Hot 게시글 검색(Offset)</a></h3>
 <div class="sect3">
-<h4 id="_hot_게시글_검색offset_http_request"><a class="link" href="#_hot_게시글_검색offset_http_request">4.15.1. HTTP request</a></h4>
+<h4 id="_hot_게시글_검색offset_http_request"><a class="link" href="#_hot_게시글_검색offset_http_request">4.16.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts/hot/search/offset?keyword=%EC%B7%A8%EC%97%85&amp;page=1&amp;size=10 HTTP/1.1
@@ -3538,7 +3749,7 @@ Cookie: accessToken=accessTokenValue</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_hot_게시글_검색offset_http_response"><a class="link" href="#_hot_게시글_검색offset_http_response">4.15.2. HTTP response</a></h4>
+<h4 id="_hot_게시글_검색offset_http_response"><a class="link" href="#_hot_게시글_검색offset_http_response">4.16.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -3546,7 +3757,7 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 582
+Content-Length: 581
 
 {
   "code" : "200",
@@ -3560,7 +3771,7 @@ Content-Length: 582
       "content" : "열심히 SSAFY 9기를 수료하시면 취업에 성공하실겁니다.",
       "likeCount" : 102,
       "commentCount" : 33,
-      "createdAt" : "2023-10-26T13:04:50.5518783",
+      "createdAt" : "2023-11-02T19:22:10.819607",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
@@ -3573,7 +3784,7 @@ Content-Length: 582
 </div>
 </div>
 <div class="sect3">
-<h4 id="_hot_게시글_검색offset_cookie"><a class="link" href="#_hot_게시글_검색offset_cookie">4.15.3. Cookie</a></h4>
+<h4 id="_hot_게시글_검색offset_cookie"><a class="link" href="#_hot_게시글_검색offset_cookie">4.16.3. Cookie</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -3594,7 +3805,7 @@ Content-Length: 582
 </table>
 </div>
 <div class="sect3">
-<h4 id="_hot_게시글_검색offset_request_parameters"><a class="link" href="#_hot_게시글_검색offset_request_parameters">4.15.4. Request parameters</a></h4>
+<h4 id="_hot_게시글_검색offset_request_parameters"><a class="link" href="#_hot_게시글_검색offset_request_parameters">4.16.4. Request parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -3623,7 +3834,7 @@ Content-Length: 582
 </table>
 </div>
 <div class="sect3">
-<h4 id="_hot_게시글_검색offset_response_fields"><a class="link" href="#_hot_게시글_검색offset_response_fields">4.15.5. Response fields</a></h4>
+<h4 id="_hot_게시글_검색offset_response_fields"><a class="link" href="#_hot_게시글_검색offset_response_fields">4.16.5. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -3728,9 +3939,9 @@ Content-Length: 582
 </div>
 </div>
 <div class="sect2">
-<h3 id="_나의_게시글_목록_조회cursor"><a class="link" href="#_나의_게시글_목록_조회cursor">4.16. 나의 게시글 목록 조회(Cursor)</a></h3>
+<h3 id="_나의_게시글_목록_조회cursor"><a class="link" href="#_나의_게시글_목록_조회cursor">4.17. 나의 게시글 목록 조회(Cursor)</a></h3>
 <div class="sect3">
-<h4 id="_나의_게시글_목록_조회cursor_http_request"><a class="link" href="#_나의_게시글_목록_조회cursor_http_request">4.16.1. HTTP request</a></h4>
+<h4 id="_나의_게시글_목록_조회cursor_http_request"><a class="link" href="#_나의_게시글_목록_조회cursor_http_request">4.17.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts/my/cursor?cursor=-1&amp;size=10 HTTP/1.1
@@ -3740,7 +3951,7 @@ Cookie: accessToken=accessTokenValue</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_나의_게시글_목록_조회cursor_http_response"><a class="link" href="#_나의_게시글_목록_조회cursor_http_response">4.16.2. HTTP response</a></h4>
+<h4 id="_나의_게시글_목록_조회cursor_http_response"><a class="link" href="#_나의_게시글_목록_조회cursor_http_response">4.17.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -3748,7 +3959,7 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 956
+Content-Length: 954
 
 {
   "code" : "200",
@@ -3762,7 +3973,7 @@ Content-Length: 956
       "content" : "SSAFY 9기 합격했습니다!!",
       "likeCount" : 3,
       "commentCount" : 2,
-      "createdAt" : "2023-10-26T13:04:50.5518783",
+      "createdAt" : "2023-11-02T19:22:10.819607",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
@@ -3774,7 +3985,7 @@ Content-Length: 956
       "content" : "열심히 SSAFY 9기를 수료하시면 취업에 성공하실겁니다.",
       "likeCount" : 102,
       "commentCount" : 33,
-      "createdAt" : "2023-10-26T13:04:50.5518783",
+      "createdAt" : "2023-11-02T19:22:10.819607",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
@@ -3786,7 +3997,7 @@ Content-Length: 956
 </div>
 </div>
 <div class="sect3">
-<h4 id="_나의_게시글_목록_조회cursor_cookie"><a class="link" href="#_나의_게시글_목록_조회cursor_cookie">4.16.3. Cookie</a></h4>
+<h4 id="_나의_게시글_목록_조회cursor_cookie"><a class="link" href="#_나의_게시글_목록_조회cursor_cookie">4.17.3. Cookie</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -3807,7 +4018,7 @@ Content-Length: 956
 </table>
 </div>
 <div class="sect3">
-<h4 id="_나의_게시글_목록_조회cursor_request_parameters"><a class="link" href="#_나의_게시글_목록_조회cursor_request_parameters">4.16.4. Request parameters</a></h4>
+<h4 id="_나의_게시글_목록_조회cursor_request_parameters"><a class="link" href="#_나의_게시글_목록_조회cursor_request_parameters">4.17.4. Request parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -3832,7 +4043,7 @@ Content-Length: 956
 </table>
 </div>
 <div class="sect3">
-<h4 id="_나의_게시글_목록_조회cursor_response_fields"><a class="link" href="#_나의_게시글_목록_조회cursor_response_fields">4.16.5. Response fields</a></h4>
+<h4 id="_나의_게시글_목록_조회cursor_response_fields"><a class="link" href="#_나의_게시글_목록_조회cursor_response_fields">4.17.5. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -3932,9 +4143,9 @@ Content-Length: 956
 </div>
 </div>
 <div class="sect2">
-<h3 id="_나의_게시글_목록_조회offset"><a class="link" href="#_나의_게시글_목록_조회offset">4.17. 나의 게시글 목록 조회(Offset)</a></h3>
+<h3 id="_나의_게시글_목록_조회offset"><a class="link" href="#_나의_게시글_목록_조회offset">4.18. 나의 게시글 목록 조회(Offset)</a></h3>
 <div class="sect3">
-<h4 id="_나의_게시글_목록_조회offset_http_request"><a class="link" href="#_나의_게시글_목록_조회offset_http_request">4.17.1. HTTP request</a></h4>
+<h4 id="_나의_게시글_목록_조회offset_http_request"><a class="link" href="#_나의_게시글_목록_조회offset_http_request">4.18.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts/my/offset?page=1&amp;size=10 HTTP/1.1
@@ -3944,7 +4155,217 @@ Cookie: accessToken=accessTokenValue</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_나의_게시글_목록_조회offset_http_response"><a class="link" href="#_나의_게시글_목록_조회offset_http_response">4.17.2. HTTP response</a></h4>
+<h4 id="_나의_게시글_목록_조회offset_http_response"><a class="link" href="#_나의_게시글_목록_조회offset_http_response">4.18.2. HTTP response</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+Content-Length: 983
+
+{
+  "code" : "200",
+  "message" : "success",
+  "data" : {
+    "posts" : [ {
+      "boardId" : 1,
+      "boardTitle" : "자유 게시판",
+      "postId" : 6,
+      "title" : "안녕하세요 반갑습니다.",
+      "content" : "SSAFY 9기 합격했습니다!!",
+      "likeCount" : 3,
+      "commentCount" : 2,
+      "createdAt" : "2023-11-02T19:22:10.819607",
+      "nickname" : "이용준",
+      "anonymity" : false,
+      "thumbnail" : "썸네일 URL"
+    }, {
+      "boardId" : 2,
+      "boardTitle" : "취업 게시판",
+      "postId" : 7,
+      "title" : "취업을 하기 위한 꿀팁",
+      "content" : "열심히 SSAFY 9기를 수료하시면 취업에 성공하실겁니다.",
+      "likeCount" : 102,
+      "commentCount" : 33,
+      "createdAt" : "2023-11-02T19:22:10.819607",
+      "nickname" : "이용준",
+      "anonymity" : false,
+      "thumbnail" : "썸네일 URL"
+    } ],
+    "currentPage" : 1,
+    "totalPageCount" : 1
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_나의_게시글_목록_조회offset_cookie"><a class="link" href="#_나의_게시글_목록_조회offset_cookie">4.18.3. Cookie</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Cookie</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">accessToken</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">액세스 토큰 필수</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_나의_게시글_목록_조회offset_request_parameters"><a class="link" href="#_나의_게시글_목록_조회offset_request_parameters">4.18.4. Request parameters</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">page값은 불러올 현재 페이지의 값을 의미함, 초기 page는 1(또는 첫 페이지는 1)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지의 게시글 개수를 의미함, 최소 size는 10</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_나의_게시글_목록_조회offset_response_fields"><a class="link" href="#_나의_게시글_목록_조회offset_response_fields">4.18.5. Response fields</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 목록</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.currentPage</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지 번호</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.totalPageCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">전체 페이지 수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].boardId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글이 작성된 게시판 종류의 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].boardTitle</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글이 작성된 게시판의 종류, 자유 게시판 | 취업 게시판 | 맛집 게시판 | 질문 게시판 | 싸피 예비생 게시판</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].postId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 고유 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].title</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 제목</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].content</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 내용</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].likeCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 좋아요 개수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].commentCount</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 댓글 개수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].createdAt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 작성일</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].nickname</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 작성자의 닉네임</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].anonymity</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 작성자의 익명 여부인지 나타내는 필드</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].thumbnail</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">게시판의 썸네일, 게시글의 사진이 여러개가 있을 때 첫 번째 사진이 해당 게시글의 썸네일이 됨.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_나의_스크랩_게시글_목록_조회cursor"><a class="link" href="#_나의_스크랩_게시글_목록_조회cursor">4.19. 나의 스크랩 게시글 목록 조회(Cursor)</a></h3>
+<div class="sect3">
+<h4 id="_나의_스크랩_게시글_목록_조회cursor_http_request"><a class="link" href="#_나의_스크랩_게시글_목록_조회cursor_http_request">4.19.1. HTTP request</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts/my-scrap/cursor?cursor=-1&amp;size=10 HTTP/1.1
+Host: api.ssafsound.com
+Cookie: accessToken=accessTokenValue</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_나의_스크랩_게시글_목록_조회cursor_http_response"><a class="link" href="#_나의_스크랩_게시글_목록_조회cursor_http_response">4.19.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -3961,222 +4382,12 @@ Content-Length: 985
     "posts" : [ {
       "boardId" : 1,
       "boardTitle" : "자유 게시판",
-      "postId" : 6,
-      "title" : "안녕하세요 반갑습니다.",
-      "content" : "SSAFY 9기 합격했습니다!!",
-      "likeCount" : 3,
-      "commentCount" : 2,
-      "createdAt" : "2023-10-26T13:04:50.5518783",
-      "nickname" : "이용준",
-      "anonymity" : false,
-      "thumbnail" : "썸네일 URL"
-    }, {
-      "boardId" : 2,
-      "boardTitle" : "취업 게시판",
-      "postId" : 7,
-      "title" : "취업을 하기 위한 꿀팁",
-      "content" : "열심히 SSAFY 9기를 수료하시면 취업에 성공하실겁니다.",
-      "likeCount" : 102,
-      "commentCount" : 33,
-      "createdAt" : "2023-10-26T13:04:50.5518783",
-      "nickname" : "이용준",
-      "anonymity" : false,
-      "thumbnail" : "썸네일 URL"
-    } ],
-    "currentPage" : 1,
-    "totalPageCount" : 1
-  }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_나의_게시글_목록_조회offset_cookie"><a class="link" href="#_나의_게시글_목록_조회offset_cookie">4.17.3. Cookie</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Cookie</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">accessToken</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">액세스 토큰 필수</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_나의_게시글_목록_조회offset_request_parameters"><a class="link" href="#_나의_게시글_목록_조회offset_request_parameters">4.17.4. Request parameters</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">page값은 불러올 현재 페이지의 값을 의미함, 초기 page는 1(또는 첫 페이지는 1)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>size</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지의 게시글 개수를 의미함, 최소 size는 10</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_나의_게시글_목록_조회offset_response_fields"><a class="link" href="#_나의_게시글_목록_조회offset_response_fields">4.17.5. Response fields</a></h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 코드</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>message</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 메시지</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">응답 데이터</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 목록</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.currentPage</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">현재 페이지 번호</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.totalPageCount</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">전체 페이지 수</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].boardId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글이 작성된 게시판 종류의 ID</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].boardTitle</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글이 작성된 게시판의 종류, 자유 게시판 | 취업 게시판 | 맛집 게시판 | 질문 게시판 | 싸피 예비생 게시판</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].postId</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 고유 ID</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].title</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 제목</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].content</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 내용</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].likeCount</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 좋아요 개수</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].commentCount</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 댓글 개수</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].createdAt</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글의 작성일</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].nickname</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 작성자의 닉네임</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].anonymity</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시글 작성자의 익명 여부인지 나타내는 필드</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data.posts[].thumbnail</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">게시판의 썸네일, 게시글의 사진이 여러개가 있을 때 첫 번째 사진이 해당 게시글의 썸네일이 됨.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_나의_스크랩_게시글_목록_조회cursor"><a class="link" href="#_나의_스크랩_게시글_목록_조회cursor">4.18. 나의 스크랩 게시글 목록 조회(Cursor)</a></h3>
-<div class="sect3">
-<h4 id="_나의_스크랩_게시글_목록_조회cursor_http_request"><a class="link" href="#_나의_스크랩_게시글_목록_조회cursor_http_request">4.18.1. HTTP request</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts/my-scrap/cursor?cursor=-1&amp;size=10 HTTP/1.1
-Host: api.ssafsound.com
-Cookie: accessToken=accessTokenValue</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_나의_스크랩_게시글_목록_조회cursor_http_response"><a class="link" href="#_나의_스크랩_게시글_목록_조회cursor_http_response">4.18.2. HTTP response</a></h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
-Vary: Origin
-Vary: Access-Control-Request-Method
-Vary: Access-Control-Request-Headers
-Content-Type: application/json
-Content-Length: 987
-
-{
-  "code" : "200",
-  "message" : "success",
-  "data" : {
-    "posts" : [ {
-      "boardId" : 1,
-      "boardTitle" : "자유 게시판",
       "postId" : 5,
       "title" : "삼성 B형 시험을 준비하려면 뭘 해야할까요?",
       "content" : "역시 B형 특강을 열심히 듣는게 맞나요?",
       "likeCount" : 5,
       "commentCount" : 14,
-      "createdAt" : "2023-10-26T13:04:50.5518783",
+      "createdAt" : "2023-11-02T19:22:10.819607",
       "nickname" : "익명",
       "anonymity" : true,
       "thumbnail" : "썸네일 URL"
@@ -4188,7 +4399,7 @@ Content-Length: 987
       "content" : "저도 싸피에서 교육들으면 개발실력 엄청 오르겠죠?",
       "likeCount" : 11,
       "commentCount" : 29,
-      "createdAt" : "2023-10-26T13:04:50.5518783",
+      "createdAt" : "2023-11-02T19:22:10.819607",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
@@ -4200,7 +4411,7 @@ Content-Length: 987
 </div>
 </div>
 <div class="sect3">
-<h4 id="_나의_스크랩_게시글_목록_조회cursor_cookie"><a class="link" href="#_나의_스크랩_게시글_목록_조회cursor_cookie">4.18.3. Cookie</a></h4>
+<h4 id="_나의_스크랩_게시글_목록_조회cursor_cookie"><a class="link" href="#_나의_스크랩_게시글_목록_조회cursor_cookie">4.19.3. Cookie</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -4221,7 +4432,7 @@ Content-Length: 987
 </table>
 </div>
 <div class="sect3">
-<h4 id="_나의_스크랩_게시글_목록_조회cursor_request_parameters"><a class="link" href="#_나의_스크랩_게시글_목록_조회cursor_request_parameters">4.18.4. Request parameters</a></h4>
+<h4 id="_나의_스크랩_게시글_목록_조회cursor_request_parameters"><a class="link" href="#_나의_스크랩_게시글_목록_조회cursor_request_parameters">4.19.4. Request parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -4246,7 +4457,7 @@ Content-Length: 987
 </table>
 </div>
 <div class="sect3">
-<h4 id="_나의_스크랩_게시글_목록_조회cursor_response_fields"><a class="link" href="#_나의_스크랩_게시글_목록_조회cursor_response_fields">4.18.5. Response fields</a></h4>
+<h4 id="_나의_스크랩_게시글_목록_조회cursor_response_fields"><a class="link" href="#_나의_스크랩_게시글_목록_조회cursor_response_fields">4.19.5. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -4346,9 +4557,9 @@ Content-Length: 987
 </div>
 </div>
 <div class="sect2">
-<h3 id="_나의_스크랩_게시글_목록_조회offset"><a class="link" href="#_나의_스크랩_게시글_목록_조회offset">4.19. 나의 스크랩 게시글 목록 조회(Offset)</a></h3>
+<h3 id="_나의_스크랩_게시글_목록_조회offset"><a class="link" href="#_나의_스크랩_게시글_목록_조회offset">4.20. 나의 스크랩 게시글 목록 조회(Offset)</a></h3>
 <div class="sect3">
-<h4 id="_나의_스크랩_게시글_목록_조회offset_http_request"><a class="link" href="#_나의_스크랩_게시글_목록_조회offset_http_request">4.19.1. HTTP request</a></h4>
+<h4 id="_나의_스크랩_게시글_목록_조회offset_http_request"><a class="link" href="#_나의_스크랩_게시글_목록_조회offset_http_request">4.20.1. HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /posts/my-scrap/offset?page=1&amp;size=10 HTTP/1.1
@@ -4358,7 +4569,7 @@ Cookie: accessToken=accessTokenValue</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_나의_스크랩_게시글_목록_조회offset_http_response"><a class="link" href="#_나의_스크랩_게시글_목록_조회offset_http_response">4.19.2. HTTP response</a></h4>
+<h4 id="_나의_스크랩_게시글_목록_조회offset_http_response"><a class="link" href="#_나의_스크랩_게시글_목록_조회offset_http_response">4.20.2. HTTP response</a></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
@@ -4366,7 +4577,7 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 1016
+Content-Length: 1014
 
 {
   "code" : "200",
@@ -4380,7 +4591,7 @@ Content-Length: 1016
       "content" : "역시 B형 특강을 열심히 듣는게 맞나요?",
       "likeCount" : 5,
       "commentCount" : 14,
-      "createdAt" : "2023-10-26T13:04:50.5518783",
+      "createdAt" : "2023-11-02T19:22:10.819607",
       "nickname" : "익명",
       "anonymity" : true,
       "thumbnail" : "썸네일 URL"
@@ -4392,7 +4603,7 @@ Content-Length: 1016
       "content" : "저도 싸피에서 교육들으면 개발실력 엄청 오르겠죠?",
       "likeCount" : 11,
       "commentCount" : 29,
-      "createdAt" : "2023-10-26T13:04:50.5518783",
+      "createdAt" : "2023-11-02T19:22:10.819607",
       "nickname" : "이용준",
       "anonymity" : false,
       "thumbnail" : "썸네일 URL"
@@ -4405,7 +4616,7 @@ Content-Length: 1016
 </div>
 </div>
 <div class="sect3">
-<h4 id="_나의_스크랩_게시글_목록_조회offset_cookie"><a class="link" href="#_나의_스크랩_게시글_목록_조회offset_cookie">4.19.3. Cookie</a></h4>
+<h4 id="_나의_스크랩_게시글_목록_조회offset_cookie"><a class="link" href="#_나의_스크랩_게시글_목록_조회offset_cookie">4.20.3. Cookie</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -4426,7 +4637,7 @@ Content-Length: 1016
 </table>
 </div>
 <div class="sect3">
-<h4 id="_나의_스크랩_게시글_목록_조회offset_request_parameters"><a class="link" href="#_나의_스크랩_게시글_목록_조회offset_request_parameters">4.19.4. Request parameters</a></h4>
+<h4 id="_나의_스크랩_게시글_목록_조회offset_request_parameters"><a class="link" href="#_나의_스크랩_게시글_목록_조회offset_request_parameters">4.20.4. Request parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -4451,7 +4662,7 @@ Content-Length: 1016
 </table>
 </div>
 <div class="sect3">
-<h4 id="_나의_스크랩_게시글_목록_조회offset_response_fields"><a class="link" href="#_나의_스크랩_게시글_목록_조회offset_response_fields">4.19.5. Response fields</a></h4>
+<h4 id="_나의_스크랩_게시글_목록_조회offset_response_fields"><a class="link" href="#_나의_스크랩_게시글_목록_조회offset_response_fields">4.20.5. Response fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -4591,7 +4802,7 @@ Content-Length: 1283
       "commentId" : 1,
       "content" : "반가워요",
       "likeCount" : 3,
-      "createdAt" : "2023-10-26T13:04:50.5328772",
+      "createdAt" : "2023-11-02T19:22:10.8127684",
       "anonymity" : true,
       "modified" : false,
       "liked" : true,
@@ -4609,7 +4820,7 @@ Content-Length: 1283
         "commentId" : 1,
         "content" : "안녕하세요",
         "likeCount" : 10,
-        "createdAt" : "2023-10-26T13:04:50.5278754",
+        "createdAt" : "2023-11-02T19:22:10.8107687",
         "anonymity" : false,
         "modified" : false,
         "liked" : false,
@@ -6062,8 +6273,8 @@ Host: api.ssafsound.com
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-Set-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/; Domain=ssafsound.com; Max-Age=2629744; Expires=Sat, 25 Nov 2023 14:33:53 GMT; Secure; HttpOnly
-Set-Cookie: refreshToken=syJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IsdfserwetweSflKxwRJeSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/auth/reissue; Domain=ssafsound.com; Max-Age=2629744; Expires=Sat, 25 Nov 2023 14:33:53 GMT; Secure; HttpOnly
+Set-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/; Domain=ssafsound.com; Max-Age=2629744; Expires=Sat, 2 Dec 2023 20:51:14 GMT; Secure; HttpOnly
+Set-Cookie: refreshToken=syJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IsdfserwetweSflKxwRJeSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Path=/auth/reissue; Domain=ssafsound.com; Max-Age=2629744; Expires=Sat, 2 Dec 2023 20:51:14 GMT; Secure; HttpOnly
 Content-Type: application/json
 Content-Length: 422
 
@@ -9443,7 +9654,7 @@ Cookie: accessToken=accessTokenValue
 
 {
   "category" : "PROJECT",
-  "recruitEnd" : "2023-11-02",
+  "recruitEnd" : "2023-11-09",
   "title" : "[사이드 프로젝트] 공모전 레퍼런스 웹 플랫폼 개발 프로젝트 팀원을 모집합니다.",
   "content" : "&lt;p&gt;[프로젝트 소개]&lt;/p&gt;\n저희 프로젝트는 대학생들의 공모전 경험에 있어 누구나 참고할 레퍼런스를 제공받고, 또 자발적으로 공유할 수 있는 환경을 구축하고자 시작하게 되었습니다! 저희 프로젝트는 아래와 같은 특징을 가지고 있습니다.\n현재 PM 1명, 프론트엔드 개발자 2명, 백엔드 개발자 1명이 있으며, 디자인의 경우 PM이 1차 MVP의 UI/UX를 제작했습니다.\n",
   "contactURI" : "https://open.kakao.com/o/sA8Kb83b",
@@ -9922,8 +10133,8 @@ Content-Length: 1774
     "contactURI" : "https://open.kakao.com/o/sA8Kb83b",
     "view" : 1,
     "finishedRecruit" : false,
-    "recruitStart" : "2023-10-26",
-    "recruitEnd" : "2023-11-02",
+    "recruitStart" : "2023-11-02",
+    "recruitEnd" : "2023-11-09",
     "skills" : [ {
       "skillId" : 1,
       "name" : "Spring"
@@ -10522,7 +10733,7 @@ Content-Length: 927
       "category" : "PROJECT",
       "title" : "[사이드 프로젝트] 공모전 레퍼런스 웹 플랫폼 개발 프로젝트 팀원을 모집합니다.",
       "finishedRecruit" : false,
-      "recruitEnd" : "2023-11-02",
+      "recruitEnd" : "2023-11-09",
       "content" : "&lt;p&gt;[프로젝트 소개]&lt;/p&gt;\n저희 ",
       "skills" : [ {
         "skillId" : 1,
@@ -10744,7 +10955,7 @@ Content-Length: 933
       "category" : "PROJECT",
       "title" : "[사이드 프로젝트] 공모전 레퍼런스 웹 플랫폼 개발 프로젝트 팀원을 모집합니다.",
       "finishedRecruit" : false,
-      "recruitEnd" : "2023-11-02",
+      "recruitEnd" : "2023-11-09",
       "content" : "&lt;p&gt;[프로젝트 소개]&lt;/p&gt;\n저희 ",
       "skills" : [ {
         "skillId" : 1,
@@ -10975,7 +11186,7 @@ Content-Length: 1013
       "category" : "PROJECT",
       "title" : "[사이드 프로젝트] 공모전 레퍼런스 웹 플랫폼 개발 프로젝트 팀원을 모집합니다.",
       "finishedRecruit" : false,
-      "recruitEnd" : "2023-11-02",
+      "recruitEnd" : "2023-11-09",
       "content" : "&lt;p&gt;[프로젝트 소개]&lt;/p&gt;\n저희 ",
       "skills" : [ {
         "skillId" : 1,
@@ -10998,7 +11209,7 @@ Content-Length: 1013
       } ],
       "mine" : false,
       "matchStatus" : "PENDING",
-      "appliedAt" : "2023-10-26T13:04:58.1405866"
+      "appliedAt" : "2023-11-02T19:22:16.0322047"
     } ],
     "nextCursor" : 1,
     "isLast" : true
@@ -11218,7 +11429,7 @@ Content-Length: 1019
       "category" : "PROJECT",
       "title" : "[사이드 프로젝트] 공모전 레퍼런스 웹 플랫폼 개발 프로젝트 팀원을 모집합니다.",
       "finishedRecruit" : false,
-      "recruitEnd" : "2023-11-02",
+      "recruitEnd" : "2023-11-09",
       "content" : "&lt;p&gt;[프로젝트 소개]&lt;/p&gt;\n저희 ",
       "skills" : [ {
         "skillId" : 1,
@@ -11241,7 +11452,7 @@ Content-Length: 1019
       } ],
       "mine" : false,
       "matchStatus" : "PENDING",
-      "appliedAt" : "2023-10-26T13:04:58.1405866"
+      "appliedAt" : "2023-11-02T19:22:16.0322047"
     } ],
     "currentPage" : 1,
     "totalPageCount" : 1
@@ -11461,7 +11672,7 @@ Content-Length: 927
       "category" : "PROJECT",
       "title" : "[사이드 프로젝트] 공모전 레퍼런스 웹 플랫폼 개발 프로젝트 팀원을 모집합니다.",
       "finishedRecruit" : false,
-      "recruitEnd" : "2023-11-02",
+      "recruitEnd" : "2023-11-09",
       "content" : "&lt;p&gt;[프로젝트 소개]&lt;/p&gt;\n저희 ",
       "skills" : [ {
         "skillId" : 1,
@@ -11692,7 +11903,7 @@ Content-Length: 933
       "category" : "PROJECT",
       "title" : "[사이드 프로젝트] 공모전 레퍼런스 웹 플랫폼 개발 프로젝트 팀원을 모집합니다.",
       "finishedRecruit" : false,
-      "recruitEnd" : "2023-11-02",
+      "recruitEnd" : "2023-11-09",
       "content" : "&lt;p&gt;[프로젝트 소개]&lt;/p&gt;\n저희 ",
       "skills" : [ {
         "skillId" : 1,
@@ -11915,7 +12126,7 @@ Content-Length: 927
       "category" : "PROJECT",
       "title" : "[사이드 프로젝트] 공모전 레퍼런스 웹 플랫폼 개발 프로젝트 팀원을 모집합니다.",
       "finishedRecruit" : false,
-      "recruitEnd" : "2023-11-02",
+      "recruitEnd" : "2023-11-09",
       "content" : "&lt;p&gt;[프로젝트 소개]&lt;/p&gt;\n저희 ",
       "skills" : [ {
         "skillId" : 1,
@@ -12138,7 +12349,7 @@ Content-Length: 933
       "category" : "PROJECT",
       "title" : "[사이드 프로젝트] 공모전 레퍼런스 웹 플랫폼 개발 프로젝트 팀원을 모집합니다.",
       "finishedRecruit" : false,
-      "recruitEnd" : "2023-11-02",
+      "recruitEnd" : "2023-11-09",
       "content" : "&lt;p&gt;[프로젝트 소개]&lt;/p&gt;\n저희 ",
       "skills" : [ {
         "skillId" : 1,
@@ -12855,7 +13066,7 @@ Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-Content-Length: 1028
+Content-Length: 1029
 
 {
   "code" : "200",
@@ -12866,7 +13077,7 @@ Content-Length: 1028
         "limit" : 4,
         "members" : [ {
           "recruitApplicationId" : -1,
-          "joinedAt" : "2023-10-26T13:04:58.0955865",
+          "joinedAt" : "2023-11-02T19:22:16.0004557",
           "memberId" : 99,
           "nickname" : "KIM",
           "isMajor" : true,
@@ -12882,7 +13093,7 @@ Content-Length: 1028
         "limit" : 3,
         "members" : [ {
           "recruitApplicationId" : 1,
-          "joinedAt" : "2023-10-26T13:04:58.133586",
+          "joinedAt" : "2023-11-02T19:22:16.0261959",
           "memberId" : 99,
           "nickname" : "KIM",
           "isMajor" : true,
@@ -13077,7 +13288,7 @@ Content-Length: 922
         "reply" : "취업 준비를 위해서 신청하게되었습니다.",
         "question" : "프로젝트에 참여하고자 하는 동기가 무엇인가요?",
         "liked" : false,
-        "appliedAt" : "2023-10-26T13:04:58.1285859"
+        "appliedAt" : "2023-11-02T19:22:16.0221956"
       } ]
     }
   }
@@ -13416,7 +13627,7 @@ Content-Length: 751
     "reply" : "취업 준비를 위해서 신청하게되었습니다.",
     "question" : "프로젝트에 참여하고자 하는 동기가 무엇인가요?",
     "liked" : false,
-    "appliedAt" : "2023-10-26T13:04:58.1285859"
+    "appliedAt" : "2023-11-02T19:22:16.0221956"
   }
 }</code></pre>
 </div>
@@ -13632,7 +13843,7 @@ Content-Length: 820
       "reply" : "취업 준비를 위해서 신청하게되었습니다.",
       "question" : "프로젝트에 참여하고자 하는 동기가 무엇인가요?",
       "liked" : false,
-      "appliedAt" : "2023-10-26T13:04:58.1285859"
+      "appliedAt" : "2023-11-02T19:22:16.0221956"
     } ]
   }
 }</code></pre>
@@ -13848,7 +14059,7 @@ Content-Length: 751
     "reply" : "취업 준비를 위해서 신청하게되었습니다.",
     "question" : "프로젝트에 참여하고자 하는 동기가 무엇인가요?",
     "liked" : false,
-    "appliedAt" : "2023-10-26T13:04:58.1285859"
+    "appliedAt" : "2023-11-02T19:22:16.0221956"
   }
 }</code></pre>
 </div>
@@ -14581,7 +14792,7 @@ Content-Length: 772
       "likeCount" : 0,
       "liked" : false,
       "mine" : false,
-      "createdAt" : "2023-10-26T13:05:00.0238927",
+      "createdAt" : "2023-11-02T19:22:17.6282642",
       "deletedComment" : false,
       "modified" : false,
       "author" : {
@@ -14993,7 +15204,7 @@ Content-Length: 66
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-10-20 16:19:35 +0900
+Last updated 2023-10-30 13:13:33 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
