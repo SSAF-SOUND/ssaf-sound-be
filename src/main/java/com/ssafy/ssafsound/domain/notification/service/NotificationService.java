@@ -22,7 +22,6 @@ public class NotificationService {
 
         for (Notification notification : notifications) {
             log.info(notification.getId());
-            log.info(String.valueOf(notification.getOwne()));
         }
 
         return null;
