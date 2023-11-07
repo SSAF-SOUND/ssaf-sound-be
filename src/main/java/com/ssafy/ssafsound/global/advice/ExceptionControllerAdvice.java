@@ -6,6 +6,7 @@ import com.ssafy.ssafsound.domain.board.exception.BoardException;
 import com.ssafy.ssafsound.domain.comment.exception.CommentException;
 import com.ssafy.ssafsound.domain.lunch.exception.LunchException;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
+import com.ssafy.ssafsound.domain.notification.exception.NotificationException;
 import com.ssafy.ssafsound.domain.post.exception.PostException;
 import com.ssafy.ssafsound.domain.recruit.exception.RecruitException;
 import com.ssafy.ssafsound.global.common.exception.GlobalErrorInfo;
@@ -195,6 +196,17 @@ public class ExceptionControllerAdvice {
         return EnvelopeResponse.builder()
                 .code(GlobalErrorInfo.BAD_REQUEST.getCode())
                 .message(GlobalErrorInfo.BAD_REQUEST.getMessage())
+                .build();
+    }
+
+    @ExceptionHandler(NotificationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public EnvelopeResponse HttpMessageNotReadableException(NotificationException e) {
+        log.error(e.getMessage());
+
+        return EnvelopeResponse.builder()
+                .code(e.getInfo().getCode())
+                .message(e.getInfo().getMessage())
                 .build();
     }
 
