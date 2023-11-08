@@ -1,6 +1,5 @@
 package com.ssafy.ssafsound.global.config;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
@@ -14,13 +13,12 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
 @Configuration
 @EnableMongoAuditing
-@RequiredArgsConstructor
 public class MongoConfig {
-    private final MongoDatabaseFactory mongoDatabaseFactory;
-    private final MongoMappingContext mongoMappingContext;
 
     @Bean
-    public MappingMongoConverter mappingMongoConverter() {
+    public MappingMongoConverter mappingMongoConverter(MongoDatabaseFactory mongoDatabaseFactory, MongoMappingContext mongoMappingContext) {
+        mongoMappingContext.setAutoIndexCreation(true);
+
         DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDatabaseFactory);
         MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, mongoMappingContext);
         converter.setTypeMapper(new DefaultMongoTypeMapper(null));
@@ -28,7 +26,7 @@ public class MongoConfig {
     }
 
     @Bean
-    public MongoTransactionManager mongoTransactionManager() {
+    public MongoTransactionManager transactionManager(MongoDatabaseFactory mongoDatabaseFactory) {
         return new MongoTransactionManager(mongoDatabaseFactory);
     }
 
