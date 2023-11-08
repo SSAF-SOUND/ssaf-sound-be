@@ -197,6 +197,7 @@ bootJar {
     querydsl {
         jpa = true
         querydslSourcesDir = querydslDir
+        springDataMongo = true
     }
 
 // build시 사용할 sourceSet 추가 설정
