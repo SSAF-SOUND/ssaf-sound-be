@@ -18,31 +18,8 @@ public class Notification {
     private String id;
 
     @Indexed(unique = true)
-    private Long owner;
+    private Long ownerId;
 
     @Builder.Default
     private List<NotificationItem> notificationItems = new ArrayList<>();
-
-//    @Id
-//    private String id;
-//
-//    @Indexed()
-//    private Long owner;
-//
-//    private String message;
-//
-//    private Long contentId;
-//
-//    @Convert(converter = ServiceTypeConverter.class)
-//    private ServiceType serviceType;
-//
-//    @Convert(converter = NotificationTypeConverter.class)
-//    private NotificationType notificationType;
-//
-//    @Builder.Default
-//    private Boolean read = Boolean.FALSE;
-//
-//    @Indexed(name = "createdAtIndex", expireAfter = "30d")
-//    @CreatedDate
-//    private LocalDateTime createdAt;
 }

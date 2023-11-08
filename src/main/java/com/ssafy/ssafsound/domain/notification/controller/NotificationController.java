@@ -1,5 +1,7 @@
 package com.ssafy.ssafsound.domain.notification.controller;
 
+import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
+import com.ssafy.ssafsound.domain.notification.dto.GetNotificationResDto;
 import com.ssafy.ssafsound.domain.notification.service.NotificationService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +18,23 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @GetMapping()
-    public EnvelopeResponse<Void> getNotificationsByMemberId() {
-        log.info("사용자 알림 조회 컨트롤러");
-        return EnvelopeResponse.<Void>builder()
-                .data(notificationService.getNotifications())
+    public EnvelopeResponse<GetNotificationResDto> getNotificationsByMemberId() {
+        AuthenticatedMember authenticatedMember = AuthenticatedMember.builder()
+                .memberId(1L)
+                .memberRole("user")
+                .build();
+
+        return EnvelopeResponse.<GetNotificationResDto>builder()
+                .data(notificationService.getNotifications(authenticatedMember))
                 .build();
     }
+
+//    @GetMapping("/save")
+//    public EnvelopeResponse<Void> saveNotification(@RequestParam Long id) {
+//        CreateNotification
+//
+//        return EnvelopeResponse.<Void>builder()
+//                .data(notificationService.saveNotification(id))
+//                .build();
+//    }
 }
