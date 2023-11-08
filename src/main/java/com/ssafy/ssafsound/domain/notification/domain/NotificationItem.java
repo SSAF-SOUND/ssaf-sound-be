@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.domain.notification.domain;
 
 import com.ssafy.ssafsound.domain.notification.converter.NotificationTypeConverter;
 import com.ssafy.ssafsound.domain.notification.converter.ServiceTypeConverter;
+import com.ssafy.ssafsound.domain.notification.dto.CreateNotification;
 import lombok.*;
 
 import javax.persistence.Convert;
@@ -27,4 +28,13 @@ public class NotificationItem {
 
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    public static NotificationItem from(CreateNotification createNotification) {
+        return NotificationItem.builder()
+                .message(createNotification.getMessage())
+                .contentId(createNotification.getContentId())
+                .serviceType(createNotification.getServiceType())
+                .notificationType(createNotification.getNotificationType())
+                .build();
+    }
 }

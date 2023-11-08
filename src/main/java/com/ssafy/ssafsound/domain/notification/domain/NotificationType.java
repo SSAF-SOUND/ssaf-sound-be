@@ -8,9 +8,10 @@ import java.util.Arrays;
 
 @Getter
 public enum NotificationType {
-    POST(1, "POST"),
-    RECRUIT(2, "RECRUIT"),
-    SYSTEM(3, "SYSTEM");
+    POST_REPLAY(1, "POST_REPLAY"),
+    COMMENT_REPLAY(2, "COMMENT_REPLAY"),
+    RECRUIT(3, "RECRUIT"),
+    SYSTEM(4, "SYSTEM");
 
     private final Integer id;
     private final String name;

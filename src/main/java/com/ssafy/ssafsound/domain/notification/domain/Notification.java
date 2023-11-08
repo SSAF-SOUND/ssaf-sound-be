@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.notification.domain;
 
+import com.ssafy.ssafsound.domain.notification.dto.CreateNotification;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -22,4 +23,10 @@ public class Notification {
 
     @Builder.Default
     private List<NotificationItem> notificationItems = new ArrayList<>();
+
+    public static Notification from(CreateNotification createNotification) {
+        return Notification.builder()
+                .ownerId(createNotification.getOwnerId())
+                .build();
+    }
 }

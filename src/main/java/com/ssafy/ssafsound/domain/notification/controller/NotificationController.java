@@ -28,13 +28,4 @@ public class NotificationController {
                 .data(notificationService.getNotifications(authenticatedMember))
                 .build();
     }
-
-//    @GetMapping("/save")
-//    public EnvelopeResponse<Void> saveNotification(@RequestParam Long id) {
-//        CreateNotification
-//
-//        return EnvelopeResponse.<Void>builder()
-//                .data(notificationService.saveNotification(id))
-//                .build();
-//    }
 }

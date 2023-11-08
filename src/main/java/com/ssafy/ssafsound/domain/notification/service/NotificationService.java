@@ -5,6 +5,7 @@ import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.notification.domain.Notification;
+import com.ssafy.ssafsound.domain.notification.dto.CreateNotification;
 import com.ssafy.ssafsound.domain.notification.dto.GetNotificationResDto;
 import com.ssafy.ssafsound.domain.notification.exception.NotificationErrorInfo;
 import com.ssafy.ssafsound.domain.notification.exception.NotificationException;
@@ -34,33 +35,11 @@ public class NotificationService {
         return GetNotificationResDto.from(notification);
     }
 
-//    @Transactional
-//    public Void saveNotification(CreateNotification createNotification) {
-//        Long ownerId = createNotification.getOwnerId();
-//
-//        Optional<Notification> optionalNotification = notificationRepository.findByOwnerId(ownerId);
-//        if (!notificationRepository.existsByOwnerId(ownerId)) {
-////            notificationRepository.saveNotification(createNotification);
-//        }
-//
-////        Notification notification = Notification.builder()
-////                .owner(1L)
-////                .build();
-////        notificationRepository.save(notification);
-//        notificationRepository.updateTemp(ownerId);
-//
-//
-////        Notification notification = Notification.builder()
-////                .owner(id)
-////                .message("테스트 메시지")
-////                .contentId(1L)
-////                .serviceType(ServiceType.POST)
-////                .notificationType(NotificationType.POST)
-////                .build();
-////
-////        notificationRepository.saveTemp(notification);
-//
-////        throw new RuntimeException();
-////        return null;
-//    }
+    @Transactional
+    public void sendNotification(CreateNotification createNotification) {
+        if (!notificationRepository.existsByOwnerId(createNotification.getOwnerId())) {
+            notificationRepository.saveNotification(createNotification);
+        }
+        notificationRepository.saveNotificationItem(createNotification);
+    }
 }
