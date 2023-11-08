@@ -2,8 +2,8 @@ package com.ssafy.ssafsound.domain.notification.domain;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +17,32 @@ public class Notification {
     @Id
     private String id;
 
-    private Integer owner;
+    @Indexed(unique = true)
+    private Long owner;
 
-    @Field
     @Builder.Default
-    private List<NotificationElement> notificationElements = new ArrayList<>();
+    private List<NotificationItem> notificationItems = new ArrayList<>();
 
+//    @Id
+//    private String id;
+//
+//    @Indexed()
+//    private Long owner;
+//
+//    private String message;
+//
+//    private Long contentId;
+//
+//    @Convert(converter = ServiceTypeConverter.class)
+//    private ServiceType serviceType;
+//
+//    @Convert(converter = NotificationTypeConverter.class)
+//    private NotificationType notificationType;
+//
+//    @Builder.Default
+//    private Boolean read = Boolean.FALSE;
+//
+//    @Indexed(name = "createdAtIndex", expireAfter = "30d")
+//    @CreatedDate
+//    private LocalDateTime createdAt;
 }

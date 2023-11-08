@@ -1,19 +1,20 @@
 package com.ssafy.ssafsound.domain.notification.domain;
 
-import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.notification.converter.NotificationTypeConverter;
 import com.ssafy.ssafsound.domain.notification.converter.ServiceTypeConverter;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import javax.persistence.Convert;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class NotificationElement extends BaseTimeEntity {
-    private Long notificationId;
-
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+public class NotificationItem {
     private String message;
+
+    private Long contentId;
 
     @Convert(converter = ServiceTypeConverter.class)
     private ServiceType serviceType;
@@ -21,8 +22,9 @@ public class NotificationElement extends BaseTimeEntity {
     @Convert(converter = NotificationTypeConverter.class)
     private NotificationType notificationType;
 
-    private Long contentId;
-
     @Builder.Default
     private Boolean read = Boolean.FALSE;
+
+    @Builder.Default
+    private LocalDateTime createdAt = LocalDateTime.now();
 }
