@@ -2,7 +2,7 @@ package com.ssafy.ssafsound.domain.notification.repository;
 
 import com.ssafy.ssafsound.domain.notification.domain.Notification;
 import com.ssafy.ssafsound.domain.notification.domain.NotificationItem;
-import com.ssafy.ssafsound.domain.notification.dto.CreateNotification;
+import com.ssafy.ssafsound.domain.notification.event.NotificationEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -26,16 +26,16 @@ public class NotificationRepositoryImpl implements NotificationCustomRepository 
     }
 
     @Override
-    public void saveNotification(CreateNotification createNotification) {
-        Notification emptyNotification = Notification.from(createNotification);
+    public void saveNotification(NotificationEvent notificationEvent) {
+        Notification emptyNotification = Notification.from(notificationEvent);
         mongoTemplate.save(emptyNotification);
     }
 
     @Override
-    public void saveNotificationItem(CreateNotification createNotification) {
-        NotificationItem notificationItem = NotificationItem.from(createNotification);
+    public void saveNotificationItem(NotificationEvent notificationEvent) {
+        NotificationItem notificationItem = NotificationItem.from(notificationEvent);
 
-        Query query = new Query(Criteria.where("ownerId").is(createNotification.getOwnerId()));
+        Query query = new Query(Criteria.where("ownerId").is(notificationEvent.getOwnerId()));
         Update update = new Update().push("notificationItems", notificationItem);
 
         mongoTemplate.updateFirst(query, update, Notification.class);

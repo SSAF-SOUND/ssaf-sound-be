@@ -8,9 +8,9 @@ import java.util.Arrays;
 
 @Getter
 public enum ServiceType {
-    POST(1, "POST"),
-    RECRUIT(2, "RECRUIT"),
-    SYSTEM(3, "SYSTEM");
+    SYSTEM(1, "SYSTEM"),
+    POST(2, "POST"),
+    RECRUIT(3, "RECRUIT");
 
     private final Integer id;
     private final String name;

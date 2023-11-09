@@ -17,8 +17,6 @@ import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
-import com.ssafy.ssafsound.domain.notification.dto.CreateNotification;
-import com.ssafy.ssafsound.domain.notification.service.NotificationService;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.dto.PostCommonLikeResDto;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
@@ -26,6 +24,7 @@ import com.ssafy.ssafsound.domain.post.exception.PostException;
 import com.ssafy.ssafsound.domain.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,8 +39,7 @@ public class CommentService {
     private final CommentLikeRepository commentLikeRepository;
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
-    private final NotificationService notificationService;
-
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public CommentIdElement writeComment(Long postId, Long loginMemberId, PostCommentWriteReqDto postCommentWriteReqDto) {
@@ -77,8 +75,9 @@ public class CommentService {
         comment = commentRepository.save(comment);
         commentRepository.updateByCommentGroup(comment.getId());
 
+        // 알림 처리
         if (!post.isMine(loginMember)) {
-            notificationService.sendNotification(CreateNotification.postReplyNotificationFrom(post));
+            applicationEventPublisher.publishEvent(post.toNotificationEvent());
         }
 
         return new CommentIdElement(comment.getId());
@@ -147,6 +146,7 @@ public class CommentService {
                 .build();
 
         comment = commentRepository.save(comment);
+
         return new CommentIdElement(comment.getId());
     }
 

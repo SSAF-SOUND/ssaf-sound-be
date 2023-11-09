@@ -5,8 +5,8 @@ import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.notification.domain.Notification;
-import com.ssafy.ssafsound.domain.notification.dto.CreateNotification;
 import com.ssafy.ssafsound.domain.notification.dto.GetNotificationResDto;
+import com.ssafy.ssafsound.domain.notification.event.NotificationEvent;
 import com.ssafy.ssafsound.domain.notification.exception.NotificationErrorInfo;
 import com.ssafy.ssafsound.domain.notification.exception.NotificationException;
 import com.ssafy.ssafsound.domain.notification.repository.NotificationRepository;
@@ -36,10 +36,10 @@ public class NotificationService {
     }
 
     @Transactional
-    public void sendNotification(CreateNotification createNotification) {
-        if (!notificationRepository.existsByOwnerId(createNotification.getOwnerId())) {
-            notificationRepository.saveNotification(createNotification);
+    public void sendNotification(NotificationEvent notificationEvent) {
+        if (!notificationRepository.existsByOwnerId(notificationEvent.getOwnerId())) {
+            notificationRepository.saveNotification(notificationEvent);
         }
-        notificationRepository.saveNotificationItem(createNotification);
+        notificationRepository.saveNotificationItem(notificationEvent);
     }
 }

@@ -1,12 +1,12 @@
 package com.ssafy.ssafsound.domain.notification.repository;
 
-import com.ssafy.ssafsound.domain.notification.dto.CreateNotification;
+import com.ssafy.ssafsound.domain.notification.event.NotificationEvent;
 
 public interface NotificationCustomRepository {
 
     void updateReadTrue(Long owner);
 
-    void saveNotification(CreateNotification createNotification);
+    void saveNotification(NotificationEvent notificationEvent);
 
-    void saveNotificationItem(CreateNotification createNotification);
+    void saveNotificationItem(NotificationEvent notificationEvent);
 }
