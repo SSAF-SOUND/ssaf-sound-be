@@ -20,7 +20,7 @@ import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.notification.domain.NotificationType;
 import com.ssafy.ssafsound.domain.notification.domain.ServiceType;
 import com.ssafy.ssafsound.domain.notification.event.NotificationEvent;
-import com.ssafy.ssafsound.domain.notification.message.PostNotificationMessage;
+import com.ssafy.ssafsound.domain.notification.message.NotificationMessage;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.dto.PostCommonLikeResDto;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
@@ -32,7 +32,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -79,10 +81,12 @@ public class CommentService {
         comment = commentRepository.save(comment);
         commentRepository.updateByCommentGroup(comment.getId());
 
+        
+        // 알림 전송
         if (!post.isMine(loginMember)) {
             NotificationEvent notificationEvent = NotificationEvent.builder()
-                    .ownerId(post.getMember().getId())
-                    .message(String.format(PostNotificationMessage.POST_REPLY_MESSAGE.getMessage(), post.getTitle()))
+                    .ownerId(post.getAuthorId())
+                    .message(String.format(NotificationMessage.POST_REPLY_MESSAGE.getMessage(), post.getTitle()))
                     .contentId(post.getId())
                     .serviceType(ServiceType.POST)
                     .notificationType(NotificationType.POST_REPLAY)
@@ -124,12 +128,19 @@ public class CommentService {
         Post post = postRepository.findByIdWithMember(postId)
                 .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
-        if (!commentRepository.existsById(commentId)) {
-            throw new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT);
-        }
-
         Member loginMember = memberRepository.findById(loginMemberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
+
+        Comment parentComment = commentRepository.findByIdWithMemberAndCommentGroup(commentId)
+                .orElseThrow(() -> new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT));
+
+        if (!parentComment.isAssociatedWithPost(post)) {
+            throw new CommentException(CommentErrorInfo.NOT_ASSOCIATED_WITH_POST);
+        }
+
+        if (!parentComment.isParent()) {
+            throw new CommentException(CommentErrorInfo.FORBIDDEN_REPLY_SUB_COMMENT);
+        }
 
         // 1. 익명 번호 부여
         CommentNumber commentNumber = commentNumberRepository.
@@ -137,7 +148,7 @@ public class CommentService {
 
         if (commentNumber == null) {
             commentNumber = CommentNumber.builder()
-                    .post(postRepository.getReferenceById(postId))
+                    .post(post)
                     .member(loginMember)
                     .number(commentNumberRepository.countAllByPostId(postId) + 1)
                     .build();
@@ -146,27 +157,43 @@ public class CommentService {
 
         // 2. 대댓글 저장
         Comment comment = Comment.builder()
-                .post(postRepository.getReferenceById(postId))
+                .post(post)
                 .member(loginMember)
                 .content(postCommentWriteReplyReqDto.getContent())
                 .anonymity(postCommentWriteReplyReqDto.getAnonymity())
                 .commentNumber(commentNumber)
-                .commentGroup(commentRepository.getReferenceById(commentId))
+                .commentGroup(parentComment)
                 .build();
 
         comment = commentRepository.save(comment);
 
+        // 알림 전송
+        Set<Long> visited = new HashSet<>();
+        if (!parentComment.isMine(loginMember)) {
+            visited.add(parentComment.getAuthorId());
+            NotificationEvent notificationEvent = NotificationEvent.builder()
+                    .ownerId(parentComment.getAuthorId())
+                    .message(String.format(NotificationMessage.COMMENT_REPLY_MESSAGE.getMessage(), post.getTitle()))
+                    .contentId(post.getId())
+                    .serviceType(ServiceType.POST)
+                    .notificationType(NotificationType.COMMENT_REPLAY)
+                    .build();
+            applicationEventPublisher.publishEvent(notificationEvent);
+        }
 
-//        if (post.isMine(loginMember)) {
-//            NotificationEvent notificationEvent = NotificationEvent.builder()
-//                    .ownerId(post.getMember().getId())
-//                    .message(String.format(PostNotificationMessage.POST_REPLY_MESSAGE.getMessage(), post.getTitle()))
-//                    .contentId(post.getId())
-//                    .serviceType(ServiceType.POST)
-//                    .notificationType(NotificationType.POST_REPLAY)
-//                    .build();
-//            applicationEventPublisher.publishEvent(notificationEvent);
-//        }
+        if (!post.isMine(loginMember)) {
+            if (!visited.contains(post.getAuthorId())) {
+                visited.add(post.getAuthorId());
+                NotificationEvent notificationEvent = NotificationEvent.builder()
+                        .ownerId(post.getAuthorId())
+                        .message(String.format(NotificationMessage.POST_REPLY_MESSAGE.getMessage(), post.getTitle()))
+                        .contentId(post.getId())
+                        .serviceType(ServiceType.POST)
+                        .notificationType(NotificationType.POST_REPLAY)
+                        .build();
+                applicationEventPublisher.publishEvent(notificationEvent);
+            }
+        }
 
         return new CommentIdElement(comment.getId());
     }

@@ -96,4 +96,8 @@ public class Post extends BaseTimeEntity {
     public Boolean isMine(Member member) {
         return this.getMember().getId().equals(member.getId());
     }
+
+    public Long getAuthorId(){
+        return this.getMember().getId();
+    }
 }
