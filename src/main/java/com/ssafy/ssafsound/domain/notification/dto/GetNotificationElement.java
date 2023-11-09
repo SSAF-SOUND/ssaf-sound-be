@@ -1,12 +1,11 @@
 package com.ssafy.ssafsound.domain.notification.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ssafy.ssafsound.domain.notification.domain.NotificationItem;
 import com.ssafy.ssafsound.domain.notification.domain.NotificationType;
 import com.ssafy.ssafsound.domain.notification.domain.ServiceType;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDateTime;
 
 @Getter
@@ -17,7 +16,7 @@ public class GetNotificationElement {
     private ServiceType serviceType;
     private NotificationType notificationType;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createAt;
 
     public static GetNotificationElement from(NotificationItem notificationItem) {
