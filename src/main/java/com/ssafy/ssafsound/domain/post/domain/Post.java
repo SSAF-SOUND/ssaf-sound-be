@@ -96,15 +96,4 @@ public class Post extends BaseTimeEntity {
     public Boolean isMine(Member member) {
         return this.getMember().getId().equals(member.getId());
     }
-
-    public NotificationEvent toNotificationEvent() {
-        String message = String.format("'%s' 게시글에 새로운 댓글이 달렸습니다.", this.getTitle());
-        return NotificationEvent.builder()
-                .ownerId(this.getMember().getId())
-                .message(message)
-                .contentId(this.getId())
-                .serviceType(ServiceType.POST)
-                .notificationType(NotificationType.POST_REPLAY)
-                .build();
-    }
 }

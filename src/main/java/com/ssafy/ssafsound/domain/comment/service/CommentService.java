@@ -17,6 +17,10 @@ import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
+import com.ssafy.ssafsound.domain.notification.domain.NotificationType;
+import com.ssafy.ssafsound.domain.notification.domain.ServiceType;
+import com.ssafy.ssafsound.domain.notification.event.NotificationEvent;
+import com.ssafy.ssafsound.domain.notification.message.PostNotificationMessage;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.dto.PostCommonLikeResDto;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
@@ -75,9 +79,15 @@ public class CommentService {
         comment = commentRepository.save(comment);
         commentRepository.updateByCommentGroup(comment.getId());
 
-        // 알림 처리
         if (!post.isMine(loginMember)) {
-            applicationEventPublisher.publishEvent(post.toNotificationEvent());
+            NotificationEvent notificationEvent = NotificationEvent.builder()
+                    .ownerId(post.getMember().getId())
+                    .message(String.format(PostNotificationMessage.POST_REPLY_MESSAGE.getMessage(), post.getTitle()))
+                    .contentId(post.getId())
+                    .serviceType(ServiceType.POST)
+                    .notificationType(NotificationType.POST_REPLAY)
+                    .build();
+            applicationEventPublisher.publishEvent(notificationEvent);
         }
 
         return new CommentIdElement(comment.getId());
@@ -111,9 +121,8 @@ public class CommentService {
 
     @Transactional
     public CommentIdElement writeCommentReply(Long postId, Long commentId, Long loginMemberId, PostCommentWriteReqDto postCommentWriteReplyReqDto) {
-        if (!postRepository.existsById(postId)) {
-            throw new PostException(PostErrorInfo.NOT_FOUND_POST);
-        }
+        Post post = postRepository.findByIdWithMember(postId)
+                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
         if (!commentRepository.existsById(commentId)) {
             throw new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT);
@@ -146,6 +155,18 @@ public class CommentService {
                 .build();
 
         comment = commentRepository.save(comment);
+
+
+//        if (post.isMine(loginMember)) {
+//            NotificationEvent notificationEvent = NotificationEvent.builder()
+//                    .ownerId(post.getMember().getId())
+//                    .message(String.format(PostNotificationMessage.POST_REPLY_MESSAGE.getMessage(), post.getTitle()))
+//                    .contentId(post.getId())
+//                    .serviceType(ServiceType.POST)
+//                    .notificationType(NotificationType.POST_REPLAY)
+//                    .build();
+//            applicationEventPublisher.publishEvent(notificationEvent);
+//        }
 
         return new CommentIdElement(comment.getId());
     }
