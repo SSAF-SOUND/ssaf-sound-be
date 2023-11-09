@@ -1,11 +1,12 @@
 package com.ssafy.ssafsound.domain.notification.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.ssafy.ssafsound.domain.notification.domain.NotificationItem;
+import com.ssafy.ssafsound.domain.notification.domain.Notification;
 import com.ssafy.ssafsound.domain.notification.domain.NotificationType;
 import com.ssafy.ssafsound.domain.notification.domain.ServiceType;
 import lombok.Builder;
 import lombok.Getter;
+
 import java.time.LocalDateTime;
 
 @Getter
@@ -19,13 +20,13 @@ public class GetNotificationElement {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createAt;
 
-    public static GetNotificationElement from(NotificationItem notificationItem) {
+    public static GetNotificationElement from(Notification notification) {
         return GetNotificationElement.builder()
-                .message(notificationItem.getMessage())
-                .contentId(notificationItem.getContentId())
-                .serviceType(notificationItem.getServiceType())
-                .notificationType(notificationItem.getNotificationType())
-                .createAt(notificationItem.getCreatedAt())
+                .message(notification.getMessage())
+                .contentId(notification.getContentId())
+                .serviceType(notification.getServiceType())
+                .notificationType(notification.getNotificationType())
+                .createAt(notification.getCreatedAt())
                 .build();
     }
 }

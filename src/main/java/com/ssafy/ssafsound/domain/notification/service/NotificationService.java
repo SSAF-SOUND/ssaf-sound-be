@@ -7,13 +7,13 @@ import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.notification.domain.Notification;
 import com.ssafy.ssafsound.domain.notification.dto.GetNotificationResDto;
 import com.ssafy.ssafsound.domain.notification.event.NotificationEvent;
-import com.ssafy.ssafsound.domain.notification.exception.NotificationErrorInfo;
-import com.ssafy.ssafsound.domain.notification.exception.NotificationException;
 import com.ssafy.ssafsound.domain.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,18 +28,13 @@ public class NotificationService {
             throw new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID);
         }
 
-        Notification notification = notificationRepository.findByOwnerId(authenticatedMember.getMemberId())
-                .orElseThrow(() -> new NotificationException(NotificationErrorInfo.NOT_FOUND_NOTIFICATION_BY_OWNER));
-        notificationRepository.updateReadTrue(authenticatedMember.getMemberId());
-
-        return GetNotificationResDto.from(notification);
+        List<Notification> notifications = notificationRepository.findAllByOwnerAndReadTrue(authenticatedMember.getMemberId());
+        return GetNotificationResDto.from(notifications);
     }
 
     @Transactional
     public void sendNotification(NotificationEvent notificationEvent) {
-        if (!notificationRepository.existsByOwnerId(notificationEvent.getOwnerId())) {
-            notificationRepository.saveNotification(notificationEvent);
-        }
-        notificationRepository.saveNotificationItem(notificationEvent);
+        Notification notification = Notification.from(notificationEvent);
+        notificationRepository.save(notification);
     }
 }

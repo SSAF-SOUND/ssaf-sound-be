@@ -10,13 +10,11 @@ import java.util.stream.Collectors;
 @Getter
 @Builder
 public class GetNotificationResDto {
-    private Long ownerId;
     private List<GetNotificationElement> notifications;
 
-    public static GetNotificationResDto from(Notification notification) {
+    public static GetNotificationResDto from(List<Notification> notifications) {
         return GetNotificationResDto.builder()
-                .ownerId(notification.getOwnerId())
-                .notifications(notification.getNotificationItems().stream()
+                .notifications(notifications.stream()
                         .map(GetNotificationElement::from)
                         .collect(Collectors.toList()))
                 .build();
