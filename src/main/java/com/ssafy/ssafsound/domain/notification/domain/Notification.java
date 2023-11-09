@@ -6,6 +6,7 @@ import com.ssafy.ssafsound.domain.notification.event.NotificationEvent;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -18,8 +19,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Document(collection = "notifications")
 public class Notification {
+    @Transient
+    public static final String SEQUENCE_NAME = "NOTIFICATIONS_SEQUENCE";
+
     @Id
-    private String id;
+    private Long id;
 
     @Indexed
     private Long ownerId;
@@ -40,6 +44,10 @@ public class Notification {
     @Indexed(name = "createdAtIndex", expireAfter = "30d")
     @CreatedDate
     private LocalDateTime createdAt;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public static Notification from(NotificationEvent notificationEvent) {
         return Notification.builder()
