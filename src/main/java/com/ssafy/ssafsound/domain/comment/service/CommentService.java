@@ -4,7 +4,10 @@ import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.comment.domain.Comment;
 import com.ssafy.ssafsound.domain.comment.domain.CommentLike;
 import com.ssafy.ssafsound.domain.comment.domain.CommentNumber;
-import com.ssafy.ssafsound.domain.comment.dto.*;
+import com.ssafy.ssafsound.domain.comment.dto.CommentIdElement;
+import com.ssafy.ssafsound.domain.comment.dto.GetCommentResDto;
+import com.ssafy.ssafsound.domain.comment.dto.PatchCommentUpdateReqDto;
+import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReqDto;
 import com.ssafy.ssafsound.domain.comment.exception.CommentErrorInfo;
 import com.ssafy.ssafsound.domain.comment.exception.CommentException;
 import com.ssafy.ssafsound.domain.comment.repository.CommentLikeRepository;
@@ -14,6 +17,8 @@ import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
+import com.ssafy.ssafsound.domain.notification.dto.CreateNotification;
+import com.ssafy.ssafsound.domain.notification.service.NotificationService;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.dto.PostCommonLikeResDto;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
@@ -35,13 +40,13 @@ public class CommentService {
     private final CommentLikeRepository commentLikeRepository;
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
 
 
     @Transactional
     public CommentIdElement writeComment(Long postId, Long loginMemberId, PostCommentWriteReqDto postCommentWriteReqDto) {
-        if (!postRepository.existsById(postId)) {
-            throw new PostException(PostErrorInfo.NOT_FOUND_POST);
-        }
+        Post post = postRepository.findByIdWithMember(postId)
+                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
         Member loginMember = memberRepository.findById(loginMemberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
@@ -72,18 +77,23 @@ public class CommentService {
         comment = commentRepository.save(comment);
         commentRepository.updateByCommentGroup(comment.getId());
 
+        if (!post.isMine(loginMember)) {
+            notificationService.sendNotification(CreateNotification.postReplyNotificationFrom(post));
+        }
+
         return new CommentIdElement(comment.getId());
     }
 
     @Transactional(readOnly = true)
     public GetCommentResDto findComments(Long postId, AuthenticatedMember loginMember) {
-          if (!postRepository.existsById(postId)) {
+        if (!postRepository.existsById(postId)) {
             throw new PostException(PostErrorInfo.NOT_FOUND_POST);
         }
-          
+
         List<Comment> comments = commentRepository.findAllPostIdWithDetailsFetchOrderByCommentGroupId(postId);
         return GetCommentResDto.of(comments, loginMember);
     }
+
     @Transactional
     public CommentIdElement updateComment(Long commentId, Long loginMemberId, PatchCommentUpdateReqDto patchCommentUpdateReqDto) {
         Comment comment = commentRepository.findById(commentId)
@@ -105,7 +115,7 @@ public class CommentService {
         if (!postRepository.existsById(postId)) {
             throw new PostException(PostErrorInfo.NOT_FOUND_POST);
         }
-      
+
         if (!commentRepository.existsById(commentId)) {
             throw new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT);
         }

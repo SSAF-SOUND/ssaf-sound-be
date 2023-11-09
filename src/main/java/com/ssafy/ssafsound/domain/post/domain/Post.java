@@ -89,4 +89,8 @@ public class Post extends BaseTimeEntity {
         return (int) this.getComments().stream()
                 .filter(comment -> !comment.getDeletedComment()).count();
     }
+
+    public Boolean isMine(Member member) {
+        return this.getMember().getId().equals(member.getId());
+    }
 }
