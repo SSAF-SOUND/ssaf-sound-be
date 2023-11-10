@@ -5,8 +5,6 @@ import com.ssafy.ssafsound.domain.lunch.domain.LunchPoll;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListElementResDto;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListReqDto;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListResDto;
-import com.ssafy.ssafsound.domain.lunch.exception.LunchErrorInfo;
-import com.ssafy.ssafsound.domain.lunch.exception.LunchException;
 import com.ssafy.ssafsound.domain.lunch.repository.LunchPollRepository;
 import com.ssafy.ssafsound.domain.lunch.repository.LunchRepository;
 import com.ssafy.ssafsound.domain.member.domain.Member;
@@ -36,8 +34,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.lenient;
@@ -112,9 +108,9 @@ class LunchServiceTest {
         lenient().when(memberRepository.findById(1L)).thenReturn(Optional.of(member1));
         lenient().when(memberRepository.findById(2L)).thenReturn(Optional.of(member2));
 
-        lenient().when(lunchPollRepository.findByMemberAndPolledAt(member1, today))
+        lenient().when(lunchPollRepository.findByMemberAndCampusAndPolledAt(member1, testCampus, today))
                 .thenReturn(lunchPoll);
-        lenient().when(lunchPollRepository.findByMemberAndPolledAt(member2, today))
+        lenient().when(lunchPollRepository.findByMemberAndCampusAndPolledAt(member2, testCampus, today))
                 .thenReturn(null);
     }
 
@@ -132,7 +128,7 @@ class LunchServiceTest {
         given(clock.getZone()).willReturn(ZoneId.of("Asia/Seoul"));
 
         given(metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), inputCampus))
-                .willReturn(new MetaData(Campus.SEOUL));
+                .willReturn(testCampus);
 
         given(lunchRepository.findAllByCampusAndDate(
                 metaDataConsumer.getMetaData(MetaDataType.CAMPUS.name(), inputCampus), inputDate))
