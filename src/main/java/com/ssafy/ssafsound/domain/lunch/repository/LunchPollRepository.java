@@ -18,10 +18,11 @@ public interface LunchPollRepository extends JpaRepository<LunchPoll, Long> {
 
     Optional<LunchPoll> findByMemberAndLunch(Member member, Lunch lunch);
 
-    @Query( "SELECT lp " +
+    @Query( "SELECT" +
+            "   lp " +
             "FROM " +
             "   lunch_poll lp " +
-            "LEFT JOIN " +
+            "INNER JOIN " +
             "   lunch l " +
             "ON" +
             "   lp.lunch = l " +
