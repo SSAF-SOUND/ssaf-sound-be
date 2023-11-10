@@ -71,7 +71,7 @@ class NotificationControllerTest extends ControllerTest {
                 .when().get("/notifications/new")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
-                .apply(document("notification/check-new_notification",
+                .apply(document("notification/check-notification",
                                 requestCookieAccessTokenMandatory(),
                                 getEnvelopPatternWithData().andWithPrefix("data.",
                                         fieldWithPath("isNew").type(JsonFieldType.BOOLEAN).description("새로운 알림이 있는지 여부, true면 확인하지 않은 알림이 있다는 의미.")
