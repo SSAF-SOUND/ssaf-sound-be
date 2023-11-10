@@ -9,7 +9,8 @@ public enum AuthErrorInfo {
     AUTH_SERVER_PARSING_ERROR("702", "서버에서 파싱하는데 문제가 발생했습니다."),
     AUTH_TOKEN_INVALID("705", "토큰이 유효하지 않습니다."),
     AUTH_TOKEN_EXPIRED("706", "토큰이 만료됐습니다."),
-    AUTH_TOKEN_SERVICE_ERROR("707", "서버에서 토큰을 처리하는 과정에서 문제가 발생했습니다.");
+    AUTH_TOKEN_SERVICE_ERROR("707", "서버에서 토큰을 처리하는 과정에서 문제가 발생했습니다."),
+    UNAUTHORIZED_ERROR("708", "권한이 없습니다.");
 
     private final String code;
     private final String message;
