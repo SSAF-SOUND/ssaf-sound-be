@@ -1,6 +1,6 @@
 package com.ssafy.ssafsound.domain.notification.service;
 
-import com.ssafy.ssafsound.domain.notification.domain.NotificationSequence;
+import com.ssafy.ssafsound.domain.notification.domain.AutoIncrementSequence;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -17,12 +17,12 @@ public class SequenceGeneratorService {
     private final MongoOperations mongoOperations;
 
     public Long generateSequence(String sequenceName) {
-        NotificationSequence notificationSequence = mongoOperations.findAndModify(
+        AutoIncrementSequence autoIncrementSequence = mongoOperations.findAndModify(
                 new Query(Criteria.where("_id").is(sequenceName)),
                 new Update().inc("seq", 1),
                 FindAndModifyOptions.options().returnNew(true).upsert(true),
-                NotificationSequence.class);
+                AutoIncrementSequence.class);
 
-        return !Objects.isNull(notificationSequence) ? notificationSequence.getSeq() : 1;
+        return !Objects.isNull(autoIncrementSequence) ? autoIncrementSequence.getSequence() : 1;
     }
 }

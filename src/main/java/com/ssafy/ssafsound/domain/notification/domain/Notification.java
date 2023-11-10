@@ -49,6 +49,10 @@ public class Notification {
         this.id = id;
     }
 
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public static Notification from(NotificationEvent notificationEvent) {
         return Notification.builder()
                 .ownerId(notificationEvent.getOwnerId())
