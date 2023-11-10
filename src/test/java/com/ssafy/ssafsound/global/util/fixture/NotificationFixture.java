@@ -29,7 +29,7 @@ public class NotificationFixture {
                 .contentId(2L)
                 .serviceType(ServiceType.POST)
                 .notificationType(NotificationType.COMMENT_REPLAY)
-                .createdAt(LocalDateTime.now().minusHours(1))
+                .createdAt(LocalDateTime.now().plusHours(1))
                 .build();
 
     }

@@ -24,9 +24,16 @@ public class NotificationController {
 
     @GetMapping()
     public EnvelopeResponse<GetNotificationResDto> getNotificationsByCursor(@Authentication AuthenticatedMember authenticatedMember,
-                                                                              @Valid @ModelAttribute GetNotificationReqDto getNotificationReqDto) {
+                                                                            @Valid @ModelAttribute GetNotificationReqDto getNotificationReqDto) {
         return EnvelopeResponse.<GetNotificationResDto>builder()
                 .data(notificationService.getNotifications(authenticatedMember, getNotificationReqDto))
+                .build();
+    }
+
+    @GetMapping("/new")
+    public EnvelopeResponse<Boolean> checkNewNotification(@Authentication AuthenticatedMember authenticatedMember) {
+        return EnvelopeResponse.<Boolean>builder()
+                .data(notificationService.checkNewNotification(authenticatedMember))
                 .build();
     }
 }

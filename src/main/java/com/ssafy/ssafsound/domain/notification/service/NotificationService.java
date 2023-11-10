@@ -41,4 +41,9 @@ public class NotificationService {
         Notification notification = Notification.from(notificationEvent);
         notificationRepository.save(notification);
     }
+
+    @Transactional(readOnly = true)
+    public Boolean checkNewNotification(AuthenticatedMember authenticatedMember) {
+        return notificationRepository.existsNewNotification(authenticatedMember.getMemberId());
+    }
 }

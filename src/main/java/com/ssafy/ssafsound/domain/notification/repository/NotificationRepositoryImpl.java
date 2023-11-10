@@ -31,12 +31,18 @@ public class NotificationRepositoryImpl implements NotificationCustomRepository 
         List<Notification> notifications = mongoOperations.find(query, Notification.class);
 
         mongoOperations.updateMulti(
-                query,
+                new Query(Criteria.where("ownerId").is(ownerId)),
                 new Update().set("read", true),
                 Notification.class
         );
 
         return notifications;
+    }
+
+    @Override
+    public Boolean existsNewNotification(Long ownerId) {
+        Query query = new Query(Criteria.where("ownerId").is(ownerId).and("read").is(false));
+        return mongoOperations.exists(query, Notification.class);
     }
 
 

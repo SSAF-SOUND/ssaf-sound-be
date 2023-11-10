@@ -7,4 +7,6 @@ import java.util.List;
 public interface NotificationCustomRepository {
 
     List<Notification> findAllByOwnerAndReadTrue(Long ownerId, Long cursor, Integer size);
+
+    Boolean existsNewNotification(Long ownerId);
 }
