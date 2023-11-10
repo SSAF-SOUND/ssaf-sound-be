@@ -2,6 +2,7 @@ package com.ssafy.ssafsound.domain.notification.controller;
 
 import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.auth.validator.Authentication;
+import com.ssafy.ssafsound.domain.notification.dto.GetCheckNotificationResDto;
 import com.ssafy.ssafsound.domain.notification.dto.GetNotificationReqDto;
 import com.ssafy.ssafsound.domain.notification.dto.GetNotificationResDto;
 import com.ssafy.ssafsound.domain.notification.service.NotificationService;
@@ -31,9 +32,9 @@ public class NotificationController {
     }
 
     @GetMapping("/new")
-    public EnvelopeResponse<Boolean> checkNewNotification(@Authentication AuthenticatedMember authenticatedMember) {
-        return EnvelopeResponse.<Boolean>builder()
-                .data(notificationService.checkNewNotification(authenticatedMember))
+    public EnvelopeResponse<GetCheckNotificationResDto> checkNotification(@Authentication AuthenticatedMember authenticatedMember) {
+        return EnvelopeResponse.<GetCheckNotificationResDto>builder()
+                .data(notificationService.checkNotification(authenticatedMember))
                 .build();
     }
 }

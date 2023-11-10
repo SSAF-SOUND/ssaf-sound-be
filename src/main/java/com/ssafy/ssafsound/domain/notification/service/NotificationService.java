@@ -5,6 +5,7 @@ import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
 import com.ssafy.ssafsound.domain.notification.domain.Notification;
+import com.ssafy.ssafsound.domain.notification.dto.GetCheckNotificationResDto;
 import com.ssafy.ssafsound.domain.notification.dto.GetNotificationReqDto;
 import com.ssafy.ssafsound.domain.notification.dto.GetNotificationResDto;
 import com.ssafy.ssafsound.domain.notification.event.NotificationEvent;
@@ -43,7 +44,9 @@ public class NotificationService {
     }
 
     @Transactional(readOnly = true)
-    public Boolean checkNewNotification(AuthenticatedMember authenticatedMember) {
-        return notificationRepository.existsNewNotification(authenticatedMember.getMemberId());
+    public GetCheckNotificationResDto checkNotification(AuthenticatedMember authenticatedMember) {
+        Boolean isNew = notificationRepository.existsNewNotification(authenticatedMember.getMemberId());
+
+        return new GetCheckNotificationResDto(isNew);
     }
 }
