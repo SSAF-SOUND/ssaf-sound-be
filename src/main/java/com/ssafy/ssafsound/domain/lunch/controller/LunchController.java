@@ -6,6 +6,7 @@ import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListReqDto;
 import com.ssafy.ssafsound.domain.lunch.dto.GetLunchListResDto;
 import com.ssafy.ssafsound.domain.lunch.dto.PostLunchPollResDto;
 import com.ssafy.ssafsound.domain.lunch.service.LunchPollService;
+import com.ssafy.ssafsound.domain.lunch.service.LunchScrapService;
 import com.ssafy.ssafsound.domain.lunch.service.LunchService;
 import com.ssafy.ssafsound.global.common.response.EnvelopeResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class LunchController {
 
     private final LunchService lunchService;
     private final LunchPollService lunchPollService;
+    private final LunchScrapService lunchScrapService;
 
     @GetMapping
     public EnvelopeResponse<GetLunchListResDto> getLunchesByCampusAndDate(@Authentication AuthenticatedMember member, @Valid GetLunchListReqDto getLunchListReqDto) {
@@ -48,6 +50,13 @@ public class LunchController {
         return EnvelopeResponse.<PostLunchPollResDto>builder()
                 .data(lunchPollService.deleteLunchPoll(user.getMemberId(), lunchId))
                 .build();
+    }
+
+    @PostMapping("/manual-scrap")
+    public EnvelopeResponse<Void> scrapWelstoryLunchManually(@Authentication AuthenticatedMember member, @Valid GetLunchListReqDto getLunchListReqDto) {
+
+        lunchScrapService.scrapLunchManually(member, getLunchListReqDto);
+        return EnvelopeResponse.<Void>builder().build();
     }
 
 }
