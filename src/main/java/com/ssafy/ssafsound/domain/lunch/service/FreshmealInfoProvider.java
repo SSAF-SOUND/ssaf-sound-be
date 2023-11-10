@@ -1,9 +1,10 @@
-package com.ssafy.ssafsound.domain.lunch.task.domain;
+package com.ssafy.ssafsound.domain.lunch.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ssafy.ssafsound.domain.lunch.task.dto.GetFreshmealResDto;
-import com.ssafy.ssafsound.domain.lunch.task.dto.GetScrapReqDto;
-import com.ssafy.ssafsound.domain.lunch.task.dto.GetScrapResDto;
+import com.ssafy.ssafsound.domain.lunch.domain.FreshmealProperties;
+import com.ssafy.ssafsound.domain.lunch.dto.GetFreshmealResDto;
+import com.ssafy.ssafsound.domain.lunch.dto.GetScrapReqDto;
+import com.ssafy.ssafsound.domain.lunch.dto.GetScrapResDto;
 import com.ssafy.ssafsound.global.common.json.JsonParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
