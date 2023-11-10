@@ -31,7 +31,7 @@
 
 ## 🏷️ PROJECT GOAL
 
-SSAFY를 희망하는 예비 싸피생부터 이수한 싸피생들과 현재 교육을 받고 있는 싸피생들까지 ❗️
+SSAFY를 희망하는 예비 싸피생부터 재학생 및 수료생들과 현재 교육을 받고 있는 싸피생들까지 ❗️
 [에브리타임](https://everytime.kr) 을 모티브로 삼아 SSAFY 생활 정보를 간접적으로 경험하고 공유할 수 있으며 '익명' 을 통해 적극적인 커뮤니케이션의 장이 될 수 있도록 기획했습니다.
 
 <br><br>
@@ -72,75 +72,12 @@ SSAFY를 희망하는 예비 싸피생부터 이수한 싸피생들과 현재 �
 
 ## 🏷️ SSAF.SOUND TROUBLE SHOOTING
 
-[MultipleBagFetchException 발생시 해결 방법](#1-multiplebagfetchexception-원인과-해결방법)
+[김한성 Fork Repository](https://github.com/khs960616/ssaf-sound-be)
 
-[Cookie 발급 시, 브라우저 정책과 RFC 6265 Cookie Processor 정책 이해하기](#2-cookie-발급-시-브라우저-정책과-rfc-6265-cookie-processor-정책-이해하기)
+[신현철 Fork Repository](https://github.com/moonn6pence/ssaf-sound-be)
 
-[HandlerMethodArgumentResolver를 활용한 커스텀 애노테이션과 고민들](#3-handlermethodargumentresolver를-활용한-커스텀-애노테이션과-고민들)
+[이용준 Fork Repository](https://github.com/jjuny0310/ssaf-sound-be)
 
-[RestAssuredMockMvc 를 활용한 Controller Test 속도 개선](#4-restassuredmockmvc-를-활용한-controller-test-속도-개선)
-
-[Custom Snippet과 모듈화를 통한 테스트 코드 개선](#5-custom-snippet과-모듈화를-통한-테스트-코드-개선)
-
-
+[김태용 Fork Repository](https://github.com/YongsHub/ssaf-sound-be)
 <br><br>
-
-
-
-# 1. MultipleBagFetchException 원인과 해결방법
-<details>
-<summary>Contents 확인</summary>
-<div markdown="1">
-
-</div>
-</details>
-
-<br>
-<br>
-<br>
-
-# 2. Cookie 발급 시, 브라우저 정책과 RFC 6265 Cookie Processor 정책 이해하기
-<details>
-<summary>Contents 확인</summary>
-<div markdown="2">
-
-</div>
-</details>
-
-<br>
-<br>
-<br>
-
-# 3. HandlerMethodArgumentResolver를 활용한 커스텀 애노테이션과 고민들
-<details>
-<summary>Contents 확인</summary>
-<div markdown="3">
-
-</div>
-</details>
-
-<br>
-<br>
-<br>
-
-# 4. RestAssuredMockMvc 를 활용한 Controller Test 속도 개선
-<details>
-<summary>Contents 확인</summary>
-<div markdown="4">
-
-</div>
-</details>
-
-<br>
-<br>
-<br>
-
-# 5. Custom Snippet과 모듈화를 통한 테스트 코드 개선
-<details>
-<summary>Contents 확인</summary>
-<div markdown="5">
-
-</div>
-</details>
-
 </div>
