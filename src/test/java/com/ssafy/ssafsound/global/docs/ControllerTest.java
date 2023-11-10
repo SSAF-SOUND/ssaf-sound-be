@@ -18,6 +18,8 @@ import com.ssafy.ssafsound.domain.member.service.SemesterConstantProvider;
 import com.ssafy.ssafsound.domain.member.validator.SemesterValidator;
 import com.ssafy.ssafsound.domain.meta.controller.MetaDataController;
 import com.ssafy.ssafsound.domain.meta.service.EnumMetaDataConsumer;
+import com.ssafy.ssafsound.domain.notification.controller.NotificationController;
+import com.ssafy.ssafsound.domain.notification.service.NotificationService;
 import com.ssafy.ssafsound.domain.post.controller.PostController;
 import com.ssafy.ssafsound.domain.post.service.PostService;
 import com.ssafy.ssafsound.domain.recruit.controller.RecruitController;
@@ -43,7 +45,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
-
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -63,6 +64,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
         LunchController.class,
         MemberController.class,
         MetaDataController.class,
+        NotificationController.class,
         PostController.class,
         RecruitController.class,
         RecruitApplicationController.class,
@@ -100,6 +102,9 @@ public class ControllerTest {
 
     @MockBean
     protected EnumMetaDataConsumer enumMetaDataConsumer;
+
+    @MockBean
+    protected NotificationService notificationService;
 
     @MockBean
     protected PostService postService;
