@@ -81,7 +81,7 @@ public class CommentService {
         comment = commentRepository.save(comment);
         commentRepository.updateByCommentGroup(comment.getId());
 
-        
+
         // 알림 전송
         if (!post.isMine(loginMember)) {
             NotificationEvent notificationEvent = NotificationEvent.builder()

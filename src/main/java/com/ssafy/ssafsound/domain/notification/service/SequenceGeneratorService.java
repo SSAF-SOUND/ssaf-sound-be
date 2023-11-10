@@ -19,7 +19,7 @@ public class SequenceGeneratorService {
     public Long generateSequence(String sequenceName) {
         AutoIncrementSequence autoIncrementSequence = mongoOperations.findAndModify(
                 new Query(Criteria.where("_id").is(sequenceName)),
-                new Update().inc("seq", 1),
+                new Update().inc("sequence", 1),
                 FindAndModifyOptions.options().returnNew(true).upsert(true),
                 AutoIncrementSequence.class);
 

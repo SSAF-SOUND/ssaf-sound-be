@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface NotificationCustomRepository {
 
-    List<Notification> findAllByOwnerAndReadTrue(Long owner);
+    List<Notification> findAllByOwnerAndReadTrue(Long ownerId, Long cursor, Integer size);
 }

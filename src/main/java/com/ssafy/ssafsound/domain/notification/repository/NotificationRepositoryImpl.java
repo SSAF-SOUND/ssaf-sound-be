@@ -4,7 +4,7 @@ import com.ssafy.ssafsound.domain.notification.domain.Notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -16,16 +16,28 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class NotificationRepositoryImpl implements NotificationCustomRepository {
-    private final MongoTemplate mongoTemplate;
+    private final MongoOperations mongoOperations;
 
     @Override
-    public List<Notification> findAllByOwnerAndReadTrue(Long ownerId) {
-        Query query = new Query(Criteria.where("ownerId").is(ownerId))
-                .with(Sort.by(Sort.Order.desc("createdAt")));
-        Update update = new Update().set("read", true);
+    public List<Notification> findAllByOwnerAndReadTrue(Long ownerId, Long cursor, Integer size) {
+        Criteria criteria = Criteria.where("ownerId").is(ownerId);
+        if (cursor != -1) {
+            criteria.and("_id").lt(cursor);
+        }
+        Query query = new Query(criteria)
+                .limit(size + 1)
+                .with(Sort.by(Sort.Order.desc("_id")));
 
-        List<Notification> notifications = mongoTemplate.find(query, Notification.class);
-        mongoTemplate.updateMulti(query, update, Notification.class);
+        List<Notification> notifications = mongoOperations.find(query, Notification.class);
+
+        mongoOperations.updateMulti(
+                query,
+                new Update().set("read", true),
+                Notification.class
+        );
+
         return notifications;
     }
+
+
 }

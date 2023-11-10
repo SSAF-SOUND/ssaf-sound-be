@@ -11,12 +11,18 @@ import java.util.stream.Collectors;
 @Builder
 public class GetNotificationResDto {
     private List<GetNotificationElement> notifications;
+    private Long cursor;
 
-    public static GetNotificationResDto from(List<Notification> notifications) {
+    public static GetNotificationResDto of(List<Notification> notifications, Integer pageSize) {
+        int size = notifications.size();
+        boolean hasNext = size == pageSize + 1;
+
         return GetNotificationResDto.builder()
-                .notifications(notifications.stream()
+                .notifications((hasNext ? notifications.subList(0, size - 1) : notifications)
+                        .stream()
                         .map(GetNotificationElement::from)
                         .collect(Collectors.toList()))
+                .cursor(hasNext ? notifications.get(size - 1).getId() : null)
                 .build();
     }
 }

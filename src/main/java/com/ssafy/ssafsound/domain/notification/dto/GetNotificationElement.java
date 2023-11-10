@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 public class GetNotificationElement {
+    private Long notificationId;
     private String message;
     private Long contentId;
     private ServiceType serviceType;
@@ -22,6 +23,7 @@ public class GetNotificationElement {
 
     public static GetNotificationElement from(Notification notification) {
         return GetNotificationElement.builder()
+                .notificationId(notification.getId())
                 .message(notification.getMessage())
                 .contentId(notification.getContentId())
                 .serviceType(notification.getServiceType())
