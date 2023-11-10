@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import java.time.LocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 public class NotificationEventListener extends AbstractMongoEventListener<Notification> {
@@ -24,5 +26,6 @@ public class NotificationEventListener extends AbstractMongoEventListener<Notifi
     @Override
     public void onBeforeConvert(BeforeConvertEvent<Notification> event) {
         event.getSource().setId(sequenceGeneratorService.generateSequence(Notification.SEQUENCE_NAME));
+        event.getSource().setCreatedAt(LocalDateTime.now());
     }
 }
