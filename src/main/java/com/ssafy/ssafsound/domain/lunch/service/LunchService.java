@@ -75,7 +75,7 @@ public class LunchService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-        LunchPoll lunchPoll = lunchPollRepository.findByMemberAndPolledAt(member, currentTime);
+        LunchPoll lunchPoll = lunchPollRepository.findByMemberAndCampusAndPolledAt(member, campus, currentTime);
         Integer polledAt = lunchPoll != null ? lunches.indexOf(lunchPoll.getLunch()) : -1;
 
         // 인증 유저 응답

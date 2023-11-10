@@ -11,6 +11,8 @@ import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
+import com.ssafy.ssafsound.domain.meta.domain.Campus;
+import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,6 +52,7 @@ class LunchPollServiceTest {
     @InjectMocks
     private LunchPollService lunchPollService;
 
+    private MetaData SEOUL;
     private Lunch lunch1;
     private Lunch lunch2;
     private Lunch lunch3;
@@ -66,18 +69,23 @@ class LunchPollServiceTest {
     @BeforeEach
     void setUp() {
 
+        SEOUL = new MetaData(Campus.SEOUL);
+
         lunch1 = Lunch.builder()
                 .id(1L)
+                .campus(SEOUL)
                 .createdAt(today)
                 .build();
 
         lunch2 = Lunch.builder()
                 .id(2L)
+                .campus(SEOUL)
                 .createdAt(today)
                 .build();
 
         lunch3 = Lunch.builder()
                 .id(3L)
+                .campus(SEOUL)
                 .createdAt(today.plusDays(1))
                 .build();
 
@@ -118,8 +126,8 @@ class LunchPollServiceTest {
                                                                   Integer expectedLunch2PollCount) {
 
         // given
-        lenient().when(lunchPollRepository.findByMemberAndPolledAt(member1, today)).thenReturn(lunchPoll);
-        lenient().when(lunchPollRepository.findByMemberAndPolledAt(member2, today)).thenReturn(null);
+        lenient().when(lunchPollRepository.findByMemberAndCampusAndPolledAt(member1, SEOUL, today)).thenReturn(lunchPoll);
+        lenient().when(lunchPollRepository.findByMemberAndCampusAndPolledAt(member2, SEOUL, today)).thenReturn(null);
 
         // when
         PostLunchPollResDto postLunchPollResDto = lunchPollService.saveLunchPoll(memberId, lunchId);
@@ -167,13 +175,13 @@ class LunchPollServiceTest {
         // given
         Long memberId = 1L;
         Long lunchId = 2L;
-        given(lunchPollRepository.findByMemberAndPolledAt(member1, today)).willReturn(lunchPoll);
+        given(lunchPollRepository.findByMemberAndCampusAndPolledAt(member1, SEOUL, today)).willReturn(lunchPoll);
 
         // when, then
         LunchException exception = assertThrows(LunchException.class, () -> lunchPollService.saveLunchPoll(memberId, lunchId));
         assertEquals(LunchErrorInfo.DUPLICATE_LUNCH_POLL, exception.getInfo());
 
-        verify(lunchPollRepository).findByMemberAndPolledAt(member1, today);
+        verify(lunchPollRepository).findByMemberAndCampusAndPolledAt(member1, SEOUL, today);
     }
 
     @Test
