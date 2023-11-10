@@ -1,5 +1,6 @@
 package com.ssafy.ssafsound.domain.notification.controller;
 
+import com.ssafy.ssafsound.domain.notification.dto.GetCheckNotificationResDto;
 import com.ssafy.ssafsound.domain.notification.dto.GetNotificationResDto;
 import com.ssafy.ssafsound.global.docs.ControllerTest;
 import com.ssafy.ssafsound.global.util.fixture.NotificationFixture;
@@ -54,6 +55,26 @@ class NotificationControllerTest extends ControllerTest {
                                         fieldWithPath("serviceType").type(JsonFieldType.STRING).description("알림을 저장한 서비스 타입, SYSTEM | POST | RECRUIT"),
                                         fieldWithPath("notificationType").type(JsonFieldType.STRING).description("구체적인 알림 타입, SYSTEM | POST_REPLAY | COMMENT_REPLAY | RECRUIT~~~ 단, RECRUIT는 추가될 수 있음."),
                                         fieldWithPath("createAt").type(JsonFieldType.STRING).description("알림이 저장된 시간, yyyy-MM-dd HH:mm:ss")
+                                )
+                        )
+                );
+    }
+
+    @Test
+    @DisplayName("새로운 알림 확인")
+    void checkNewNotification() {
+        doReturn(new GetCheckNotificationResDto(true))
+                .when(notificationService)
+                .checkNotification(any());
+
+        restDocs.cookie(ACCESS_TOKEN)
+                .when().get("/notifications/new")
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .apply(document("notification/check-new_notification",
+                                requestCookieAccessTokenMandatory(),
+                                getEnvelopPatternWithData().andWithPrefix("data.",
+                                        fieldWithPath("isNew").type(JsonFieldType.BOOLEAN).description("새로운 알림이 있는지 여부, true면 확인하지 않은 알림이 있다는 의미.")
                                 )
                         )
                 );
