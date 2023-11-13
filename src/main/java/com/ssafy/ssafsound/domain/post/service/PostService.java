@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,7 +47,7 @@ public class PostService {
         Long cursor = getPostCursorReqDto.getCursor();
         int size = getPostCursorReqDto.getSize();
 
-        if (!boardRepository.existsById(boardId)) {
+        if (!boardRepository.existsByIdAndUsedBoardTrue(boardId)) {
             throw new BoardException(BoardErrorInfo.NO_BOARD);
         }
 
@@ -62,7 +61,7 @@ public class PostService {
 
         Long boardId = getPostOffsetReqDto.getBoardId();
 
-        Board board = boardRepository.findById(boardId)
+        Board board = boardRepository.findByIdAndUsedBoardTrue(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorInfo.NO_BOARD));
 
         Page<Post> posts = postRepository.findPostsByboardAndPageable(board, pageRequest);
