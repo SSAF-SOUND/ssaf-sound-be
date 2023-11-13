@@ -88,9 +88,9 @@ class PostServiceTest {
 		// given
 		GetPostCursorReqDto getPostCursorReqDto = GetPostCursorReqDto.builder().boardId(1L).cursor(-1L).size(10).build();
 
-		List<Post> posts = List.of(POST_FIXTURE1, POST_FIXTURE2);
+		List<Post> posts = List.of(POST_FIXTURE2, POST_FIXTURE1);
 
-		given(boardRepository.existsById(getPostCursorReqDto.getBoardId())).willReturn(true);
+		given(boardRepository.existsByIdAndUsedBoardTrue(getPostCursorReqDto.getBoardId())).willReturn(true);
 		given(postRepository.findWithDetailsByBoardId(getPostCursorReqDto.getBoardId(), getPostCursorReqDto.getCursor(),
 			getPostCursorReqDto.getSize())).willReturn(posts);
 
@@ -102,7 +102,7 @@ class PostServiceTest {
 			.isEqualTo(GetPostCursorResDto.ofPosts(posts, getPostCursorReqDto.getSize()));
 
 		// verify
-		verify(boardRepository, times(1)).existsById(getPostCursorReqDto.getBoardId());
+		verify(boardRepository, times(1)).existsByIdAndUsedBoardTrue(getPostCursorReqDto.getBoardId());
 		verify(postRepository, times(1)).findWithDetailsByBoardId(getPostCursorReqDto.getBoardId(), getPostCursorReqDto.getCursor(),
 			getPostCursorReqDto.getSize());
 	}
@@ -113,14 +113,14 @@ class PostServiceTest {
 		// given
 		GetPostCursorReqDto getPostCursorReqDto = GetPostCursorReqDto.builder().boardId(100L).cursor(-1L).size(10).build();
 
-		given(boardRepository.existsById(getPostCursorReqDto.getBoardId())).willReturn(false);
+		given(boardRepository.existsByIdAndUsedBoardTrue(getPostCursorReqDto.getBoardId())).willReturn(false);
 
 		// when, then
 		BoardException exception = assertThrows(BoardException.class, () -> postService.findPostsByCursor(getPostCursorReqDto));
 		assertEquals(BoardErrorInfo.NO_BOARD, exception.getInfo());
 
 		// verify
-		verify(boardRepository, times(1)).existsById(getPostCursorReqDto.getBoardId());
+		verify(boardRepository, times(1)).existsByIdAndUsedBoardTrue(getPostCursorReqDto.getBoardId());
 	}
 
 	@Test
