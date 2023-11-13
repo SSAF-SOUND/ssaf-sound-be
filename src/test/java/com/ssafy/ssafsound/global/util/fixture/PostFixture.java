@@ -86,7 +86,7 @@ public class PostFixture {
     public static final GetPostElement GET_POST_ELEMENT4 = GetPostElement.builder()
             .boardId(1L)
             .boardTitle("취업 게시판")
-            .postId(6L)
+            .postId(7L)
             .title("싸피는 뭐지")
             .content("싸피는 취업 꿈나무를 위한 공간")
             .likeCount(3)
