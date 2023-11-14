@@ -133,6 +133,13 @@ public class PostController {
                 .build();
     }
 
+    @GetMapping("/all/search/offset")
+    public EnvelopeResponse<GetPostOffsetResDto> searchAllPostsByOffset(@Valid @ModelAttribute GetPostAllSearchOffsetReqDto getPostAllSearchOffsetReqDto) {
+        return EnvelopeResponse.<GetPostOffsetResDto>builder()
+                .data(postService.searchAllPostsByOffset(getPostAllSearchOffsetReqDto))
+                .build();
+    }
+
     @GetMapping("/search/cursor")
     public EnvelopeResponse<GetPostCursorResDto> searchPostsByCursor(@Valid @ModelAttribute GetPostSearchCursorReqDto getPostSearchCursorReqDto) {
         return EnvelopeResponse.<GetPostCursorResDto>builder()
