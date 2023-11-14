@@ -81,17 +81,8 @@ public class CommentService {
         comment = commentRepository.save(comment);
         commentRepository.updateByCommentGroup(comment.getId());
 
-
-        // 알림 전송
         if (!post.isMine(loginMember)) {
-            NotificationEvent notificationEvent = NotificationEvent.builder()
-                    .ownerId(post.getAuthorId())
-                    .message(String.format(NotificationMessage.POST_REPLY_MESSAGE.getMessage(), post.getTitle()))
-                    .contentId(post.getId())
-                    .serviceType(ServiceType.POST)
-                    .notificationType(NotificationType.POST_REPLAY)
-                    .build();
-            applicationEventPublisher.publishEvent(notificationEvent);
+            publishNotificationEventFromPostReply(post);
         }
 
         return new CommentIdElement(comment.getId());
@@ -167,32 +158,14 @@ public class CommentService {
 
         comment = commentRepository.save(comment);
 
-        // 알림 전송
         Set<Long> visited = new HashSet<>();
         if (!parentComment.isMine(loginMember)) {
             visited.add(parentComment.getAuthorId());
-            NotificationEvent notificationEvent = NotificationEvent.builder()
-                    .ownerId(parentComment.getAuthorId())
-                    .message(String.format(NotificationMessage.COMMENT_REPLY_MESSAGE.getMessage(), post.getTitle()))
-                    .contentId(post.getId())
-                    .serviceType(ServiceType.POST)
-                    .notificationType(NotificationType.COMMENT_REPLAY)
-                    .build();
-            applicationEventPublisher.publishEvent(notificationEvent);
+            publishNotificationEventFromCommentReply(post, parentComment);
         }
-
-        if (!post.isMine(loginMember)) {
-            if (!visited.contains(post.getAuthorId())) {
-                visited.add(post.getAuthorId());
-                NotificationEvent notificationEvent = NotificationEvent.builder()
-                        .ownerId(post.getAuthorId())
-                        .message(String.format(NotificationMessage.POST_REPLY_MESSAGE.getMessage(), post.getTitle()))
-                        .contentId(post.getId())
-                        .serviceType(ServiceType.POST)
-                        .notificationType(NotificationType.POST_REPLAY)
-                        .build();
-                applicationEventPublisher.publishEvent(notificationEvent);
-            }
+        if (!post.isMine(loginMember) && !visited.contains(post.getAuthorId())) {
+            visited.add(post.getAuthorId());
+            publishNotificationEventFromPostReply(post);
         }
 
         return new CommentIdElement(comment.getId());
@@ -249,5 +222,27 @@ public class CommentService {
 
         commentRepository.delete(comment);
         return new CommentIdElement(comment.getId());
+    }
+
+    private void publishNotificationEventFromPostReply(Post post) {
+        NotificationEvent notificationEvent = NotificationEvent.builder()
+                .ownerId(post.getAuthorId())
+                .message(String.format(NotificationMessage.POST_REPLY_MESSAGE.getMessage(), post.getTitle()))
+                .contentId(post.getId())
+                .serviceType(ServiceType.POST)
+                .notificationType(NotificationType.POST_REPLAY)
+                .build();
+        applicationEventPublisher.publishEvent(notificationEvent);
+    }
+
+    private void publishNotificationEventFromCommentReply(Post post, Comment comment) {
+        NotificationEvent notificationEvent = NotificationEvent.builder()
+                .ownerId(comment.getAuthorId())
+                .message(String.format(NotificationMessage.COMMENT_REPLY_MESSAGE.getMessage(), post.getTitle()))
+                .contentId(post.getId())
+                .serviceType(ServiceType.POST)
+                .notificationType(NotificationType.COMMENT_REPLAY)
+                .build();
+        applicationEventPublisher.publishEvent(notificationEvent);
     }
 }
