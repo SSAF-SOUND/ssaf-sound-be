@@ -1,4 +1,4 @@
-== 익명 게시판
+== 게시글
 
 === 전체 게시글 목록 조회(Offset)
 operation::post/find-all-posts-by-offset[snippets='http-request,http-response,cookie,request-parameters,response-fields']
