@@ -55,7 +55,6 @@ public class CommentService {
         Member loginMember = memberRepository.findById(loginMemberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-        // 1. 익명 번호 부여
         CommentNumber commentNumber = commentNumberRepository.
                 findByPostIdAndMemberId(postId, loginMemberId).orElse(null);
 
@@ -68,10 +67,9 @@ public class CommentService {
             commentNumberRepository.save(commentNumber);
         }
 
-        // 2. 댓글 저장
         Comment comment = Comment.builder()
-                .post(postRepository.getReferenceById(postId))
-                .member(memberRepository.getReferenceById(loginMemberId))
+                .post(post)
+                .member(loginMember)
                 .content(postCommentWriteReqDto.getContent())
                 .anonymity(postCommentWriteReqDto.getAnonymity())
                 .commentNumber(commentNumber)
@@ -133,7 +131,6 @@ public class CommentService {
             throw new CommentException(CommentErrorInfo.FORBIDDEN_REPLY_SUB_COMMENT);
         }
 
-        // 1. 익명 번호 부여
         CommentNumber commentNumber = commentNumberRepository.
                 findByPostIdAndMemberId(postId, loginMemberId).orElse(null);
 
@@ -146,7 +143,6 @@ public class CommentService {
             commentNumberRepository.save(commentNumber);
         }
 
-        // 2. 대댓글 저장
         Comment comment = Comment.builder()
                 .post(post)
                 .member(loginMember)
