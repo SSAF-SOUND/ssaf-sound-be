@@ -1,0 +1,7 @@
+== 알림
+
+=== 알림 목록 조회
+operation::notification/get-notifications-by-cursor[snippets='http-request,http-response,cookie,response-fields']
+
+=== 새로운 알림 확인
+operation::notification/check-notification[snippets='http-request,http-response,cookie,response-fields']

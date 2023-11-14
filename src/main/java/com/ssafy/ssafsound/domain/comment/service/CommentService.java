@@ -4,7 +4,10 @@ import com.ssafy.ssafsound.domain.auth.dto.AuthenticatedMember;
 import com.ssafy.ssafsound.domain.comment.domain.Comment;
 import com.ssafy.ssafsound.domain.comment.domain.CommentLike;
 import com.ssafy.ssafsound.domain.comment.domain.CommentNumber;
-import com.ssafy.ssafsound.domain.comment.dto.*;
+import com.ssafy.ssafsound.domain.comment.dto.CommentIdElement;
+import com.ssafy.ssafsound.domain.comment.dto.GetCommentResDto;
+import com.ssafy.ssafsound.domain.comment.dto.PatchCommentUpdateReqDto;
+import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReqDto;
 import com.ssafy.ssafsound.domain.comment.exception.CommentErrorInfo;
 import com.ssafy.ssafsound.domain.comment.exception.CommentException;
 import com.ssafy.ssafsound.domain.comment.repository.CommentLikeRepository;
@@ -14,6 +17,10 @@ import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.member.exception.MemberErrorInfo;
 import com.ssafy.ssafsound.domain.member.exception.MemberException;
 import com.ssafy.ssafsound.domain.member.repository.MemberRepository;
+import com.ssafy.ssafsound.domain.notification.domain.NotificationType;
+import com.ssafy.ssafsound.domain.notification.domain.ServiceType;
+import com.ssafy.ssafsound.domain.notification.event.NotificationEvent;
+import com.ssafy.ssafsound.domain.notification.message.NotificationMessage;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import com.ssafy.ssafsound.domain.post.dto.PostCommonLikeResDto;
 import com.ssafy.ssafsound.domain.post.exception.PostErrorInfo;
@@ -21,10 +28,13 @@ import com.ssafy.ssafsound.domain.post.exception.PostException;
 import com.ssafy.ssafsound.domain.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -35,18 +45,16 @@ public class CommentService {
     private final CommentLikeRepository commentLikeRepository;
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
-
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public CommentIdElement writeComment(Long postId, Long loginMemberId, PostCommentWriteReqDto postCommentWriteReqDto) {
-        if (!postRepository.existsById(postId)) {
-            throw new PostException(PostErrorInfo.NOT_FOUND_POST);
-        }
+        Post post = postRepository.findByIdWithMember(postId)
+                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
         Member loginMember = memberRepository.findById(loginMemberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-        // 1. 익명 번호 부여
         CommentNumber commentNumber = commentNumberRepository.
                 findByPostIdAndMemberId(postId, loginMemberId).orElse(null);
 
@@ -59,10 +67,9 @@ public class CommentService {
             commentNumberRepository.save(commentNumber);
         }
 
-        // 2. 댓글 저장
         Comment comment = Comment.builder()
-                .post(postRepository.getReferenceById(postId))
-                .member(memberRepository.getReferenceById(loginMemberId))
+                .post(post)
+                .member(loginMember)
                 .content(postCommentWriteReqDto.getContent())
                 .anonymity(postCommentWriteReqDto.getAnonymity())
                 .commentNumber(commentNumber)
@@ -72,18 +79,23 @@ public class CommentService {
         comment = commentRepository.save(comment);
         commentRepository.updateByCommentGroup(comment.getId());
 
+        if (!post.isMine(loginMember)) {
+            publishNotificationEventFromPostReply(post);
+        }
+
         return new CommentIdElement(comment.getId());
     }
 
     @Transactional(readOnly = true)
     public GetCommentResDto findComments(Long postId, AuthenticatedMember loginMember) {
-          if (!postRepository.existsById(postId)) {
+        if (!postRepository.existsById(postId)) {
             throw new PostException(PostErrorInfo.NOT_FOUND_POST);
         }
-          
+
         List<Comment> comments = commentRepository.findAllPostIdWithDetailsFetchOrderByCommentGroupId(postId);
         return GetCommentResDto.of(comments, loginMember);
     }
+
     @Transactional
     public CommentIdElement updateComment(Long commentId, Long loginMemberId, PatchCommentUpdateReqDto patchCommentUpdateReqDto) {
         Comment comment = commentRepository.findById(commentId)
@@ -102,41 +114,56 @@ public class CommentService {
 
     @Transactional
     public CommentIdElement writeCommentReply(Long postId, Long commentId, Long loginMemberId, PostCommentWriteReqDto postCommentWriteReplyReqDto) {
-        if (!postRepository.existsById(postId)) {
-            throw new PostException(PostErrorInfo.NOT_FOUND_POST);
-        }
-      
-        if (!commentRepository.existsById(commentId)) {
-            throw new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT);
-        }
+        Post post = postRepository.findByIdWithMember(postId)
+                .orElseThrow(() -> new PostException(PostErrorInfo.NOT_FOUND_POST));
 
         Member loginMember = memberRepository.findById(loginMemberId)
                 .orElseThrow(() -> new MemberException(MemberErrorInfo.MEMBER_NOT_FOUND_BY_ID));
 
-        // 1. 익명 번호 부여
+        Comment parentComment = commentRepository.findByIdWithMemberAndCommentGroup(commentId)
+                .orElseThrow(() -> new CommentException(CommentErrorInfo.NOT_FOUND_COMMENT));
+
+        if (!parentComment.isAssociatedWithPost(post)) {
+            throw new CommentException(CommentErrorInfo.NOT_ASSOCIATED_WITH_POST);
+        }
+
+        if (!parentComment.isParent()) {
+            throw new CommentException(CommentErrorInfo.FORBIDDEN_REPLY_SUB_COMMENT);
+        }
+
         CommentNumber commentNumber = commentNumberRepository.
                 findByPostIdAndMemberId(postId, loginMemberId).orElse(null);
 
         if (commentNumber == null) {
             commentNumber = CommentNumber.builder()
-                    .post(postRepository.getReferenceById(postId))
+                    .post(post)
                     .member(loginMember)
                     .number(commentNumberRepository.countAllByPostId(postId) + 1)
                     .build();
             commentNumberRepository.save(commentNumber);
         }
 
-        // 2. 대댓글 저장
         Comment comment = Comment.builder()
-                .post(postRepository.getReferenceById(postId))
+                .post(post)
                 .member(loginMember)
                 .content(postCommentWriteReplyReqDto.getContent())
                 .anonymity(postCommentWriteReplyReqDto.getAnonymity())
                 .commentNumber(commentNumber)
-                .commentGroup(commentRepository.getReferenceById(commentId))
+                .commentGroup(parentComment)
                 .build();
 
         comment = commentRepository.save(comment);
+
+        Set<Long> visited = new HashSet<>();
+        if (!parentComment.isMine(loginMember)) {
+            visited.add(parentComment.getAuthorId());
+            publishNotificationEventFromCommentReply(post, parentComment);
+        }
+        if (!post.isMine(loginMember) && !visited.contains(post.getAuthorId())) {
+            visited.add(post.getAuthorId());
+            publishNotificationEventFromPostReply(post);
+        }
+
         return new CommentIdElement(comment.getId());
     }
 
@@ -191,5 +218,27 @@ public class CommentService {
 
         commentRepository.delete(comment);
         return new CommentIdElement(comment.getId());
+    }
+
+    private void publishNotificationEventFromPostReply(Post post) {
+        NotificationEvent notificationEvent = NotificationEvent.builder()
+                .ownerId(post.getAuthorId())
+                .message(String.format(NotificationMessage.POST_REPLY_MESSAGE.getMessage(), post.getTitle()))
+                .contentId(post.getId())
+                .serviceType(ServiceType.POST)
+                .notificationType(NotificationType.POST_REPLAY)
+                .build();
+        applicationEventPublisher.publishEvent(notificationEvent);
+    }
+
+    private void publishNotificationEventFromCommentReply(Post post, Comment comment) {
+        NotificationEvent notificationEvent = NotificationEvent.builder()
+                .ownerId(comment.getAuthorId())
+                .message(String.format(NotificationMessage.COMMENT_REPLY_MESSAGE.getMessage(), post.getTitle()))
+                .contentId(post.getId())
+                .serviceType(ServiceType.POST)
+                .notificationType(NotificationType.COMMENT_REPLAY)
+                .build();
+        applicationEventPublisher.publishEvent(notificationEvent);
     }
 }

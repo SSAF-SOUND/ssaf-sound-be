@@ -1,6 +1,7 @@
 package com.ssafy.ssafsound.domain.comment.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -26,4 +27,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 		+ "where comment_id = :id", nativeQuery = true)
 	void updateByCommentGroup(@Param("id") Long id);
 
+	@Query(value = "select c " +
+            "from comment c " +
+            "join fetch c.member " +
+            "join fetch c.commentGroup " +
+            "where c.id = :id")
+    Optional<Comment> findByIdWithMemberAndCommentGroup(Long id);
 }

@@ -149,6 +149,9 @@ dependencies {
     //restAssured
     testImplementation 'io.rest-assured:rest-assured:4.4.0'
     testImplementation 'io.rest-assured:spring-mock-mvc:4.4.0'
+
+    // Mongodb 의존성 추가
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 }
 
 task prepareDirs {
@@ -194,6 +197,7 @@ bootJar {
     querydsl {
         jpa = true
         querydslSourcesDir = querydslDir
+        springDataMongo = true
     }
 
 // build시 사용할 sourceSet 추가 설정
