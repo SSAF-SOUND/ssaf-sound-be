@@ -1,5 +1,8 @@
-package com.ssafy.ssafsound.domain.lunch.task.domain;
+package com.ssafy.ssafsound.domain.lunch.service;
 
+import com.ssafy.ssafsound.domain.lunch.service.FreshmealInfoProvider;
+import com.ssafy.ssafsound.domain.lunch.service.ScrapInfoProvider;
+import com.ssafy.ssafsound.domain.lunch.service.WelstoryInfoProvider;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

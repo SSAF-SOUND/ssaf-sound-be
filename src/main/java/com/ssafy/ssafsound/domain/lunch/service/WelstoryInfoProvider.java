@@ -1,25 +1,32 @@
-package com.ssafy.ssafsound.domain.lunch.task.domain;
+package com.ssafy.ssafsound.domain.lunch.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ssafy.ssafsound.domain.lunch.task.dto.GetScrapReqDto;
-import com.ssafy.ssafsound.domain.lunch.task.dto.GetScrapResDto;
-import com.ssafy.ssafsound.domain.lunch.task.dto.GetWelstoryResDto;
+import com.ssafy.ssafsound.domain.lunch.domain.Lunch;
+import com.ssafy.ssafsound.domain.lunch.domain.WelstoryProperties;
+import com.ssafy.ssafsound.domain.lunch.dto.GetScrapReqDto;
+import com.ssafy.ssafsound.domain.lunch.dto.GetWelstoryResDto;
+import com.ssafy.ssafsound.domain.lunch.exception.LunchErrorInfo;
+import com.ssafy.ssafsound.domain.lunch.exception.LunchException;
 import com.ssafy.ssafsound.global.common.json.JsonParser;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
-public class WelstoryInfoProvider implements ScrapInfoProvider{
+public class WelstoryInfoProvider implements ScrapInfoProvider {
 
     private final RestTemplate restTemplate;
     private final WelstoryProperties welstoryProperties;
@@ -27,38 +34,46 @@ public class WelstoryInfoProvider implements ScrapInfoProvider{
     private HttpEntity header;
 
     @Override
-    public GetScrapResDto scrapLunchInfo(GetScrapReqDto getScrapReqDto) {
+    public List<Lunch> scrapLunchInfo(List<GetScrapReqDto> getScrapReqDtos) {
 
-        Map<String, String> parameters = makeScrapParameters(getScrapReqDto);
-        String url = makeUri(this.welstoryProperties.getInfo().get("url"), parameters);
+        this.setSessionHeader();
 
-        ResponseEntity<String> response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                header,
-                String.class);
+        List<Lunch> lunches = new ArrayList<>();
 
-        try {
-            return JsonParser.getMapper().readValue(response.getBody(), GetWelstoryResDto.class);
-        } catch (JsonProcessingException e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
+        for (GetScrapReqDto getScrapReqDto : getScrapReqDtos) {
+            Map<String, String> parameters = makeScrapParameters(getScrapReqDto);
+            String url = makeUri(this.welstoryProperties.getInfo().get("url"), parameters);
 
-            throw new RuntimeException();
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    header,
+                    String.class);
+
+            try {
+                lunches.addAll(JsonParser.getMapper()
+                        .readValue(response.getBody(), GetWelstoryResDto.class)
+                        .getLunches(getScrapReqDto.getCampus()));
+            } catch (JsonProcessingException e) {
+                throw new LunchException(LunchErrorInfo.SCRAPING_ERROR);
+            }
         }
+
+        return lunches;
+
     }
 
-    public void setSessionHeader() {
+    private void setSessionHeader() {
         HttpHeaders header = new HttpHeaders();
 
-        header.add("Cookie",getJSESSIONID());
-        header.add("Content-Type","application/json");
+        header.add("Cookie", getJSESSIONID());
+        header.add("Content-Type", "application/json");
         header.add("Accept", MediaType.APPLICATION_JSON_VALUE);
 
         this.header = new HttpEntity(header);
     }
 
-    private String getJSESSIONID(){
+    private String getJSESSIONID() {
         Map<String, String> parameters = makeLoginParameters();
 
         String url = makeUri(this.welstoryProperties.getCredentials().getUrl(), parameters);
@@ -93,7 +108,7 @@ public class WelstoryInfoProvider implements ScrapInfoProvider{
         return parameters;
     }
 
-    private String makeUri(String baseUri, Map<String, String> parameters){
+    private String makeUri(String baseUri, Map<String, String> parameters) {
 
         UriComponentsBuilder uri = UriComponentsBuilder.fromUriString(baseUri);
         for (Map.Entry<String, String> entry : parameters.entrySet()) {

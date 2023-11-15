@@ -1,4 +1,4 @@
-package com.ssafy.ssafsound.domain.lunch.task.dto;
+package com.ssafy.ssafsound.domain.lunch.dto;
 
 import com.ssafy.ssafsound.domain.meta.domain.MetaData;
 import lombok.Builder;
