@@ -17,6 +17,7 @@ public class GetNotificationElement {
     private Long contentId;
     private ServiceType serviceType;
     private NotificationType notificationType;
+    private Boolean read;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createAt;
@@ -28,6 +29,7 @@ public class GetNotificationElement {
                 .contentId(notification.getContentId())
                 .serviceType(notification.getServiceType())
                 .notificationType(notification.getNotificationType())
+                .read(notification.getRead())
                 .createAt(notification.getCreatedAt())
                 .build();
     }
