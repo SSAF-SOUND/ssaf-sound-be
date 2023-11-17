@@ -11,6 +11,7 @@ import com.ssafy.ssafsound.domain.comment.controller.CommentController;
 import com.ssafy.ssafsound.domain.comment.service.CommentService;
 import com.ssafy.ssafsound.domain.lunch.controller.LunchController;
 import com.ssafy.ssafsound.domain.lunch.service.LunchPollService;
+import com.ssafy.ssafsound.domain.lunch.service.LunchScrapService;
 import com.ssafy.ssafsound.domain.lunch.service.LunchService;
 import com.ssafy.ssafsound.domain.member.controller.MemberController;
 import com.ssafy.ssafsound.domain.member.service.MemberService;
@@ -141,6 +142,9 @@ public class ControllerTest {
 
     @MockBean
     protected SemesterConstantProvider semesterConstantProvider;
+
+    @MockBean
+    protected LunchScrapService lunchScrapService;
 
     protected static final Cookie ACCESS_TOKEN = new Cookie.Builder("accessToken", "accessTokenValue").build();
     protected static final Cookie REFRESH_TOKEN = new Cookie.Builder("refreshToken", "refreshTokenValue").build();
