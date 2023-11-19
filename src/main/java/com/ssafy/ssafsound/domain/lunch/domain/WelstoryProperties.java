@@ -1,4 +1,4 @@
-package com.ssafy.ssafsound.domain.lunch.task.domain;
+package com.ssafy.ssafsound.domain.lunch.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

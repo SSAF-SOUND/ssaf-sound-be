@@ -11,6 +11,7 @@ import com.ssafy.ssafsound.domain.comment.controller.CommentController;
 import com.ssafy.ssafsound.domain.comment.service.CommentService;
 import com.ssafy.ssafsound.domain.lunch.controller.LunchController;
 import com.ssafy.ssafsound.domain.lunch.service.LunchPollService;
+import com.ssafy.ssafsound.domain.lunch.service.LunchScrapService;
 import com.ssafy.ssafsound.domain.lunch.service.LunchService;
 import com.ssafy.ssafsound.domain.member.controller.MemberController;
 import com.ssafy.ssafsound.domain.member.service.MemberService;
@@ -18,6 +19,8 @@ import com.ssafy.ssafsound.domain.member.service.SemesterConstantProvider;
 import com.ssafy.ssafsound.domain.member.validator.SemesterValidator;
 import com.ssafy.ssafsound.domain.meta.controller.MetaDataController;
 import com.ssafy.ssafsound.domain.meta.service.EnumMetaDataConsumer;
+import com.ssafy.ssafsound.domain.notification.controller.NotificationController;
+import com.ssafy.ssafsound.domain.notification.service.NotificationService;
 import com.ssafy.ssafsound.domain.post.controller.PostController;
 import com.ssafy.ssafsound.domain.post.service.PostService;
 import com.ssafy.ssafsound.domain.recruit.controller.RecruitController;
@@ -43,7 +46,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
-
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -63,6 +65,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
         LunchController.class,
         MemberController.class,
         MetaDataController.class,
+        NotificationController.class,
         PostController.class,
         RecruitController.class,
         RecruitApplicationController.class,
@@ -102,6 +105,9 @@ public class ControllerTest {
     protected EnumMetaDataConsumer enumMetaDataConsumer;
 
     @MockBean
+    protected NotificationService notificationService;
+
+    @MockBean
     protected PostService postService;
 
     @MockBean
@@ -136,6 +142,9 @@ public class ControllerTest {
 
     @MockBean
     protected SemesterConstantProvider semesterConstantProvider;
+
+    @MockBean
+    protected LunchScrapService lunchScrapService;
 
     protected static final Cookie ACCESS_TOKEN = new Cookie.Builder("accessToken", "accessTokenValue").build();
     protected static final Cookie REFRESH_TOKEN = new Cookie.Builder("refreshToken", "refreshTokenValue").build();

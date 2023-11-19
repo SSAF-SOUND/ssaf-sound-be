@@ -4,6 +4,9 @@ import com.ssafy.ssafsound.domain.BaseTimeEntity;
 import com.ssafy.ssafsound.domain.board.domain.Board;
 import com.ssafy.ssafsound.domain.comment.domain.Comment;
 import com.ssafy.ssafsound.domain.member.domain.Member;
+import com.ssafy.ssafsound.domain.notification.domain.NotificationType;
+import com.ssafy.ssafsound.domain.notification.domain.ServiceType;
+import com.ssafy.ssafsound.domain.notification.event.NotificationEvent;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -88,5 +91,13 @@ public class Post extends BaseTimeEntity {
     public int countComment() {
         return (int) this.getComments().stream()
                 .filter(comment -> !comment.getDeletedComment()).count();
+    }
+
+    public Boolean isMine(Member member) {
+        return this.getMember().getId().equals(member.getId());
+    }
+
+    public Long getAuthorId(){
+        return this.getMember().getId();
     }
 }

@@ -1,4 +1,7 @@
-== 익명 게시판
+== 게시글
+
+=== 전체 게시글 목록 조회(Offset)
+operation::post/find-all-posts-by-offset[snippets='http-request,http-response,cookie,request-parameters,response-fields']
 
 === 전체 게시글 목록 조회(Offset)
 operation::post/find-all-posts-by-offset[snippets='http-request,http-response,cookie,request-parameters,response-fields']
@@ -14,6 +17,9 @@ operation::post/find-post-anonymity-false[snippets='http-request,http-response,c
 
 === 게시글 상세 보기(익명)
 operation::post/find-post-anonymity-true[snippets='http-request,http-response,cookie,path-parameters,response-fields']
+
+=== 전체 게시글 검색(Offset)
+operation::post/search-all-posts-by-offset[snippets='http-request,http-response,cookie,request-parameters,response-fields']
 
 === 게시글 검색(Cursor)
 operation::post/search-posts-by-cursor[snippets='http-request,http-response,cookie,request-parameters,response-fields']

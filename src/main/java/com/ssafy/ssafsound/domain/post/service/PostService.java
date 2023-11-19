@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,7 +47,7 @@ public class PostService {
         Long cursor = getPostCursorReqDto.getCursor();
         int size = getPostCursorReqDto.getSize();
 
-        if (!boardRepository.existsById(boardId)) {
+        if (!boardRepository.existsByIdAndUsedBoardTrue(boardId)) {
             throw new BoardException(BoardErrorInfo.NO_BOARD);
         }
 
@@ -62,10 +61,10 @@ public class PostService {
 
         Long boardId = getPostOffsetReqDto.getBoardId();
 
-        Board board = boardRepository.findById(boardId)
+        Board board = boardRepository.findByIdAndUsedBoardTrue(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorInfo.NO_BOARD));
 
-        Page<Post> posts = postRepository.findPostsByboardAndPageable(board, pageRequest);
+        Page<Post> posts = postRepository.findPostsByBoardAndPageable(board, pageRequest);
         return GetPostOffsetResDto.ofPosts(posts);
     }
 
@@ -322,7 +321,7 @@ public class PostService {
         Long cursor = getPostSearchCursorReqDto.getCursor();
         int size = getPostSearchCursorReqDto.getSize();
 
-        if (!boardRepository.existsById(boardId)) {
+        if (!boardRepository.existsByIdAndUsedBoardTrue(boardId)) {
             throw new BoardException(BoardErrorInfo.NO_BOARD);
         }
 
@@ -337,7 +336,7 @@ public class PostService {
         Long boardId = getPostSearchOffsetReqDto.getBoardId();
         String keyword = getPostSearchOffsetReqDto.getKeyword();
 
-        Board board = boardRepository.findById(boardId)
+        Board board = boardRepository.findByIdAndUsedBoardTrue(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorInfo.NO_BOARD));
 
         Page<Post> posts = postRepository.searchPostsByBoardAndKeywordAndPageable(board, keyword, pageRequest);
@@ -370,5 +369,14 @@ public class PostService {
         Page<Post> posts = postRepository.findAllWithPageable(pageRequest);
         return GetPostOffsetResDto.ofPosts(posts);
 
+    }
+
+    @Transactional(readOnly = true)
+    public GetPostOffsetResDto searchAllPostsByOffset(GetPostAllSearchOffsetReqDto getPostAllSearchOffsetReqDto) {
+        PageRequest pageRequest = getPostAllSearchOffsetReqDto.toPageRequest();
+        String keyword = getPostAllSearchOffsetReqDto.getKeyword();
+
+        Page<Post> posts = postRepository.searchAllPostsByBoardAndKeywordAndPageable(keyword, pageRequest);
+        return GetPostOffsetResDto.ofPosts(posts);
     }
 }

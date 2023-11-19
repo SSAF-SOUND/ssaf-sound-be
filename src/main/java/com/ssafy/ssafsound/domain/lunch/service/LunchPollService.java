@@ -48,8 +48,8 @@ public class LunchPollService {
             throw new LunchException(LunchErrorInfo.INVALID_DATE);
         }
 
-        // 3. 오늘 투표한 점심 투표 엔티티 조회
-        LunchPoll lunchPoll = lunchPollRepository.findByMemberAndPolledAt(member, currentTime);
+        // 3. 같은 캠퍼스에 오늘 투표한 점심 투표 엔티티 조회
+        LunchPoll lunchPoll = lunchPollRepository.findByMemberAndCampusAndPolledAt(member, lunch.getCampus(), currentTime);
 
         // 4-1. 이미 오늘 투표한 경우
         if (lunchPoll != null) {

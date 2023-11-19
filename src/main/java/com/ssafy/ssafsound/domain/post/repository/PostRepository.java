@@ -33,7 +33,13 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRep
     @EntityGraph(attributePaths = {"board", "member", "likes"})
     @Query(value = "select p from post p " +
             "where p.board = :board ")
-    Page<Post> findPostsByboardAndPageable(@Param("board") Board board, Pageable pageable);
+    Page<Post> findPostsByBoardAndPageable(@Param("board") Board board, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"board", "member", "likes"})
+    @Query("select p from post p " +
+            "where (replace(p.title, ' ', '') like CONCAT('%', :keyword, '%') " +
+            "or replace(p.content, ' ', '') like CONCAT('%', :keyword, '%')) ")
+    Page<Post> searchAllPostsByBoardAndKeywordAndPageable(String keyword, PageRequest pageRequest);
 
     @EntityGraph(attributePaths = {"board", "member", "likes"})
     @Query("select p from post p " +

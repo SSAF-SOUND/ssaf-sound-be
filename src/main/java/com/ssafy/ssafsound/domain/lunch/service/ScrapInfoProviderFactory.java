@@ -1,4 +1,4 @@
-package com.ssafy.ssafsound.domain.lunch.task.domain;
+package com.ssafy.ssafsound.domain.lunch.service;
 
 import org.springframework.stereotype.Component;
 

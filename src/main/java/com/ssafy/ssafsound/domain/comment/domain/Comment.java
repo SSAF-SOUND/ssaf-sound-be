@@ -1,7 +1,6 @@
 package com.ssafy.ssafsound.domain.comment.domain;
 
 import com.ssafy.ssafsound.domain.BaseTimeEntity;
-import com.ssafy.ssafsound.domain.comment.dto.PostCommentWriteReqDto;
 import com.ssafy.ssafsound.domain.member.domain.Member;
 import com.ssafy.ssafsound.domain.post.domain.Post;
 import lombok.AllArgsConstructor;
@@ -64,5 +63,21 @@ public class Comment extends BaseTimeEntity {
     public void updateComment(String content, Boolean anonymity) {
         this.content = content;
         this.anonymity = anonymity;
+    }
+
+    public Boolean isMine(Member member) {
+        return this.getMember().getId().equals(member.getId());
+    }
+
+    public Long getAuthorId() {
+        return this.getMember().getId();
+    }
+
+    public Boolean isAssociatedWithPost(Post post) {
+        return this.post.getId().equals(post.getId());
+    }
+
+    public Boolean isParent() {
+        return this.getId().equals(this.commentGroup.getId());
     }
 }
