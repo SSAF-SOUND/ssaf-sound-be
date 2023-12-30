@@ -59,7 +59,7 @@ class NotificationControllerTest extends ControllerTest {
                                         fieldWithPath("serviceType").type(JsonFieldType.STRING).description("알림을 저장한 서비스 타입, SYSTEM | POST | RECRUIT"),
                                         fieldWithPath("notificationType").type(JsonFieldType.STRING).description("구체적인 알림 타입, SYSTEM | POST_REPLAY | COMMENT_REPLAY | RECRUIT~~~ 단, RECRUIT는 추가될 수 있음."),
                                         fieldWithPath("read").type(JsonFieldType.BOOLEAN).description("새로 들어온 알림인지 여부, 처음 조회된 알림이면 false"),
-                                        fieldWithPath("createAt").type(JsonFieldType.STRING).description("알림이 저장된 시간, yyyy-MM-dd HH:mm:ss")
+                                        fieldWithPath("createdAt").type(JsonFieldType.STRING).description("알림이 저장된 시간, yyyy-MM-dd HH:mm:ss")
                                 )
                         )
                 );
@@ -100,7 +100,7 @@ class NotificationControllerTest extends ControllerTest {
                                         fieldWithPath("serviceType").type(JsonFieldType.STRING).description("알림을 저장한 서비스 타입, SYSTEM | POST | RECRUIT"),
                                         fieldWithPath("notificationType").type(JsonFieldType.STRING).description("구체적인 알림 타입, SYSTEM | POST_REPLAY | COMMENT_REPLAY | RECRUIT~~~ 단, RECRUIT는 추가될 수 있음."),
                                         fieldWithPath("read").type(JsonFieldType.BOOLEAN).description("새로 들어온 알림인지 여부, 처음 조회된 알림이면 false"),
-                                        fieldWithPath("createAt").type(JsonFieldType.STRING).description("알림이 저장된 시간, yyyy-MM-dd HH:mm:ss")
+                                        fieldWithPath("createdAt").type(JsonFieldType.STRING).description("알림이 저장된 시간, yyyy-MM-dd HH:mm:ss")
                                 )
                         )
                 );
