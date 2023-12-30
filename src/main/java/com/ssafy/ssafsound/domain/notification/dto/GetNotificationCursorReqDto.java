@@ -9,7 +9,7 @@ import javax.validation.constraints.Min;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetNotificationReqDto {
+public class GetNotificationCursorReqDto {
     @Builder.Default
     private Long cursor = -1L;
 
