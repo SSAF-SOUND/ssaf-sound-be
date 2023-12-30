@@ -57,7 +57,7 @@ class NotificationControllerTest extends ControllerTest {
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("알림 메시지"),
                                         fieldWithPath("contentId").type(JsonFieldType.NUMBER).description("알림 클릭 시 이동할 해당 컨텐츠의 고유 ID, EX) ServiceType이 POST이면 게시글의 id, RECRUIT면 리쿠르트의 id 단, SYSTEM이면 null이 올 수도 있음."),
                                         fieldWithPath("serviceType").type(JsonFieldType.STRING).description("알림을 저장한 서비스 타입, SYSTEM | POST | RECRUIT"),
-                                        fieldWithPath("notificationType").type(JsonFieldType.STRING).description("구체적인 알림 타입, SYSTEM | POST_REPLAY | COMMENT_REPLAY | RECRUIT~~~ 단, RECRUIT는 추가될 수 있음."),
+                                        fieldWithPath("notificationType").type(JsonFieldType.STRING).description("구체적인 알림 타입, SYSTEM | POST_REPLY | COMMENT_REPLY | RECRUIT~~~ 단, RECRUIT는 추가될 수 있음."),
                                         fieldWithPath("read").type(JsonFieldType.BOOLEAN).description("새로 들어온 알림인지 여부, 처음 조회된 알림이면 false"),
                                         fieldWithPath("createdAt").type(JsonFieldType.STRING).description("알림이 저장된 시간, yyyy-MM-dd HH:mm:ss")
                                 )
@@ -98,7 +98,7 @@ class NotificationControllerTest extends ControllerTest {
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("알림 메시지"),
                                         fieldWithPath("contentId").type(JsonFieldType.NUMBER).description("알림 클릭 시 이동할 해당 컨텐츠의 고유 ID, EX) ServiceType이 POST이면 게시글의 id, RECRUIT면 리쿠르트의 id 단, SYSTEM이면 null이 올 수도 있음."),
                                         fieldWithPath("serviceType").type(JsonFieldType.STRING).description("알림을 저장한 서비스 타입, SYSTEM | POST | RECRUIT"),
-                                        fieldWithPath("notificationType").type(JsonFieldType.STRING).description("구체적인 알림 타입, SYSTEM | POST_REPLAY | COMMENT_REPLAY | RECRUIT~~~ 단, RECRUIT는 추가될 수 있음."),
+                                        fieldWithPath("notificationType").type(JsonFieldType.STRING).description("구체적인 알림 타입, SYSTEM | POST_REPLY | COMMENT_REPLY | RECRUIT~~~ 단, RECRUIT는 추가될 수 있음."),
                                         fieldWithPath("read").type(JsonFieldType.BOOLEAN).description("새로 들어온 알림인지 여부, 처음 조회된 알림이면 false"),
                                         fieldWithPath("createdAt").type(JsonFieldType.STRING).description("알림이 저장된 시간, yyyy-MM-dd HH:mm:ss")
                                 )
