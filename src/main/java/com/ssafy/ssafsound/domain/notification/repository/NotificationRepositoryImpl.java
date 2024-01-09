@@ -19,7 +19,7 @@ public class NotificationRepositoryImpl implements NotificationCustomRepository 
     private final MongoOperations mongoOperations;
 
     @Override
-    public List<Notification> findAllByOwnerAndReadTrue(Long ownerId, Long cursor, Integer size) {
+    public List<Notification> findAllByOwnerId(Long ownerId, Long cursor, Integer size) {
         Criteria criteria = Criteria.where("ownerId").is(ownerId);
         if (cursor != -1) {
             criteria.and("_id").lt(cursor);
@@ -28,15 +28,16 @@ public class NotificationRepositoryImpl implements NotificationCustomRepository 
                 .limit(size + 1)
                 .with(Sort.by(Sort.Order.desc("_id")));
 
-        List<Notification> notifications = mongoOperations.find(query, Notification.class);
+        return mongoOperations.find(query, Notification.class);
+    }
 
+    @Override
+    public void updateReadTrueByOwnerId(Long ownerId) {
         mongoOperations.updateMulti(
                 new Query(Criteria.where("ownerId").is(ownerId)),
                 new Update().set("read", true),
                 Notification.class
         );
-
-        return notifications;
     }
 
     @Override
