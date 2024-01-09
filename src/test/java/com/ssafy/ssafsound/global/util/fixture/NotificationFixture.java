@@ -15,7 +15,7 @@ public class NotificationFixture {
                 .message("'오늘 점심 추천좀' 게시글에 새로운 댓글이 달렸습니다.")
                 .contentId(1L)
                 .serviceType(ServiceType.POST)
-                .notificationType(NotificationType.POST_REPLAY)
+                .notificationType(NotificationType.POST_REPLY)
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -28,7 +28,7 @@ public class NotificationFixture {
                 .message("'취업 하고싶다~~' 게시글에 새로운 대댓글이 달렸습니다.")
                 .contentId(2L)
                 .serviceType(ServiceType.POST)
-                .notificationType(NotificationType.COMMENT_REPLAY)
+                .notificationType(NotificationType.COMMENT_REPLY)
                 .createdAt(LocalDateTime.now().plusHours(1))
                 .build();
 

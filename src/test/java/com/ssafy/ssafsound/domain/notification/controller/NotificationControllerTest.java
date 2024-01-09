@@ -1,11 +1,15 @@
 package com.ssafy.ssafsound.domain.notification.controller;
 
+import com.ssafy.ssafsound.domain.notification.domain.Notification;
 import com.ssafy.ssafsound.domain.notification.dto.GetCheckNotificationResDto;
-import com.ssafy.ssafsound.domain.notification.dto.GetNotificationResDto;
+import com.ssafy.ssafsound.domain.notification.dto.GetNotificationCursorResDto;
+import com.ssafy.ssafsound.domain.notification.dto.GetNotificationOffsetResDto;
 import com.ssafy.ssafsound.global.docs.ControllerTest;
 import com.ssafy.ssafsound.global.util.fixture.NotificationFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.restdocs.payload.JsonFieldType;
 
@@ -23,9 +27,9 @@ class NotificationControllerTest extends ControllerTest {
     private final NotificationFixture notificationFixture = new NotificationFixture();
 
     @Test
-    @DisplayName("알림 목록 조회(Cursor), cursor와 size를 기준으로 커서 기반 페이지네이션이 수행됨.")
+    @DisplayName("사용자 알림 목록 조회(Cursor), cursor와 size를 기준으로 커서 기반 페이지네이션이 수행됨.")
     void getNotificationsByCursor() {
-        GetNotificationResDto response = GetNotificationResDto.of(
+        GetNotificationCursorResDto response = GetNotificationCursorResDto.of(
                 List.of(notificationFixture.createCommentReplyNotification(),
                         notificationFixture.createPostReplyNotification()),
                 10
@@ -33,10 +37,10 @@ class NotificationControllerTest extends ControllerTest {
 
         doReturn(response)
                 .when(notificationService)
-                .getNotifications(any(), any());
+                .getNotificationsByCursor(any(), any());
 
         restDocs.cookie(ACCESS_TOKEN)
-                .when().get("/notifications?cursor={cursor}&size={pageSize}", -1, 10)
+                .when().get("/notifications/cursor?cursor={cursor}&size={pageSize}", -1, 10)
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
                 .apply(document("notification/get-notifications-by-cursor",
@@ -53,9 +57,50 @@ class NotificationControllerTest extends ControllerTest {
                                         fieldWithPath("message").type(JsonFieldType.STRING).description("알림 메시지"),
                                         fieldWithPath("contentId").type(JsonFieldType.NUMBER).description("알림 클릭 시 이동할 해당 컨텐츠의 고유 ID, EX) ServiceType이 POST이면 게시글의 id, RECRUIT면 리쿠르트의 id 단, SYSTEM이면 null이 올 수도 있음."),
                                         fieldWithPath("serviceType").type(JsonFieldType.STRING).description("알림을 저장한 서비스 타입, SYSTEM | POST | RECRUIT"),
-                                        fieldWithPath("notificationType").type(JsonFieldType.STRING).description("구체적인 알림 타입, SYSTEM | POST_REPLAY | COMMENT_REPLAY | RECRUIT~~~ 단, RECRUIT는 추가될 수 있음."),
+                                        fieldWithPath("notificationType").type(JsonFieldType.STRING).description("구체적인 알림 타입, SYSTEM | POST_REPLY | COMMENT_REPLY | RECRUIT~~~ 단, RECRUIT는 추가될 수 있음."),
                                         fieldWithPath("read").type(JsonFieldType.BOOLEAN).description("새로 들어온 알림인지 여부, 처음 조회된 알림이면 false"),
-                                        fieldWithPath("createAt").type(JsonFieldType.STRING).description("알림이 저장된 시간, yyyy-MM-dd HH:mm:ss")
+                                        fieldWithPath("createdAt").type(JsonFieldType.STRING).description("알림이 저장된 시간, yyyy-MM-dd HH:mm:ss")
+                                )
+                        )
+                );
+    }
+
+    @Test
+    @DisplayName("사용자 알림 목록 조회(Offset), page와 size를 기준으로 오프셋 기반 페이지네이션이 수행됨.")
+    void getNotificationsByOffset() {
+        List<Notification> notifications = List.of(notificationFixture.createCommentReplyNotification(),
+                notificationFixture.createPostReplyNotification());
+
+        GetNotificationOffsetResDto response = GetNotificationOffsetResDto.of(
+                new PageImpl<>(notifications)
+        );
+
+        doReturn(response)
+                .when(notificationService)
+                .getNotificationsByOffset(any(), any());
+
+        restDocs.cookie(ACCESS_TOKEN)
+                .when().get("/notifications/offset?page={page}&size={size}", 1, 10)
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .apply(document("notification/get-notifications-by-offset",
+                                requestCookieAccessTokenMandatory(),
+                                requestParameters(
+                                        parameterWithName("page").description("page값은 불러올 현재 페이지의 값을 의미함, 초기 page는 1(또는 첫 페이지는 1)"),
+                                        parameterWithName("size").description("현재 페이지의 게시글 개수를 의미함, 최소 size는 10")
+                                ),
+                                getEnvelopPatternWithData().andWithPrefix("data.",
+                                        fieldWithPath("notifications").type(JsonFieldType.ARRAY).description("알림 목록"),
+                                        fieldWithPath("currentPage").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
+                                        fieldWithPath("totalPageCount").type(JsonFieldType.NUMBER).description("전체 페이지 수")
+                                ).andWithPrefix("data.notifications[].",
+                                        fieldWithPath("notificationId").type(JsonFieldType.NUMBER).description("알림의 고유 ID"),
+                                        fieldWithPath("message").type(JsonFieldType.STRING).description("알림 메시지"),
+                                        fieldWithPath("contentId").type(JsonFieldType.NUMBER).description("알림 클릭 시 이동할 해당 컨텐츠의 고유 ID, EX) ServiceType이 POST이면 게시글의 id, RECRUIT면 리쿠르트의 id 단, SYSTEM이면 null이 올 수도 있음."),
+                                        fieldWithPath("serviceType").type(JsonFieldType.STRING).description("알림을 저장한 서비스 타입, SYSTEM | POST | RECRUIT"),
+                                        fieldWithPath("notificationType").type(JsonFieldType.STRING).description("구체적인 알림 타입, SYSTEM | POST_REPLY | COMMENT_REPLY | RECRUIT~~~ 단, RECRUIT는 추가될 수 있음."),
+                                        fieldWithPath("read").type(JsonFieldType.BOOLEAN).description("새로 들어온 알림인지 여부, 처음 조회된 알림이면 false"),
+                                        fieldWithPath("createdAt").type(JsonFieldType.STRING).description("알림이 저장된 시간, yyyy-MM-dd HH:mm:ss")
                                 )
                         )
                 );

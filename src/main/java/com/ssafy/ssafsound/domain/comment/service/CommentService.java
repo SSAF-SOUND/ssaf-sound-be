@@ -226,7 +226,7 @@ public class CommentService {
                 .message(String.format(NotificationMessage.POST_REPLY_MESSAGE.getMessage(), post.getTitle()))
                 .contentId(post.getId())
                 .serviceType(ServiceType.POST)
-                .notificationType(NotificationType.POST_REPLAY)
+                .notificationType(NotificationType.POST_REPLY)
                 .build();
         applicationEventPublisher.publishEvent(notificationEvent);
     }
@@ -237,7 +237,7 @@ public class CommentService {
                 .message(String.format(NotificationMessage.COMMENT_REPLY_MESSAGE.getMessage(), post.getTitle()))
                 .contentId(post.getId())
                 .serviceType(ServiceType.POST)
-                .notificationType(NotificationType.COMMENT_REPLAY)
+                .notificationType(NotificationType.COMMENT_REPLY)
                 .build();
         applicationEventPublisher.publishEvent(notificationEvent);
     }

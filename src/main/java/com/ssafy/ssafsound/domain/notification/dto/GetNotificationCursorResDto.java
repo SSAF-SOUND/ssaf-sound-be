@@ -9,15 +9,15 @@ import java.util.stream.Collectors;
 
 @Getter
 @Builder
-public class GetNotificationResDto {
+public class GetNotificationCursorResDto {
     private List<GetNotificationElement> notifications;
     private Long cursor;
 
-    public static GetNotificationResDto of(List<Notification> notifications, Integer pageSize) {
+    public static GetNotificationCursorResDto of(List<Notification> notifications, Integer pageSize) {
         int size = notifications.size();
         boolean hasNext = size == pageSize + 1;
 
-        return GetNotificationResDto.builder()
+        return GetNotificationCursorResDto.builder()
                 .notifications((hasNext ? notifications.subList(0, size - 1) : notifications)
                         .stream()
                         .map(GetNotificationElement::from)

@@ -20,7 +20,7 @@ public class GetNotificationElement {
     private Boolean read;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
 
     public static GetNotificationElement from(Notification notification) {
         return GetNotificationElement.builder()
@@ -30,7 +30,7 @@ public class GetNotificationElement {
                 .serviceType(notification.getServiceType())
                 .notificationType(notification.getNotificationType())
                 .read(notification.getRead())
-                .createAt(notification.getCreatedAt())
+                .createdAt(notification.getCreatedAt())
                 .build();
     }
 }
