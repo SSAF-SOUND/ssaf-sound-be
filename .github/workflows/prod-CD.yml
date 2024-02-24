@@ -1,17 +1,16 @@
 name: prod CI&CD to Cloud
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - prod
 env:
-  HOST: ${{ secrets.AWS_PROD_HOST }}
-  KEY: ${{ secrets.AWS_PROD_KEY }}
   DOCKERHUB_REPO: ${{ secrets.DOCKERHUB_PROD_REPO }}
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
   DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-  APPLICATION_DIR: src/main/resources
-  APPLICATION_PROD: ${{ secrets.APPLICATION_PROD }}
 
 jobs:
   build:
@@ -40,39 +39,51 @@ jobs:
         with:
           java-version: 11
           distribution: 'temurin'
-
-      # (3) 환경변수 파일 생성
-      - name: Copy properties
-        run: echo $APPLICATION_PROD | base64 --decode > $APPLICATION_DIR/application-prod.yml
-
-      # (4) gradlew 권한 설정
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      # (5) Gradle build (Test 제외)
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
+          
+      # gradle caching - 빌드 시간 향상
+      - name: Gradle Caching
+        uses: actions/cache@v3
         with:
-          arguments: clean build -x test
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # application prod yml 파일 생성
+      - name: Copy make application-prod.yml
+        run: |
+          cd ./src/main/resources
+          touch ./application-dev.yml
+          echo "${{ secrets.APPLICATION_PROD }}"| base64 --decode > ./application-prod.yml
+        shell: bash
+
+      # gradle build 테스트 제거
+      - name: Build with Gradle
+        run: ./gradlew build -x test
+          
 
       # (6) Docker 이미지 빌드
       - name: Docker build & push to docker repo
+        if: contains(github.ref, 'prod')
         run: |
           docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
           docker build -f Dockerfile -t $DOCKERHUB_REPO/ssafsound-app .
           docker push $DOCKERHUB_REPO/ssafsound-app
 
-      # (7) ssh 접속 후 docker compose up
+      # (7) ssh 접속 후 docker compose up docker rm에서 컨테이너 존재하지 않으면 error발생
       - name: Deploy to server
         uses: appleboy/ssh-action@master
-        id: deploy
+        id: deploy_to_prod
+        if: contains(github.ref, 'prod')
         with:
-          host: $HOST
+          host: ${{ secrets.AWS_PROD_HOST }}
           username: ubuntu
-          key: $KEY
-          envs: GITHUB_SHA
+          port: 22
+          key: ${{ secrets.AWS_PROD_KEY }}
           script: |
-            sudo docker rm -f $(docker ps -qa)
+            sudo docker rm -f $(sudo docker ps -aq)
             sudo docker pull $DOCKERHUB_REPO/ssafsound-app
             docker-compose up -d
             docker image prune -f
